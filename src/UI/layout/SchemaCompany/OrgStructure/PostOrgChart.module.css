@@ -5,7 +5,10 @@
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #CCCCCC;
-    background: #ffffff;
+     background-image: url('/src/UI/image/schema_background.svg'); /* Путь к файлу */
+    background-repeat: repeat; /* или no-repeat */
+    background-size: auto; /* или cover, contain */
+    background-position: center;
 }
 
 .messageContainer {

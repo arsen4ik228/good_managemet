@@ -39,6 +39,7 @@ import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
 
 import MainProject from "../../UI/app/Project/desktop/Main";
 import SingleOrgStructure from "../../UI/layout/SchemaCompany/OrgStructure/SingleOrgStructure";
+import Test from "../../UI/layout/SchemaCompany/Test";
 
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
@@ -130,6 +131,14 @@ function DesktopApp() {
             element={
               <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <ErrorPage />
+              </React.Suspense>
+            }
+          />
+           <Route
+            path="/test"
+            element={
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                <Test />
               </React.Suspense>
             }
           />
