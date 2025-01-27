@@ -1,6 +1,6 @@
 import './App.css';
 import { isMobile } from 'react-device-detect'; // Импортируем функцию для определения устройства
-
+//ygugjygyjgyg
 import MobileApp from './mobile/MobileApp';
 import AppDesktop from './desktop/AppDesktop';
 
