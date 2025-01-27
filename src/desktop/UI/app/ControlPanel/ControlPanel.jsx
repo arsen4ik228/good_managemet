@@ -4,11 +4,11 @@ import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import ModalSetting from "@Custom/modalSetting/ModalSetting";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import useControlPanel from "UI/hooks/useControlPanel";
-import usePostsHook from "UI/hooks/usePostsHook";
+import useControlPanel from "@hooks/useControlPanel";
+import usePostsHook from "@hooks/usePostsHook";
 import PanelDragDrop from "@Custom/panelDragDrop/PanelDragDrop";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import { useModalSelectRadio } from "UI/hooks/useModalSelectRadio";
+import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
 import ModalWindow from "@Custom/ModalWindow";
 import ModalStatistic from "@Custom/GraphicStatistics/modal/ModalStatistic";
 

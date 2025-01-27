@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import classes from "./Policy.module.css";
 
-import subbarSearch from "../../image/subbarSearch.svg";
-import Blacksavetmp from "../../image/Blacksavetmp.svg";
+import subbarSearch from "@image/subbarSearch.svg";
+import Blacksavetmp from "@image/Blacksavetmp.svg";
 
-import folder from "../../image/folder.svg";
-import iconSublist from "../../image/iconSublist.svg";
-import deleteGrey from "../../image/deleteGrey.svg";
+import folder from "@image/folder.svg";
+import iconSublist from "@image/iconSublist.svg";
+import deleteGrey from "@image/deleteGrey.svg";
 import {
   usePostPoliciesMutation,
   useGetPoliciesQuery,
   useGetPoliciesIdQuery,
   useUpdatePoliciesMutation,
-} from "../../../BLL/policyApi.js";
-import HandlerMutation from "../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../Custom/HandlerQeury.jsx";
-import addCircleBlue from "../../image/addCircleBlue.svg";
-import exitModal from "../../image/exitModal.svg";
-import WaveLetters from "../../Custom/WaveLetters.jsx";
-import Mdxeditor from "../../Custom/Mdxeditor/Mdxeditor.jsx";
-import Headers from "../../Custom/Headers/Headers.jsx";
-import BottomHeaders from "../../Custom/Headers/BottomHeaders/BottomHeaders.jsx";
-import Select from "../../Custom/Select/Select.jsx";
+} from "@BLL/policyApi.js";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import addCircleBlue from "@image/addCircleBlue.svg";
+import exitModal from "@image/exitModal.svg";
+import WaveLetters from "@Custom/WaveLetters.jsx";
+import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
+import Headers from "@Custom/Headers/Headers.jsx";
+import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders.jsx";
+import Select from "@Custom/Select/Select.jsx";
 import { useDirectories } from "./hooks/Directories";
-import useGetOldAndNewOrganizationId from "UI/hooks/useGetReduxOrganization";
+import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
 import ModalFolder from "@Custom/modalFolder/ModalFolder";
 import ModalWindow from "@Custom/ModalWindow";
 

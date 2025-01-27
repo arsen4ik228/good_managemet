@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Objective.module.css";
 import classNames from "classnames";
-import HandlerMutation from "../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../Custom/HandlerQeury.jsx";
-import WaveLetters from "../../Custom/WaveLetters.jsx";
-import TextArea from "../../Custom/TextArea/TextArea.jsx";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import WaveLetters from "@Custom/WaveLetters.jsx";
+import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
-import { useObjectiveHook } from "UI/hooks/useObjectiveHook";
-import useStartegyHook from "UI/hooks/useStartegyHook";
+import { useObjectiveHook } from "@hooks/useObjectiveHook";
+import useStartegyHook from "@hooks/useStartegyHook";
 
 export default function Objective() {
   const [activeIndex, setActiveIndex] = useState(0);

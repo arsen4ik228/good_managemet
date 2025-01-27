@@ -1,7 +1,7 @@
 
 
-import { useGetOrganizationsQuery } from "BLL/organizationApi";
-import useGetReduxOrganization from "UI/hooks/useGetReduxOrganization";
+import { useGetOrganizationsQuery } from "@BLL/organizationApi";
+import useGetReduxOrganization from "@hooks/useGetReduxOrganization";
 
 export function useOrganization() {
 

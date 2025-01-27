@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Strategy.module.css";
-import HandlerMutation from "../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../Custom/HandlerQeury.jsx";
-import WaveLetters from "../../Custom/WaveLetters.jsx";
-import ModalWindow from "../../Custom/ModalWindow.jsx";
-import TextArea from "../../Custom/TextArea/TextArea.jsx";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import WaveLetters from "@Custom/WaveLetters.jsx";
+import ModalWindow from "@Custom/ModalWindow.jsx";
+import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import Select from "@Custom/Select/Select";
-import useStartegyHook from "UI/hooks/useStartegyHook";
-import { useMutationHandler } from "UI/hooks/useMutationHandler";
+import useStartegyHook from "@hooks/useStartegyHook";
+import { useMutationHandler } from "@hooks/useMutationHandler";
 
 export default function Strategy() {
   const [number, setNumber] = useState("");

@@ -1,37 +1,37 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Statistic.module.css";
 
-import Graphic from "../../Custom/Graphic.jsx";
-import Blacksavetmp from "../../image/Blacksavetmp.svg";
-import statisticsArrowLeft from "../../image/statisticsArrowLeft.svg";
-import statisticsArrowRight from "../../image/statisticsArrowRight.svg";
-import trash from "../../image/trash.svg";
-import addBlock from "../../image/iconAdd.svg";
-import hint from "../../image/hint.svg";
+import Graphic from "@Custom/Graphic.jsx";
+import Blacksavetmp from "@image/Blacksavetmp.svg";
+import statisticsArrowLeft from "@image/statisticsArrowLeft.svg";
+import statisticsArrowRight from "@image/statisticsArrowRight.svg";
+import trash from "@image/trash.svg";
+import addBlock from "@image/iconAdd.svg";
+import hint from "@image/hint.svg";
 import {
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
   usePostStatisticsMutation,
-} from "../../../BLL/statisticsApi.js";
-import HandlerMutation from "../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../Custom/HandlerQeury.jsx";
-import exit from "../../image/exitModal.svg";
+} from "@BLL/statisticsApi.js";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import exit from "@image/exitModal.svg";
 import {
   useGetOrganizationIdQuery,
   useUpdateOrganizationsMutation,
-} from "../../../BLL/organizationApi.js";
-import WaveLetters from "../../Custom/WaveLetters.jsx";
-import getDateFormatSatatistic from "../../Custom/Function/getDateFormatStatistic.js";
+} from "@BLL/organizationApi.js";
+import WaveLetters from "@Custom/WaveLetters.jsx";
+import getDateFormatSatatistic from "@Custom/Function/getDateFormatStatistic.js";
 import Headers from "@Custom/Headers/Headers";
-import { useGetPostsQuery } from "BLL/postApi";
+import { useGetPostsQuery } from "@BLL/postApi";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import Select from "@Custom/Select/Select";
 import Input from "@Custom/Input/Input";
 import Lupa from "@Custom/Lupa/Lupa";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import { useModalSelectRadio } from "UI/hooks/useModalSelectRadio";
-import useGetOldAndNewOrganizationId from "UI/hooks/useGetReduxOrganization";
+import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
+import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
 
 export default function Statistic() {
   

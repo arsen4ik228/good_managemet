@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Goal.module.css";
-import drag from "../../image/drag.svg";
-import deleteImage from "../../image/delete.svg";
-import {
-  useGetGoalQuery,
-  useUpdateGoalMutation,
-  usePostGoalMutation,
-} from "../../../BLL/goalApi.js";
-import HandlerMutation from "../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../Custom/HandlerQeury.jsx";
+import drag from "@image/drag.svg";
+import deleteImage from "@image/delete.svg";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import TextArea from "../../Custom/TextArea/TextArea.jsx";
+import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import useGoalHook from "UI/hooks/useGoalHook";
+import useGoalHook from "@hooks/useGoalHook";
 
 export default function Goal() {
   const [editorState, setEditorState] = useState([]);

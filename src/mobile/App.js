@@ -27,8 +27,11 @@ import Statistics from './UI/Statistics/Statistics.jsx';
 import NewStatistic from './UI/Statistics/NewStatistic.jsx';
 import MainWorkingPlan from './UI/WorkingPlan/MainWorkingPlan.jsx';
 import ModalContainer from './UI/Custom/ModalContainer/ModalContainer.jsx';
+import { isMobile } from 'react-device-detect';
 
 function App() {
+    console.log('mobile                                                        ', isMobile)
+
     return (
         <>
             <Routes>

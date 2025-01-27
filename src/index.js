@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-// import App from './App';
-import App from './desktop/App'
+import App from './App';
+// import App from './desktop/App'
 import {HashRouter} from "react-router-dom";
 import {Provider} from "react-redux";
 // import store from './BLL/index';
@@ -16,7 +16,7 @@ const store = isMobile ? mobileStore : desktopStore;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={desktopStore}>
+  <Provider store={store}>
     <HashRouter>
       <App />
     </HashRouter>
