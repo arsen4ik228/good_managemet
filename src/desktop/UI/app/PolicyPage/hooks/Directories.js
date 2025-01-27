@@ -4,7 +4,7 @@ import {
   useGetDirectoriesQuery,
   usePostDirectoriesMutation,
   useUpdateDirectoriesMutation,
-} from "BLL/directoriesApi.js";
+} from "@BLL/directoriesApi.js";
 
 export function useDirectories({instructionsActive, directivesActive}) {
 

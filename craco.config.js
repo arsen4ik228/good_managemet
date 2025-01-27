@@ -10,6 +10,7 @@ module.exports = {
       '@image': path.resolve('src/desktop/UI/image/'),
       '@sprite': path.resolve('src/desktop/UI/sprite/'),
       '@utils': path.resolve('src/desktop/UI/utils/'),
+      '@hooks': path.resolve('src/desktop/UI/hooks/'),
     },
   },
 };

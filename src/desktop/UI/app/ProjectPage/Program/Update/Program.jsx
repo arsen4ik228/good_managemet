@@ -1,28 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import classes from "./Program.module.css";
-import icon from "../../../../image/iconHeader.svg";
-import iconBack from "../../../../image/iconBack.svg";
-import Listsetting from "../../../../image/Listsetting.svg";
-import glazikBlack from "../../../../image/glazikBlack.svg";
-import glazikInvisible from "../../../../image/glazikInvisible.svg";
+import icon from "@image/iconHeader.svg";
+import iconBack from "@image/iconBack.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import Blacksavetmp from "../../../../image/Blacksavetmp.svg";
-import iconAdd from "../../../../image/iconAdd.svg";
+import Blacksavetmp from "@image/Blacksavetmp.svg";
+import iconAdd from "@image/iconAdd.svg";
 import {
   useGetProjectQuery,
   useUpdateProjectMutation,
   useGetProgramIdQuery,
   useGetProgramNewQuery,
-} from "../../../../../BLL/projectApi.js";
-import HandlerMutation from "../../../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../../../Custom/HandlerQeury.jsx";
-import WaveLetters from "../../../../Custom/WaveLetters.jsx";
-import TableProject from "../../../../Custom/TableProject/TableProject.jsx";
-import Modal from "../../../../Custom/Modal/Modal.jsx";
+} from "@BLL/projectApi.js";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import WaveLetters from "@Custom/WaveLetters.jsx";
+import TableProject from "@Custom/TableProject/TableProject.jsx";
+import Modal from "@Custom/Modal/Modal.jsx";
 import { useSelector } from "react-redux";
-import Lupa from "../../../../Custom/Lupa/Lupa.jsx";
-import TextArea from "../../../../Custom/TextArea/TextArea.jsx";
-import BlockSections from "../../../../Custom/SectionsProject/BlockSections.jsx";
+import Lupa from "@Custom/Lupa/Lupa.jsx";
+import TextArea from "@Custom/TextArea/TextArea.jsx";
+import BlockSections from "@Custom/sectionsProject/BlockSections.jsx";
 
 export default function Program() {
   const navigate = useNavigate();

@@ -1,32 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
 import classes from "./Post.module.css";
-import greyPolicy from "../../image/greyPolicy.svg";
-import blackStatistic from "../../image/blackStatistic.svg";
+import greyPolicy from "@image/greyPolicy.svg";
+import blackStatistic from "@image/blackStatistic.svg";
 import { useNavigate } from "react-router-dom";
 import {
   useGetPostIdQuery,
   useGetPostsQuery,
   useUpdatePostsMutation,
-} from "../../../BLL/postApi.js";
+} from "@BLL/postApi.js";
 import {
   usePostStatisticsMutation,
   useUpdateStatisticsToPostIdMutation,
-} from "BLL/statisticsApi.js";
-import HandlerMutation from "../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../Custom/HandlerQeury.jsx";
-import WaveLetters from "../../Custom/WaveLetters.jsx";
+} from "@BLL/statisticsApi.js";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import WaveLetters from "@Custom/WaveLetters.jsx";
 import { useSelector } from "react-redux";
-import ModalWindow from "../../Custom/ModalWindow.jsx";
+import ModalWindow from "@Custom/ModalWindow.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import Select from "@Custom/Select/Select";
 import Input from "@Custom/Input/Input";
 import Lupa from "@Custom/Lupa/Lupa";
-import { useModalSelectRadio } from "UI/hooks/useModalSelectRadio";
+import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import { useModalCheckBoxStatistic } from "UI/hooks/useModalCheckBoxStatistic";
+import { useModalCheckBoxStatistic } from "@hooks/useModalCheckBoxStatistic";
 import { ModalSelectedStatistic } from "@Custom/modalSelectedStatistic/ModalSelectedStatistic";
-import useGetOldAndNewOrganizationId from "UI/hooks/useGetReduxOrganization";
+import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
 
 export default function Post() {
   const navigate = useNavigate();

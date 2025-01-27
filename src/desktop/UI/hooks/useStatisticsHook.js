@@ -1,4 +1,4 @@
-import { useGetStatisticsQuery } from "BLL/statisticsApi";
+import { useGetStatisticsQuery } from "@BLL/statisticsApi";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 
 export default function useStatisticsHook({ statisticData }) {

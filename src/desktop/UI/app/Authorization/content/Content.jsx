@@ -4,7 +4,7 @@ import { QRCode } from "antd";
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-import { url } from "../../../../BLL/baseUrl";
+import { url } from "@BLL/baseUrl";
 
 const socket = io("http://localhost:5000/auth", {
   cors: {

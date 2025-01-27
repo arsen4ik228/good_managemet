@@ -1,5 +1,4 @@
-import { useGetStatisticsQuery } from "BLL/statisticsApi";
-import { __esModule } from "draft-js-utils";
+import { useGetStatisticsQuery } from "@BLL/statisticsApi";
 import { useState, useEffect } from "react";
 import useGetOrganizationId from "./useGetReduxOrganization";
 

@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from "react";
 import classes from "./ProgramNew.module.css";
-import icon from "../../../../image/iconHeader.svg";
-import iconBack from "../../../../image/iconBack.svg";
-import Listsetting from "../../../../image/Listsetting.svg";
-import glazikBlack from "../../../../image/glazikBlack.svg";
-import glazikInvisible from "../../../../image/glazikInvisible.svg";
-import Blacksavetmp from "../../../../image/Blacksavetmp.svg";
-import iconAddProjectBlue from "../../../../image/iconAddProjectBlue.svg";
+import icon from "@image/iconHeader.svg";
+import iconBack from "@image/iconBack.svg";
+import Blacksavetmp from "@image/Blacksavetmp.svg";
+import iconAddProjectBlue from "@image/iconAddProjectBlue.svg";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { usePostProjectMutation } from "../../../../../BLL/projectApi.js";
+import { usePostProjectMutation } from "@BLL/projectApi.js";
 
-import HandlerMutation from "../../../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../../../Custom/HandlerQeury.jsx";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
-import TableProject from "../../../../Custom/TableProject/TableProject.jsx";
-import { useGetProgramNewQuery } from "../../../../../BLL/projectApi.js";
+import TableProject from "@Custom/TableProject/TableProject.jsx";
+import { useGetProgramNewQuery } from "@BLL/projectApi.js";
 import { useDispatch } from "react-redux";
 import {
   setProgramCreatedId,
   setProgramOrganizationId,
-} from "../../../../../BLL/Program/Slice/programSlice.js";
-import TextArea from "../../../../Custom/TextArea/TextArea.jsx";
-import BlockSections from "../../../../Custom/SectionsProject/BlockSections.jsx";
+} from "@BLL/Program/Slice/programSlice.js";
+import TextArea from "@Custom/TextArea/TextArea.jsx";
+import BlockSections from "@Custom/sectionsProject/BlockSections.jsx";
 
 export default function ProgramNew() {
   const navigate = useNavigate();

@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
 import classes from "./ProjectNew.module.css";
-import icon from "../../../../image/iconHeader.svg";
-import iconBack from "../../../../image/iconBack.svg";
-import Blacksavetmp from "../../../../image/Blacksavetmp.svg";
+import icon from "@image/iconHeader.svg";
+import iconBack from "@image/iconBack.svg";
+import Blacksavetmp from "@image/Blacksavetmp.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetProjectNewQuery,
   usePostProjectMutation,
-} from "../../../../../BLL/projectApi.js";
+} from "@BLL/projectApi.js";
 
-import HandlerMutation from "../../../../Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../../../Custom/HandlerQeury.jsx";
-import TableProject from "../../../../Custom/TableProject/TableProject.jsx";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import TableProject from "@Custom/TableProject/TableProject.jsx";
 import { useDispatch } from "react-redux";
 import {
   setProjectCreatedId,
   setProjectOrganizationId,
-} from "../../../../../BLL/Project/Slice/projectSlice.js";
-import TextArea from "../../../../Custom/TextArea/TextArea.jsx";
-import BlockSections from "../../../../Custom/SectionsProject/BlockSections.jsx";
+} from "@BLL/Project/Slice/projectSlice.js";
+import TextArea from "@Custom/TextArea/TextArea.jsx";
+import BlockSections from "@Custom/sectionsProject/BlockSections.jsx";
 
 export default function ProjectNew() {
   const navigate = useNavigate();

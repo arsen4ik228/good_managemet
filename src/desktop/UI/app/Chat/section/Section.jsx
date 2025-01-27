@@ -2,8 +2,8 @@ import React from "react";
 import classes from "./Section.module.css";
 import { useOrganization } from "./hook/getOrganization";
 import { useDispatch } from "react-redux";
-import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "BLL/localStorage/localStorageSlice";
-import useGetReduxOrganization from "UI/hooks/useGetReduxOrganization";
+import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@BLL/localStorage/localStorageSlice";
+import useGetReduxOrganization from "@hooks/useGetReduxOrganization";
 import { useNavigate } from "react-router-dom";
 
 export default function Section() {

@@ -1,5 +1,5 @@
 
-import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation } from "../../BLL/postApi";
+import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation } from "@BLL/postApi";
 import useGetOrganizationId from "./useGetReduxOrganization";
 export default function usePostsHook(postId) {
 
