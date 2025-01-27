@@ -1,0 +1,39 @@
+.content {
+    position: relative;
+
+    >input {
+        padding: 10px 0;
+
+        width: 100%;
+
+        /* border-bottom: 1px solid #bfbfbf; */
+
+    }
+}
+
+.attachPolicy {
+    position: relative;
+
+    width: 100%;
+
+    margin: 0 auto;
+
+    border-bottom: 1px solid #bfbfbf;
+
+    font-size: 1rem;
+    text-align: center;
+
+}
+
+.content::before {
+    content: "Прикрепите политику";
+    color: rgb(58, 58, 58);
+    position: absolute;
+    top: -8px;
+    left: 8px;
+    pointer-events: none;
+    font-weight: 500;
+    font-size: 12px;
+    font-style: italic;
+    z-index: 1000;
+}

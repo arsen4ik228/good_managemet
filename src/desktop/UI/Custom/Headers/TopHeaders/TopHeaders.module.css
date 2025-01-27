@@ -1,0 +1,67 @@
+.fon {
+    min-height: 32px;
+    background-color: #005475;
+    border-radius: 0px 8px 0px 0px;
+}
+
+.pomoshnikSearch {
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+
+.speedGoal{
+    box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+}
+
+.pomoshnik {
+    display: flex;
+    flex-direction: row;
+    column-gap: 30px;
+    align-items: center;
+}
+
+.iconBack:hover {
+    background-color: rgb(240, 240, 240);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.search {
+    -webkit-appearance: none;
+    /* Удаляет стандартные стили WebKit */
+    width: 10vw;
+    /* Регулирует ширину */
+    height: 50%;
+    /* Регулирует высоту */
+    border-bottom: 1px solid #ccc;
+    /* Добавляет границу */
+}
+
+.spanPomoshnik {
+    align-self: flex-start;
+    font-family: "Montserrat";
+    font-size: 12px;
+    position: relative;
+    font-weight: 600;
+}
+
+.spanPomoshnik span {
+    color: rgb(58, 58, 58);
+}
+
+.spanPomoshnik::after {
+    content: attr(data-name);
+    white-space: nowrap;
+    position: absolute;
+    left: 0;
+    bottom: -15px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+}

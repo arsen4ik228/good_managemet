@@ -1,0 +1,103 @@
+.wrapper {
+    height: 70px;
+
+    padding: 5px;
+    margin: 10px 0;
+
+
+    background-color: white;
+    border-radius: 10px;
+}
+
+.body {
+    width: 100%;
+    /* min-height: 50px;
+    max-height: 70px; */
+    height: 60px;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+._body{
+    position: relative;
+
+    width: 100%;
+    /* min-height: 50px;
+    max-height: 70px; */
+    height: 60px;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+._body::before{
+    position: absolute;
+    left: 10px;
+    top: -12px;
+
+    /* width: 100px;
+    height: 30px; */
+
+    padding: 2px 8px;
+
+    border-radius: 5px;
+    box-shadow: 0 0 2px rgb(0, 0, 0, 0.5);
+    background-color: white;
+
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #005475;
+    
+    content: 'Приказ';
+
+    /* z-index: 1000; */
+}
+
+.checkboxContainer {
+
+    margin: auto 0;
+
+    >input {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+.titleContainer {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+
+    height: 50px;
+
+    padding: 0 10px;
+
+    font-weight: 600;
+    color: rgb(58, 58, 58);
+
+    text-overflow: ellipsis;
+}
+
+.titleText {
+    overflow: hidden;
+    /* height: 100%; */
+    /* display: flex; */
+}
+
+.dateContainer {
+    padding: 20px 0;
+    font-size: 12px;
+
+    >span {
+        display: block;
+    }
+}

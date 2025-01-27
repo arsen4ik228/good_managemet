@@ -1,0 +1,23 @@
+.wrapper{
+    height: 100vh;
+    width: 100%;
+    background-color: #005475;
+    overflow: hidden;
+    font-family: 'Montserrat';
+}
+.messages{
+    height: 100vh;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    grid-template-rows: 0px 1fr; /* Было 24px*/
+    grid-template-areas:
+    "header header"
+    "block content";
+}
+
+@media  (max-width: 1400px) {
+    .messages{
+        grid-template-columns: 40px 1fr;
+    }
+}

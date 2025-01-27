@@ -1,0 +1,81 @@
+.blockSelect {
+    position: relative;
+    margin-right: 5px;
+
+    & > img:hover {
+        background-color: rgb(240, 240, 240);
+        border-radius: 20%;
+    }
+}
+
+.blockSelect:hover .option {
+    display: block;
+}
+
+.select {
+    width:100%;
+    max-width:100%;
+    position: relative;
+    font-family: 'Montserrat';
+    overflow: hidden;         
+    text-overflow: ellipsis; 
+}
+
+.nameList {
+    color: #3A3A3A;
+    font-family: "Montserrat";
+    text-align: center;
+    font-weight: 600;
+}
+
+.option {
+    z-index: 1000;
+    position: absolute;
+    display: none;
+    white-space: nowrap;
+    right: 1%;
+    background-color: #ffff;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    padding: 5px;
+    padding-bottom: 8px;
+
+    & li:last-child {
+        margin-bottom: 0;
+    }
+
+}
+
+.option img {
+    margin-right: 10px;
+}
+
+.option li:first-child {
+    margin-top: 0px;
+}
+
+.option li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    position: relative;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.option li:hover {
+    background-color: rgb(240, 240, 240)
+}
+
+.option li:before {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 90%;
+    bottom: 1px;
+    right: 0;
+    background-color: rgb(240, 240, 240);
+}

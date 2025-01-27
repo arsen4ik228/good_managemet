@@ -1,0 +1,308 @@
+/*Обнуление*/
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+*,
+*:before,
+*:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+:focus,
+:active {
+    outline: none;
+}
+
+a:focus,
+a:active {
+    outline: none;
+}
+
+nav,
+footer,
+header,
+aside {
+    display: block;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-size: 100%;
+    line-height: 1;
+    font-size: 16px;
+    -ms-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+input,
+button,
+textarea {
+    font-family: inherit;
+}
+
+input::-ms-clear {
+    display: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+a,
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+ul li {
+    list-style: none;
+}
+
+img {
+    vertical-align: top;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/*--------------------*/
+
+
+
+.wrapper {
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    height: 100vh;
+    font-family: "'Montserrat', sans-serif'";
+}
+
+.header {
+    margin-bottom: 57px;
+}
+
+.saveIcon{
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    >img{
+        z-index: 1000;
+        position: absolute;
+        float: left;
+        top: 17px;
+        right: 10px;
+        cursor: pointer;
+    }
+}
+
+.body {
+    height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.graph {
+    flex: 1;
+}
+
+.arrowSection {
+    display: flex;
+    justify-content: space-between;
+    /* border: 1px solid green; */
+
+    >select {
+        font-size: 1.3rem;
+        width: 200px;
+        border-bottom: #005475 1px solid;
+        text-align: center;
+        font-family: "'Montserrat', sans-serif'";
+    }
+}
+
+.menu {
+    background-color: white;
+    /* padding: 10px; */
+    /* border: red 1px dotted; */
+    border-radius: 25px 25px 0 0;
+    box-shadow: 0 0 2px black;
+    display: flex;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.menuContent {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    font-size: 1.4rem;
+    padding-bottom: 10px;
+
+}
+
+.nameSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+
+    >input {
+        /* border-bottom: #005475 1px solid; */
+        font-size: 24px;
+        font-style: italic;
+        text-decoration: underline;
+        text-transform: uppercase;
+        color: #005475;
+
+    }
+}
+
+.menuContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px;
+    /* height: 20px; */
+    /* border: #005475 solid 1px; */
+
+    >textarea {
+        font-size: 1.1rem;
+        box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.25);
+        border-radius: 15px;
+        width: 100%;
+        overflow: hidden;
+        resize: none;
+        /* min-height: 50px; */
+        transition: height 0.3s ease-out;
+        padding: 0.3em 0.5em 0.3em 0.5em;
+    }
+}
+
+.name {
+    font-size: 1.25rem;
+    width: 50%;
+    /* border: black solid 1px; */
+}
+
+.selectSection {
+    display: flex;
+    font-size: 1.2rem;
+    width: 50%;
+    /* border: black solid 1px; */
+
+    >select {
+        font-size: 1.2rem;
+        font-family: "'Montserrat', sans-serif'";
+        border-bottom: #005475 1px solid;
+        height: 30px;
+        width: 100%;
+        text-align: center;
+    }
+
+    >input {
+        font-size: 1.2rem;
+        /* height: 30px; */
+        height: 30px;
+        font-family: "'Montserrat', sans-serif";
+        border-bottom: #005475 1px solid;
+        padding-left: 10px;
+        width: 100%;
+    }
+
+}
+
+
+.tableContainer {
+    /* display: flex; */
+    flex: 1 1 auto;
+    /* justify-content: space-between;
+    align-items: center; */
+    width: 100%;
+    padding: 10px 15px;
+}
+
+.tableDots {
+    background-color: #f0f8ff;
+    border-radius: 15px;
+    height: 100%;
+    width: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px 15px 10px;
+
+}
+
+.rowTableDtos {
+    margin-top: 15px;
+    border: grey 1px solid;
+    width: 100%;
+    border-radius: 15px;
+    padding: 0 12px;
+
+
+    >input {
+
+        width: 50%;
+        text-align: center;
+        height: 100%;
+        font-size: 1.5rem;
+        background-color: #f0f8ff;
+    }
+}
+
+.tableButton {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.addedBtn {
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    box-shadow: 0 0 2px black;
+    color: #005475;
+    width: 120px;
+    text-align: center;
+
+}
+
+.removeBtn {
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    box-shadow: 0 0 2px black;
+    color: red;
+    width: 100px;
+    text-align: center;
+
+}

@@ -1,0 +1,10 @@
+.header{
+    height: 60px;
+}
+.exit{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
