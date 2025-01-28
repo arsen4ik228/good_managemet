@@ -198,6 +198,7 @@ export default function InputTextContainer({ userPosts }) {
                 <OrderModal
                     setModalOpen={setOpenOrderModal}
                     setReciverPost={setReciverPostId}
+                    selectedPost={selectedPost}
                     setTheme={setConvertTheme}
                     buttonFunc={createOrder}
                 ></OrderModal>
