@@ -1,6 +1,8 @@
 .content {
     position: relative;
 
+    max-width: 550px;
+
     >input {
         padding: 10px 0;
 

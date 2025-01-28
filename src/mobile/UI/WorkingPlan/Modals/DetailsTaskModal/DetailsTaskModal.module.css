@@ -3,7 +3,6 @@
 }
 
 .titleContainer {
-
     >input {
         display: block;
 
@@ -19,13 +18,13 @@
 
 .postContainer{
     position: relative;
-
-    margin-bottom: 10px;
+    max-width: 95%;
+    margin: 0 auto 10px auto;
 
     >select {
         display: block;
 
-        width: 95%;
+        width: 100%;
 
         margin: 0 auto;
 
@@ -106,12 +105,13 @@
 .stateContainer{
     position: relative;
 
-    margin-bottom: 10px;
+    max-width: 95%;
+    margin: 0 auto 10px auto;
 
     >select {
         display: block;
 
-        width: 95%;
+        width: 100%;
 
         margin: 0 auto;
 
@@ -138,10 +138,13 @@
 .attachContainer {
     position: relative;
 
+    max-width: 95%;
+    margin: 0 auto 10px auto;
+
     >select {
         display: block;
 
-        width: 95%;
+        width: 100%;
 
         margin: 0 auto;
 

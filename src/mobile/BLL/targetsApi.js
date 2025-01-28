@@ -38,12 +38,14 @@ export const targetsApi = createApi({
                     });
                     console.log(groupedItems)
                     const _groupedItems = JSON.parse(JSON.stringify(groupedItems))
+                    const groupedItems1 = JSON.parse(JSON.stringify(groupedItems))
+
                     const currentTargets = Object.values(groupedItems)
                         .filter(items => !items.some(item => item.isFutureOrPastCurrent))
                         .flat()
                         .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-
-                    const _futureTargets = Object.values(groupedItems)
+                    console.log(currentTargets)
+                    const _futureTargets = Object.values(groupedItems1)
                         .filter(items => items.some(item => item.isFutureOrPastCurrent))
                         .map(elem => ({
                             date: formattedDate(elem[0].dateStart).slice(0, 5),

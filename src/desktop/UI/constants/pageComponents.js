@@ -14,6 +14,7 @@ const Program = React.lazy(() => import("@app/ProjectPage/Program/Update/Program
 const ProgramNew = React.lazy(() => import("@app/ProjectPage/Program/Create/ProgramNew"));
 const Post = React.lazy(() => import("@app/PostPage/Post"));
 const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
+const WorkingPlan = React.lazy(() => import("@app/WorkingPlanPage/MainWorkingPlan"))
 
 const pageComponents = {
   pomoshnik: {
@@ -31,6 +32,7 @@ const pageComponents = {
     programNew: ProgramNew,
     post: Post,
     postNew: PostNew,
+    workingPlan: WorkingPlan,
   },
 };
 
