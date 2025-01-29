@@ -10,6 +10,8 @@ import FilesModal from '../Modals/FilesModal/FilesModal'
 import OrderModal from '../Modals/OrderModal/OrderModal'
 import { useTargetsHook } from '../../../hooks/useTargetsHook'
 import { useConvertsHook } from '../../../hooks/useConvertsHook'
+import TextAreaWithDrfatState from './TextAreaWithDrfatState'
+import { deleteDraft, loadDraft, saveDraft } from '../../../BLL/Function/indexedDB'
 
 export default function InputTextContainer({ userPosts }) {
 
@@ -28,6 +30,8 @@ export default function InputTextContainer({ userPosts }) {
     const [reciverPostId, setReciverPostId] = useState()
 
     const idTextarea = 1001
+    const dbName = 'DraftDB'
+    const storeName = 'drafts'
 
 
     const {
@@ -53,6 +57,7 @@ export default function InputTextContainer({ userPosts }) {
         setDeadlineDate(new Date().toISOString().split('T')[0])
         setContentInput('')
         setSelectedPolicy(false)
+        deleteDraft(dbName, storeName, idTextarea)
     }
 
     const createTargets = async () => {
@@ -94,7 +99,7 @@ export default function InputTextContainer({ userPosts }) {
         Data.expirationTime = 999
         Data.convertType = "Приказ"
         Data.convertPath = 'Прямой'
-        Data.dateFinish =  deadlineDate
+        Data.dateFinish = deadlineDate
         Data.senderPostId = selectedPost
         Data.reciverPostId = reciverPostId
         Data.targetCreateDto = {
@@ -128,10 +133,6 @@ export default function InputTextContainer({ userPosts }) {
         }
     };
 
-    
-    useEffect(() => {
-        setTimeout(resizeTextarea(idTextarea), 0)
-    }, [contentInput])
 
     useEffect(() => {
         if (!notEmpty(userPosts)) return
@@ -139,6 +140,16 @@ export default function InputTextContainer({ userPosts }) {
         setSelectedPost(userPosts[0].id)
         setSelectedPostOrganizationId(userPosts[0].organization)
     }, [userPosts])
+
+    useEffect(() => {
+        loadDraft(dbName, storeName, idTextarea, setContentInput);
+    }, []);
+
+    // Сохраняем черновик при изменении текста
+    useEffect(() => {
+        setTimeout(resizeTextarea(idTextarea), 0)
+        saveDraft(dbName, storeName, idTextarea, contentInput);
+    }, [contentInput]);
 
     return (
         <>
@@ -161,6 +172,11 @@ export default function InputTextContainer({ userPosts }) {
                             <img src={calenderIcon} alt="calenderIcon" onClick={() => setOpenCalendarModal(true)} />
                         </div>
                         <div className={classes.inputText}>
+                            {/* <TextAreaWithDrfatState
+                                idTextarea={idTextarea}
+                                contentInput={contentInput}
+                                setContentInput={setContentInput}
+                            ></TextAreaWithDrfatState> */}
                             <textarea
                                 id={idTextarea}
                                 value={contentInput}
