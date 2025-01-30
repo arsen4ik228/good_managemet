@@ -4,6 +4,7 @@ import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
 import { notEmpty, resizeTextarea } from '../../../../BLL/constans'
 import { useTargetsHook } from '../../../../hooks/useTargetsHook'
 import { usePolicyHook } from '../../../../hooks/usePolicyHook'
+import { baseUrl } from '../../../../BLL/constans'
 
 export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) {
 
@@ -15,6 +16,8 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
     const [selectedPolicy, setSelectedPolicy] = useState()
     const [isArchive, setIsArchive] = useState(false)
     const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState()
+    const [attachments, setAttachments] = useState([]);
+
 
     const isOrder = taskData.type === 'Приказ'
     console.log(taskData)
@@ -94,19 +97,26 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
     }
 
     useEffect(() => {
+        // ... существующий код ...
 
-        if (!notEmpty(taskData)) return
+        if (!notEmpty(taskData)) return;
+        console.warn('bam')
+        setIsArchive(taskData?.targetState === 'Завершена' ? true : false);
+        setStartDate(taskData?.dateStart.split('T')[0]);
+        setDeadlineDate(taskData?.deadline.split('T')[0]);
+        setContentInput(taskData.content);
+        setTaskStatus(taskData?.targetState);
+        setHolderPost(taskData?.holderPostId);
+        setSelectedPolicy(taskData?.policy?.id || false);
+        setSelectedPostOrganizationId(userPosts?.find(item => item.id === taskData.holderPostId)?.organization);
 
-        setIsArchive(taskData?.targetState === 'Завершена' ? true : false)
-        setStartDate(taskData?.dateStart.split('T')[0])
-        setDeadlineDate(taskData?.deadline.split('T')[0])
-        setContentInput(taskData.content)
-        setTaskStatus(taskData?.targetState)
-        setHolderPost(taskData?.holderPostId)
-        setSelectedPolicy(taskData?.policy?.id || false)
-        setSelectedPostOrganizationId(userPosts?.find(item => item.id === taskData.holderPostId)?.organization)
-    }, [taskData])
+        // Загрузка информации о прикрепленных файлах
+        const loadedAttachments = taskData?.attachmentToTargets || [];
+        console.warn('loadedAttachments',loadedAttachments)
+        setAttachments(loadedAttachments);
+    }, [taskData]);
 
+    console.log(attachments)
     useEffect(() => {
         resizeTextarea(taskData?.id)
     }, [contentInput])
@@ -116,13 +126,12 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
         setOpenModal(false)
     }
 
-    console.log('selectedPostOrganizationId     ', selectedPostOrganizationId)
     return (
         <ModalContainer
             setOpenModal={setOpenModal}
             clickFunction={clickFunction}
             disabledButton={isArchive}
-            buttonText={isOrder && 'К диалогу'} 
+            buttonText={isOrder && 'К диалогу'}
         >
             <div className={classes.content}>
                 {/* {taskData.type === 'Приказ' && (
@@ -179,6 +188,24 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                         ))}
                     </select>
                     <input type="file" />
+                    {attachments?.length > 0 && (
+                        <div className={classes.attachmentsContainer}>
+                            <h4>Прикрепленные файлы:</h4>
+                            <ul>
+                                {attachments.map((attachment, index) => (
+                                    <li key={index}>
+                                        <p>{attachment.attachmentName}</p>
+                                        <img src={`${baseUrl}${attachment?.attachment.attachmentPath}`} alt="Прикрепленный файл" 
+                                            onError={(e) => {
+                                                console.error('Ошибка загрузки изображения:', e);}}
+                                        />
+                                        <p>Размер: {(attachment.attachmentSize / 1024).toFixed(2)} KB</p>
+                                        <p>Дата создания: {new Date(attachment.createdAt).toLocaleString()}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
             </div>
         </ModalContainer>

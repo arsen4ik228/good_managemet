@@ -176,3 +176,26 @@
     font-style: italic;
     z-index: 1000;
 }
+
+.attachmentsContainer {
+    margin-top: 20px;
+}
+
+.attachmentsContainer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.attachmentsContainer li {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.attachmentsContainer img {
+    max-width: 200px;
+    height: auto;
+}

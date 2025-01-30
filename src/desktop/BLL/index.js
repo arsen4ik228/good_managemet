@@ -13,6 +13,7 @@ import { organizationApi } from './organizationApi';
 import { controlPanelApi } from './controlPanel/controlPanelApi';
 import { targetsApi } from '../../mobile/BLL/targetsApi';
 import { convertApi } from '../../mobile/BLL/convertApi';
+import { fileApi } from './fileApi';
 
 
 import localStorageReducer from "./localStorage/localStorageSlice";
@@ -35,6 +36,7 @@ export const desktopStore = configureStore({
         [controlPanelApi.reducerPath]: controlPanelApi.reducer,
         [convertApi.reducerPath]: convertApi.reducer,
         [targetsApi.reducerPath]: targetsApi.reducer,
+        [fileApi.reducerPath]: fileApi.reducer,
 
         localStorage: localStorageReducer,
         post: postReducer,
@@ -54,5 +56,6 @@ export const desktopStore = configureStore({
         .concat(controlPanelApi.middleware)
         .concat(convertApi.middleware)
         .concat(targetsApi.middleware)
+        .concat(fileApi.middleware)
 });
 export default desktopStore;

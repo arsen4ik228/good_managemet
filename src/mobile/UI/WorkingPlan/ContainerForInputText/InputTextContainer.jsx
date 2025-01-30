@@ -10,7 +10,6 @@ import FilesModal from '../Modals/FilesModal/FilesModal'
 import OrderModal from '../Modals/OrderModal/OrderModal'
 import { useTargetsHook } from '../../../hooks/useTargetsHook'
 import { useConvertsHook } from '../../../hooks/useConvertsHook'
-import TextAreaWithDrfatState from './TextAreaWithDrfatState'
 import { deleteDraft, loadDraft, saveDraft } from '../../../BLL/Function/indexedDB'
 
 export default function InputTextContainer({ userPosts }) {
@@ -25,6 +24,7 @@ export default function InputTextContainer({ userPosts }) {
     const [contentInput, setContentInput] = useState()
     const [selectedPolicy, setSelectedPolicy] = useState(false)
     const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState()
+    const [filesIds, setFilesIds] = useState()
 
     const [convertTheme, setConvertTheme] = useState('')
     const [reciverPostId, setReciverPostId] = useState()
@@ -59,7 +59,7 @@ export default function InputTextContainer({ userPosts }) {
         setSelectedPolicy(false)
         deleteDraft(dbName, storeName, idTextarea)
     }
-
+    console.log(filesIds)
     const createTargets = async () => {
 
         if (!contentInput) return
@@ -74,6 +74,10 @@ export default function InputTextContainer({ userPosts }) {
         Data.deadline = deadlineDate
         if (selectedPolicy)
             Data.policyId = selectedPolicy
+        if (filesIds) {
+            Data.attachmentIds = filesIds.map(element => element.id);
+        }
+
 
         console.log(Data)
 
@@ -207,6 +211,7 @@ export default function InputTextContainer({ userPosts }) {
                     policyId={selectedPolicy}
                     setPolicyId={setSelectedPolicy}
                     postOrganizationId={selectedPostOrganizationId}
+                    setFilesIds={setFilesIds}
                 ></FilesModal>
             )}
 
