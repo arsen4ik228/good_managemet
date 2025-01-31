@@ -33,11 +33,11 @@ export const targetsApi = createApi({
                     return [newArray, futureTargets]
                 }
                 const mergeAndTransformFutureTargets = (array1, array2, array3) => {
-                    const mergeArraies = (array1 || []).concat(array2 || [], array3 || []);
+                    const mergeArraies = (array3 || []).concat(array2 || [], array1 || []);
 
                     return Array.from(
                         mergeArraies
-                            .sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart))
+                            .sort((a, b) => new Date(b.dateStart) - new Date(a.dateStart))
                             .reduce((resultMap, item) => {
                                 const currentDate = formattedDate(item.dateStart).slice(0, 5);
 
