@@ -10,6 +10,7 @@ import FilesModal from '../Modals/FilesModal/FilesModal'
 import OrderModal from '../Modals/OrderModal/OrderModal'
 import { useTargetsHook } from '../../../hooks/useTargetsHook'
 import { useConvertsHook } from '../../../hooks/useConvertsHook'
+import { deleteDraft, loadDraft, saveDraft } from '../../../BLL/Function/indexedDB'
 
 export default function InputTextContainer({ userPosts }) {
 
@@ -23,11 +24,15 @@ export default function InputTextContainer({ userPosts }) {
     const [contentInput, setContentInput] = useState()
     const [selectedPolicy, setSelectedPolicy] = useState(false)
     const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState()
+    const [files, setFiles] = useState()
+    const [unpinFiles, setUnpinFiles] = useState([])
 
     const [convertTheme, setConvertTheme] = useState('')
     const [reciverPostId, setReciverPostId] = useState()
-
+    console.log(reciverPostId)
     const idTextarea = 1001
+    const dbName = 'DraftDB'
+    const storeName = 'drafts'
 
 
     const {
@@ -53,8 +58,9 @@ export default function InputTextContainer({ userPosts }) {
         setDeadlineDate(new Date().toISOString().split('T')[0])
         setContentInput('')
         setSelectedPolicy(false)
+        deleteDraft(dbName, storeName, idTextarea)
     }
-
+    console.warn(unpinFiles)
     const createTargets = async () => {
 
         if (!contentInput) return
@@ -69,6 +75,12 @@ export default function InputTextContainer({ userPosts }) {
         Data.deadline = deadlineDate
         if (selectedPolicy)
             Data.policyId = selectedPolicy
+        if (files) {
+            Data.attachmentIds = files
+            .filter(item => !unpinFiles.includes(item.id))
+            .map(element => element.id)
+        }
+
 
         console.log(Data)
 
@@ -94,7 +106,7 @@ export default function InputTextContainer({ userPosts }) {
         Data.expirationTime = 999
         Data.convertType = "Приказ"
         Data.convertPath = 'Прямой'
-        Data.dateFinish =  deadlineDate
+        Data.dateFinish = deadlineDate
         Data.senderPostId = selectedPost
         Data.reciverPostId = reciverPostId
         Data.targetCreateDto = {
@@ -128,10 +140,6 @@ export default function InputTextContainer({ userPosts }) {
         }
     };
 
-    
-    useEffect(() => {
-        setTimeout(resizeTextarea(idTextarea), 0)
-    }, [contentInput])
 
     useEffect(() => {
         if (!notEmpty(userPosts)) return
@@ -139,6 +147,16 @@ export default function InputTextContainer({ userPosts }) {
         setSelectedPost(userPosts[0].id)
         setSelectedPostOrganizationId(userPosts[0].organization)
     }, [userPosts])
+
+    useEffect(() => {
+        loadDraft(dbName, storeName, idTextarea, setContentInput);
+    }, []);
+
+    // Сохраняем черновик при изменении текста
+    useEffect(() => {
+        setTimeout(resizeTextarea(idTextarea), 0)
+        saveDraft(dbName, storeName, idTextarea, contentInput);
+    }, [contentInput]);
 
     return (
         <>
@@ -161,6 +179,11 @@ export default function InputTextContainer({ userPosts }) {
                             <img src={calenderIcon} alt="calenderIcon" onClick={() => setOpenCalendarModal(true)} />
                         </div>
                         <div className={classes.inputText}>
+                            {/* <TextAreaWithDrfatState
+                                idTextarea={idTextarea}
+                                contentInput={contentInput}
+                                setContentInput={setContentInput}
+                            ></TextAreaWithDrfatState> */}
                             <textarea
                                 id={idTextarea}
                                 value={contentInput}
@@ -191,6 +214,10 @@ export default function InputTextContainer({ userPosts }) {
                     policyId={selectedPolicy}
                     setPolicyId={setSelectedPolicy}
                     postOrganizationId={selectedPostOrganizationId}
+                    files={files}
+                    setFiles={setFiles}
+                    unpinFiles={unpinFiles}
+                    setUnpinFiles={setUnpinFiles}
                 ></FilesModal>
             )}
 
@@ -198,6 +225,7 @@ export default function InputTextContainer({ userPosts }) {
                 <OrderModal
                     setModalOpen={setOpenOrderModal}
                     setReciverPost={setReciverPostId}
+                    selectedPost={selectedPost}
                     setTheme={setConvertTheme}
                     buttonFunc={createOrder}
                 ></OrderModal>

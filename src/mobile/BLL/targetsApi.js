@@ -14,112 +14,164 @@ export const targetsApi = createApi({
             transformResponse: (response) => {
                 console.log('getTargets:    ', response)
 
-                const transformTargetsArray = (array, marker) => {
+                const transformArray = (array) => {
                     const currentDate = new Date().toISOString().split('T')[0];
-                    const groupedItems = {};
-                    console.warn(array, '         ', marker)
+
+                    const newArray = []
+                    const futureTargets = []
 
                     array.forEach(item => {
-                        // Создаём копию объекта item, чтобы не мутировать исходные данные
-                        const itemCopy = JSON.parse(JSON.stringify(item)); // Глубокая копия
-                        console.log('item', itemCopy)
-                        const dateStart = itemCopy.dateStart;
-                        const dateWithoutTime = new Date(dateStart).toISOString().split('T')[0];
-                        const isFutureOrPastCurrent = dateWithoutTime > currentDate;
+                        const itemCopy = JSON.parse(JSON.stringify(item))
+                        const dateWithoutTime = new Date(itemCopy.dateStart).toISOString().split('T')[0];
 
-                        if (!groupedItems[dateWithoutTime]) {
-                            groupedItems[dateWithoutTime] = [];
-                        }
+                        if (dateWithoutTime <= currentDate)
+                            newArray.push(itemCopy)
+                        else
+                            futureTargets.push(itemCopy)
+                    })
 
-                        groupedItems[dateWithoutTime].push({
-                            ...itemCopy, // Используем копию объекта
-                            isFutureOrPastCurrent: isFutureOrPastCurrent
-                        });
-                    });
-                    console.log(groupedItems)
-                    const _groupedItems = JSON.parse(JSON.stringify(groupedItems))
-                    const currentTargets = Object.values(groupedItems)
-                        .filter(items => !items.some(item => item.isFutureOrPastCurrent))
-                        .flat()
-                        .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+                    return [newArray, futureTargets]
+                }
+                const mergeAndTransformFutureTargets = (array1, array2, array3) => {
+                    const mergeArraies = (array3 || []).concat(array2 || [], array1 || []);
 
-                    const _futureTargets = Object.values(groupedItems)
-                        .filter(items => items.some(item => item.isFutureOrPastCurrent))
-                        .map(elem => ({
-                            date: formattedDate(elem[0].dateStart).slice(0, 5),
-                            items: elem
-                        }))
-                    console.log(_futureTargets)
+                    return Array.from(
+                        mergeArraies
+                            .sort((a, b) => new Date(b.dateStart) - new Date(a.dateStart))
+                            .reduce((resultMap, item) => {
+                                const currentDate = formattedDate(item.dateStart).slice(0, 5);
 
-                    const futureTargets = Object.values(_groupedItems)
-                        .filter(items => items.some(item => item.isFutureOrPastCurrent))
-                        .map(elem => ({
-                            date: formattedDate(elem[0].dateStart).slice(0, 5),
-                            items: elem
-                        }))
-                    console.log(futureTargets)
+                                if (resultMap.has(currentDate)) {
+                                    resultMap.get(currentDate).items.push(item);
+                                } else {
+                                    resultMap.set(currentDate, {
+                                        date: currentDate,
+                                        items: [item],
+                                    });
+                                }
 
-                    return {
-                        currentTargets,
-                        futureTargets
-                    };
+                                return resultMap;
+                            }, new Map())
+                            .values()
+                    );
                 };
 
-                const merdgeOtherTargets = (array1, array2) => {
+                const [personalTargets, futurePersonalTargets] = transformArray(response?.personalTargets || []);
+                console.log(personalTargets, futurePersonalTargets)
+                const [orderTargets, futureOrderTargets] = transformArray(response?.ordersTargets || [])
+                console.log(orderTargets, futureOrderTargets)
+                const [projectTargets, futureProjectTargets] = transformArray(response?.projectTargets || [])
+                const futureTargets = mergeAndTransformFutureTargets(futurePersonalTargets, futureOrderTargets, futureProjectTargets)
+
+                // const transformTargetsArray = (array, marker) => {
+                //     const currentDate = new Date().toISOString().split('T')[0];
+                //     const groupedItems = {};
+                //     console.warn(array, '         ', marker)
+
+                //     array.forEach(item => {
+                //         // Создаём копию объекта item, чтобы не мутировать исходные данные
+                //         const itemCopy = JSON.parse(JSON.stringify(item)); // Глубокая копия
+                //         console.log('item', itemCopy)
+                //         const dateStart = itemCopy.dateStart;
+                //         const dateWithoutTime = new Date(dateStart).toISOString().split('T')[0];
+                //         const isFutureOrPastCurrent = dateWithoutTime > currentDate;
+
+                //         if (!groupedItems[dateWithoutTime]) {
+                //             groupedItems[dateWithoutTime] = [];
+                //         }
+
+                //         groupedItems[dateWithoutTime].push({
+                //             ...itemCopy, // Используем копию объекта
+                //             isFutureOrPastCurrent: isFutureOrPastCurrent
+                //         });
+                //     });
+                //     console.log(groupedItems)
+                //     const _groupedItems = JSON.parse(JSON.stringify(groupedItems))
+                //     const groupedItems1 = JSON.parse(JSON.stringify(groupedItems))
+
+                //     const currentTargets = Object.values(groupedItems)
+                //         .filter(items => !items.some(item => item.isFutureOrPastCurrent))
+                //         .flat()
+                //         .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+                //     console.log(currentTargets)
+                //     const _futureTargets = Object.values(groupedItems1)
+                //         .filter(items => items.some(item => item.isFutureOrPastCurrent))
+                //         .map(elem => ({
+                //             date: formattedDate(elem[0].dateStart).slice(0, 5),
+                //             items: elem
+                //         }))
+                //     console.log(_futureTargets)
+
+                //     const futureTargets = Object.values(_groupedItems)
+                //         .filter(items => items.some(item => item.isFutureOrPastCurrent))
+                //         .map(elem => ({
+                //             date: formattedDate(elem[0].dateStart).slice(0, 5),
+                //             items: elem
+                //         }))
+                //     console.log(futureTargets)
+
+                //     return {
+                //         currentTargets,
+                //         futureTargets
+                //     };
+                // };
+
+                // const merdgeOtherTargets = (array1, array2) => {
 
 
-                    if (!notEmpty(array1) && !notEmpty(array2))
-                        return []
+                //     if (!notEmpty(array1) && !notEmpty(array2))
+                //         return []
 
-                    if (!notEmpty(array1))
-                        return array2
+                //     if (!notEmpty(array1))
+                //         return array2
 
-                    if (!notEmpty(array2))
-                        return array1
+                //     if (!notEmpty(array2))
+                //         return array1
 
-                    const [largerArray, smallerArray] = array1.length > array2.length ? [array1, array2] : [array2, array1];
+                //     const [largerArray, smallerArray] = array1.length > array2.length ? [array1, array2] : [array2, array1];
 
-                    const result = smallerArray.map((smaller, smallerIndex) => {
-                        // Находим элемент в largerArray с такой же датой
-                        const sameDateElemIndex = largerArray.findIndex(larger => larger.date === smaller.date);
+                //     const result = smallerArray.map((smaller, smallerIndex) => {
+                //         // Находим элемент в largerArray с такой же датой
+                //         const sameDateElemIndex = largerArray.findIndex(larger => larger.date === smaller.date);
 
-                        if (sameDateElemIndex > -1) {
-                            // Если найден элемент с такой же датой, объединяем items
-                            smaller.items = smaller.items.concat(largerArray[sameDateElemIndex].items);
-                            // Удаляем элемент из largerArray, чтобы он не попал в финальный результат
-                            largerArray.splice(sameDateElemIndex, 1);
-                        }
+                //         if (sameDateElemIndex > -1) {
+                //             // Если найден элемент с такой же датой, объединяем items
+                //             smaller.items = smaller.items.concat(largerArray[sameDateElemIndex].items);
+                //             // Удаляем элемент из largerArray, чтобы он не попал в финальный результат
+                //             largerArray.splice(sameDateElemIndex, 1);
+                //         }
 
-                        // Если это последний элемент smallerArray, добавляем оставшиеся элементы largerArray
-                        if (smallerIndex === smallerArray.length - 1) {
-                            smallerArray.push(...largerArray);
-                        }
+                //         // Если это последний элемент smallerArray, добавляем оставшиеся элементы largerArray
+                //         if (smallerIndex === smallerArray.length - 1) {
+                //             smallerArray.push(...largerArray);
+                //         }
 
-                        return smaller;
-                    });
+                //         return smaller;
+                //     });
 
-                    // Сортируем финальный результат по дате
+                //     // Сортируем финальный результат по дате
 
-                    const sortedResult = result.sort((a, b) => new Date(b.date) - new Date(a.date));
+                //     const sortedResult = result.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                    console.warn('sorted   ', sortedResult);
-                    return sortedResult;
-                }
+                //     console.warn('sorted   ', sortedResult);
+                //     return sortedResult;
+                // }
 
-                const newPersonalTargets = transformTargetsArray(response?.personalTargets, 'personal')
-                const newOrdersTargets = transformTargetsArray(response?.ordersTargets, 'order')
+                // const newPersonalTargets = transformTargetsArray(response?.personalTargets, 'personal')
+                // const newOrdersTargets = transformTargetsArray(response?.ordersTargets, 'order')
 
+
+                // console.log(' Orders   ', newOrdersTargets.futureTargets)
+                // console.log('personal  ', newPersonalTargets.futureTargets)
+                // const otherTargets = merdgeOtherTargets(newOrdersTargets.futureTargets, newPersonalTargets.futureTargets)
 
                 const _userPosts = response?.userPosts.map(item => ({ ...item, organization: item.organization.id }))
-                console.log(' Orders   ', newOrdersTargets.futureTargets)
-                console.log('personal  ', newPersonalTargets.futureTargets)
-                const otherTargets = merdgeOtherTargets(newOrdersTargets.futureTargets, newPersonalTargets.futureTargets)
 
                 return {
                     userPosts: _userPosts,
-                    personalTargets: newPersonalTargets.currentTargets,
-                    ordersTargets: newOrdersTargets.currentTargets,
-                    otherTargets
+                    personalTargets,
+                    orderTargets,
+                    futureTargets
                 }
             },
             providesTags: (result) => result ? [{ type: "Targets", id: "LIST" }] : [],

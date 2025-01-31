@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import classes from './MainWorkingPlan.module.css'
-import InputTextContainer from './ContainerForInputText/InputTextContainer'
-import Header from '../Custom/CustomHeader/Header'
-import Task from './TaskContainer/Task'
-import { useTargetsHook } from '../../hooks/useTargetsHook'
+import classes from './MainWorkingPlam.module.css'
+import Headers from "@Custom/Headers/Headers";
+import Task from '../../../../mobile/UI/WorkingPlan/TaskContainer/Task';
+import InputTextContainer from '../../../../mobile/UI/WorkingPlan/ContainerForInputText/InputTextContainer';
+import { useTargetsHook } from '../../../../mobile/hooks/useTargetsHook';
 
 export default function MainWorkingPlan() {
+
 
     const [isViewArchive, setIsViewArchive] = useState(false)
 
@@ -27,17 +28,14 @@ export default function MainWorkingPlan() {
 
     } = useTargetsHook()
 
-    return (
-        <>
-            <div className={classes.wrapper}>
 
-                <>
-                    <Header
-                        title={"Рабочий план"}
-                    >
-                        Личный помощник
-                    </Header>
-                </>
+    return (
+        <div className={classes.dialog}>
+            <Headers name={"Рабочий План"}>
+                {/* <BottomHeaders></BottomHeaders> */}
+            </Headers>
+
+            <div className={classes.main}>
                 <div className={classes.body}>
                     <div key={'un'} className={classes.archiveButton} onClick={() => setIsViewArchive(!isViewArchive)}>
                         {isViewArchive ? 'Скрыть ' : 'Показать'} завершенные задачи
@@ -45,7 +43,7 @@ export default function MainWorkingPlan() {
                     <div className={classes.tasksContainer}>
                         {!isViewArchive ? (
                             <>
-                                {futureTargets?.map((elem, elemIndex) => (
+                                {futureTargets.map((elem, elemIndex) => (
                                     <>
                                         <div key={elemIndex} className={classes.dayContainer}>
                                             <span>Начать {elem.date}</span>
@@ -76,7 +74,7 @@ export default function MainWorkingPlan() {
                                 <div className={classes.dayContainer}>
                                     <span>Текущие</span>
                                 </div>
-                                {orderTargets?.map((item, index) => (
+                                {orderTargets.map((item, index) => (
                                     <Task
                                         key={index}
                                         taskData={item}
@@ -84,7 +82,7 @@ export default function MainWorkingPlan() {
                                     ></Task>
                                 ))}
 
-                                {personalTargets?.map((item, index) => (
+                                {personalTargets.map((item, index) => (
                                     <Task
                                         key={index}
                                         taskData={item}
@@ -108,11 +106,11 @@ export default function MainWorkingPlan() {
                     </div>
 
                 </div>
-                <InputTextContainer
-                    userPosts={userPosts}
-                >
-                </InputTextContainer>
             </div>
-        </>
+            <InputTextContainer
+                userPosts={userPosts}
+            >
+            </InputTextContainer>
+        </div>
     )
 }

@@ -2,15 +2,12 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import HandlerMutation from "@Custom/HandlerMutation";
-import { isMobile } from "react-device-detect";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const Content = React.lazy(() => import("@app/Constructions/content/Content"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
 function App() {
-  console.log('mobile                                                        ', isMobile)
-
   return (
     <div>
       <Routes>

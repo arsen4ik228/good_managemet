@@ -31,8 +31,6 @@ import { isMobile } from 'react-device-detect';
 import ControlPanel from './UI/ControlPanel/ControlPanel.jsx';
 
 function App() {
-    console.log('mobile                                                        ', isMobile)
-
     return (
         <>
             <Routes>

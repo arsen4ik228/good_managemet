@@ -63,6 +63,26 @@ export const postApi = createApi({
       },
     }),
 
+    getUnderPosts: build.query({
+      query: ({postId }) => ({
+        url: `posts/${postId}/allUnderPosts`,
+      }),
+      providesTags: (result, error, { postId }) => [{ type: 'Post', id: postId }],
+      transformResponse: (response) => {
+        console.log('getUnderPosts    ',response); // Отладка ответа
+        return {
+          // currentPost: response?.currentPost || {},
+          // parentPost: response?.parentPost || {},
+          // policiesActive: response?.policiesActive || [],
+          // posts: response?.posts || [],
+          // workers: response?.workers || [],
+          // organizations: response?.organizations || [],
+          // statisticsIncludedPost: response?.currentPost?.statistics || [],
+          underPosts: response
+        };
+      },
+    }),
+
     updatePosts: build.mutation({
       query: (body) => ({
         url: `/posts/${body._id}/update`,
@@ -86,4 +106,4 @@ export const postApi = createApi({
   }),
 });
 
-export const { useGetPostsQuery, useGetPostNewQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation , useUpdateStatisticsToPostIdMutation} = postApi;
+export const { useGetPostsQuery, useGetPostNewQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery , useUpdateStatisticsToPostIdMutation} = postApi;
