@@ -3,21 +3,19 @@ import { useDeleteTargetMutation, useGetArchiveTargetsQuery, useGetTargetsQuery,
 export const useTargetsHook = () => {
 
     const {
-        currentPersonalTargets = [],
-        currentOrdersTargets = [],
-
-        otherTargets = [],
+        personalTargets = [],
+        orderTargets = [],
         projectTragets = [],
+        futureTargets = [],
         userPosts = [],
         isLoadingGetTargets,
         isErrorGetTargets,
     } = useGetTargetsQuery(undefined, {
         selectFromResult: ({ data, isLoading, isError, }) => ({
-            currentPersonalTargets: data?.personalTargets || [],
-            currentOrdersTargets: data?.ordersTargets || [],
-            otherTargets: data?.otherTargets,
-
+            personalTargets: data?.personalTargets || [],
+            orderTargets: data?.orderTargets || [],
             projectTragets: data?.projectTargets || [],
+            futureTargets: data?.futureTargets || [],
             userPosts: data?.userPosts || [],
             isLoadingGetTargets: isLoading,
             isErrorGetTargets: isError,
@@ -72,10 +70,10 @@ export const useTargetsHook = () => {
 
     return {
         // getTargets
-        currentPersonalTargets,
-        currentOrdersTargets,
-        otherTargets,
+        personalTargets,
+        orderTargets,
         projectTragets,
+        futureTargets,
         userPosts,
         isLoadingGetTargets,
         isErrorGetTargets,

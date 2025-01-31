@@ -24,7 +24,8 @@ export default function InputTextContainer({ userPosts }) {
     const [contentInput, setContentInput] = useState()
     const [selectedPolicy, setSelectedPolicy] = useState(false)
     const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState()
-    const [filesIds, setFilesIds] = useState()
+    const [files, setFiles] = useState()
+    const [unpinFiles, setUnpinFiles] = useState([])
 
     const [convertTheme, setConvertTheme] = useState('')
     const [reciverPostId, setReciverPostId] = useState()
@@ -59,7 +60,7 @@ export default function InputTextContainer({ userPosts }) {
         setSelectedPolicy(false)
         deleteDraft(dbName, storeName, idTextarea)
     }
-    console.log(filesIds)
+    console.warn(unpinFiles)
     const createTargets = async () => {
 
         if (!contentInput) return
@@ -74,8 +75,10 @@ export default function InputTextContainer({ userPosts }) {
         Data.deadline = deadlineDate
         if (selectedPolicy)
             Data.policyId = selectedPolicy
-        if (filesIds) {
-            Data.attachmentIds = filesIds.map(element => element.id);
+        if (files) {
+            Data.attachmentIds = files
+            .filter(item => !unpinFiles.includes(item.id))
+            .map(element => element.id)
         }
 
 
@@ -211,7 +214,10 @@ export default function InputTextContainer({ userPosts }) {
                     policyId={selectedPolicy}
                     setPolicyId={setSelectedPolicy}
                     postOrganizationId={selectedPostOrganizationId}
-                    setFilesIds={setFilesIds}
+                    files={files}
+                    setFiles={setFiles}
+                    unpinFiles={unpinFiles}
+                    setUnpinFiles={setUnpinFiles}
                 ></FilesModal>
             )}
 

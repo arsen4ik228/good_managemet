@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import classes from './FilesModal.module.css';
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer';
 import { usePolicyHook } from '../../../../hooks/usePolicyHook';
 import { usePostImageMutation } from '../../../../../desktop/BLL/fileApi';
+import { baseUrl, notEmpty } from '../../../../BLL/constans';
 
-export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOrganizationId, setFilesIds }) {
-    const [selectedFiles, setSelectedFiles] = useState([]); // Состояние для хранения выбранных файлов
-    const [postImage] = usePostImageMutation(); // Используем мутацию для загрузки файлов
-
+export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOrganizationId, files, setFiles, setUnpinFiles }) {
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [postImage] = usePostImageMutation();
+    const [deleteFile, setDeleteFile] = useState([])
+    const fileInputRef = useRef(null);
+    console.warn(files)
     const {
         activeDirectives,
         activeInstructions,
@@ -15,14 +18,18 @@ export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOr
 
     // Обработчик изменения input типа file
     const handleFileChange = (e) => {
-        const files = e.target.files;
+        const files = Array.from(e.target.files); // Преобразуем FileList в массив
         if (files) {
-            setSelectedFiles([...files]); // Сохраняем выбранные файлы в состоянии
+            setSelectedFiles(files); // Сохраняем выбранные файлы в состоянии
         }
     };
 
     // Обработчик отправки файлов на сервер
     const handleUpload = async () => {
+
+        if (notEmpty(deleteFile))
+            setUnpinFiles(deleteFile)
+
         if (selectedFiles.length === 0) {
             alert('Пожалуйста, выберите файлы для загрузки.');
             return;
@@ -35,8 +42,7 @@ export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOr
 
         try {
             const response = await postImage({ formData }).unwrap(); // Вызываем мутацию
-            setFilesIds(response)
-            console.log('Файлы успешно загружены:', response);
+            setFiles(response);
             setSelectedFiles([]); // Очищаем выбранные файлы после успешной загрузки
             alert('Файлы успешно загружены!');
         } catch (error) {
@@ -44,6 +50,17 @@ export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOr
             alert('Произошла ошибка при загрузке файлов.');
         }
     };
+    // Обработчик удаления файла из списка выбранных
+    const handleRemoveFile = (index) => {
+        const newFiles = [...selectedFiles];
+        newFiles.splice(index, 1);
+        setSelectedFiles(newFiles);
+    };
+
+    const handleCustomButtonClick = () => {
+        fileInputRef.current.click(); // Программно вызываем клик по input
+    };
+
 
     return (
         <ModalContainer setOpenModal={setOpenModal} clickFunction={handleUpload}>
@@ -66,13 +83,54 @@ export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOr
                 {/* Input для выбора файлов */}
                 <input
                     type="file"
-                    multiple // Позволяет выбирать несколько файлов
+                    multiple
+                    ref={fileInputRef}
+                    style={{ display: 'none' }} // Скрываем input
                     onChange={handleFileChange}
                 />
 
-                {/* Кнопка для загрузки файлов */}
-                {/* <button onClick={handleUpload}>Загрузить файлы</button> */}
+                {/* Кастомная кнопка */}
+                <button onClick={handleCustomButtonClick} className={classes.customFileButton}>
+                    Выберите файлы
+                </button>
+
+                {/* Отображение выбранных файлов */}
+                {(notEmpty(selectedFiles) || notEmpty(files)) && (
+                    <div className={classes.selectedFiles}>
+                        {selectedFiles.map((file, index) => (
+                            <div key={index} className={classes.fileItem}>
+                                {/* Превью изображения */}
+                                {file.type.startsWith('image/') ? (
+                                    <img
+                                        src={URL.createObjectURL(file)} // Создаем временную ссылку для превью
+                                        alt={file.name}
+                                        className={classes.imagePreview}
+                                    />
+                                ) : (
+                                    <span>{file.name}</span> // Для не-изображений показываем имя файла
+                                )}
+                                <button onClick={() => handleRemoveFile(index)}>Удалить</button>
+                            </div>
+                        ))}
+                        {files
+                            ?.filter((file) => !deleteFile.includes(file.id))
+                            .map((file, index) => (
+                                <div key={index} className={classes.fileItem}>
+                                    {file.attachmentMimetype.startsWith('image/') ? (
+                                        <img
+                                            src={baseUrl + file.attachmentPath} // Создаем временную ссылку для превью
+                                            alt={file.name}
+                                            className={classes.imagePreview}
+                                        />
+                                    ) : (
+                                        <span>{file.attachmentName}</span> // Для не-изображений показываем имя файла
+                                    )}
+                                    <button onClick={() => setDeleteFile(prevState => [...prevState, file.id])}>Удалить</button>
+                                </div>
+                            ))}
+                    </div>
+                )}
             </div>
-        </ModalContainer>
+        </ModalContainer >
     );
 }

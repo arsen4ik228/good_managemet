@@ -10,11 +10,10 @@ export default function MainWorkingPlan() {
     const [isViewArchive, setIsViewArchive] = useState(false)
 
     const {
-        currentPersonalTargets,
-        currentOrdersTargets,
-        otherTargets,
-        
+        personalTargets,
+        orderTargets,
         projectTragets,
+        futureTargets,
         userPosts,
         isLoadingGetTargets,
         isErrorGetTargets,
@@ -46,7 +45,7 @@ export default function MainWorkingPlan() {
                     <div className={classes.tasksContainer}>
                         {!isViewArchive ? (
                             <>
-                                {otherTargets.map((elem, elemIndex) => (
+                                {futureTargets?.map((elem, elemIndex) => (
                                     <>
                                         <div key={elemIndex} className={classes.dayContainer}>
                                             <span>Начать {elem.date}</span>
@@ -77,7 +76,7 @@ export default function MainWorkingPlan() {
                                 <div className={classes.dayContainer}>
                                     <span>Текущие</span>
                                 </div>
-                                {currentOrdersTargets.map((item, index) => (
+                                {orderTargets?.map((item, index) => (
                                     <Task
                                         key={index}
                                         taskData={item}
@@ -85,7 +84,7 @@ export default function MainWorkingPlan() {
                                     ></Task>
                                 ))}
 
-                                {currentPersonalTargets.map((item, index) => (
+                                {personalTargets?.map((item, index) => (
                                     <Task
                                         key={index}
                                         taskData={item}
