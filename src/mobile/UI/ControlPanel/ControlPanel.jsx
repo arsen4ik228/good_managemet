@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
 import classes from "./ControlPanel.module.css";
-import Headers from "@Custom/Headers/Headers";
-import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import ModalSetting from "@Custom/modalSetting/ModalSetting";
+import Header from "../Custom/CustomHeader/Header";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import useControlPanel from "@hooks/useControlPanel";
-import usePostsHook from "@hooks/usePostsHook";
-import PanelDragDrop from "@Custom/panelDragDrop/PanelDragDrop";
-import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
-import ModalWindow from "@Custom/ModalWindow";
-import ModalStatistic from "@Custom/GraphicStatistics/modal/ModalStatistic";
+
+import ModalSetting from "./modalSetting/ModalSetting";
+import { ModalSelectRadio } from "./modalSelectRadio/ModalSelectRadio";
+
+import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
+import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
+import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
+
+import { useModalSelectRadio } from "../../hooks/useModalSelectRadio";
+import useControlPanel from "../../hooks/useControlPanel";
+import { usePostsHook } from "../../hooks/usePostsHook";
+
+import ModalContainer from "../Custom/ModalContainer/ModalContainer";
 
 import {
   DndContext,
@@ -26,7 +30,7 @@ import {
   sortableKeyboardCoordinates,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import SortableCard from "@Custom/GraphicStatistics/card/sortable/SortableCard";
+
 import {
   saveToIndexedDB,
   deleteFromIndexedDB,
@@ -36,6 +40,7 @@ import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
 import { debounce } from "lodash";
 
 export default function ControlPanel() {
+
   const [openModalSetting, setOpenModalSetting] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -290,14 +295,13 @@ export default function ControlPanel() {
       setCards(statisticsPoints);
     }
   }, [statisticsPoints]);
-
   return (
-    <div className={classes.dialog}>
-      <Headers name={"панель управления"}>
-        <BottomHeaders create={openCreate}></BottomHeaders>
-      </Headers>
+    <div className={classes.wrapper}>
+      <Header onRightIcon={true} rightIconClick={openCreate}>
+        Панель управления
+      </Header>
 
-      <div className={classes.main}>
+      <div className={classes.body}>
         <DragDropContext onDragEnd={onDragEnd_ControlPanel}>
           <Droppable droppableId="panelList" direction="horizontal">
             {(provided) => (
@@ -390,16 +394,17 @@ export default function ControlPanel() {
           ></ModalSelectRadio>
         )}
         {openModalDelete && (
-          <ModalWindow
-          text={`Вы точно хотите удалить панель управления ${
-            currentControlPanel.isNameChanged
-              ? currentControlPanel.panelName
-              : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
-          }`}
-            close={setOpenModalDelete}
-            btnYes={btnYes}
-            btnNo={btnNo}
-          ></ModalWindow>
+          <ModalContainer
+            setOpenModal={btnNo}
+            clickFunction={btnYes}
+            buttonText={"Удалить"}
+          >
+            {`Вы точно хотите удалить панель управления ${
+              currentControlPanel.isNameChanged
+                ? currentControlPanel.panelName
+                : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
+            }`}
+          </ModalContainer>
         )}
         {openModalStatistic && (
           <ModalStatistic

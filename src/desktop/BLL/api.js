@@ -1,14 +1,14 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
-import { prepareHeaders } from './Function/prepareHeaders'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'; // Исправленный импорт
+import { prepareHeaders } from './Function/prepareHeaders';
 
 const apiSlice = createApi({
-  reducerPath: 'api',
+  reducerPath: 'apiSlice',
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_BASE_URL,
     prepareHeaders
   }),
-  tagTypes: ['Panel', 'Strategy', 'Directories', 'Goal', 'Objective', 'Organization', 'Policy', '', '', '', '', '',],
+  tagTypes: ['Panel', 'PanelToStatistics', 'User', 'File'],
   endpoints: builder => ({}),
 })
 
-export default apiSlice
+export default apiSlice;

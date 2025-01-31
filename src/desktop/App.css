@@ -76,7 +76,7 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
 /*цвета*/
 :root {
     --primary: #005475;
-    --primary-light: #DDEBF1;;
+    --primary-light: #DDEBF1;
     --white:#FFFFFF;
     --grey:#B4B4B4;
     --grey-light:#F0F0F0;

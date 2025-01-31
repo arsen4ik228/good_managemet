@@ -1,46 +1,52 @@
 import React, { useEffect, useRef, useState } from "react";
+import classes from "./ModalStatistic.module.css";
 import * as d3 from "d3";
-import classes from "./CardStatistic.module.css";
 import getDateFormatSatatistic from "@Custom/Function/getDateFormatStatistic";
+import exitModal from "./icon/exit.svg";
+import arrow from "./icon/arrow.svg";
 
-export default function CardStatistic({
-  name,
+const ModalStatistic = ({
   data,
-  typeGraphic,
+  graphicTypeBD,
   type,
+  name,
+  exit,
   reportDay,
-  // Для модального окна
-  setOpenModalStatistic,
-  setModalStatisticName,
-  setModalStatisticDatas,
-}) {
+}) => {
   const svgRef = useRef();
-
-  const [width, setWidth] = useState(300);
-  const [height, setHeight] = useState(340);
-
+  const [width, setWidth] = useState(150);
+  const [height, setHeight] = useState(250);
   const [pointsForGraphic, setPointsForGraphic] = useState([]);
-
-  // Для клика по карточке
-  const [isDragging, setIsDragging] = useState(false);
-  const handlePointerDown = (event) => {
-    setIsDragging(false); // Сбрасываем флаг перетаскивания
-  };
-
-  const handlePointerMove = () => {
-    setIsDragging(true); // Устанавливаем флаг перетаскивания, если есть движение
-  };
-
-  const handlePointerUp = () => {
-    if (!isDragging) {
-      // Если не было движения, считаем это кликом
-      setOpenModalStatistic(true);
-      setModalStatisticName(name);
-      setModalStatisticDatas(data);
-    }
-  };
+  const [typeGraphic, setTypeGraphic] = useState(graphicTypeBD);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight - 100;
+
+    if (typeGraphic === "52") {
+      setWidth(newHeight);
+      setHeight(newWidth);
+    } else {
+      setWidth(newWidth);
+      setHeight(newHeight);
+    }
+  }, [typeGraphic]);
+
+  // Для стрелок на графике
+  const handleArrowLeftClick = () => {
+    setCount((prevCount) => prevCount + 1);
+  };
+
+  const handleArrowRightClick = () => {
+    setCount((prevCount) => prevCount - 1);
+  };
+
+  const updateStatisticsData = () => {
+    setPointsForGraphic([]);
+
+    if (!data.length) return;
+
     if (typeGraphic === "Ежедневный") {
       const dayNow = new Date();
       const currentWeekday = dayNow.getDay(); // Текущий день недели (0 - Воскресенье, 1 - Понедельник и т.д.)
@@ -67,7 +73,7 @@ export default function CardStatistic({
 
       // Создаем массив всех дат за последние 7 дней
       const last7Days = [];
-      for (let i = 0; i < 7 ; i++) {
+      for (let i = count; i < 7 + count; i++) {
         const date = new Date(dayNow);
         date.setDate(dayNow.getDate() - i);
         last7Days.push(date.toISOString().split("T")[0]);
@@ -103,6 +109,316 @@ export default function CardStatistic({
       setPointsForGraphic([..._updatedPoints, ...crPoints]);
     }
 
+    if (typeGraphic === "Ежемесячный") {
+      // Группируем данные по месяцам и суммируем `valueDate` за каждый месяц
+      const monthlyData = data.reduce((acc, item) => {
+        const itemDate = new Date(item.valueDate);
+        const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
+        if (
+          !isNaN(itemDate) &&
+          new Date(new Date().setMonth(new Date().getMonth() - 14 + count)) <
+            itemDate
+        ) {
+          if (item?.isCorrelation === true) {
+            acc[monthKey] = {
+              id: item.id,
+              valueSum: item.value,
+              year: itemDate.getFullYear(),
+              month: itemDate.getMonth() + 1,
+              isCorrelation: true,
+            };
+          }
+
+          // Если месяца ещё нет в acc, создаем начальный объект с valueSum = 0
+          if (!acc[monthKey] || !acc[monthKey]?.isCorrelation) {
+            if (!acc[monthKey]) {
+              acc[monthKey] = {
+                valueSum: 0,
+                year: itemDate.getFullYear(),
+                month: itemDate.getMonth() + 1,
+                isCorrelation: false,
+              };
+            }
+            acc[monthKey].valueSum += item.value;
+          }
+        }
+        return acc;
+      }, {});
+
+      // Формируем новый массив, включающий `valueDate` и `date` (последний день месяца)
+      const updatedMonthlyPoints = [];
+
+      // Для каждого месяца от 14 месяцев назад до текущего добавляем данные
+      for (let i = count; i < 13 + count; i++) {
+        const monthDate = new Date();
+        monthDate.setMonth(monthDate.getMonth() - i);
+        const monthKey = `${monthDate.getFullYear()}-${
+          monthDate.getMonth() + 1
+        }`;
+
+        // Если данных нет для этого месяца, создаем запись с суммой 0
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = {
+            valueSum: 0,
+            year: monthDate.getFullYear(),
+            month: monthDate.getMonth() + 1,
+            isCorrelation: false,
+          };
+        }
+
+        const lastDayOfMonth = new Date(
+          monthDate.getFullYear(),
+          monthDate.getMonth() + 1,
+          0
+        ); // Получаем последний день месяца
+        const year = lastDayOfMonth.getFullYear();
+        const monthValue = lastDayOfMonth.getMonth() + 1; // Месяцы начинаются с 0
+        const date = lastDayOfMonth.getDate(); // Дата
+
+        updatedMonthlyPoints.push({
+          id: monthlyData[monthKey]?.id || null, // Если id не найден, присваиваем null
+          valueDate: `${year}-${monthValue}-${date}`, // Форматирование в 'год-месяц-день'
+          value: monthlyData[monthKey].valueSum, // Сумма за месяц
+          isCorrelation: monthlyData[monthKey].isCorrelation,
+        });
+      }
+
+      // Сортируем данные по дате, от последнего месяца к первому
+      updatedMonthlyPoints.sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      );
+
+      setPointsForGraphic(updatedMonthlyPoints);
+    }
+
+    if (typeGraphic === "Ежегодовой") {
+      // Группируем данные по годам и суммируем `valueDate` за каждый год
+      const yearData = data.reduce((acc, item) => {
+        const itemDate = new Date(item.valueDate);
+        const yearKey = `${itemDate.getFullYear()}`;
+        // Проверяем, что дата корректна и меньше чем на 13 лет от текущего года
+        if (
+          !isNaN(itemDate) &&
+          new Date().getFullYear() - 12 < itemDate.getFullYear()
+        ) {
+          if (item?.isCorrelation === true) {
+            acc[yearKey] = {
+              id: item.id,
+              valueSum: item.value,
+              year: itemDate.getFullYear(),
+              isCorrelation: true,
+            };
+          }
+
+          // Если года еще нет в acc, создаем начальный объект с valueSum = 0
+          if (!acc[yearKey] || !acc[yearKey]?.isCorrelation) {
+            if (!acc[yearKey]) {
+              acc[yearKey] = {
+                valueSum: 0,
+                year: itemDate.getFullYear(),
+                isCorrelation: false,
+              };
+            }
+            acc[yearKey].valueSum += item.value;
+          }
+        }
+        return acc;
+      }, {});
+
+      // Формируем новый массив, включающий `valueDate` и `date` (первый день года)
+      const updatedYearPoints = [];
+
+      // Для каждого года от 13 лет назад до текущего добавляем данные
+      for (let i = count; i < 12 + count; i++) {
+        const yearDate = new Date();
+        yearDate.setFullYear(yearDate.getFullYear() - i);
+        const yearKey = `${yearDate.getFullYear()}`;
+
+        // Если данных нет для этого года, создаем запись с суммой 0
+        if (!yearData[yearKey]) {
+          yearData[yearKey] = {
+            valueSum: 0,
+            year: yearDate.getFullYear(),
+            isCorrelation: false,
+          };
+        }
+
+        updatedYearPoints.push({
+          id: yearData[yearKey]?.id || null, // Если id не найден, присваиваем null
+          valueDate: `${yearDate.getFullYear()}-01-01`,
+          value: yearData[yearKey].valueSum, // Сумма за год
+          isCorrelation: yearData[yearKey].isCorrelation,
+        });
+      }
+
+      // Сортируем данные по дате, от последнего года к первому
+      updatedYearPoints.sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      );
+
+      setPointsForGraphic(updatedYearPoints);
+    }
+    if (typeGraphic === "13" || typeGraphic === "26" || typeGraphic === "52") {
+      const today = new Date();
+      today.setDate(today.getDate() - count * 7);
+      const end = new Date(today);
+
+      const start = new Date(end);
+      start.setDate(end.getDate() - (Number(typeGraphic) + 1) * 7);
+
+      const selectedDayOfWeek = parseInt(reportDay);
+      const result = [];
+
+      let currentDate = new Date(start);
+      let currentSum = 0;
+
+      // Перемещаем currentDate на первый выбранный день недели
+      while (currentDate.getDay() !== selectedDayOfWeek) {
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      // Цикл по неделям
+      while (currentDate <= end) {
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(currentDate.getDate() + 7);
+
+        // Фильтруем и суммируем значения для текущей недели
+        currentSum = data
+          .filter((item) => {
+            const itemDate = new Date(item.valueDate);
+            return (
+              currentDate <= itemDate &&
+              itemDate < nextDate &&
+              item.isCorrelation !== true
+            );
+          })
+          .reduce((sum, item) => sum + item.value, 0);
+
+        // Создаем новую дату на день позже
+        const valueDate = new Date(nextDate.getTime() + 24 * 60 * 60 * 1000);
+
+        // Проверяем, что valueDate не позже сегодняшней даты
+        if (valueDate <= today) {
+          result.push({
+            value: currentSum,
+            valueDate: valueDate.toISOString().split("T")[0],
+          });
+        }
+
+        currentDate = nextDate; // Переходим к следующей неделе
+      }
+
+      setPointsForGraphic(
+        result.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate))
+      );
+    }
+  };
+
+  useEffect(() => {
+    updateStatisticsData();
+  }, [count]);
+
+  // Изменение pointsForGraphic в зависимости от типа графика
+  useEffect(() => {
+    setCount(0); // обнуление кол-во нажатий при смене графика
+
+    if (typeGraphic === "Ежедневный") {
+      const dayNow = new Date();
+      const currentWeekday = dayNow.getDay(); // Текущий день недели (0 - Воскресенье, 1 - Понедельник и т.д.)
+
+      // Определяем начальную дату - ближайший предыдущий день `day`
+      const startDate = new Date(dayNow);
+      let dayDifference;
+
+      if (currentWeekday >= reportDay) {
+        dayDifference = currentWeekday - reportDay;
+      } else {
+        dayDifference = 7 - (reportDay - currentWeekday);
+      }
+
+      startDate.setDate(dayNow.getDate() - dayDifference);
+
+      // Вычисляем конечную дату (b = startDate + 7 дней)
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 7);
+
+      // Генерируем массив всех дат в диапазоне [startDate, endDate)
+      const allDates = [];
+      for (
+        let date = new Date(startDate);
+        date < endDate;
+        date.setDate(date.getDate() + 1)
+      ) {
+        allDates.push(new Date(date).toISOString().split("T")[0]);
+      }
+
+      // Фильтруем данные и заполняем пропущенные даты
+      const filteredData = data
+        ?.filter((item) => {
+          // Проверяем, если valueDate существует и валиден
+          const itemDate = item?.valueDate ? new Date(item.valueDate) : null;
+
+          // Если itemDate не валидная, пропускаем элемент
+          if (isNaN(itemDate?.getTime())) {
+            return false; // Пропускаем невалидные даты
+          }
+
+          // Проверяем, если startDate и endDate валидные
+          const isValidStartDate =
+            startDate instanceof Date && !isNaN(startDate.getTime());
+          const isValidEndDate =
+            endDate instanceof Date && !isNaN(endDate.getTime());
+
+          if (!isValidStartDate || !isValidEndDate) {
+            return false; // Пропускаем, если startDate или endDate невалидны
+          }
+
+          const itemDateStr = itemDate.toISOString().split("T")[0];
+          const startDateStr = startDate.toISOString().split("T")[0];
+          const endDateStr = endDate.toISOString().split("T")[0];
+
+          // Возвращаем результат фильтрации
+          return (
+            startDateStr <= itemDateStr &&
+            itemDateStr < endDateStr &&
+            item.isCorrelation !== true
+          );
+        })
+        ?.map((item) => ({
+          ...item,
+          valueDate: item.valueDate?.split("T")[0], // Предполагаем, что valueDate - строка с датой
+        }));
+
+      const updatedPoints = [];
+      const _createdPoints = [];
+
+      allDates.forEach((date) => {
+        const existingPoint = filteredData.find(
+          (item) => item.valueDate === date
+        );
+
+        if (existingPoint) {
+          updatedPoints.push(existingPoint);
+        } else {
+          _createdPoints.push({
+            id: date,
+            valueDate: date,
+            value: "",
+            isCorrelation: false,
+          });
+        }
+      });
+
+      // Сортируем данные по убыванию даты
+      updatedPoints.sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      );
+      _createdPoints.sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      );
+      // Устанавливаем данные
+      setPointsForGraphic([...updatedPoints, ..._createdPoints]);
+    }
 
     if (typeGraphic === "Ежемесячный") {
       // Группируем данные по месяцам и суммируем `valueDate` за каждый месяц
@@ -268,11 +584,13 @@ export default function CardStatistic({
 
       // Перемещаем currentDate на первый выбранный день недели
       while (currentDate.getDay() !== selectedDayOfWeek) {
+        console.log("11111111111111");
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
       // Цикл по неделям
       while (currentDate <= end) {
+        console.log("2222222222222222");
         const nextDate = new Date(currentDate);
         nextDate.setDate(currentDate.getDate() + 7);
 
@@ -307,14 +625,14 @@ export default function CardStatistic({
         result.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate))
       );
     }
-  }, [data, typeGraphic]);
+  }, [typeGraphic]);
 
+  // Построение svg картинки
   useEffect(() => {
-    pointsForGraphic?.sort(
+    pointsForGraphic.sort(
       (a, b) => new Date(a.valueDate) - new Date(b.valueDate)
     );
-
-    const margin = { top: 20, right: 20, bottom: 40, left: 20 };
+    const margin = { top: 20, right: 10, bottom: 80, left: 35 };
 
     const minValue = d3.min(pointsForGraphic, (d) => d.value);
     const maxValue = d3.max(pointsForGraphic, (d) => d.value);
@@ -406,10 +724,7 @@ export default function CardStatistic({
       .attr("stroke-width", 1)
       .attr("opacity", 0.3);
 
-    const xAxis = d3
-      .axisBottom(x)
-      .tickFormat(() => "")
-      .tickSize(0);
+    const xAxis = d3.axisBottom(x);
 
     svg
       .append("g")
@@ -423,15 +738,10 @@ export default function CardStatistic({
       .style("font-weight", "bold")
       .style("font-size", "12px");
 
-    const yAxis = d3
-      .axisLeft(y)
-      .tickFormat(() => "")
-      .tickSize(0);
-
     svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(yAxis);
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".2s"))); // Format Y axis
 
     pointsForGraphic.forEach((d, i) => {
       if (i > 0) {
@@ -468,7 +778,7 @@ export default function CardStatistic({
           ? "red"
           : "blue"; // Normal logic for points
       } else {
-        return "blue";
+        return "green";
       }
     };
 
@@ -570,14 +880,63 @@ export default function CardStatistic({
   }, [pointsForGraphic]);
 
   return (
-    <div
-      className={classes.graphic}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-    >
-      <span>{name}</span>
-      <svg ref={svgRef}></svg>
+    <div className={classes.modal}>
+      <div className={classes.modalWindow}>
+        <img
+          src={exitModal}
+          alt="exitModal"
+          onClick={() => exit()}
+          className={classes.exit}
+        />
+
+        <div className={classes.block}>
+          <span>{name}</span>
+
+          <div className={classes.svg_container}>
+            <svg
+              ref={svgRef}
+              style={{
+                transform: typeGraphic === "52" ? "rotate(90deg)" : "none",
+              }}
+            ></svg>
+          </div>
+
+          <div className={classes.arrowSection}>
+            <img
+              src={arrow}
+              alt="arrow"
+              style={{ transform: "rotate(90deg)" }}
+              onClick={handleArrowLeftClick}
+            />
+            <select
+              value={typeGraphic}
+              onChange={(e) => setTypeGraphic(e.target.value)}
+            >
+              <option value="" disabled>
+                Выберите тип отображения графика
+              </option>
+              <option value="Ежедневный"> Ежедневный (за один день)</option>
+              <option value="Ежемесячный">
+                Ежемесячный (сумма за календарный месяц)
+              </option>
+              <option value="Ежегодовой">
+                Ежегодовой (сумма за календарный год)
+              </option>
+              <option value="13">13 недель</option>
+              <option value="26">26 недель</option>
+              <option value="52">52 недели</option>
+            </select>
+            <img
+              src={arrow}
+              alt="arrow"
+              style={{ transform: "rotate(-90deg)" }}
+              onClick={handleArrowRightClick}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default ModalStatistic;

@@ -2,6 +2,7 @@ import React from "react";
 
 const Pomoshnik = React.lazy(() => import("@app/Pomoshnik/Pomoshnik"));
 const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
+const User = React.lazy(() => import("@app/UserPage/User"));
 const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
 const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
 const Statistic = React.lazy(() => import("@app/StatisticsPage/Statistic"));
@@ -20,6 +21,7 @@ const pageComponents = {
   pomoshnik: {
     start: Pomoshnik,
     controlPanel: ControlPanel,
+    user: User,
     goal: Goal,
     policy: Policy,
     statistic: Statistic,

@@ -28,6 +28,7 @@ import NewStatistic from './UI/Statistics/NewStatistic.jsx';
 import MainWorkingPlan from './UI/WorkingPlan/MainWorkingPlan.jsx';
 import ModalContainer from './UI/Custom/ModalContainer/ModalContainer.jsx';
 import { isMobile } from 'react-device-detect';
+import ControlPanel from './UI/ControlPanel/ControlPanel.jsx';
 
 function App() {
     return (
@@ -40,7 +41,7 @@ function App() {
                         <Routes>
                             <Route path="test" element={<ModalContainer />} />
                             <Route path="Main" element={<Main />} />
-
+                            <Route path='ControlPanel' element={<ControlPanel />} />
                             <Route path="Chat/*"
                                 element={
                                     <Routes>
@@ -77,6 +78,7 @@ function App() {
                                         <Route path="Statistics/new/:paramPostID?" element={<NewStatistic />} />
 
                                         <Route path='WorkingPlan' element={<MainWorkingPlan />} />
+                                       
 
                                     </Routes>
                                 }

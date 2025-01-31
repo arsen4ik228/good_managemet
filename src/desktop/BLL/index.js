@@ -10,6 +10,10 @@ import { strategyApi } from './strategy/strategyApi';
 import { statisticsApi } from './statisticsApi';
 import { directoriesApi } from './directoriesApi';
 import { organizationApi } from './organizationApi';
+
+
+import  apiSlice  from './api';
+
 import { controlPanelApi } from './controlPanel/controlPanelApi';
 import { targetsApi } from '../../mobile/BLL/targetsApi';
 import { convertApi } from '../../mobile/BLL/convertApi';
@@ -33,17 +37,16 @@ export const desktopStore = configureStore({
         [statisticsApi.reducerPath]: statisticsApi.reducer,
         [directoriesApi.reducerPath]: directoriesApi.reducer,
         [organizationApi.reducerPath]: organizationApi.reducer,
-        [controlPanelApi.reducerPath]: controlPanelApi.reducer,
+        [apiSlice.reducerPath]: apiSlice.reducer,
         [convertApi.reducerPath]: convertApi.reducer,
         [targetsApi.reducerPath]: targetsApi.reducer,
-        [fileApi.reducerPath]: fileApi.reducer,
 
         localStorage: localStorageReducer,
         post: postReducer,
         project: projectReducer,
         program: programReducer,
     },
-    middleware: (getDefaultMiddlware) => getDefaultMiddlware()
+    middleware: (getDefaultMiddlware) => getDefaultMiddlware()                                                       
         .concat(policyApi.middleware)
         .concat(goalApi.middleware)
         .concat(objectiveApi.middleware)
@@ -53,9 +56,9 @@ export const desktopStore = configureStore({
         .concat(statisticsApi.middleware)
         .concat(directoriesApi.middleware)
         .concat(organizationApi.middleware)
-        .concat(controlPanelApi.middleware)
+        .concat(apiSlice.middleware)
         .concat(convertApi.middleware)
         .concat(targetsApi.middleware)
-        .concat(fileApi.middleware)
+
 });
 export default desktopStore;

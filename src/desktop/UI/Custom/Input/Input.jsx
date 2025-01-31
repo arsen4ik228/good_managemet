@@ -6,6 +6,7 @@ export default function Input({
   value,
   onChange,
   disabledPole,
+  isShowInput,
 }) {
   return (
     <div className={classes.item}>
@@ -15,14 +16,16 @@ export default function Input({
         </span>
       </div>
       <div className={classes.div}>
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          title={name}
-          className={classes.select}
-          disabled={disabledPole}
-        ></input>
+        {!isShowInput && (
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            title={name}
+            className={classes.select}
+            disabled={disabledPole}
+          ></input>
+        )}
         {children}
       </div>
     </div>

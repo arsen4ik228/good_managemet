@@ -61,6 +61,18 @@ export const statisticsApi = createApi({
       invalidatesTags: (result) =>
         result ? [{ type: "Statistics", id: "LIST" }] : [],
     }),
+
+    updateStatisticsOrderNumber: build.mutation({
+      query: (body) => ({
+        url: `/statistics/updateOrderNumbers`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (result) =>
+        result ? [{ type: "Statistics", id: "LIST" }] : [],
+    }),
+    
+
   }),
 });
 
@@ -70,4 +82,5 @@ export const {
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
   useUpdateStatisticsToPostIdMutation,
+  useUpdateStatisticsOrderNumberMutation,
 } = statisticsApi;
