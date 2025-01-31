@@ -1,7 +1,8 @@
 import { useGetStatisticsQuery } from "@BLL/statisticsApi";
 import useGetReduxOrganization from "./useGetReduxOrganization";
+import { useUpdateStatisticsOrderNumberMutation } from "../../BLL/statisticsApi";
 
-export default function useStatisticsHook({ statisticData }) {
+export default function useStatisticsHook(statisticData) {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
   const {
     statistics = [],
@@ -24,10 +25,16 @@ export default function useStatisticsHook({ statisticData }) {
     }
   );
 
+const [
+  updateStatisticsOrderNumber,
+] = useUpdateStatisticsOrderNumberMutation();
+
   return {
     statistics,
     isLoadingGetStatistics,
     isFetchingGetStatistics,
     isErrorGetStatistics,
+
+    updateStatisticsOrderNumber
   };
 }

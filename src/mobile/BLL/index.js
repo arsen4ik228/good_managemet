@@ -10,7 +10,9 @@ import { organizationsApi } from './organizationsApi';
 import { statisticsApi } from './statisticsApi';
 import { targetsApi } from './targetsApi';
 import { convertApi } from './convertApi'; 
+import { controlPanelApi } from './controlPanelApi'; 
 import strategReducer from "./strategSlice";
+import localStorageReducer from "./localStorageSlice";
 
 export const mobileStore = configureStore({
     reducer: {
@@ -25,7 +27,9 @@ export const mobileStore = configureStore({
         [statisticsApi.reducerPath]: statisticsApi.reducer,
         [targetsApi.reducerPath]: targetsApi.reducer,
         [convertApi.reducerPath]: convertApi.reducer,
+        [controlPanelApi.reducerPath]: controlPanelApi.reducer,
         strateg: strategReducer,
+        localStorage: localStorageReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
@@ -40,5 +44,6 @@ export const mobileStore = configureStore({
           .concat(statisticsApi.middleware)
           .concat(targetsApi.middleware)
           .concat(convertApi.middleware)
+          .concat(controlPanelApi.middleware)
       });
 export default mobileStore;

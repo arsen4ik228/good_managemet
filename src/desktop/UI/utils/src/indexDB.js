@@ -1,58 +1,81 @@
 const dbName = "ControlPanelDB";
+let dbInstance = null;
 
-// Функция для получения текущей версии базы данных
-const getCurrentDBVersion = () => {
+// Функция для проверки существования хранилища
+const doesStoreExist = (db, storeName) => {
+  return db.objectStoreNames.contains(storeName);
+};
+
+// Инициализация базы данных
+export const initDB = async (orgName) => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(dbName);
+    // Если база данных уже открыта и хранилище существует, используем её
+    if (dbInstance && doesStoreExist(dbInstance, orgName)) {
+      resolve(dbInstance);
+      return;
+    }
 
-    request.onsuccess = (event) => {
+    // Шаг 1: Открываем базу данных для проверки существования хранилища
+    const checkRequest = indexedDB.open(dbName);
+
+    checkRequest.onsuccess = (event) => {
       const db = event.target.result;
-      const version = db.version;
-      db.close(); // Закрываем соединение
-      resolve(version || 0); // Если база данных не существует, версия будет 0
+
+      // Проверяем, существует ли хранилище
+      if (doesStoreExist(db, orgName)) {
+        // Хранилище существует, возвращаем базу данных
+        dbInstance = db;
+        resolve(db);
+      } else {
+        // Хранилище не существует, увеличиваем версию базы данных
+        const currentVersion = db.version;
+        const newVersion = currentVersion + 1;
+
+        // Закрываем текущее соединение
+        db.close();
+
+        // Шаг 2: Открываем базу данных с новой версией для создания хранилища
+        const upgradeRequest = indexedDB.open(dbName, newVersion);
+
+        upgradeRequest.onupgradeneeded = (event) => {
+          const db = event.target.result;
+
+          // Создаём новое хранилище, если его ещё нет
+          if (!db.objectStoreNames.contains(orgName)) {
+            db.createObjectStore(orgName, { keyPath: "id" });
+            console.log(`Хранилище ${orgName} создано.`);
+          }
+        };
+
+        upgradeRequest.onsuccess = (event) => {
+          const db = event.target.result;
+          dbInstance = db; // Сохраняем соединение
+          resolve(db);
+        };
+
+        upgradeRequest.onerror = (event) => {
+          reject(event.target.error);
+        };
+      }
     };
 
-    request.onerror = (event) => {
+    checkRequest.onerror = (event) => {
       reject(event.target.error);
     };
   });
 };
 
-// Функция для инициализации базы данных
-export const initDB = async (orgName) => {
-  try {
-    const currentVersion = await getCurrentDBVersion();
-    const newVersion = currentVersion + 1;
-  
-    const request = indexedDB.open(dbName, newVersion);
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      // Создаём объектное хранилище для каждой организации
-      if (!db.objectStoreNames.contains(orgName)) {
-        db.createObjectStore(orgName, { keyPath: "id" }); // "id" будет ключом
-      }
-    };
-
-    request.onerror = (event) => {
-      console.error("Ошибка инициализации базы данных:", event.target.error);
-    };
-
-    return request;
-  } catch (error) {
-    console.error("Ошибка при получении текущей версии базы данных:", error);
-    throw error;
-  }
-};
-
+// Загрузка данных из IndexedDB
 export const loadFromIndexedDB = async (orgName, callback) => {
   try {
-    const request = await initDB(orgName); // Ожидаем завершения initDB
+    const db = await initDB(orgName);
 
-    request.onsuccess = (event) => {
-      const db = event.target.result;
+    // Проверяем, существует ли хранилище перед выполнением транзакции
+    if (!doesStoreExist(db, orgName)) {
+      throw new Error(`Хранилище ${orgName} не существует.`);
+    }
 
+    return new Promise((resolve, reject) => {
       const transaction = db.transaction(orgName, "readonly");
       const store = transaction.objectStore(orgName);
 
@@ -60,57 +83,51 @@ export const loadFromIndexedDB = async (orgName, callback) => {
 
       getRequest.onsuccess = () => {
         callback(getRequest.result || []);
+        resolve();
       };
 
       getRequest.onerror = (event) => {
         console.error("Ошибка чтения из IndexedDB:", event.target.errorCode);
+        reject(event.target.error);
       };
-    };
-
-    request.onerror = (event) => {
-      console.error("Ошибка при открытии базы данных:", event.target.error);
-    };
+    });
   } catch (error) {
     console.error("Ошибка в loadFromIndexedDB:", error);
+    throw error;
   }
 };
 
+// Сохранение данных в IndexedDB
 export const saveToIndexedDB = async (orgName, dataArray, activeId) => {
   try {
-    const request = await initDB(orgName);
-
+    const db = await initDB(orgName);
+    // Проверяем, существует ли хранилище перед выполнением транзакции
+    if (!doesStoreExist(db, orgName)) {
+      throw new Error(`Хранилище ${orgName} не существует.`);
+    }
     return new Promise((resolve, reject) => {
-      request.onsuccess = (event) => {
-        const db = event.target.result;
+      const transaction = db.transaction(orgName, "readwrite");
+      const store = transaction.objectStore(orgName);
 
-        // Создаем транзакцию для конкретного хранилища
-        const transaction = db.transaction(orgName, "readwrite");
-        const store = transaction.objectStore(orgName);
+      // Очищаем хранилище перед записью новых данных
+      const clearRequest = store.clear();
 
-        // Очищаем хранилище перед записью новых данных
-        const clearRequest = store.clear();
+      clearRequest.onsuccess = () => {
+        // Добавляем каждый объект из массива
+        dataArray.forEach((item) => {
+          const newItem = {
+            ...item,
+            isActive: item.id === activeId,
+          };
+          store.add(newItem);
+        });
 
-        clearRequest.onsuccess = () => {
-          // Добавляем каждый объект из массива
-          dataArray.forEach((item) => {
-            const newItem = {
-              ...item,
-              isActive: item.id === activeId, // Устанавливаем `active` в true, если id совпадает
-            };
-            store.add(newItem); // "item" должен содержать поля "id" и "orderNumber"
-          });
-
-          console.log("Данные успешно сохранены в IndexedDB");
-          resolve();
-        };
-
-        clearRequest.onerror = (event) => {
-          reject(event.target.errorCode);
-        };
+        console.log("Данные успешно сохранены в IndexedDB");
+        resolve();
       };
 
-      request.onerror = (event) => {
-        reject(event.target.error);
+      clearRequest.onerror = (event) => {
+        reject(event.target.errorCode);
       };
     });
   } catch (error) {
@@ -119,33 +136,31 @@ export const saveToIndexedDB = async (orgName, dataArray, activeId) => {
   }
 };
 
+// Удаление данных из IndexedDB
 export const deleteFromIndexedDB = async (orgName, id) => {
   try {
-    const request = await initDB(orgName);
+    const db = await initDB(orgName);
 
+    // Проверяем, существует ли хранилище перед выполнением транзакции
+    if (!doesStoreExist(db, orgName)) {
+      throw new Error(`Хранилище ${orgName} не существует.`);
+    }
     return new Promise((resolve, reject) => {
-      request.onsuccess = (event) => {
-        const db = event.target.result;
+      const transaction = db.transaction(orgName, "readwrite");
+      const store = transaction.objectStore(orgName);
 
-        // Создаем транзакцию для конкретного хранилища
-        const transaction = db.transaction(orgName, "readwrite");
-        const store = transaction.objectStore(orgName);
+      // Удаляем объект по id
+      const deleteRequest = store.delete(id);
 
-        // Удаляем объект по id
-        const deleteRequest = store.delete(id);
-
-        deleteRequest.onsuccess = () => {
-          console.log(`Объект с id ${id} успешно удалён из ${orgName} в IndexedDB`);
-          resolve();
-        };
-
-        deleteRequest.onerror = (event) => {
-          reject(event.target.errorCode);
-        };
+      deleteRequest.onsuccess = () => {
+        console.log(
+          `Объект с id ${id} успешно удалён из ${orgName} в IndexedDB`
+        );
+        resolve();
       };
 
-      request.onerror = (event) => {
-        reject(event.target.error);
+      deleteRequest.onerror = (event) => {
+        reject(event.target.errorCode);
       };
     });
   } catch (error) {
@@ -153,5 +168,3 @@ export const deleteFromIndexedDB = async (orgName, id) => {
     throw error;
   }
 };
-
-// indexedDB.deleteDatabase("ControlPanelDB")

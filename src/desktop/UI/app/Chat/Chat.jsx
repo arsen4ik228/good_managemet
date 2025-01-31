@@ -3,8 +3,15 @@ import classes from "./Chat.module.css";
 import iconHeader from "@image/iconHeader.svg";
 import burger from "@image/burger.svg";
 import Section from "./section/Section";
+import { useNavigate } from "react-router-dom";
 
 export default function Chat() {
+  const navigate = useNavigate();
+  
+  const handleButtonClick = () => {
+    navigate("/pomoshnik/user");
+  };
+
   return (
     <div className={classes.contact}>
       <div className={classes.header}>
@@ -17,9 +24,10 @@ export default function Chat() {
       <div className={classes.main}>
         <div className={classes.item}>
           <img src={iconHeader} alt="iconHeader" />
-          <div>Личный помощник</div>
+          <span>Личный помощник</span>
         </div>
         <Section></Section>
+        <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
       </div>
     </div>
   );

@@ -1,42 +1,34 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "../baseUrl";
-import { prepareHeaders } from "../Function/prepareHeaders.js";
-import apiSlice from "../api.js";
+import { baseUrl } from "./constans";
+import { prepareHeaders } from "./Function/prepareHeaders.js";
 
-export const controlPanelApi = apiSlice.injectEndpoints({
+export const controlPanelApi = createApi({
+  reducerPath: "controlPanelApi",
+  tagTypes: ["Panel"],
+  baseQuery: fetchBaseQuery({ baseUrl, prepareHeaders }),
   endpoints: (build) => ({
+    getAllControlPanel: build.query({
+      query: ({ organizationId }) => ({
+        url: `controlPanels/${organizationId}`,
+      }),
+      providesTags: [{ type: "Panel", id: "LIST" }],
+    }),
+
     getControlPanelId: build.query({
       query: ({ controlPanelId }) => ({
         url: `controlPanels/${controlPanelId}/controlPanel`,
       }),
 
       transformResponse: (response) => {
-        const statisticsIdsInPanel =
-          response?.panelToStatistics?.map((item) => item.statistic.id) || [];
-        const statisticsPoints =
-          response?.panelToStatistics
-            ?.map((item) => ({
-              panelToStatisticsId: item.id,
-              orderStatisticNumber: item.orderStatisticNumber,
-              id: item.statistic.id,
-              name: item.statistic.name,
-              statisticDatas: item.statistic.statisticDatas,
-            }))
-            .sort((a, b) => a.orderStatisticNumber - b.orderStatisticNumber) ||
-          [];
-        return {
-          response: response,
-          statisticsIdsInPanel: statisticsIdsInPanel,
-          statisticsPoints: statisticsPoints,
-        };
+        const statisticsIdsInPanel = response?.panelToStatistics?.map(item => item.statistic.id) || [];
+        const statisticsPoints = response?.panelToStatistics?.map(item => ({
+          id: item.statistic.id,
+          name: item.statistic.name,
+          statisticDatas: item.statistic.statisticDatas
+        })) || [];
+        
+        return { response: response, statisticsIdsInPanel: statisticsIdsInPanel, statisticsPoints:statisticsPoints };
       },
-      providesTags: [{ type: "Panel", id: "LIST" }],
-    }),
-
-    getAllControlPanel: build.query({
-      query: ({ organizationId }) => ({
-        url: `controlPanels/${organizationId}`,
-      }),
       providesTags: [{ type: "Panel", id: "LIST" }],
     }),
 

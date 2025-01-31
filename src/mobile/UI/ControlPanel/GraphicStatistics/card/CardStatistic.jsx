@@ -16,8 +16,8 @@ export default function CardStatistic({
 }) {
   const svgRef = useRef();
 
-  const [width, setWidth] = useState(300);
-  const [height, setHeight] = useState(340);
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(335);
 
   const [pointsForGraphic, setPointsForGraphic] = useState([]);
 
@@ -39,6 +39,24 @@ export default function CardStatistic({
       setModalStatisticDatas(data);
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = window.innerWidth - 25;
+      setWidth(newWidth);
+    };
+
+    // Устанавливаем начальное значение ширины
+    handleResize();
+
+    // Добавляем слушатель события resize
+    window.addEventListener('resize', handleResize);
+
+    // Убираем слушатель при размонтировании компонента
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeGraphic === "Ежедневный") {
@@ -314,7 +332,7 @@ export default function CardStatistic({
       (a, b) => new Date(a.valueDate) - new Date(b.valueDate)
     );
 
-    const margin = { top: 20, right: 20, bottom: 40, left: 20 };
+    const margin = { top: 10, right: 15, bottom: 30, left: 15 };
 
     const minValue = d3.min(pointsForGraphic, (d) => d.value);
     const maxValue = d3.max(pointsForGraphic, (d) => d.value);
@@ -485,7 +503,7 @@ export default function CardStatistic({
         )
       )
       .attr("cy", (d) => y(d.value))
-      .attr("r", 5)
+      .attr("r", 0)
       .attr("fill", (d, i) => getColor(d.value, i)) // Apply the reversed color logic here
       .on("mouseover", (event, d) => {
         d3.select(event.currentTarget).attr("r", 7).attr("fill", "orange");
@@ -563,7 +581,7 @@ export default function CardStatistic({
         const d = d3.select(event.currentTarget).datum();
         const index = pointsForGraphic.indexOf(d);
         d3.select(event.currentTarget)
-          .attr("r", 5)
+          .attr("r", 0)
           .attr("fill", getColor(d.value, index)); // Apply the reversed color logic here
         svg.select("#tooltip").remove();
       });
