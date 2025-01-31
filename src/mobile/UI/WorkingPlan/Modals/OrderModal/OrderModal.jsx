@@ -3,13 +3,16 @@ import classes from './OrderModal.module.css'
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
 import { usePostsHook } from '../../../../hooks/usePostsHook'
 
-export default function OrderModal({ setModalOpen, setTheme, setReciverPost, buttonFunc }) {
+export default function OrderModal({ setModalOpen, setTheme, selectedPost, setReciverPost, buttonFunc }) {
 
     const {
-        allPosts
-    } = usePostsHook()
+        underPosts,
+        isLoadingGetUnderPosts,
+        isErrorGetUnderPosts,
+        isFetchingGetUnderPosts,
+    } = usePostsHook(selectedPost)
 
-    const [selectedPost, setSelectedPost] = useState()
+    const [selectedReceiverPost, setSelectedRecieverPost] = useState()
 
     const buttonClick = () => {
         buttonFunc()
@@ -17,7 +20,7 @@ export default function OrderModal({ setModalOpen, setTheme, setReciverPost, but
     }
 
     const selectPost = (value) => {
-        setSelectedPost(value)
+        setSelectedRecieverPost(value)
         setReciverPost(value)
     }
 
@@ -38,7 +41,7 @@ export default function OrderModal({ setModalOpen, setTheme, setReciverPost, but
                         Пост:
                     </div>
                     <div className={classes.right}>
-                        {allPosts.map((item, index) => (
+                        {underPosts?.map((item, index) => (
                             <div key={index} onClick={() => selectPost(item.id)}>
                                 <input type="radio" checked={item.id === selectedPost} />
                                 <span>{item.postName}</span>

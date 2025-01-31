@@ -1,4 +1,4 @@
-import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation } from "../BLL/postApi";
+import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation, useGetUnderPostsQuery } from "../BLL/postApi";
 
 export const usePostsHook = (postId) => {
 
@@ -43,6 +43,23 @@ export const usePostsHook = (postId) => {
         }
     );
 
+    const {
+        underPosts = {},
+        isLoadingGetUnderPosts,
+        isErrorGetUnderPosts,
+        isFetchingGetUnderPosts,
+    } = useGetUnderPostsQuery(
+        { postId },
+        {
+            selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
+                underPosts: data?.underPosts || [],
+                isLoadingGetUnderPosts: isLoading,
+                isErrorGetUnderPosts: isError,
+                isFetchingGetUnderPosts: isFetching,
+            }),
+            skip: !postId
+        }
+    );
 
     const [
         updatePost,
@@ -101,6 +118,11 @@ export const usePostsHook = (postId) => {
         isLoadingGetPostId,
         isErrorGetPostId,
         isFetchingGetPostId,
+
+        underPosts,
+        isLoadingGetUnderPosts,
+        isErrorGetUnderPosts,
+        isFetchingGetUnderPosts,
 
 
         staff,

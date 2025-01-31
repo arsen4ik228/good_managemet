@@ -30,8 +30,6 @@ import ModalContainer from './UI/Custom/ModalContainer/ModalContainer.jsx';
 import { isMobile } from 'react-device-detect';
 
 function App() {
-    console.log('mobile                                                        ', isMobile)
-
     return (
         <>
             <Routes>

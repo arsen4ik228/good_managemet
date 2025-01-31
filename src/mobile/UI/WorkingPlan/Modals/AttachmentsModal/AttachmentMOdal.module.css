@@ -1,47 +1,3 @@
-.content {
-    position: relative;
-
-    max-width: 550px;
-
-    padding-bottom: 10px;
-
-    >input {
-        padding-top: 10px;
-
-        width: 100%;
-
-        /* border-bottom: 1px solid #bfbfbf; */
-
-    }
-}
-
-.attachPolicy {
-    position: relative;
-
-    width: 100%;
-
-    margin: 0 auto;
-
-    border-bottom: 1px solid #bfbfbf;
-
-    font-size: 1rem;
-    text-align: center;
-
-}
-
-.content::before {
-    content: "Прикрепите политику";
-    color: rgb(58, 58, 58);
-    position: absolute;
-    top: -8px;
-    left: 8px;
-    pointer-events: none;
-    font-weight: 500;
-    font-size: 12px;
-    font-style: italic;
-    z-index: 1000;
-}
-
 .customFileButton {
     background: linear-gradient(to bottom, #FFFFFF, #E6E6E6) #F5F5F5 repeat-x;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) #B3B3B3;
@@ -53,7 +9,7 @@
     text-decoration: none;
     display: block;
     font-size: 16px;
-    width: 100%;
+    width: 95%;
     line-height: 20px;
     margin: 20px auto;
     padding: 4px 12px;
@@ -105,8 +61,8 @@
 
 /* Стили для контейнера выбранных файлов */
 .selectedFiles {
-    margin-top: 16px;
-    width: 100%;
+    margin: 0 auto 10px auto;
+    width: 95%;
     max-height: 200px;
     overflow-y: auto;
     /* Добавляем прокрутку, если файлов слишком много */
