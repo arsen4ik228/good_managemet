@@ -12,7 +12,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
         isFetchingGetUnderPosts,
     } = usePostsHook(selectedPost)
 
-    // const [selectedPost, setSelectedPost] = useState()
+    const [selectedReceiverPost, setSelectedRecieverPost] = useState()
 
     const buttonClick = () => {
         buttonFunc()
@@ -20,7 +20,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
     }
 
     const selectPost = (value) => {
-        // setSelectedPost(value)
+        setSelectedRecieverPost(value)
         setReciverPost(value)
     }
 

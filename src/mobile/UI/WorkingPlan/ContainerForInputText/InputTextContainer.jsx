@@ -29,7 +29,7 @@ export default function InputTextContainer({ userPosts }) {
 
     const [convertTheme, setConvertTheme] = useState('')
     const [reciverPostId, setReciverPostId] = useState()
-
+    console.log(reciverPostId)
     const idTextarea = 1001
     const dbName = 'DraftDB'
     const storeName = 'drafts'
