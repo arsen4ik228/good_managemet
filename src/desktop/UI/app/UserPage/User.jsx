@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./User.module.css";
 
 import Headers from "@Custom/Headers/Headers";
@@ -10,14 +10,26 @@ import { useUserHook } from "../../hooks/useUserHook";
 import HandlerMutation from "@Custom/HandlerMutation";
 import { usePostImageMutation } from "../../../BLL/fileApi";
 import addCircle from "@image/addCircleGrey.svg";
+import post from "@image/post.svg";
+import ButtonAttach from "../../Custom/buttonAttach/ButtonAttach";
+import { useModalSelectCheckBox } from "../../hooks/useModalSelectCheckBox";
+import { ModalSelectCheckBox } from "../../Custom/modalSelectCheckBox/ModalSelectCheckBox";
+import usePostsHook from "../../hooks/usePostsHook";
+import exitHeader from "@image/exitHeader.svg";
 
 export default function User() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [telephoneNumber, setTelephoneNumber] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
   const [avatarLocal, setAvatarLocal] = useState("");
-  const [file, setFile] = useState();
+  const [file, setFile] = useState("");
+
+  const [openModalSelectPosts, setOpenModalSelectPosts] = useState("");
+  const [arrayCheckedPostsIds, setArrayCheckedPostsIds] = useState([]);
+  const [arrayCheckedPostsNames, setArrayCheckedPostsNames] = useState([]);
 
   const handleChangeFirstName = (e) => {
     const inputValue = e;
@@ -56,6 +68,7 @@ export default function User() {
 
   // Создание аккаунта
   const {
+    // Создать user
     reduxSelectedOrganizationId,
     postUser,
 
@@ -65,11 +78,16 @@ export default function User() {
     ErrorUserMutation,
 
     localIsResponseUserMutation,
+
+    // Получит информацию для создания user
+    postsWithoutUser,
+    isLoadingGetUserNew,
+    isErrorGetUserNew,
   } = useUserHook();
 
   const [postImage] = usePostImageMutation();
 
-  const handlePostUserButtonClick = async () => {
+  const handleCreateUserButtonClick = async () => {
     const userData = {
       firstName,
       lastName,
@@ -93,7 +111,7 @@ export default function User() {
 
     await postUser(userData)
       .unwrap()
-      .then()
+      .then((result) => saveUpdatePost(result.id))
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
@@ -108,14 +126,102 @@ export default function User() {
 
   //Загрузка картинки локально
   const imageUploadHandlerLocal = (e) => {
+    const fileInput = e.target;
     const file = e.target.files[0];
     if (file) {
       setFile(file);
       const imageUrl = URL.createObjectURL(file);
       setAvatarLocal(imageUrl);
-      console.log(imageUrl);
+    }
+    // Сбрасываем значение инпута, чтобы можно было выбрать тот же файл
+    fileInput.value = "";
+  };
+
+  const deleteImage = () => {
+    if (avatarLocal) {
+      URL.revokeObjectURL(avatarLocal); // Очищаем URL из памяти
+    }
+    setFile("");
+    setAvatarLocal("");
+  };
+
+  // Для прикрепления поста
+  const {
+    filterArraySearchModalCheckBox,
+    handleCheckboxChange,
+    inputSearchModalCheckBox,
+    setInputSearchModalCheckBox,
+  } = useModalSelectCheckBox({
+    array: postsWithoutUser,
+    arrayItem: "postName",
+    setArrayChecked: setArrayCheckedPostsIds,
+  });
+
+  const exitsModalSelectPosts = () => {
+    setOpenModalSelectPosts(false);
+    const filtered = arrayCheckedPostsIds
+      .map(
+        (selectPost) =>
+          postsWithoutUser.find((post) => selectPost === post.id)?.postName
+      )
+      .filter(Boolean); // Убираем undefined
+    setArrayCheckedPostsNames(filtered);
+  };
+
+  const {
+    updatePost,
+    isLoadingUpdatePostMutation,
+    isSuccessUpdatePostMutation,
+    isErrorUpdatePostMutation,
+    ErrorUpdatePostMutation,
+  } = usePostsHook();
+
+  const saveUpdatePost = async (createdUserId) => {
+    if (arrayCheckedPostsIds.length > 0 && createdUserId) {
+      try {
+        await Promise.all(
+          arrayCheckedPostsIds.map(async (id) => {
+            await updatePost({
+              postId: id,
+              _id: id,
+              responsibleUserId: createdUserId,
+            })
+              .unwrap()
+              .then(() => {
+                reset();
+              })
+              .catch((error) => {
+                console.error(
+                  `Ошибка при обновлении поста ${id}:`,
+                  JSON.stringify(error, null, 2)
+                );
+              });
+          })
+        );
+      } catch (err) {
+        console.error("Ошибка выполнения запросов:", err);
+      }
     }
   };
+
+  const reset = () => {
+    setFirstName("");
+    setLastName("");
+    setMiddleName("");
+    setTelephoneNumber("");
+    setAvatarLocal("");
+    setFile("");
+    setArrayCheckedPostsIds([]);
+    setArrayCheckedPostsNames([]);
+  };
+
+  useEffect(() => {
+    if (firstName && lastName && middleName && telephoneNumber.length == 12) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+  }, [firstName, lastName, middleName, telephoneNumber]);
 
   return (
     <div className={classes.dialog}>
@@ -138,6 +244,12 @@ export default function User() {
               className={classes.hiddenInput}
               onChange={imageUploadHandlerLocal}
             />
+            <img
+              src={exitHeader}
+              title={"удалить картинку"}
+              onClick={deleteImage}
+              style={{ width: "12px", height: "12px" }}
+            ></img>
           </div>
 
           <div className={classes.column2}>
@@ -173,9 +285,34 @@ export default function User() {
               </InputMask>
             </Input>
 
+            <ButtonAttach
+              image={post}
+              onClick={() => setOpenModalSelectPosts(true)}
+              selectArray={arrayCheckedPostsNames}
+              prefix={"Посты: "}
+              btnName={"Пикрепить посты"}
+            ></ButtonAttach>
+
+            {openModalSelectPosts && (
+              <ModalSelectCheckBox
+                nameTable={"Посты"}
+                handleSearchValue={inputSearchModalCheckBox}
+                handleSearchOnChange={(e) =>
+                  setInputSearchModalCheckBox(e.target.value)
+                }
+                exit={exitsModalSelectPosts}
+                filterArray={filterArraySearchModalCheckBox}
+                array={postsWithoutUser}
+                arrayItem={"postName"}
+                handleChecboxChange={handleCheckboxChange}
+                arrayChecked={arrayCheckedPostsIds}
+              ></ModalSelectCheckBox>
+            )}
+
             <button
-              onClick={handlePostUserButtonClick}
+              onClick={handleCreateUserButtonClick}
               className={classes.btnSave}
+              disabled={!isValid}
             >
               Сохранить
             </button>
@@ -186,13 +323,14 @@ export default function User() {
           Loading={isLoadingUserMutation}
           Error={isErrorUserMutation && localIsResponseUserMutation}
           Success={isSuccessUserMutation && localIsResponseUserMutation}
-          textSuccess={"Стратегия обновлена"}
+          textSuccess={"Пользователь создан"}
           textError={
             ErrorUserMutation?.data?.errors?.[0]?.errors?.[0]
               ? ErrorUserMutation.data.errors[0].errors[0]
               : ErrorUserMutation?.data?.message
           }
         ></HandlerMutation>
+        
       </div>
     </div>
   );

@@ -10,7 +10,6 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import Select from "@Custom/Select/Select";
 import useStartegyHook from "@hooks/useStartegyHook";
-import { useMutationHandler } from "@hooks/useMutationHandler";
 
 export default function Strategy() {
   const [number, setNumber] = useState("");

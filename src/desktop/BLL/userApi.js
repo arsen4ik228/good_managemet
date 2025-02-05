@@ -10,7 +10,15 @@ export const userApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+
+    getUserNew: build.query({
+      query: ({ organizationId }) => ({
+        url: `users/${organizationId}/new`,
+      }),
+      providesTags:["User"]
+    }),
+
   }),
 });
 
-export const { usePostUserMutation } = userApi;
+export const { usePostUserMutation, useGetUserNewQuery } = userApi;

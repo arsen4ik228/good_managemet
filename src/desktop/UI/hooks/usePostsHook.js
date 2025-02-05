@@ -1,6 +1,7 @@
 
 import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation } from "@BLL/postApi";
 import useGetOrganizationId from "./useGetReduxOrganization";
+
 export default function usePostsHook(postId) {
 
     const {reduxSelectedOrganizationId} = useGetOrganizationId();
@@ -47,17 +48,6 @@ export default function usePostsHook(postId) {
     );
 
 
-    const [
-        updatePost,
-        {
-            isLoading: isLoadingUpdatePostMutation,
-            isSuccess: isSuccessUpdatePostMutation,
-            isError: isErrorUpdatePostMutation,
-            error: ErrorUpdatePostMutation
-        },
-    ] = useUpdatePostsMutation();
-
-
     const {
         staff = [],
         policies = [],
@@ -88,7 +78,16 @@ export default function usePostsHook(postId) {
         },
     ] = usePostPostsMutation();
 
-
+    const [
+        updatePost,
+        {
+            isLoading: isLoadingUpdatePostMutation,
+            isSuccess: isSuccessUpdatePostMutation,
+            isError: isErrorUpdatePostMutation,
+            error: ErrorUpdatePostMutation
+        },
+    ] = useUpdatePostsMutation();
+    
     return {
         allPosts,
         isLoadingGetPosts,

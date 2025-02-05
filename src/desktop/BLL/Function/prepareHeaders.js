@@ -3,8 +3,9 @@ import { refreshTokens } from "../authApi"; // Функция обновлени
 
 export const prepareHeaders = async (headers) => {
   const token = localStorage.getItem("accessToken");
-  
+
   // Если токена нет, перенаправляем на главную страницу
+
   if (token == null) {
     window.location.href = `#/`;
     return headers;
@@ -16,15 +17,20 @@ export const prepareHeaders = async (headers) => {
     return headers;
   }
 
-  // Если токен невалиден — обновляем
-  const fingerprint = localStorage.getItem("fingerprint"); // Замените на реальный fingerprint
-  const response = await refreshTokens(fingerprint); // Функция обновления токенов
-  const newAccessToken = response?.newAccessToken;
+  try {
+    // Если токен невалиден — обновляем
+    const fingerprint = localStorage.getItem("fingerprint"); // Замените на реальный fingerprint
+    const response = await refreshTokens(fingerprint); // Функция обновления токенов
+    const newAccessToken = response?.newAccessToken;
 
-  // Если есть новый токен, сохраняем его и добавляем в заголовок
-  if (newAccessToken) {
-    localStorage.setItem("accessToken", newAccessToken);
-    headers.set("Authorization", `Bearer ${newAccessToken}`);
+    if (newAccessToken) {
+      localStorage.setItem("accessToken", newAccessToken);
+      headers.set("Authorization", `Bearer ${newAccessToken}`);
+    }
+
+  } catch (error) {
+    window.location.href = `#/error`;
+    console.error(error);
   }
 
   return headers;

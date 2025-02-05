@@ -6,6 +6,7 @@ import {
   useUpdateControlPanelMutation,
 } from "@BLL/controlPanel/controlPanelApi";
 import useGetOrganizationId from "./useGetReduxOrganization";
+import { useMutationHandler } from "./useMutationHandler";
 
 export default function useControlPanel({ selectedControlPanelId }) {
   const { reduxSelectedOrganizationId, reduxSelectedOrganizationReportDay } = useGetOrganizationId();
@@ -58,8 +59,16 @@ export default function useControlPanel({ selectedControlPanelId }) {
       isSuccess: isSuccessPostControlPanelMutation,
       isError: isErrorPostControlPanelMutation,
       error: ErrorPostControlPanel,
+      reset: resetPostControlPanelMutation,
     },
   ] = usePostControlPanelMutation();
+
+   
+  const localIsResponsePostControlPanelMutation = useMutationHandler(
+    isSuccessPostControlPanelMutation,
+    isErrorPostControlPanelMutation,
+    resetPostControlPanelMutation
+  );
 
   const [
     updateControlPanel,
@@ -68,8 +77,15 @@ export default function useControlPanel({ selectedControlPanelId }) {
       isSuccess: isSuccessUpdateControlPanelMutation,
       isError: isErrorUpdateControlPanelMutation,
       error: ErrorUpdateControlPanel,
+      reset: resetUpdateControlPanelMutation,
     },
   ] = useUpdateControlPanelMutation();
+
+  const localIsResponseUpdateControlPanelMutation = useMutationHandler(
+    isSuccessUpdateControlPanelMutation,
+    isErrorUpdateControlPanelMutation,
+    resetUpdateControlPanelMutation
+  );
 
   const [
     deleteControlPanel,
@@ -78,8 +94,15 @@ export default function useControlPanel({ selectedControlPanelId }) {
       isSuccess: isSuccessDeleteControlPanelMutation,
       isError: isErrorDeleteControlPanelMutation,
       error: ErrorDeleteControlPanel,
+      reset: resetDeleteControlPanelMutation,
     },
   ] = useDeleteControlPanelMutation();
+
+  const localIsResponseDeleteControlPanelMutation = useMutationHandler(
+    isSuccessDeleteControlPanelMutation,
+    isErrorDeleteControlPanelMutation,
+    resetDeleteControlPanelMutation
+  );
 
   return {
     reduxSelectedOrganizationId,
@@ -106,6 +129,7 @@ export default function useControlPanel({ selectedControlPanelId }) {
     isSuccessPostControlPanelMutation,
     isErrorPostControlPanelMutation,
     ErrorPostControlPanel,
+    localIsResponsePostControlPanelMutation,
 
     //  Обновление
     updateControlPanel,
@@ -113,6 +137,7 @@ export default function useControlPanel({ selectedControlPanelId }) {
     isSuccessUpdateControlPanelMutation,
     isErrorUpdateControlPanelMutation,
     ErrorUpdateControlPanel,
+    localIsResponseUpdateControlPanelMutation,
 
     // Удаление статистики
     deleteControlPanel,
@@ -120,5 +145,6 @@ export default function useControlPanel({ selectedControlPanelId }) {
     isSuccessDeleteControlPanelMutation,
     isErrorDeleteControlPanelMutation,
     ErrorDeleteControlPanel,
+    localIsResponseDeleteControlPanelMutation
   };
 }

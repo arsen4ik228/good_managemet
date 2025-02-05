@@ -9,7 +9,7 @@
     background-color: #ffff;
     box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.5);
 
-    overflow-x: auto; 
+    overflow-x: auto;
 }
 
 .main {
@@ -17,7 +17,7 @@
 
     width: 100%;
     max-width: 75vw;
-    
+
     display: flex;
     flex-direction: column;
     flex: 1 0 200px;
@@ -56,6 +56,12 @@
     row-gap: 10px;
 
     padding: 10px;
-    
+
     overflow-y: auto;
+}
+
+.handler {
+    align-self: center;
+
+    margin-right:  25%;
 }

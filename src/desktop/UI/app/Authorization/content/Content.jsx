@@ -57,6 +57,7 @@ export default function Content() {
             headers: {
               "User-Agent": userAgent,
             },
+            credentials: "include" // Максик
           }
         );
         const serverData = await response.json();

@@ -42,6 +42,7 @@
     padding: 10px;
 
     background-color: #ffff;
+    border-radius: 10px;
 }
 
 
@@ -71,7 +72,6 @@
 }
 
 .btnSave {
-    /* margin-top: 10px; */
 
     width: 150px;
     height: 40px;
@@ -82,13 +82,16 @@
     background-color: var(--primary);
 }
 
-.btnSave:hover{
+.btnSave:not(:disabled):hover {
     transition: all 0.3s;
 
-    width: 155px;
-    height: 42px;
+    transform: scale(1.1);
 
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
     background-color: var(--primary);
+}
+
+.btnSave:disabled{
+    background-color: var(--grey);
 }

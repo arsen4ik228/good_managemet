@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import classes from "./HandlerMutation.module.css";
+
+import { Result } from "antd";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+
 import icon from "../image/iconHeader.svg";
-import error from "../image/error.svg";
-import success from "../image/success.svg";
+
 export default function HandlerMutation({
   Loading,
   Error,
@@ -11,23 +14,35 @@ export default function HandlerMutation({
   textError,
 }) {
   const [showSuccessMutation, setShowSuccessMutation] = useState(false);
-  const [showErrorMutation, setShowErrorMutation] = useState(false);
+ 
+
+  const [visibleError, setVisibleError] = useState(false);
+  const [visibleTextError, setVisibleTextError] = useState("");
+
+
+  const handerErrorButtonClick = () => {
+    setVisibleError(false);
+    setVisibleTextError("");
+  };
 
   useEffect(() => {
     setShowSuccessMutation(Success);
   }, [Success]);
 
   useEffect(() => {
-    setShowErrorMutation(Error);
+    if (Error) {
+      setVisibleError(true);
+      setVisibleTextError(textError);
+    }
   }, [Error]);
 
   return (
     <>
+    
       {Loading && (
         <div className={classes.load}>
           <img src={icon} alt="Loading..." className={classes.loadImage} />
           <div className={classes.wave}>
-            {/* <span className={classes.spanLoad}>Загрузка...</span> */}
             <span style={{ "--i": 1 }}>З</span>
             <span style={{ "--i": 2 }}>А</span>
             <span style={{ "--i": 3 }}>Г</span>
@@ -43,18 +58,66 @@ export default function HandlerMutation({
         </div>
       )}
 
-      {showErrorMutation && (
-        <div className={classes.error}>
-          <img src={error} alt="Error" className={classes.errorImage} />
-          <span className={classes.spanError}>{textError}</span>
+      {visibleError && (
+        <div
+          style={{
+            position: "fixed",
+            top: "5%",
+            zIndex: 10000,
+            backgroundColor: "white",
+            border: "1px solid #d9d9d9",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <CloseCircleOutlined
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              fontSize: "18px",
+              color: "#ff4d4f",
+              cursor: "pointer",
+            }}
+            onClick={handerErrorButtonClick}
+          />
+          <Result
+            status="error"
+            title="Ошибка выполнения"
+            subTitle={visibleTextError}
+            icon={
+              <CloseCircleOutlined
+                style={{ transform: "scale(2.5)", color: "#ff4d4f" }}
+              />
+            }
+          />
         </div>
       )}
 
       {showSuccessMutation && (
-        <div className={classes.success}>
-          <img src={success} alt="success" className={classes.successImage} />
-          <span className={classes.spanSuccess}>{textSuccess}</span>
-        </div>
+        <Result
+          style={{
+            position: "fixed",
+            top: "5%",
+            zIndex: 10000,
+            backgroundColor: "white",
+            border: "1px solid #d9d9d9",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          }}
+          status="success"
+          title="Успешно выполнено!"
+          subTitle={textSuccess}
+          icon={
+            <CheckCircleOutlined
+              style={{ transform: "scale(2.5)", color: "#52c41a" }}
+            />
+          }
+        />
       )}
     </>
   );
