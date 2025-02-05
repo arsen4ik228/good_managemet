@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import classes from './FilesModal.module.css';
+
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer';
 import { usePolicyHook } from '../../../../hooks/usePolicyHook';
-import { usePostFilesMutation } from '../../../../../desktop/BLL/fileApi';
+import { usePostFilesMutation } from '@services';
 import { baseUrl, notEmpty } from '../../../../BLL/constans';
 
 export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOrganizationId, files, setFiles, setUnpinFiles }) {
