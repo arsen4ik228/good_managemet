@@ -9,6 +9,7 @@ export const fileApi = apiSlice.injectEndpoints({
                 method: "POST",
                 body,
             }),
+            invalidatesTags: ["Image"],
         }),
         postFiles: build.mutation({
             query: ({formData}) => ({
@@ -16,6 +17,7 @@ export const fileApi = apiSlice.injectEndpoints({
                 method: "POST",
                 body: formData,
             }),
+            invalidatesTags: ["File"],
         }),
     }),
 

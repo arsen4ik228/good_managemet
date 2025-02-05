@@ -52,8 +52,16 @@ export const statisticsApi = apiSlice.injectEndpoints({
         console.log("Transform Data:  ", transformData);
         return transformData;
       },
-      providesTags: (result) =>
-        result ? [{ type: "Statistics", id: "LIST" }] : [],
+      providesTags: result =>
+        result
+          ? [
+              ...result?.transformData.map(({ id }) => ({
+                type: 'Statistic',
+                id,
+              })),
+              'Statistic',
+            ]
+          : ['Statistic'],
     }),
 
     postStatistics: build.mutation({
@@ -72,7 +80,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: (result) =>
-        result ? [{ type: "Statistics", id: "LIST" }] : [],
+        result ? ["Statistic"],
     }),
 
     getStatisticsId: build.query({
@@ -85,8 +93,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
           statisticDatas: response.statisticDatas || [],
         };
       },
-      providesTags: (result, error, { statisticId }) =>
-        result ? [{ type: "Statistics1", id: statisticId }] : [],
+      providesTags: (result, err, arg) => [{ type: 'Statistic', id: arg.statisticId }],
     }),
 
     updateStatistics: build.mutation({
@@ -95,8 +102,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { statisticId }) =>
-        result ? [{ type: "Statistics1", id: statisticId }] : [],
+      invalidatesTags: (result, err, arg) => [{ type: 'Statistic', id: arg.statisticId }],
     }),
 
     updateStatisticsToPostId: build.mutation({
@@ -105,8 +111,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result) =>
-        result ? [{ type: "Statistics", id: "LIST" }] : [],
+      invalidatesTags: (result, err, arg) => [{ type: 'Post', id: arg.postId }],
     }),
   }),
 });

@@ -7,22 +7,31 @@ export const organizationApi = apiSlice.injectEndpoints({
       query: () => ({
         url: `organizations`,
       }),
-      providesTags: (result) =>
-        result ? [{ type: "Organization", id: "LIST" }] : [],
+    
       transformResponse: (response) => {
         const organizations = response?.map(
           ({ createdAt, updatedAt, ...rest }) => ({ ...rest })
         );
         return organizations
-      },
+      },  
+      
+      providesTags: result =>
+        result
+          ? [
+              ...result?.organizations.map(({ id }) => ({
+                type: 'Organization',
+                id,
+              })),
+              'Organization',
+            ]
+          : ['Organization'],
     }),
 
     getOrganizationId: build.query({
       query: ({organizationId}) => ({
         url: `organizations/${organizationId}`,
       }),
-      providesTags: (result) =>
-        result ? [{ type: "Organization", id: "LIST" }] : [],
+      providesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.organizationId }],
     }),
 
     updateOrganizations: build.mutation({
@@ -34,8 +43,7 @@ export const organizationApi = apiSlice.injectEndpoints({
           ...body
         },
       }),
-      invalidatesTags: (result, error) =>
-        result ? [{ type: "Organization", id: "LIST" }] : [],
+      invalidatesTags: (result, err, arg) => [{ type: 'Organization', id: arg.selectedOrganizationId }],
     }),
   }),
 });

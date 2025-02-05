@@ -62,8 +62,9 @@ export default function Content() {
         );
         const serverData = await response.json();
 
-        if (serverData.isLogged) {
-          window.location.href = `#/pomoshnik/start`;
+        if (serverData.isLogged && localStorage.getItem("accessToken")) {
+          localStorage.setItem("fingerprint", fp.visitorId);
+          window.location.href = "#/pomoshnik/start";
         }
         console.log("Ответ от /:", serverData);
         setTokenForTG(serverData.tokenForTG);

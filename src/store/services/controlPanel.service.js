@@ -43,7 +43,7 @@ export const controlPanelApi = apiSlice.injectEndpoints({
           statisticsPoints: statisticsPoints,
         };
       },
-      providesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.id }],
+      providesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.controlPanelId }],
     }),
 
     postControlPanel: build.mutation({

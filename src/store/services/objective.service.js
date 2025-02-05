@@ -12,7 +12,10 @@ export const objectiveApi = apiSlice.injectEndpoints({
           currentObjective: response || {},
         };
       },
-      providesTags: [{ type: "Objective", id: "LIST" }],
+      providesTags: (result) =>
+        result?.currentObjective
+          ? [{ type: "Objective", id: result.currentObjective.id }, "Objective"]
+          : ["Objective"],
     }),
 
     updateObjective: build.mutation({
@@ -21,7 +24,7 @@ export const objectiveApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [{ type: "Objective", id: "LIST" }],
+      invalidatesTags: (result, err, arg) => [{ type: 'Objective', id: arg._id }],
     }),
   }),
 });

@@ -9,7 +9,7 @@ export const panelToStatisticsApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [{ type: "Panel", id: "LIST" }],
+      invalidatesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.id }],
     }),
   }),
 });

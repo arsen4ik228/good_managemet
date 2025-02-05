@@ -110,12 +110,15 @@ export const policyApi = apiSlice.injectEndpoints({
       },
 
       providesTags: (result) =>
-        result && Array.isArray(result)
+        result
           ? [
-              ...result.map(({ id }) => ({ type: "Policy", id })),
-              { type: "Policy", id: "LIST" },
+              ...result?.data.map(({ id }) => ({
+                type: 'Policy',
+                id,
+              })),
+              'Policy',
             ]
-          : [{ type: "Policy", id: "LIST" }],
+          : ['Policy'],
     }),
 
     getPoliciesId: build.query({
@@ -155,7 +158,7 @@ export const policyApi = apiSlice.injectEndpoints({
       transformResponse: (response) => ({
         id: response.id,
       }),
-      invalidatesTags: [{ type: "Policy", id: "LIST" }],
+      invalidatesTags: ["Policy"],
     }),
 
     updatePolicies: build.mutation({
@@ -164,11 +167,7 @@ export const policyApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      // Обновляем теги, чтобы перезагрузить getPoliciesId
-      invalidatesTags: (result, error, { policyId }) => [
-        { type: "Policy", id: "LIST" },
-        { type: "Policy", id: policyId },
-      ],
+      invalidatesTags: (result, err, arg) => [{ type: 'Policy', id: arg._id }],
     }),
 
     // postImage: build.mutation({
