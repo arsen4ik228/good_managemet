@@ -3,7 +3,6 @@ import { selectedOrganizationId } from "./baseUrl";
 
 
 export const directoriesApi = apiSlice.injectEndpoints({
-
   endpoints: (build) => ({
     getDirectories: build.query({
       query: () => ({
@@ -53,7 +52,16 @@ export const directoriesApi = apiSlice.injectEndpoints({
           mobileData: Data,
         };
       },
-      providesTags: [{ type: "Directories", id: "LIST" }],
+      providesTags: result =>
+        result
+          ? [
+              ...result?.folders.map(({ id }) => ({
+                type: 'Directory',
+                id,
+              })),
+              'Directory',
+            ]
+          : ['Directory'],
     }),
 
     getPolicyDirectoriesId: build.query({
@@ -79,8 +87,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
         };
       },
       // Добавляем теги для этой query
-      providesTags: (result, error, { policyDirectoryId }) =>
-        result ? [{ type: "policyDirectories", id: policyDirectoryId }] : [],
+      providesTags: (result, err, arg) => [{ type: 'Directory', id: arg.policyDirectoryId }],
     }),
 
     postDirectories: build.mutation({
@@ -89,8 +96,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (result) =>
-        result ? [{ type: "Directories", id: "LIST" }] : [],
+      invalidatesTags: ['Directory'],
     }),
 
     updateDirectories: build.mutation({
@@ -99,8 +105,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result) =>
-        result ? [{ type: "Directories", id: "LIST" }] : [],
+      invalidatesTags: (result, err, arg) => [{ type: 'Directory', id: arg.policyDirectoryId }],
     }),
 
     deleteDirectories: build.mutation({
@@ -108,7 +113,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
         url: `policyDirectory/${policyDirectoryId}/remove`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Directories", id: "LIST" }],
+      invalidatesTags:['Directory'],
     }),
   }),
 });

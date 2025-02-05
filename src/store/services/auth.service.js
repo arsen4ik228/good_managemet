@@ -1,9 +1,9 @@
-import { url } from "./baseUrl"; // Импорт базового URL
+import { baseUrl } from "@helpers/constant.js"; // Импорт базового URL
 
 // Функция для обновления токенов
 export const refreshTokens = async (fingerprint) => {
   try {
-    const response = await fetch(`${url}auth/refresh-tokens`, {
+    const response = await fetch(`${baseUrl}auth/refresh-tokens`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

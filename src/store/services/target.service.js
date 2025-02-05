@@ -172,7 +172,16 @@ export const targetsApi =  apiSlice.injectEndpoints({
                     futureTargets
                 }
             },
-            providesTags: (result) => result ? [{ type: "Targets", id: "LIST" }] : [],
+            providesTags: result =>
+                result
+                  ? [
+                      ...result?.data?.userPosts.map(({ id }) => ({
+                        type: 'Target',
+                        id,
+                      })),
+                      'Target',
+                    ]
+                  : ['Target']
         }),
 
         getArchiveTargets: build.query({
@@ -183,7 +192,16 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 console.log('getArchiveTargets    ', response)
                 return response
             },
-            providesTags: (result) => result ? [{ type: "Targets", id: "LIST" }] : [],
+            providesTags: result =>
+                result
+                  ? [
+                      ...result?.data.map(({ id }) => ({
+                        type: 'Target',
+                        id,
+                      })),
+                      'Target',
+                    ]
+                  : ['Target'],
 
         }),
 
@@ -193,8 +211,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 method: "PATCH",
                 body,
             }),
-            // Обновляем теги, чтобы перезагрузить getStrategiesId
-            invalidatesTags: (result) => result ? [{ type: "Targets", id: "LIST" }] : [],
+            invalidatesTags: (result, err, arg) => [{ type: 'Target', id: arg._id }],
         }),
 
         postTargets: build.mutation({
@@ -203,10 +220,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 method: "POST",
                 body,
             }),
-            // transformResponse: (response) => ({
-            //     id: response.id
-            // }),
-            invalidatesTags: (result) => result ? [{ type: "Targets", id: "LIST" }] : [],
+            invalidatesTags: ['Target'],
         }),
 
         deleteTarget: build.mutation({
@@ -218,7 +232,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
             // transformResponse: (response) => ({
             //     id: response.id
             // }),
-            invalidatesTags: (result) => result ? [{ type: "Targets", id: "LIST" }] : [],
+            invalidatesTags:['Target'] ,
         }),
     })
 })

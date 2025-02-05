@@ -9,12 +9,14 @@ export const goalApi = apiSlice.injectEndpoints({
       }),
 
       transformResponse: (response) => {
-        console.log(response); // Отладка ответа
         return {
           currentGoal: response || {},
         };
       },
-      providesTags: [{ type: "Goal", id: "LIST" }],
+      providesTags: (result) =>
+        result?.currentGoal
+          ? [{ type: "Goal", id: result.currentGoal.id }, "Goal"]
+          : ["Goal"],
     }),
 
     postGoal: build.mutation({
@@ -23,7 +25,7 @@ export const goalApi = apiSlice.injectEndpoints({
         method: "POST",
         body
       }),
-      invalidatesTags: [{ type: "Goal", id: "LIST" }],
+      invalidatesTags: ["Goal"],
     }),
 
     updateGoal: build.mutation({
@@ -32,7 +34,7 @@ export const goalApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [{ type: "Goal", id: "LIST" }],
+      invalidatesTags: (result, err, arg) => [{ type: 'Goal', id: arg._id }],
     }),
   }),
 });

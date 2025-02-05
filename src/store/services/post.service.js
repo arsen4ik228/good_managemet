@@ -11,7 +11,16 @@ export const postApi = apiSlice.injectEndpoints({
       query: () => ({
         url: `posts/${selectedOrganizationId}`,
       }),
-      providesTags: (result, error) => [{ type: "Post", id: "LIST" }],
+      providesTags: result =>
+        result
+          ? [
+              ...result?.data.map(({ id }) => ({
+                type: 'Post',
+                id,
+              })),
+              'Post',
+            ]
+          : ['Post'],
     }),
 
     postPosts: build.mutation({
@@ -23,7 +32,7 @@ export const postApi = apiSlice.injectEndpoints({
       transformResponse: (response) => ({
         id: response.id
       }),
-      invalidatesTags: [{ type: "Post", id: "LIST" }, { type: "PostNew", id: "NEW" }],
+      invalidatesTags: ["Post"],
     }),
 
     getPostNew: build.query({
@@ -40,14 +49,14 @@ export const postApi = apiSlice.injectEndpoints({
           maxDivisionNumber: response?.maxDivisionNumber || null
         };
       },
-      providesTags: (result, error, userId) => [{ type: "PostNew", id: "NEW" }],
+      providesTags: (result, error, arg) => ["Post"],
     }),
 
     getPostId: build.query({
-      query: ({postId }) => ({
+      query: ({postId}) => ({
         url: `posts/${postId}/post`,
       }),
-      providesTags: (result, error, { postId }) => [{ type: 'Post', id: postId },{type: "Statistics", id: "LIST" }],
+      providesTags: (result, error, arg) => [{ type: 'Post', id: arg.postId }],
       transformResponse: (response) => {
         console.log('getPostId    ',response); // Отладка ответа
         return {
@@ -66,7 +75,7 @@ export const postApi = apiSlice.injectEndpoints({
       query: ({postId }) => ({
         url: `posts/${postId}/allUnderPosts`,
       }),
-      providesTags: (result, error, { postId }) => [{ type: 'Post', id: postId }],
+      providesTags: (result, error, arg) => [{ type: 'Post', id: arg.postId }],
       transformResponse: (response) => {
         console.log('getUnderPosts    ',response); // Отладка ответа
         return {
@@ -92,15 +101,6 @@ export const postApi = apiSlice.injectEndpoints({
         { type: "Post", id: "LIST" },  // Инвалидация списка постов
         { type: "Post", id: postId },  // Инвалидация конкретного поста
       ],
-    }),
-
-    updateStatisticsToPostId: build.mutation({
-      query: ({userId, postId , ...body}) => ({
-        url: `${userId}/statistics/${postId}/updateBulk`,
-        method: "PATCH",
-        body,
-      }),
-      invalidatesTags: (result) => result ? [{type: "Statistics", id: "LIST" }] : []
     }),
   }),
 });

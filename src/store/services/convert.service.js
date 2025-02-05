@@ -10,7 +10,7 @@ export const convertApi = apiSlice.injectEndpoints({
           ...body,
         },
       }),
-      invalidatesTags: [{ type: "Convert", id: "LIST" }],
+      invalidatesTags: ["Convert"],
     }),
   }),
 });

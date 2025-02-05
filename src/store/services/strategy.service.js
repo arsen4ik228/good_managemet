@@ -37,7 +37,16 @@ export const strategyApi = apiSlice.injectEndpoints({
           hasDraftStrategies: hasDraftStrategies,
         };
       },
-      providesTags: [{ type: "Strategy", id: "LIST" }],
+      providesTags: result =>
+        result
+          ? [
+              ...result?.data.map(({ id }) => ({
+                type: 'Strategy',
+                id,
+              })),
+              'Strategy',
+            ]
+          : ['Strategy'],
     }),
 
     getStrategyId: build.query({
@@ -48,8 +57,9 @@ export const strategyApi = apiSlice.injectEndpoints({
         currentStrategy: response || {},
         currentStrategyState: response.state || "",
       }),
-      providesTags: [{ type: "Strategy", id: "LIST" }],
+      providesTags: (result, err, arg) => [{ type: 'Strategy', id: arg.strategyId }],
     }),
+
 // Илья body другое postStrategy
     postStrategy: build.mutation({
       query: (body) => ({
@@ -60,7 +70,7 @@ export const strategyApi = apiSlice.injectEndpoints({
       transformResponse: (response) => ({
         id: response.id,
       }),
-      invalidatesTags:[{ type: "Strategy", id: "LIST" }],
+      invalidatesTags:["Strategy"],
     }),
 
     updateStrategy: build.mutation({
@@ -69,7 +79,7 @@ export const strategyApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [{ type: "Strategy", id: "LIST" }],
+      invalidatesTags: (result, err, arg) => [{ type: 'Strategy', id: arg._id }],
     }),
   }),
 });
