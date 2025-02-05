@@ -1,11 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "./baseUrl";
-import { prepareHeaders } from "./Function/prepareHeaders.js";
+import apiSlice from "./api";
 
-export const objectiveApi = createApi({
-  reducerPath: "objectiveApi",
-  tagTypes: ["Objective"],
-  baseQuery: fetchBaseQuery({ baseUrl: url, prepareHeaders }),
+export const objectiveApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getObjectiveId: build.query({
       query: ({ strategyId }) => ({
@@ -32,4 +27,4 @@ export const objectiveApi = createApi({
 });
 
 export const { useGetObjectiveIdQuery, useUpdateObjectiveMutation } =
-objectiveApi;
+  objectiveApi;

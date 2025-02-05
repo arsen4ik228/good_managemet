@@ -1,10 +1,23 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "../baseUrl";
-import { prepareHeaders } from "../Function/prepareHeaders.js";
-import apiSlice from "../api.js";
+import apiSlice from "./api";
 
 export const controlPanelApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
+    getAllControlPanel: build.query({
+      query: ({ organizationId }) => ({
+        url: `controlPanels/${organizationId}`,
+      }),
+      providesTags: result =>
+        result
+          ? [
+              ...result?.data.map(({ id }) => ({
+                type: 'ControlPanel',
+                id,
+              })),
+              'ControlPanel',
+            ]
+          : ['ControlPanel'],
+    }),
+
     getControlPanelId: build.query({
       query: ({ controlPanelId }) => ({
         url: `controlPanels/${controlPanelId}/controlPanel`,
@@ -30,14 +43,7 @@ export const controlPanelApi = apiSlice.injectEndpoints({
           statisticsPoints: statisticsPoints,
         };
       },
-      providesTags: [{ type: "Panel", id: "LIST" }],
-    }),
-
-    getAllControlPanel: build.query({
-      query: ({ organizationId }) => ({
-        url: `controlPanels/${organizationId}`,
-      }),
-      providesTags: [{ type: "Panel", id: "LIST" }],
+      providesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.id }],
     }),
 
     postControlPanel: build.mutation({
@@ -46,7 +52,7 @@ export const controlPanelApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "Panel", id: "LIST" }],
+      invalidatesTags: ["ControlPanel"],
     }),
 
     deleteControlPanel: build.mutation({
@@ -54,7 +60,7 @@ export const controlPanelApi = apiSlice.injectEndpoints({
         url: `controlPanels/${controlPanelId}/remove`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Panel", id: "LIST" }],
+      invalidatesTags: ["ControlPanel"],
     }),
 
     updateControlPanel: build.mutation({
@@ -63,7 +69,7 @@ export const controlPanelApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [{ type: "Panel", id: "LIST" }],
+      invalidatesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.id }],
     }),
   }),
 });

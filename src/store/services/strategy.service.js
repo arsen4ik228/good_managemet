@@ -1,11 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "../baseUrl";
-import { prepareHeaders } from "../Function/prepareHeaders.js";
+import apiSlice from "./api";
 
-export const strategyApi = createApi({
-  reducerPath: "strategyApi",
-  tagTypes: ["Strategy"],
-  baseQuery: fetchBaseQuery({ baseUrl: url, prepareHeaders }),
+export const strategyApi = apiSlice.injectEndpoints({
+
   endpoints: (build) => ({
     getStrategies: build.query({
       query: ({organizationId}) => ({
@@ -54,7 +50,7 @@ export const strategyApi = createApi({
       }),
       providesTags: [{ type: "Strategy", id: "LIST" }],
     }),
-
+// Илья body другое postStrategy
     postStrategy: build.mutation({
       query: (body) => ({
         url: `strategies/new`,

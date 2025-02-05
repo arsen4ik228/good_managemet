@@ -1,11 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "./baseUrl";
-import { prepareHeaders } from "./Function/prepareHeaders.js";
 
-export const goalApi = createApi({
-  reducerPath: "goalApi",
-  tagTypes: ["Goal"],
-  baseQuery: fetchBaseQuery({ baseUrl: url, prepareHeaders }),
+import apiSlice from "./api";
+
+export const goalApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getGoal: build.query({
       query: ({ organizationId }) => ({

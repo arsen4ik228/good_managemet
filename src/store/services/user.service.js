@@ -15,7 +15,7 @@ export const userApi = apiSlice.injectEndpoints({
       query: ({ organizationId }) => ({
         url: `users/${organizationId}/new`,
       }),
-      providesTags:["User"]
+      providesTags: ["User"]
     }),
 
   }),

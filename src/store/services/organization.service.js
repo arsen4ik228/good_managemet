@@ -1,11 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { selectedOrganizationId, url } from "./baseUrl";
-import { prepareHeaders } from "./Function/prepareHeaders.js";
+import { selectedOrganizationId } from "./baseUrl";
+import apiSlice from "./api";
 
-export const organizationApi = createApi({
-  reducerPath: "organizationApi",
-  tagTypes: ["Organization"],
-  baseQuery: fetchBaseQuery({ baseUrl: url, prepareHeaders }),
+export const organizationApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getOrganizations: build.query({
       query: () => ({
@@ -17,9 +13,7 @@ export const organizationApi = createApi({
         const organizations = response?.map(
           ({ createdAt, updatedAt, ...rest }) => ({ ...rest })
         );
-        return {
-          organizations: organizations,
-        };
+        return organizations
       },
     }),
 
