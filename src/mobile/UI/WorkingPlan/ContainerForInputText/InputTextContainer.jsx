@@ -77,8 +77,8 @@ export default function InputTextContainer({ userPosts }) {
             Data.policyId = selectedPolicy
         if (files) {
             Data.attachmentIds = files
-            .filter(item => !unpinFiles.includes(item.id))
-            .map(element => element.id)
+                .filter(item => !unpinFiles.includes(item.id))
+                .map(element => element.id)
         }
 
 
@@ -100,6 +100,13 @@ export default function InputTextContainer({ userPosts }) {
 
         if (!contentInput) return
 
+        let attachmentIds = [];
+        if (files) {
+            attachmentIds = files
+                .filter(item => !unpinFiles.includes(item.id)) // Фильтруем файлы
+                .map(element => element.id); // Преобразуем в массив ID
+        }
+
         const Data = {}
 
         Data.convertTheme = convertTheme
@@ -115,7 +122,10 @@ export default function InputTextContainer({ userPosts }) {
             content: contentInput,
             holderPostId: reciverPostId,
             dateStart: startDate,
-            deadline: deadlineDate
+            deadline: deadlineDate,
+            ...(attachmentIds.length > 0 && {
+                attachmentIds: attachmentIds
+            })
         }
 
         await postConvert({

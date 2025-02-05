@@ -9,9 +9,9 @@
     text-decoration: none;
     display: block;
     font-size: 16px;
-    width: 95%;
+    width: 99%;
     line-height: 20px;
-    margin: 20px auto;
+    margin: 5px auto 15px auto;
     padding: 4px 12px;
     text-align: center;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
@@ -63,7 +63,8 @@
 .selectedFiles {
     margin: 0 auto 10px auto;
     width: 95%;
-    max-height: 200px;
+    min-width: 255px;
+    max-height: 300px;
     overflow-y: auto;
     /* Добавляем прокрутку, если файлов слишком много */
     border: 1px solid #ccc;

@@ -2,15 +2,15 @@ import React, { useState, useRef } from 'react';
 import classes from './FilesModal.module.css';
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer';
 import { usePolicyHook } from '../../../../hooks/usePolicyHook';
-import { usePostImageMutation } from '../../../../../desktop/BLL/fileApi';
+import { usePostFilesMutation } from '../../../../../desktop/BLL/fileApi';
 import { baseUrl, notEmpty } from '../../../../BLL/constans';
 
 export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOrganizationId, files, setFiles, setUnpinFiles }) {
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [postImage] = usePostImageMutation();
+    const [postImage] = usePostFilesMutation();
     const [deleteFile, setDeleteFile] = useState([])
     const fileInputRef = useRef(null);
-    console.warn(files)
+    console.warn(selectedFiles)
     const {
         activeDirectives,
         activeInstructions,
@@ -39,9 +39,10 @@ export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOr
         selectedFiles.forEach((file) => {
             formData.append('files', file); // Добавляем каждый файл в FormData
         });
-
+        console.log(formData)
         try {
-            const response = await postImage({ formData }).unwrap(); // Вызываем мутацию
+            const response = await postImage({formData}).unwrap(); // Вызываем мутацию
+            console.log(response)
             setFiles(response);
             setSelectedFiles([]); // Очищаем выбранные файлы после успешной загрузки
             alert('Файлы успешно загружены!');
