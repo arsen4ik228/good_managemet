@@ -1,5 +1,5 @@
-import { selectedOrganizationId } from "../BLL/constans";
-import { useDeletePolicyDirectoriesMutation, useGetPolicyDirectoriesIdQuery, useGetPolicyDirectoriesQuery, usePostPolicyDirectoriesMutation, useUpdatePolicyDirectoriesMutation } from "../BLL/policyDirectoriesApi";
+import { selectedOrganizationId } from "../store/services/index";
+import { useDeletePolicyDirectoriesMutation, useGetPolicyDirectoriesIdQuery, useGetPolicyDirectoriesQuery, usePostPolicyDirectoriesMutation, useUpdatePolicyDirectoriesMutation } from "../mobile/BLL/policyDirectoriesApi";
 
 
 export const usePoliceDirectoriesHook = (policyDirectoryId) => {

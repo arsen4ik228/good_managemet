@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetPoliciesIdQuery, useGetPoliciesQuery, usePostPoliciesMutation, useUpdatePoliciesMutation } from "../BLL/policyApi";
+import { useGetPoliciesIdQuery, useGetPoliciesQuery, usePostPoliciesMutation, useUpdatePoliciesMutation } from "../store/services/index";
 
 
 export const usePolicyHook = (props) => {

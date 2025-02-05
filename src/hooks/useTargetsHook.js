@@ -1,4 +1,4 @@
-import { useDeleteTargetMutation, useGetArchiveTargetsQuery, useGetTargetsQuery, usePostTargetsMutation, useUpdateTargetsMutation } from "../BLL/targetsApi"
+import { useDeleteTargetMutation, useGetArchiveTargetsQuery, useGetTargetsQuery, usePostTargetsMutation, useUpdateTargetsMutation } from "../store/services/index"
 
 export const useTargetsHook = () => {
 

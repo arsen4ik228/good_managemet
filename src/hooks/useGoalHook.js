@@ -1,4 +1,4 @@
-import { useGetGoalQuery, usePostGoalMutation, useUpdateGoalMutation } from "../BLL/goalApi";
+import { useGetGoalQuery, usePostGoalMutation, useUpdateGoalMutation } from "../store/services/index";
 
 export const useGoalHook = () => {
 

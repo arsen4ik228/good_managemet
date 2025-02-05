@@ -4,7 +4,7 @@ import {
     useGetControlPanelIdQuery,
     usePostControlPanelMutation,
     useUpdateControlPanelMutation,
-  } from "../BLL/controlPanelApi";
+  } from "../mobile/BLL/controlPanelApi";
   import useGetOrganizationId from "./useGetReduxOrganization";
   
   export default function useControlPanel({selectedControlPanelId}) {

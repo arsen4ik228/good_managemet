@@ -1,4 +1,4 @@
-import { useGetStrategyIdQuery, useGetStrategyQuery, usePostStrategyMutation, useUpdateStrategyMutation } from "../BLL/strategyApi";
+import { useGetStrategyIdQuery, useGetStrategyQuery, usePostStrategyMutation, useUpdateStrategyMutation } from "../store/services/index";
 
 
 export const useStartegyHook = (strategyId) => {
