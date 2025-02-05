@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import HandlerMutation from "@Custom/HandlerMutation";
+import ErrorPage from "./UI/app/ErrorPage/ErrorPage";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const Content = React.lazy(() => import("@app/Constructions/content/Content"));
@@ -15,7 +16,9 @@ function App() {
           path="/"
           element={
             <div className="wrapper">
-              <React.Suspense fallback={<HandlerMutation Loading={true}></HandlerMutation>}>
+              <React.Suspense
+                fallback={<HandlerMutation Loading={true}></HandlerMutation>}
+              >
                 <Main />
               </React.Suspense>
             </div>
@@ -24,18 +27,36 @@ function App() {
         <Route
           path="/:group/:route"
           element={
-            <div className="messages">
-              <React.Suspense fallback={<HandlerMutation Loading={true}></HandlerMutation>}>
+            <React.Suspense
+              fallback={
+                <div className="lazy">
+                  <HandlerMutation Loading={true}></HandlerMutation>
+                </div>
+              }
+            >
+              <div className="messages">
                 <Content />
-              </React.Suspense>
-            </div>
+              </div>
+            </React.Suspense>
           }
         />
         <Route
           path="*"
           element={
-            <React.Suspense fallback={<HandlerMutation Loading={true}></HandlerMutation>}>
+            <React.Suspense
+              fallback={<HandlerMutation Loading={true}></HandlerMutation>}
+            >
               <NotFound />
+            </React.Suspense>
+          }
+        />
+        <Route
+          path="/error"
+          element={
+            <React.Suspense
+              fallback={<HandlerMutation Loading={true}></HandlerMutation>}
+            >
+              <ErrorPage />
             </React.Suspense>
           }
         />

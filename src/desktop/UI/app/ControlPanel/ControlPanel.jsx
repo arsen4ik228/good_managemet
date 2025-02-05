@@ -11,6 +11,7 @@ import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
 import ModalWindow from "@Custom/ModalWindow";
 import ModalStatistic from "@Custom/GraphicStatistics/modal/ModalStatistic";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
 
 import {
   DndContext,
@@ -74,6 +75,7 @@ export default function ControlPanel() {
     isSuccessPostControlPanelMutation,
     isErrorPostControlPanelMutation,
     ErrorPostControlPanel,
+    localIsResponsePostControlPanelMutation,
 
     //  Обновление
     updateControlPanel,
@@ -81,6 +83,7 @@ export default function ControlPanel() {
     isSuccessUpdateControlPanelMutation,
     isErrorUpdateControlPanelMutation,
     ErrorUpdateControlPanel,
+    localIsResponseUpdateControlPanelMutation,
 
     // Удаление статистики
     deleteControlPanel,
@@ -88,6 +91,7 @@ export default function ControlPanel() {
     isSuccessDeleteControlPanelMutation,
     isErrorDeleteControlPanelMutation,
     ErrorDeleteControlPanel,
+    localIsResponseDeleteControlPanelMutation,
   } = useControlPanel({ selectedControlPanelId });
 
   const { allPosts, isLoadingGetPosts, isErrorGetPosts } = usePostsHook();
@@ -391,11 +395,11 @@ export default function ControlPanel() {
         )}
         {openModalDelete && (
           <ModalWindow
-          text={`Вы точно хотите удалить панель управления ${
-            currentControlPanel.isNameChanged
-              ? currentControlPanel.panelName
-              : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
-          }`}
+            text={`Вы точно хотите удалить панель управления ${
+              currentControlPanel.isNameChanged
+                ? currentControlPanel.panelName
+                : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
+            }`}
             close={setOpenModalDelete}
             btnYes={btnYes}
             btnNo={btnNo}
@@ -411,6 +415,62 @@ export default function ControlPanel() {
             reportDay={reduxSelectedOrganizationReportDay}
           ></ModalStatistic>
         )}
+
+        <div className={classes.handler}>
+          <HandlerMutation
+            Loading={isLoadingPostControlPanelMutation}
+            Error={
+              isErrorPostControlPanelMutation &&
+              localIsResponsePostControlPanelMutation
+            }
+            Success={
+              isSuccessPostControlPanelMutation &&
+              localIsResponsePostControlPanelMutation
+            }
+            textSuccess={"Панель управления успешно создана."}
+            textError={
+              ErrorPostControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorPostControlPanel.data.errors[0].errors[0]
+                : ErrorPostControlPanel?.data?.message
+            }
+          ></HandlerMutation>
+
+          <HandlerMutation
+            Loading={isLoadingUpdateControlPanelMutation}
+            Error={
+              isErrorUpdateControlPanelMutation &&
+              localIsResponseUpdateControlPanelMutation
+            }
+            Success={
+              isSuccessUpdateControlPanelMutation &&
+              localIsResponseUpdateControlPanelMutation
+            }
+            textSuccess={"Панель управления обновлена."}
+            textError={
+              ErrorUpdateControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorUpdateControlPanel.data.errors[0].errors[0]
+                : ErrorUpdateControlPanel?.data?.message
+            }
+          ></HandlerMutation>
+
+          <HandlerMutation
+            Loading={isLoadingDeleteControlPanelMutation}
+            Error={
+              isErrorDeleteControlPanelMutation &&
+              localIsResponseDeleteControlPanelMutation
+            }
+            Success={
+              isSuccessDeleteControlPanelMutation &&
+              localIsResponseDeleteControlPanelMutation
+            }
+            textSuccess={"Панель управления удалена"}
+            textError={
+              ErrorDeleteControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorDeleteControlPanel.data.errors[0].errors[0]
+                : ErrorDeleteControlPanel?.data?.message
+            }
+          ></HandlerMutation>
+        </div>
       </div>
     </div>
   );

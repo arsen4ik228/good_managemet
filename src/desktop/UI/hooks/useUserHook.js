@@ -1,9 +1,26 @@
-import { usePostUserMutation } from "../../BLL/userApi";
+import { useGetUserNewQuery, usePostUserMutation } from "../../BLL/userApi";
 import { useMutationHandler } from "./useMutationHandler";
-import useGetReduxOrganization  from "./useGetReduxOrganization";
+import useGetReduxOrganization from "./useGetReduxOrganization";
 
 export function useUserHook() {
-    const {reduxSelectedOrganizationId} = useGetReduxOrganization();
+  const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+
+  const {
+    postsWithoutUser = [],
+    isLoadingGetUserNew,
+    isErrorGetUserNew,
+  } = useGetUserNewQuery(
+    { organizationId: reduxSelectedOrganizationId },
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        postsWithoutUser: data?.postsWithoutUser || [],
+        isLoadingGetUserNew: isLoading,
+        isErrorGetUserNew: isError,
+      }),
+    }
+  );
+
+
   const [
     postUser,
     {
@@ -32,5 +49,9 @@ export function useUserHook() {
     resetUserMutation,
 
     localIsResponseUserMutation,
+
+    postsWithoutUser,
+    isLoadingGetUserNew,
+    isErrorGetUserNew,
   };
 }

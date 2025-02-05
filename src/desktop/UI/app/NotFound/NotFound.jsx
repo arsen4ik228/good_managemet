@@ -1,9 +1,12 @@
 import React from 'react'
-import classes from "./NotFound.module.css"
+import { Result } from "antd";
+
 export default function NotFound() {
   return (
-    <div className={classes.container}>
-        <div className={classes.box}>Страница не найдена !!!</div>
-    </div>
+    <Result
+    status="404"
+    title="404"
+    subTitle="Страница не найдена"
+  />
   )
 }

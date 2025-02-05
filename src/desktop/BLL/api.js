@@ -7,7 +7,7 @@ const apiSlice = createApi({
     baseUrl: process.env.REACT_APP_BASE_URL,
     prepareHeaders
   }),
-  tagTypes: ['Panel', 'PanelToStatistics', 'User', 'File'],
+  tagTypes: ['Panel', 'PanelToStatistics', 'User', 'File',   "Post", "PostNew", "Statistics"   ],
   endpoints: builder => ({}),
 })
 

@@ -15,13 +15,6 @@
     /* Анимация вращения */
 }
 
-.spanLoad {
-    font-weight: 600;
-    font-family: 'Montserrat';
-    color: #005475;
-    font-size: 14px;
-}
-
 .error {
     position: absolute;
     display: flex;

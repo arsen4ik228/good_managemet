@@ -1,11 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url } from "./baseUrl";
-import { prepareHeaders } from "./Function/prepareHeaders.js";
+import apiSlice from "./api";
 
-export const postApi = createApi({
-  reducerPath: "postApi",
-  tagTypes: ["Post", "PostNew", "Statistics"],
-  baseQuery: fetchBaseQuery({ baseUrl: url, prepareHeaders }),
+export const postApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getPosts: build.query({
       query: ({organizationId}) => ({
@@ -121,6 +116,7 @@ export const postApi = createApi({
       invalidatesTags: (result, error, { postId }) => [
         { type: "Post", id: "LIST" }, // Инвалидация списка постов
         { type: "Post", id: postId }, // Инвалидация конкретного поста
+        { type: "User" }, // Инвалидация конкретного поста
       ],
     }),
   }),

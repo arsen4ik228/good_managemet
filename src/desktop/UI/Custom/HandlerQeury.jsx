@@ -10,7 +10,6 @@ export default function HandlerQeury({ Loading, Fetching, Error }) {
         <div className={classes.load}>
           <img src={icon} alt="Loading..." className={classes.loadImage} />
           <div className={classes.wave}>
-            {/* <span className={classes.spanLoad}>Загрузка...</span> */}
             <span style={{ "--i": 1 }}>З</span>
             <span style={{ "--i": 2 }}>А</span>
             <span style={{ "--i": 3 }}>Г</span>

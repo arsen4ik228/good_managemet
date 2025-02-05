@@ -156,7 +156,7 @@ export default function Post() {
     setIsOpenSearch(parametr);
   };
 
-  // Открыть создавшийся пост
+
   useEffect(() => {
     if (createdId) {
       setSelectedPostId(createdId);
