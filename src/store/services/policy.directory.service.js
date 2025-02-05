@@ -1,0 +1,122 @@
+import apiSlice from "./api";
+import { selectedOrganizationId } from "./baseUrl";
+
+
+export const directoriesApi = apiSlice.injectEndpoints({
+
+  endpoints: (build) => ({
+    getDirectories: build.query({
+      query: () => ({
+        url: `policyDirectory/${selectedOrganizationId}`,
+      }),
+      transformResponse: (response) => {
+        //Валерка
+        const foldersSort = response?.map((element) => ({
+          ...element,
+          policyToPolicyDirectories: element.policyToPolicyDirectories
+            ?.sort((a, b) =>
+              a?.policy?.policyName.localeCompare(b?.policy?.policyName)
+            )
+            ?.sort((a, b) => {
+              if (
+                a?.policy?.type === "Директива" &&
+                b?.policy?.type !== "Директива"
+              ) {
+                return -1;
+              }
+              if (
+                a?.policy?.type !== "Директива" &&
+                b?.policy?.type === "Директива"
+              ) {
+                return 1;
+              }
+              return 0;
+            }),
+        }));
+
+        //Илюша
+        console.log("getPolicyDirectories     ", response);
+        let Data = [];
+        if (Array.isArray(response) && response.length > 0) {
+          Data = response.map((item) => ({
+            id: item.id,
+            directoryName: item.directoryName,
+            policies: item.policyToPolicyDirectories.flatMap(
+              (elem) => elem.policy
+            ),
+          }));
+        }
+
+        return {
+          folders: response || [],
+          foldersSort: foldersSort,
+          mobileData: Data,
+        };
+      },
+      providesTags: [{ type: "Directories", id: "LIST" }],
+    }),
+
+    getPolicyDirectoriesId: build.query({
+      query: ({ organizationId, policyDirectoryId }) => ({
+        url: `policyDirectory/${organizationId}/${policyDirectoryId}/policyDirectory`,
+      }),
+      transformResponse: (response) => {
+        console.log("getPolicyDirectoriesId     ", response);
+        const Data = {
+          id: response?.policyDirectory?.id,
+          directoryName: response?.policyDirectory?.directoryName,
+          policies:
+            response?.policyDirectory?.policyToPolicyDirectories?.flatMap(
+              (elem) => elem.policy
+            ),
+        };
+
+        return {
+          activeDirectives: response?.directives || [],
+          activeInstructions: response?.instructions || [],
+          policyDirectory: Data || [],
+          data: response || [],
+        };
+      },
+      // Добавляем теги для этой query
+      providesTags: (result, error, { policyDirectoryId }) =>
+        result ? [{ type: "policyDirectories", id: policyDirectoryId }] : [],
+    }),
+
+    postDirectories: build.mutation({
+      query: (body) => ({
+        url: `policyDirectory/new`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (result) =>
+        result ? [{ type: "Directories", id: "LIST" }] : [],
+    }),
+
+    updateDirectories: build.mutation({
+      query: ({ policyDirectoryId, ...body }) => ({
+        url: `/policyDirectory/${policyDirectoryId}/update`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (result) =>
+        result ? [{ type: "Directories", id: "LIST" }] : [],
+    }),
+
+    deleteDirectories: build.mutation({
+      query: ({ policyDirectoryId }) => ({
+        url: `policyDirectory/${policyDirectoryId}/remove`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "Directories", id: "LIST" }],
+    }),
+  }),
+});
+
+export const {
+  useGetDirectoriesQuery,
+  useGetPolicyDirectoriesIdQuery,
+  usePostDirectoriesMutation,
+  useDeleteDirectoriesMutation,
+  useUpdateDirectoriesMutation,
+} = directoriesApi;
