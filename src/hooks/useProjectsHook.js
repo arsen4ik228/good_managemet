@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useGetProgramNewQuery, useGetProjectNewQuery, useGetProjectQuery, usePostProjectMutation } from "../BLL/projectApi";
+import { useGetProgramNewQuery, useGetProjectNewQuery, useGetProjectQuery, usePostProjectMutation } from "../store/services/index";
 
 
 export const useProjectsHook = ({ IsTypeProgram }) => {

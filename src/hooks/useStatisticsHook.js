@@ -1,4 +1,4 @@
-import { useGetStatisticsIdQuery, useGetStatisticsQuery, usePostStatisticsMutation, useUpdateStatisticsMutation } from "../BLL/statisticsApi"
+import { useGetStatisticsIdQuery, useGetStatisticsQuery, usePostStatisticsMutation, useUpdateStatisticsMutation } from "../store/services/index"
 
 
 

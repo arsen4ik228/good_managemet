@@ -1,4 +1,4 @@
-import { useGetSpeedGoalIdQuery, useUpdateSpeedGoalMutation } from "../BLL/speedGoalApi";
+import { useGetSpeedGoalIdQuery, useUpdateSpeedGoalMutation } from "../store/services/index"
 
 export const useObjectiveHook = (selectedStrategyId) => {
 

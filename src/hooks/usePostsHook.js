@@ -1,4 +1,4 @@
-import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation, useGetUnderPostsQuery } from "../BLL/postApi";
+import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation, useGetUnderPostsQuery } from "../store/services/index";
 
 export const usePostsHook = (postId) => {
 
