@@ -43,6 +43,16 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
         activeInstructions,
     } = usePolicyHook({ organizationId: selectedPostOrganizationId })
 
+    const transformAttachmentsForRequest = (array) => {
+
+        if (!notEmpty(array)) return null
+
+        const result = []
+        array.forEach(item =>
+            result.push(item.attachment.id)
+        )
+        return result
+    }
 
     const updateTask = async () => {
 
@@ -72,7 +82,10 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
             else if (selectedPolicy && selectedPolicy !== taskData.policy?.id)
                 Data.policyId = selectedPolicy
 
-            if (!notEmpty(Data)) return
+            // if (!notEmpty(Data)) return
+
+            Data.attachmentIds = transformAttachmentsForRequest(attachments)
+
 
             await updateTargets({
                 _id: taskData.id,
@@ -276,8 +289,10 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
 
             {openAttachmentsModal && (
                 <AttachmentModal
-                attachments={attachments}
-
+                    setOpenModal={setOpenAttachmentsModal}
+                    attachments={attachments}
+                    setAttachments={setAttachments}
+                    isOrder={isOrder} 
                 ></AttachmentModal>
             )}
         </>

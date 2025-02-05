@@ -12,7 +12,7 @@ import { directoriesApi } from './directoriesApi';
 import { organizationApi } from './organizationApi';
 
 
-import  apiSlice  from './api';
+import apiSlice from './api';
 
 import { controlPanelApi } from './controlPanel/controlPanelApi';
 import { targetsApi } from '../../mobile/BLL/targetsApi';
@@ -46,7 +46,7 @@ export const desktopStore = configureStore({
         project: projectReducer,
         program: programReducer,
     },
-    middleware: (getDefaultMiddlware) => getDefaultMiddlware()                                                       
+    middleware: (getDefaultMiddlware) => getDefaultMiddlware()
         .concat(policyApi.middleware)
         .concat(goalApi.middleware)
         .concat(objectiveApi.middleware)
