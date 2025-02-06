@@ -4,14 +4,13 @@ import Header from '../Custom/CustomHeader/Header'
 import icon from '../Custom/icon/icon _ downarrow _ 005475.svg'
 import { getDateFormatSatatistic, selectedOrganizationId, } from '../../BLL/constans'
 import { useParams } from 'react-router-dom'
-import { useGetOrganizationsQuery,  } from '../../BLL/organizationsApi'
 import saveIcon from '../Custom/icon/icon _ save.svg'
 import Graphic from '../Custom/Graph/Graphic'
 import HandlerMutation from '../Custom/HandlerMutation'
 import iconExit from '../Custom/SearchModal/icon/icon _ add.svg'
 import arrowInCircle from '../Custom/icon/arrow in circle.svg'
-import { useGetPostsQuery } from '../../BLL/postApi'
 import { useStatisticsHook } from '@hooks'
+import { usePostsHook, useOrganizationHook } from '@hooks'
 
 export default function Statistics() {
 
@@ -64,17 +63,9 @@ export default function Statistics() {
 
 
     const {
-        posts = [],
-        isLoadingGetPosts,
-        isErrorGetPosts,
-    } = useGetPostsQuery(undefined, {
-        selectFromResult: ({ data, isLoading, isError }) => ({
-            posts: data || [],
-            isLoadingGetPosts: isLoading,
-            isErrorGetPosts: isError,
-        }),
-    });
-    console.log(posts)
+        allPosts
+    } = usePostsHook();
+    console.log(allPosts)
 
     const {
         currentStatistic,
@@ -94,18 +85,11 @@ export default function Statistics() {
 
 
     const {
-        organizations = [],
-    } = useGetOrganizationsQuery(undefined, {
-        selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-            organizations: data?.organizations || [],
-            isLoadingOrganizations: isLoading,
-            isFetchingOrganizations: isFetching,
-            isErrorOrganizations: isError,
-        }),
-    });
+        organizations
+    } = useOrganizationHook();
 
     useEffect(() => { // Установка organizationId для поиска постов и отчётного дня
-        if (Object.keys(currentStatistic).length > 0 && posts.length > 0 && organizations.length > 0) {
+        if (Object.keys(currentStatistic).length > 0 && allPosts.length > 0 && organizations.length > 0) {
             const orgId = selectedOrganizationId
             if (orgId) {
                 setOrganizationId(orgId)
@@ -114,7 +98,7 @@ export default function Statistics() {
                     (item) => item?.id === orgId
                 );
 
-                const arrayPosts = posts?.filter(
+                const arrayPosts = allPosts?.filter(
                     (item) => item?.organization?.id === orgId
                 );
                 setDisabledReportDayAndSelectStatistics(false);
@@ -124,7 +108,7 @@ export default function Statistics() {
                 setReportDayComes(report[0]?.reportDay);
             }
         }
-    }, [currentStatistic, posts, organizations])
+    }, [currentStatistic, allPosts, organizations])
   
 
     // Все для начальной страницы
@@ -1575,7 +1559,7 @@ export default function Statistics() {
                                         <option value='null' disabled>
                                             Выберите пост
                                         </option>
-                                        {posts?.map((item) => {
+                                        {allPosts?.map((item) => {
                                             return (
                                                 <option value={item.id}>
                                                     {item.postName}

@@ -56,7 +56,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
       providesTags: result =>
         result
           ? [
-              ...result?.transformData.map(({ id }) => ({
+              ...result?.map(({ id }) => ({
                 type: 'Statistic',
                 id,
               })),
