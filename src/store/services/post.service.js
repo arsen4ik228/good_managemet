@@ -24,8 +24,8 @@ export const postApi = apiSlice.injectEndpoints({
     }),
 
     postPosts: build.mutation({
-      query: ({addPolicyId = "null", ...body }) => ({
-        url: `posts/new?addPolicyId=${addPolicyId}`,
+      query: (body) => ({
+        url: `posts/new`,
         method: "POST",
         body,
       }),
@@ -36,8 +36,8 @@ export const postApi = apiSlice.injectEndpoints({
     }),
 
     getPostNew: build.query({
-      query: () => ({
-        url: `posts/${selectedOrganizationId}/new`,
+      query: ({ organizationId }) => ({
+        url: `posts/${organizationId}/new`,
       }),
       transformResponse: (response) => {
         console.log(response); // Отладка ответа
@@ -49,7 +49,7 @@ export const postApi = apiSlice.injectEndpoints({
           maxDivisionNumber: response?.maxDivisionNumber || null
         };
       },
-      providesTags: (result, error, arg) => ["Post"],
+      providesTags: ['Post', 'User'],
     }),
 
     getPostId: build.query({
@@ -97,7 +97,7 @@ export const postApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, err, arg) => [{ type: 'Post', id: arg._id }],
+      invalidatesTags: (result, err, arg) => [{ type: 'Post', id: arg._id }, 'User'],
     }),
   }),
 });

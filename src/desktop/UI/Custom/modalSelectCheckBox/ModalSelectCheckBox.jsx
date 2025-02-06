@@ -15,7 +15,9 @@ export function ModalSelectCheckBox({
   save,
   
   handleChecboxChange,
-  arrayChecked
+  arrayChecked,
+  nameBtn,
+  iconBtn,
 }) {
   return (
     <div className={classes.modal}>
@@ -41,8 +43,8 @@ export function ModalSelectCheckBox({
           {save && (
             <div className={classes.item2}>
               <ButtonImage
-                name={"сохранить"}
-                icon={Blacksavetmp}
+                name={nameBtn ? nameBtn : "сохранить"}
+                icon={iconBtn ? iconBtn : Blacksavetmp}
                 onClick={save}
               ></ButtonImage>
             </div>

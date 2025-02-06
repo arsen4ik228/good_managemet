@@ -14,8 +14,12 @@ import post from "@image/post.svg";
 import ButtonAttach from "@Custom/buttonAttach/ButtonAttach";
 import { useModalSelectCheckBox } from "@hooks";
 import { ModalSelectCheckBox } from "@Custom/modalSelectCheckBox/ModalSelectCheckBox";
-import {usePostsHook} from "@hooks";
+import { usePostsHook } from "@hooks";
 import exitHeader from "@image/exitHeader.svg";
+import iconAdd from "@image/iconAdd.svg";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCreatedUserId } from "../../../../store";
 
 export default function User() {
   const [firstName, setFirstName] = useState("");
@@ -87,37 +91,70 @@ export default function User() {
 
   const [postImage] = usePostImageMutation();
 
+  // const handleCreateUserButtonClick = async () => {
+  //   const userData = {
+  //     firstName,
+  //     lastName,
+  //     middleName,
+  //     telephoneNumber,
+  //     organizationId: reduxSelectedOrganizationId,
+  //   };
+
+  //   if (file) {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+  //     await postImage(formData)
+  //       .unwrap()
+  //       .then((result) => {
+  //         userData.avatar_url = result.filePath;
+  //       })
+  //       .catch((error) => {
+  //         console.error("Ошибка:", JSON.stringify(error, null, 2));
+  //       });
+  //   }
+
+  //   await postUser(userData)
+  //     .unwrap()
+  //     .then((result) => saveUpdatePost(result.id))
+  //     .catch((error) => {
+  //       console.error("Ошибка:", JSON.stringify(error, null, 2));
+  //     });
+  // };
+
+  // Для картинки
+  
+ const dispatch = useDispatch();
   const handleCreateUserButtonClick = async () => {
     const userData = {
-      firstName,
-      lastName,
-      middleName,
-      telephoneNumber,
-      organizationId: reduxSelectedOrganizationId,
+        firstName,
+        lastName,
+        middleName,
+        telephoneNumber,
+        organizationId: reduxSelectedOrganizationId,
     };
 
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      await postImage(formData)
-        .unwrap()
-        .then((result) => {
-          userData.avatar_url = result.filePath;
-        })
-        .catch((error) => {
-          console.error("Ошибка:", JSON.stringify(error, null, 2));
-        });
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+            const result = await postImage(formData).unwrap();
+            userData.avatar_url = result.filePath;
+        } catch (error) {
+            console.error("Ошибка загрузки изображения:", JSON.stringify(error, null, 2));
+            throw error; 
+        }
     }
 
-    await postUser(userData)
-      .unwrap()
-      .then((result) => saveUpdatePost(result.id))
-      .catch((error) => {
-        console.error("Ошибка:", JSON.stringify(error, null, 2));
-      });
-  };
+    try {
+        const result = await postUser(userData).unwrap();
+        saveUpdatePost(result.id);
+        dispatch(setCreatedUserId(result.id));
+    } catch (error) {
+        console.error("Ошибка создания пользователя:", JSON.stringify(error, null, 2));
+        throw error;
+    }
+};
 
-  // Для картинки
   const fileInputRef = useRef(null);
 
   const handleAvatarClick = () => {
@@ -222,6 +259,17 @@ export default function User() {
     }
   }, [firstName, lastName, middleName, telephoneNumber]);
 
+  const navigate = useNavigate();
+
+  const createUserAndCreatePost = async () => {
+    try {
+      await handleCreateUserButtonClick();
+      navigate("/pomoshnik/postNew");
+    } catch (error) {
+      console.error("Ошибка в процессе создания пользователя:", error);
+    }
+  };
+
   return (
     <div className={classes.dialog}>
       <Headers name={"создание пользователя"}>
@@ -290,6 +338,7 @@ export default function User() {
               selectArray={arrayCheckedPostsNames}
               prefix={"Посты: "}
               btnName={"Пикрепить посты"}
+              disabled={!isValid}
             ></ButtonAttach>
 
             {openModalSelectPosts && (
@@ -305,6 +354,9 @@ export default function User() {
                 arrayItem={"postName"}
                 handleChecboxChange={handleCheckboxChange}
                 arrayChecked={arrayCheckedPostsIds}
+                save={createUserAndCreatePost}
+                nameBtn={"создать"}
+                iconBtn={iconAdd}
               ></ModalSelectCheckBox>
             )}
 
@@ -322,14 +374,13 @@ export default function User() {
           Loading={isLoadingUserMutation}
           Error={isErrorUserMutation && localIsResponseUserMutation}
           Success={isSuccessUserMutation && localIsResponseUserMutation}
-          textSuccess={"Пользователь создан"}
+          textSuccess={`Пользователь ${firstName} ${lastName} ${middleName} создан`}
           textError={
             ErrorUserMutation?.data?.errors?.[0]?.errors?.[0]
               ? ErrorUserMutation.data.errors[0].errors[0]
               : ErrorUserMutation?.data?.message
           }
         ></HandlerMutation>
-        
       </div>
     </div>
   );
