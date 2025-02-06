@@ -68,6 +68,7 @@ export const policyApi = apiSlice.injectEndpoints({
         console.log("getPolicies    ", response);
         const directivesDB = response.directives;
         const instructionsDB = response.instructions;
+        const sharedArray = [...directivesDB, ...instructionsDB]
 
         const sortArray = (array) =>
           array.sort((a, b) => {
@@ -106,18 +107,21 @@ export const policyApi = apiSlice.injectEndpoints({
           activeInstructions: activeInstructions,
           draftInstructions: draftInstructions,
           archiveInstructions: archiveInstructions,
+          sharedArray: sharedArray
         };
       },
 
       providesTags: (result) =>
         result
           ? [
-              ...result?.data.map(({ id }) => ({
-                type: 'Policy',
-                id,
-              })),
-              'Policy',
-            ]
+            ...result?.sharedArray.map(({ id }) =>
+            ({
+              type: 'Policy',
+              id,
+            }
+            )),
+            'Policy',
+          ]
           : ['Policy'],
     }),
 

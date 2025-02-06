@@ -5,7 +5,7 @@ import { useGetOrganizationsQuery } from '../../BLL/organizationsApi';
 import Header from "../Custom/CustomHeader/Header";
 import ModalChangeReportDay from './ModalChangeReportDay/ModalChangeReportday';
 import { notEmpty, selectedOrganizationId } from '../../BLL/constans';
-import { useStatisticsHook } from '@hooks';
+import { useStatisticsHook, useGetReduxOrganization } from '@hooks';
 
 const MainStatistics = () => {
 
@@ -23,12 +23,8 @@ const MainStatistics = () => {
     } = useStatisticsHook({statisticData: false})
 
     const {
-        organizations = []
-    } = useGetOrganizationsQuery(undefined, {
-        selectFromResult: ({ data }) => ({
-            organizations: data?.organizations || []
-        })
-    })
+        organizations 
+    } = useGetReduxOrganization()
 
     const REPORT_DAY = {
         0: 'Вс',

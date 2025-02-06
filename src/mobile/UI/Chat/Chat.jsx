@@ -10,7 +10,7 @@ import policy from './icon/icon _policy.svg'
 import avatar from '../Custom/icon/messendger _ avatar.svg'
 import { useNavigate, useParams } from "react-router-dom";
 import Header from '../Custom/CustomHeader/Header';
-import { useGetOrganizationsQuery } from '../../BLL/organizationsApi';
+import { useOrganizationHook } from '@hooks';
 import { notEmpty } from '../../BLL/constans';
 
 const Chat = () => {
@@ -32,11 +32,7 @@ const Chat = () => {
 
     const {
         organizations = []
-    } = useGetOrganizationsQuery(undefined, {
-        selectFromResult: ({ data }) => ({
-            organizations: data?.organizations || []
-        })
-    })
+    } = useOrganizationHook()
 
     const selectOrganization = (id) => {
         setSelectedOrg(id);

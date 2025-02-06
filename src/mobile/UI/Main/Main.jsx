@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./Main.module.css";
-import menuIcon from "./icon/icon _ menu.svg";
-import { useGetOrganizationsQuery } from "../../BLL/organizationsApi";
+import { useOrganizationHook } from "@hooks";
 import NavigationBar from "../Custom/NavigationBar/NavigationBar";
 import Header from "../Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
@@ -11,14 +10,9 @@ import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "../
 const Main = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userId } = useParams();
   const [selectedOrg, setSelectedOrg] = useState();
 
-  const { organizations = [] } = useGetOrganizationsQuery(userId, {
-    selectFromResult: ({ data }) => ({
-      organizations: data?.organizations || [],
-    }),
-  });
+  const { organizations } = useOrganizationHook();
 
   const selectOrganization = (id, reportDay) => {
     setSelectedOrg(id);

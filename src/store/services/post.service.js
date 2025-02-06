@@ -14,7 +14,7 @@ export const postApi = apiSlice.injectEndpoints({
       providesTags: result =>
         result
           ? [
-              ...result?.data.map(({ id }) => ({
+              ...result?.map(({ id }) => ({
                 type: 'Post',
                 id,
               })),

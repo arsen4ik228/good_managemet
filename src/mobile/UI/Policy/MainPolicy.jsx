@@ -11,6 +11,7 @@ import HandlerQeury from '../Custom/HandlerQeury';
 import HandlerMutation from '../Custom/HandlerMutation';
 import { usePolicyHook } from '@hooks';
 import { usePolicyDirectoriesHook } from '@hooks';
+import { useGetReduxOrganization } from '@hooks'
 
 
 
@@ -25,6 +26,8 @@ const MainPolicy = () => {
 
     const [manualSuccessReset, setManualSuccessReset] = useState(false)
     const [manualErrorReset, setManualErrorReset] = useState(false)
+
+    const {organizationsId} = useGetReduxOrganization()
 
     const {
         activeDirectives,
@@ -43,7 +46,7 @@ const MainPolicy = () => {
         isErrorPostPoliciesMutation,
         ErrorPostPoliciesMutation,
 
-    } = usePolicyHook()
+    } = usePolicyHook({organizationsId: organizationsId})
  
 
     const TYPE_DISPLAY = {
@@ -61,7 +64,7 @@ const MainPolicy = () => {
         isErrorPolicyDirectories,
     } = usePolicyDirectoriesHook()
 
-
+    console.log('policyDirectories ', policyDirectories)
     const savePolicy = async () => {
         await postPolicy()
             .unwrap()
@@ -227,7 +230,7 @@ const MainPolicy = () => {
                                     </div>
                                 </div>
                                 <ul className={classes.selectList}>
-                                    {policyDirectories.map((item, index) => (
+                                    {policyDirectories?.mobileData?.map((item, index) => (
                                         <>
                                             <li
                                                 key={index}
