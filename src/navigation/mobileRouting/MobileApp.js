@@ -1,4 +1,4 @@
-import './App.css';
+import './MobileApp.css';
 import React from 'react';
 import { Route, Routes, Navigate } from "react-router-dom";
 import AuthorizationPage from './UI/Authorization/AuthorizationPage.jsx'
@@ -29,7 +29,7 @@ import MainWorkingPlan from './UI/WorkingPlan/MainWorkingPlan.jsx';
 import ModalContainer from './UI/Custom/ModalContainer/ModalContainer.jsx';
 import ControlPanel from './UI/ControlPanel/ControlPanel.jsx';
 
-function App() {
+function MobileApp() {
     return (
         <>
             <Routes>
@@ -92,4 +92,4 @@ function App() {
     );
 }
 
-export default App;
+export default MobileApp;
