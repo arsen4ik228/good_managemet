@@ -11,10 +11,13 @@ import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
 import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
 
 import { useModalSelectRadio } from "@hooks";
-import {useControlPanel} from "@hooks";
+import { useControlPanel } from "@hooks";
 import { usePostsHook } from "@hooks";
 
 import ModalContainer from "../Custom/ModalContainer/ModalContainer";
+
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import {
   DndContext,
@@ -36,11 +39,10 @@ import {
   deleteFromIndexedDB,
   loadFromIndexedDB,
 } from "@utils/src/index.js";
-import {usePanelToStatisticsHook} from "@hooks";
+import { usePanelToStatisticsHook } from "@hooks";
 import { debounce } from "lodash";
 
 export default function ControlPanel() {
-
   const [openModalSetting, setOpenModalSetting] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -79,6 +81,7 @@ export default function ControlPanel() {
     isSuccessPostControlPanelMutation,
     isErrorPostControlPanelMutation,
     ErrorPostControlPanel,
+    localIsResponsePostControlPanelMutation,
 
     //  Обновление
     updateControlPanel,
@@ -86,6 +89,7 @@ export default function ControlPanel() {
     isSuccessUpdateControlPanelMutation,
     isErrorUpdateControlPanelMutation,
     ErrorUpdateControlPanel,
+    localIsResponseUpdateControlPanelMutation,
 
     // Удаление статистики
     deleteControlPanel,
@@ -93,6 +97,7 @@ export default function ControlPanel() {
     isSuccessDeleteControlPanelMutation,
     isErrorDeleteControlPanelMutation,
     ErrorDeleteControlPanel,
+    localIsResponseDeleteControlPanelMutation,
   } = useControlPanel({ selectedControlPanelId });
 
   const { allPosts, isLoadingGetPosts, isErrorGetPosts } = usePostsHook();
@@ -369,14 +374,17 @@ export default function ControlPanel() {
           </DndContext>
         )}
 
-        {openModalSetting && (
-          <ModalSetting
-            exit={() => setOpenModalSetting(false)}
-            updateControlPanel={updateControlPanel}
-            currentControlPanel={currentControlPanel}
-            statisticsIdsInPanel={statisticsIdsInPanel}
-          ></ModalSetting>
-        )}
+        {!isErrorGetontrolPanelId &&
+          !isLoadingGetontrolPanelId &&
+          !isFetchingGetontrolPanelId &&
+          openModalSetting && (
+            <ModalSetting
+              exit={() => setOpenModalSetting(false)}
+              updateControlPanel={updateControlPanel}
+              currentControlPanel={currentControlPanel}
+              statisticsIdsInPanel={statisticsIdsInPanel}
+            ></ModalSetting>
+          )}
         {openModalCreate && (
           <ModalSelectRadio
             nameTable={"Название поста"}
@@ -393,19 +401,22 @@ export default function ControlPanel() {
             save={createControlPanel}
           ></ModalSelectRadio>
         )}
-        {openModalDelete && (
-          <ModalContainer
-            setOpenModal={btnNo}
-            clickFunction={btnYes}
-            buttonText={"Удалить"}
-          >
-            {`Вы точно хотите удалить панель управления ${
-              currentControlPanel.isNameChanged
-                ? currentControlPanel.panelName
-                : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
-            }`}
-          </ModalContainer>
-        )}
+        {!isErrorGetontrolPanelId &&
+          !isLoadingGetontrolPanelId &&
+          !isFetchingGetontrolPanelId &&
+          openModalDelete && (
+            <ModalContainer
+              setOpenModal={btnNo}
+              clickFunction={btnYes}
+              buttonText={"Удалить"}
+            >
+              {`Вы точно хотите удалить панель управления ${
+                currentControlPanel.isNameChanged
+                  ? currentControlPanel.panelName
+                  : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
+              }`}
+            </ModalContainer>
+          )}
         {openModalStatistic && (
           <ModalStatistic
             data={modalStatisticDatas}
@@ -416,6 +427,74 @@ export default function ControlPanel() {
             reportDay={reduxSelectedOrganizationReportDay}
           ></ModalStatistic>
         )}
+
+        <div className={classes.handler}>
+          <HandlerQeury
+            Loading={isLoadingGetAllControlPanel}
+            Fetching={isFetchingGetAllControlPanel}
+            Error={isErrorGetAllControlPanel}
+          ></HandlerQeury>
+
+          <HandlerQeury
+            Loading={isLoadingGetontrolPanelId}
+            Fetching={isFetchingGetontrolPanelId}
+            Error={isErrorGetontrolPanelId}
+          ></HandlerQeury>
+
+          <HandlerMutation
+            Loading={isLoadingPostControlPanelMutation}
+            Error={
+              isErrorPostControlPanelMutation &&
+              localIsResponsePostControlPanelMutation
+            }
+            Success={
+              isSuccessPostControlPanelMutation &&
+              localIsResponsePostControlPanelMutation
+            }
+            textSuccess={`Панель управления успешно создана.`}
+            textError={
+              ErrorPostControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorPostControlPanel.data.errors[0].errors[0]
+                : ErrorPostControlPanel?.data?.message
+            }
+          ></HandlerMutation>
+
+          <HandlerMutation
+            Loading={isLoadingUpdateControlPanelMutation}
+            Error={
+              isErrorUpdateControlPanelMutation &&
+              localIsResponseUpdateControlPanelMutation
+            }
+            Success={
+              isSuccessUpdateControlPanelMutation &&
+              localIsResponseUpdateControlPanelMutation
+            }
+            textSuccess={`Панель управления обновлена.`}
+            textError={
+              ErrorUpdateControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorUpdateControlPanel.data.errors[0].errors[0]
+                : ErrorUpdateControlPanel?.data?.message
+            }
+          ></HandlerMutation>
+
+          <HandlerMutation
+            Loading={isLoadingDeleteControlPanelMutation}
+            Error={
+              isErrorDeleteControlPanelMutation &&
+              localIsResponseDeleteControlPanelMutation
+            }
+            Success={
+              isSuccessDeleteControlPanelMutation &&
+              localIsResponseDeleteControlPanelMutation
+            }
+            textSuccess={"Панель управления удалена"}
+            textError={
+              ErrorDeleteControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorDeleteControlPanel.data.errors[0].errors[0]
+                : ErrorDeleteControlPanel?.data?.message
+            }
+          ></HandlerMutation>
+        </div>
       </div>
     </div>
   );

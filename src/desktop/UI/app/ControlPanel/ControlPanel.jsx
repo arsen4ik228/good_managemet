@@ -299,7 +299,6 @@ export default function ControlPanel() {
     }
   }, [statisticsPoints]);
 
-  console.log(cards);
   return (
     <div className={classes.dialog}>
       <Headers name={"панель управления"}>
@@ -444,7 +443,7 @@ export default function ControlPanel() {
               isSuccessPostControlPanelMutation &&
               localIsResponsePostControlPanelMutation
             }
-            textSuccess={"Панель управления успешно создана."}
+            textSuccess={`Панель управления успешно создана.`}
             textError={
               ErrorPostControlPanel?.data?.errors?.[0]?.errors?.[0]
                 ? ErrorPostControlPanel.data.errors[0].errors[0]
@@ -462,7 +461,7 @@ export default function ControlPanel() {
               isSuccessUpdateControlPanelMutation &&
               localIsResponseUpdateControlPanelMutation
             }
-            textSuccess={"Панель управления обновлена."}
+            textSuccess={`Панель управления обновлена.`}
             textError={
               ErrorUpdateControlPanel?.data?.errors?.[0]?.errors?.[0]
                 ? ErrorUpdateControlPanel.data.errors[0].errors[0]
