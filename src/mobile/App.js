@@ -42,12 +42,12 @@ function App() {
                             <Route path="test" element={<ModalContainer />} />
                             <Route path="Main" element={<Main />} />
                             <Route path='ControlPanel' element={<ControlPanel />} />
-                            <Route path="Chat/*"
+                            <Route path="pomoshnik/*"
                                 element={
                                     <Routes>
-                                        <Route path="/" element={<Navigate to="HelperChat" replace />} />
+                                        <Route path="/" element={<Navigate to="start" replace />} />
 
-                                        <Route path="HelperChat" element={<HelperChat />} />
+                                        <Route path="start" element={<HelperChat />} />
 
                                         <Route path="Policy" element={<MainPolicy />} />
                                         <Route path="Policy/:policyId" element={<Policy />} />
