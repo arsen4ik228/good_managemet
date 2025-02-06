@@ -60,7 +60,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 console.log(orderTargets, futureOrderTargets)
                 const [projectTargets, futureProjectTargets] = transformArray(response?.projectTargets || [])
                 const futureTargets = mergeAndTransformFutureTargets(futurePersonalTargets, futureOrderTargets, futureProjectTargets)
-
+                console.log(futureTargets)
                 // const transformTargetsArray = (array, marker) => {
                 //     const currentDate = new Date().toISOString().split('T')[0];
                 //     const groupedItems = {};
@@ -175,7 +175,12 @@ export const targetsApi =  apiSlice.injectEndpoints({
             providesTags: result =>
                 result
                   ? [
-                      ...result?.data?.userPosts.map(({ id }) => ({
+                      ...result?.personalTargets.map(({ id }) => ({
+                        type: 'Target',
+                        id,
+                      })),
+                      'Target',
+                      ...result?.orderTargets.map(({ id }) => ({
                         type: 'Target',
                         id,
                       })),
@@ -195,7 +200,17 @@ export const targetsApi =  apiSlice.injectEndpoints({
             providesTags: result =>
                 result
                   ? [
-                      ...result?.data.map(({ id }) => ({
+                      ...result?.ordersArchiveTargets.map(({ id }) => ({
+                        type: 'Target',
+                        id,
+                      })),
+                      'Target',
+                      ...result?.personalArchiveTargets.map(({ id }) => ({
+                        type: 'Target',
+                        id,
+                      })),
+                      'Target',
+                      ...result?.projectArchiveTargets.map(({ id }) => ({
                         type: 'Target',
                         id,
                       })),

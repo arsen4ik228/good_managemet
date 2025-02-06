@@ -9,6 +9,7 @@ export const goalApi = apiSlice.injectEndpoints({
       }),
 
       transformResponse: (response) => {
+        console.log('getGoal    ', response)
         return {
           currentGoal: response || {},
         };
