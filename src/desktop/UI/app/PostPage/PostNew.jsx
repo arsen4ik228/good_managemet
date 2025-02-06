@@ -5,11 +5,10 @@ import greyPolicy from "@image/greyPolicy.svg";
 import blackStatistic from "@image/blackStatistic.svg";
 
 import { useNavigate } from "react-router-dom";
-import { useGetPostNewQuery, usePostPostsMutation } from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPostCreatedId } from "@slices";
 import ModalWindow from "@Custom/ModalWindow.jsx";
 import Headers from "@Custom/Headers/Headers";
@@ -17,9 +16,9 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import Input from "@Custom/Input/Input";
 import Select from "@Custom/Select/Select";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import {useModalSelectRadio} from "@hooks/useModalSelectRadio";
-import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
-
+import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
+import { usePostsHook } from "../../../../hooks/usePostsHook";
+import ButtonAttach from "../../Custom/buttonAttach/ButtonAttach";
 
 export default function PostNew() {
   const navigate = useNavigate();
@@ -27,13 +26,14 @@ export default function PostNew() {
     navigate(`/pomoshnik/post`);
   };
   const dispatch = useDispatch();
+  const createdUserId = useSelector((state) => state.user.createdUserId);
 
   const [postName, setPostName] = useState("");
   const [divisionName, setDivisionName] = useState(null);
   const [divisionNameDB, setDivisionNameDB] = useState();
 
   const [parentId, setParentId] = useState("null");
-  const [worker, setWorker] = useState("null");
+  const [worker, setWorker] = useState(createdUserId);
 
   const [product, setProduct] = useState("");
   const [purpose, setPurpose] = useState("");
@@ -41,36 +41,22 @@ export default function PostNew() {
   const [openModalPolicy, setOpenModalPolicy] = useState(false);
   const [openModalStatistic, setOpenModalStatistic] = useState(false);
 
-   const {reduxNewSelectedOrganizationId } =
-      useGetOldAndNewOrganizationId();
-
   const {
-    workers = [],
-    policies = [],
-    posts = [],
+    reduxSelectedOrganizationId,
+
+    staff,
+    policies,
+    parentPosts,
     maxDivisionNumber,
     isLoadingGetNew,
     isErrorGetNew,
-  } = useGetPostNewQuery({organizationId:reduxNewSelectedOrganizationId}, {
-    selectFromResult: ({ data, isLoading, isError }) => ({
-      workers: data?.workers || [],
-      policies: data?.policies || [],
-      posts: data?.posts || [],
-      maxDivisionNumber: data?.maxDivisionNumber,
-      isLoadingGetNew: isLoading,
-      isErrorGetNew: isError,
-    }),
-  });
 
-  const [
     postPosts,
-    {
-      isLoading: isLoadingPostMutation,
-      isSuccess: isSuccessPostMutation,
-      isError: isErrorPostMutation,
-      error: Error,
-    },
-  ] = usePostPostsMutation();
+    isLoadingPostMutation,
+    isSuccessPostMutation,
+    isErrorPostMutation,
+    ErrorPostMutation,
+  } = usePostsHook();
 
   const successCreatePost = (id) => {
     dispatch(setPostCreatedId(id));
@@ -80,7 +66,7 @@ export default function PostNew() {
   const savePosts = async () => {
     const Data = {};
     if (selectedPolicyID !== "null" && selectedPolicyID !== null) {
-      Data.addPolicyId = selectedPolicyID;
+      Data.policyId = selectedPolicyID;
     }
     if (divisionName !== divisionNameDB) {
       Data.divisionName = divisionName;
@@ -98,7 +84,7 @@ export default function PostNew() {
       ...Data,
       product: product,
       purpose: purpose,
-      organizationId:reduxNewSelectedOrganizationId,
+      organizationId: reduxSelectedOrganizationId,
     })
       .unwrap()
       .then((result) => {
@@ -113,7 +99,7 @@ export default function PostNew() {
 
   const {
     selectedID: selectedPolicyID,
-    selectedName:selectedPolicyName,
+    selectedName: selectedPolicyName,
 
     handleRadioChange,
     handleInputChangeModalSearch,
@@ -123,8 +109,8 @@ export default function PostNew() {
   } = useModalSelectRadio({ array: policies, arrayItem: "policyName" });
 
   useEffect(() => {
-    setDivisionName(`Подразделение №${maxDivisionNumber + 1}`);
-    setDivisionNameDB(`Подразделение №${maxDivisionNumber + 1}`);
+    setDivisionName(`Подразделение №${maxDivisionNumber}`);
+    setDivisionNameDB(`Подразделение №${maxDivisionNumber}`);
   }, [maxDivisionNumber]);
 
   return (
@@ -145,7 +131,7 @@ export default function PostNew() {
             name={"Руководитель"}
             value={parentId}
             onChange={setParentId}
-            array={posts}
+            array={parentPosts}
             arrayItem={"postName"}
           >
             <option value="null"> — </option>
@@ -154,7 +140,7 @@ export default function PostNew() {
             name={"Сотрудник"}
             value={worker}
             onChange={setWorker}
-            array={workers}
+            array={staff}
             arrayItem={"lastName"}
             arrayItemTwo={"firstName"}
           >
@@ -194,35 +180,19 @@ export default function PostNew() {
                   />
                 </div>
 
-                <div
-                  className={classes.post}
+                <ButtonAttach
+                  image={greyPolicy}
                   onClick={() => setOpenModalPolicy(true)}
-                >
-                  <img src={greyPolicy} alt="greyPolicy" />
-                  <div>
-                    {selectedPolicyName ? (
-                      <span className={classes.nameButton}>
-                        Политика: {selectedPolicyName}
-                      </span>
-                    ) : (
-                      <span className={classes.nameButton}>
-                        Прикрепить политику
-                      </span>
-                    )}
-                  </div>
-                </div>
+                  selectArray={selectedPolicyName}
+                  prefix={"Политика:"}
+                  btnName={"Прикрепить политику"}
+                ></ButtonAttach>
 
-                <div
-                  className={classes.post}
+                <ButtonAttach
+                  image={blackStatistic}
                   onClick={() => setOpenModalStatistic(true)}
-                >
-                  <img src={blackStatistic} alt="blackStatistic" />
-                  <div>
-                    <span className={classes.nameButton}>
-                      Выбрать или создать статистику для поста
-                    </span>
-                  </div>
-                </div>
+                  btnName={" Выбрать или создать статистику для поста"}
+                ></ButtonAttach>
 
                 {openModalStatistic && (
                   <ModalWindow
@@ -236,15 +206,17 @@ export default function PostNew() {
 
                 {openModalPolicy && (
                   <ModalSelectRadio
-                  nameTable={"Название политики"}
+                    nameTable={"Название политики"}
                     handleSearchValue={inputSearchModal}
                     handleSearchOnChange={handleInputChangeModalSearch}
                     handleRadioChange={handleRadioChange}
-                    exit={() => {setOpenModalPolicy(false)}}
+                    exit={() => {
+                      setOpenModalPolicy(false);
+                    }}
                     filterArray={filterArraySearchModal}
                     array={policies}
                     arrayItem={"policyName"}
-                    selectedID={selectedPolicyID}
+                    selectedItemID={selectedPolicyID}
                   ></ModalSelectRadio>
                 )}
 
@@ -252,11 +224,11 @@ export default function PostNew() {
                   Loading={isLoadingPostMutation}
                   Error={isErrorPostMutation}
                   Success={isSuccessPostMutation}
-                  textSuccess={"Пост успешно создан."}
+                  textSuccess={`Пост ${postName} успешно создан.`}
                   textError={
-                    Error?.data?.errors?.[0]?.errors?.[0]
-                      ? Error.data.errors[0].errors[0]
-                      : Error?.data?.message
+                    ErrorPostMutation?.data?.errors?.[0]?.errors?.[0]
+                      ? ErrorPostMutation.data.errors[0].errors[0]
+                      : ErrorPostMutation?.data?.message
                   }
                 ></HandlerMutation>
               </>

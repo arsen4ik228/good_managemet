@@ -25,6 +25,15 @@
     color: #FFFF;
 }
 
+.btn[disabled] {
+    pointer-events: none;
+    background-color: initial !important;
+}
+
+.btn[disabled] span {
+    color: inherit !important;
+}
+
 .btnItem{
     width: 100%;
     max-width: 100%;

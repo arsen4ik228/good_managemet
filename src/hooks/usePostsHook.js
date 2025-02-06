@@ -1,6 +1,9 @@
 import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation, useGetUnderPostsQuery } from "../store/services/index";
+import useGetReduxOrganization from "./useGetReduxOrganization";
 
 export const usePostsHook = (postId) => {
+
+     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
     const {
         allPosts = [],
@@ -79,12 +82,11 @@ export const usePostsHook = (postId) => {
         maxDivisionNumber = undefined,
         isLoadingGetNew,
         isErrorGetNew,
-    } = useGetPostNewQuery(undefined, {
+    } = useGetPostNewQuery({organizationId: reduxSelectedOrganizationId}, {
         selectFromResult: ({ data, isLoading, isError }) => ({
-            workers: data?.workers || [],
+            staff: data?.workers || [],
             policies: data?.policies || [],
-            posts: data?.posts || [],
-            organizations: data?.organizations || [],
+            parentPosts: data?.posts || [],
             maxDivisionNumber: data?.maxDivisionNumber + 1 || undefined,
             isLoadingGetNew: isLoading,
             isErrorGetNew: isError,
@@ -104,6 +106,9 @@ export const usePostsHook = (postId) => {
 
 
     return {
+
+        reduxSelectedOrganizationId,
+
         allPosts,
         isLoadingGetPosts,
         isErrorGetPosts,
