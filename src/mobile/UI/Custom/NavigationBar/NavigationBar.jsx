@@ -16,7 +16,7 @@ export default function NavigationBar() {
                         <img src={messagiesIcon} alt="messagiesIcon" onClick={() => navigate('/Main')}/>
                     </div>
                     <div className={classes.imgContainer}>
-                        <img src={helperIcon} alt="helperIcon" onClick={() => navigate('/Chat')} />
+                        <img src={helperIcon} alt="helperIcon" onClick={() => navigate('/pomoshnik')} />
                     </div>
                     <div className={classes.imgContainer}>
                         <img src={accountIcon} alt="accountIcon" />
