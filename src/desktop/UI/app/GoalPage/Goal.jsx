@@ -8,7 +8,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import useGoalHook from "@hooks/useGoalHook";
+import {useGoalHook} from "@hooks";
 
 export default function Goal() {
   const [editorState, setEditorState] = useState([]);

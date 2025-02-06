@@ -8,8 +8,7 @@ import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
-import { useObjectiveHook } from "@hooks/useObjectiveHook";
-import useStartegyHook from "@hooks/useStartegyHook";
+import { useObjectiveHook, useStrategyHook } from "@hooks";
 
 export default function Objective() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -40,7 +39,7 @@ export default function Objective() {
     archiveStrategies,
     isLoadingStrategies,
     isErrorStrategies,
-  } = useStartegyHook();
+  } = useStrategyHook();
 
   const saveUpdateObjective = async () => {
     await updateObjective({

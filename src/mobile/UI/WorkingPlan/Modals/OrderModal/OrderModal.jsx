@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classes from './OrderModal.module.css'
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
-import { usePostsHook } from '../../../../hooks/usePostsHook'
+import { usePostsHook } from '@hooks'
 
 export default function OrderModal({ setModalOpen, setTheme, selectedPost, setReciverPost, buttonFunc }) {
 

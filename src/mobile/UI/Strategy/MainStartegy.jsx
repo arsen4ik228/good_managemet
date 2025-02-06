@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Custom/CustomHeader/Header";
 import addIcon from '../Custom/icon/icon _ add _ blue.svg'
 import AlertDraftIsExists from '../Custom/AlertDraftIsExists/AlertDraftIsExists';
-import { useStartegyHook } from '../../hooks/useStrategyHook';
 import HandlerMutation from '../Custom/HandlerMutation';
 import HandlerQeury from '../Custom/HandlerQeury';
+import { useStrategyHook } from '@hooks';
 
 const MainStrategy = () => {
 
@@ -29,7 +29,7 @@ const MainStrategy = () => {
         isSuccessPostStrategyMutation,
         isErrorPostStrategyMutation,
         errorPostStrategyMutation,
-    } = useStartegyHook()
+    } = useStrategyHook()
 
 
     const saveNewStrategy = async () => {

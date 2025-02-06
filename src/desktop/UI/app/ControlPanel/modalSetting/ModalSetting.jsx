@@ -6,7 +6,7 @@ import Input from "@Custom/Input/Input";
 import Select from "@Custom/Select/Select";
 import ButtonImage from "@Custom/buttonImage/ButtonImage";
 import TableCheckBox from "@Custom/tableCheckBox/TableCheckBox";
-import useStatisticsHook from "../../hooks/useStatisticsHook";
+import {useStatisticsHook} from "@hooks";
 
 export default function ModalSetting({
   exit,

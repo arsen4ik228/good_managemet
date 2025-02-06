@@ -1,5 +1,5 @@
 import { isTokenValid } from "./tokenValid"; // Функция проверки токена
-import { refreshTokens } from "../authApi"; // Функция обновления токенов
+import { refreshTokens } from "@services"; // Функция обновления токенов
 
 export const prepareHeaders = async (headers) => {
   const token = localStorage.getItem("accessToken");

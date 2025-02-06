@@ -6,7 +6,7 @@ import HandlerMutation from "../Custom/HandlerMutation";
 import ModalWindow from '../Custom/ConfirmStrategyToComplited/ModalWindow';
 import CustomtextArea from '../Custom/CustomTextarea/CustomtextArea'
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer'
-import { useStartegyHook } from '../../hooks/useStrategyHook';
+import { useStrategyHook } from '@hooks';
 import HandlerQeury from '../Custom/HandlerQeury';
 import { notEmpty } from '../../BLL/constans';
 
@@ -33,7 +33,7 @@ const Strategy = () => {
         isErrorUpdateStrategyMutation,
         ErrorStrategyMutation,
 
-    } = useStartegyHook(strategyId)
+    } = useStrategyHook(strategyId)
 
 
     const saveUpdateStrategy = async () => {

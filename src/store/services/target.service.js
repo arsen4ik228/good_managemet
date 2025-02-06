@@ -1,5 +1,5 @@
+import { formattedDate } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
-import { formattedDate } from "./constans";
 
 
 export const targetsApi =  apiSlice.injectEndpoints({

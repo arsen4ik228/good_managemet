@@ -1,4 +1,4 @@
-import { useGetStatisticsQuery } from "@BLL/statisticsApi";
+import { useGetStatisticsQuery } from "@services";
 import { useState, useEffect } from "react";
 import useGetOrganizationId from "./useGetReduxOrganization";
 

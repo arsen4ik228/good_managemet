@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import classes from './FilesModal.module.css';
 
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer';
-import { usePolicyHook } from '../../../../hooks/usePolicyHook';
+import { usePolicyHook } from '@hooks';
 import { usePostFilesMutation } from '@services';
 import { baseUrl, notEmpty } from '../../../../BLL/constans';
 

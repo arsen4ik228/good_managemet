@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import classes from './AttachmentMOdal.module.css'
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
 import { baseUrl } from '../../../../BLL/constans'
-import { usePostFilesMutation } from '../../../../../desktop/BLL/fileApi'
+import { usePostFilesMutation } from '@services'
 import { FullScreenImageModal } from '../../../Custom/FullScreanImageModal/FullScreanImageModal'
 
 

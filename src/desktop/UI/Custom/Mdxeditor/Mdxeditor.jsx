@@ -18,8 +18,8 @@ import {
 } from "@mdxeditor/editor";
 import i18n from "./i18n";
 import classes from "./Mdxeditor.module.css";
-import { usePostImageMutation } from "../../../BLL/policyApi";
-import { url } from "../../../BLL/baseUrl";
+import { usePostImageMutation } from "@services";
+import { baseUrl } from "@helpers/constants";
 
 export default function Mdxeditor({ editorState, setEditorState, userId, readOnly }) {
   const editorRef = useRef(null); // Ссылка на редактор
@@ -54,7 +54,7 @@ export default function Mdxeditor({ editorState, setEditorState, userId, readOnl
 
             console.log("Успешно загружено:", filePath);
 
-            return `${url}${filePath}`;
+            return `${baseUrl}${filePath}`;
 
         } catch (error) {
             console.error("Ошибка загрузки изображения:", error);

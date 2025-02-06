@@ -1,4 +1,4 @@
-import { baseUrl } from "@helpers/constant.js"; // Импорт базового URL
+import { baseUrl } from "@helpers/constants.js"; // Импорт базового URL
 
 // Функция для обновления токенов
 export const refreshTokens = async (fingerprint) => {

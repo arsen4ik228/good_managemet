@@ -13,18 +13,18 @@ import {
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
   usePostStatisticsMutation,
-} from "@BLL/statisticsApi.js";
+} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import exit from "@image/exitModal.svg";
 import {
   useGetOrganizationIdQuery,
   useUpdateOrganizationsMutation,
-} from "@BLL/organizationApi.js";
+} from "@services";
 import WaveLetters from "@Custom/WaveLetters.jsx";
 import getDateFormatSatatistic from "@Custom/Function/getDateFormatStatistic.js";
 import Headers from "@Custom/Headers/Headers";
-import { useGetPostsQuery } from "@BLL/postApi";
+import { useGetPostsQuery } from "@services";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import Select from "@Custom/Select/Select";
 import Input from "@Custom/Input/Input";

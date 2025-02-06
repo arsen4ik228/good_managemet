@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { prepareHeaders } from './Function/prepareHeaders';
+import { prepareHeaders } from '@helpers/authValidation/prepareHeaders';
 
 const apiSlice = createApi({
   reducerPath: 'api',

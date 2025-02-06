@@ -1,4 +1,4 @@
-import { selectedOrganizationId } from "./baseUrl";
+import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
 
 export const organizationApi = apiSlice.injectEndpoints({
@@ -7,43 +7,48 @@ export const organizationApi = apiSlice.injectEndpoints({
       query: () => ({
         url: `organizations`,
       }),
-    
+
       transformResponse: (response) => {
         const organizations = response?.map(
           ({ createdAt, updatedAt, ...rest }) => ({ ...rest })
         );
-        return organizations
-      },  
-      
-      providesTags: result =>
-        result
+        return organizations;
+      },
+
+      providesTags: (result) =>
+        Array.isArray(result)
           ? [
-              ...result?.organizations.map(({ id }) => ({
-                type: 'Organization',
+              ...result.map(({ id }) => ({
+                type: "Organization",
                 id,
               })),
-              'Organization',
+              "Organization",
             ]
-          : ['Organization'],
+          : ["Organization"],
+      
     }),
 
     getOrganizationId: build.query({
-      query: ({organizationId}) => ({
+      query: ({ organizationId }) => ({
         url: `organizations/${organizationId}`,
       }),
-      providesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.organizationId }],
+      providesTags: (result, err, arg) => [
+        { type: "ControlPanel", id: arg.organizationId },
+      ],
     }),
 
     updateOrganizations: build.mutation({
       query: (body) => ({
         url: `organizations/${selectedOrganizationId}/update`,
         method: "PATCH",
-        body:{
-          _id:selectedOrganizationId,
-          ...body
+        body: {
+          _id: selectedOrganizationId,
+          ...body,
         },
       }),
-      invalidatesTags: (result, err, arg) => [{ type: 'Organization', id: arg.selectedOrganizationId }],
+      invalidatesTags: (result, err, arg) => [
+        { type: "Organization", id: arg.selectedOrganizationId },
+      ],
     }),
   }),
 });

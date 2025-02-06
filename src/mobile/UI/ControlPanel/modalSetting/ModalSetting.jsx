@@ -3,7 +3,7 @@ import classes from "./ModalSetting.module.css";
 import Input from "@Custom/Input/Input";
 import Select from "@Custom/Select/Select";
 import TableCheckBox from "@Custom/tableCheckBox/TableCheckBox";
-import { useStatisticsHook } from "../../../hooks/useStatisticsHook";
+import { useStatisticsHook } from "@hooks";
 import ModalContainer from "../../Custom/ModalContainer/ModalContainer";
 
 export default function ModalSetting({

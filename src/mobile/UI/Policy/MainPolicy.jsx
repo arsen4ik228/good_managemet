@@ -9,8 +9,8 @@ import leftArrow from '../Custom/icon/icon _ leftarrow.svg'
 import rightArrow from '../Custom/icon/icon _ rightarrow.svg'
 import HandlerQeury from '../Custom/HandlerQeury';
 import HandlerMutation from '../Custom/HandlerMutation';
-import { usePolicyHook } from '../../hooks/usePolicyHook';
-import { usePoliceDirectoriesHook } from '../../hooks/usePolicyDirectoriesHook';
+import { usePolicyHook } from '@hooks';
+import { usePolicyDirectoriesHook } from '@hooks';
 
 
 
@@ -59,7 +59,7 @@ const MainPolicy = () => {
         policyDirectories,
         isLoadingPolicyDirectories,
         isErrorPolicyDirectories,
-    } = usePoliceDirectoriesHook()
+    } = usePolicyDirectoriesHook()
 
 
     const savePolicy = async () => {

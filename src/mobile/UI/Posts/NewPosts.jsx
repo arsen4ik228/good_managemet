@@ -10,7 +10,7 @@ import AttachPolicy from '../Custom/AttachPolicy/AttachPolicy.jsx';
 import AlertSavePost from '../Custom/AlertSavePost/AlertSavePost.jsx';
 import { selectedOrganizationId } from '../../BLL/constans.js';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
-import { usePostsHook } from '../../hooks/usePostsHook.js';
+import { usePostsHook } from '@hooks';
 
 
 const Posts = () => {

@@ -1,4 +1,4 @@
-import { useGetSpeedGoalIdQuery, useUpdateSpeedGoalMutation } from "../store/services/index"
+import { useGetObjectiveIdQuery, useUpdateObjectiveMutation } from "../store/services/index.js"
 
 export const useObjectiveHook = (selectedStrategyId) => {
 
@@ -8,7 +8,7 @@ export const useObjectiveHook = (selectedStrategyId) => {
             isLoadingGetSpeedGoalId,
             isErrorGetSpeedGoalId,
             isFetchingGetSpeedGoalId,
-        } = useGetSpeedGoalIdQuery(
+        } = useGetObjectiveIdQuery(
             { strategyId: selectedStrategyId },
             {
                 selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
@@ -30,7 +30,7 @@ export const useObjectiveHook = (selectedStrategyId) => {
                     isSuccess: isSuccessUpdateSpeedGoalMutation,
                     isError: isErrorUpdateSpeedGoalMutation,
                 },
-            ] = useUpdateSpeedGoalMutation();
+            ] = useUpdateObjectiveMutation();
 
         return {
             currentSpeedGoal,

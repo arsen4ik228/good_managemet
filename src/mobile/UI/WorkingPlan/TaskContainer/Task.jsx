@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import classes from './Task.module.css'
 import DetailsTaskModal from '../Modals/DetailsTaskModal/DetailsTaskModal'
 import { formattedDate, notEmpty } from '../../../BLL/constans'
-import { useTargetsHook } from '../../../hooks/useTargetsHook'
+import { useTargetsHook } from '@hooks'
 
 export default function Task({ taskData, userPosts, isArchive }) {
 

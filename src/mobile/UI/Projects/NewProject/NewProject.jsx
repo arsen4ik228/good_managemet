@@ -13,7 +13,7 @@ import listSetting from '../../Custom/icon/icon _ list setting.svg'
 import AlertOnlyOneProductTarget from "../../Custom/AlertOnlyOneProductTarget/AlertOnlyOneProductTarget";
 import CustomSelectSettingModal from "../CustomSelectSettingModal/CustomSelectSettingModal";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useProjectsHook } from "../../../hooks/useProjectsHook";
+import { useProjectsHook } from "@hooks";
 import { Button } from "@mdxeditor/editor";
 import { ButtonContainer } from "../../Custom/CustomButtomContainer/ButtonContainer";
 

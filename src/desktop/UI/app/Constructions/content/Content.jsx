@@ -1,7 +1,7 @@
 import React from "react";
 import classes from "./Content.module.css";
 import { useParams } from "react-router-dom";
-import pageComponents from "@constants/pageComponents.js";
+import pageComponents from "@helpers/pageComponents.js";
 import HandlerQeury from "@Custom/HandlerQeury";
 
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));

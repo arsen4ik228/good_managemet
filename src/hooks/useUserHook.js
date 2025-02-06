@@ -1,4 +1,4 @@
-import { useGetUserNewQuery, usePostUserMutation } from "../../BLL/userApi";
+import { useGetUserNewQuery, usePostUserMutation } from "@services";
 import { useMutationHandler } from "./useMutationHandler";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 

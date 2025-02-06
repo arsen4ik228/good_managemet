@@ -1,10 +1,10 @@
+import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
-import { selectedOrganizationId } from "./baseUrl";
 
 
-export const directoriesApi = apiSlice.injectEndpoints({
+export const policyDirectoriesApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
-    getDirectories: build.query({
+    getPolicyDirectories: build.query({
       query: () => ({
         url: `policyDirectory/${selectedOrganizationId}`,
       }),
@@ -90,7 +90,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
       providesTags: (result, err, arg) => [{ type: 'Directory', id: arg.policyDirectoryId }],
     }),
 
-    postDirectories: build.mutation({
+    postPolicyDirectories: build.mutation({
       query: (body) => ({
         url: `policyDirectory/new`,
         method: "POST",
@@ -99,7 +99,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
       invalidatesTags: ['Directory'],
     }),
 
-    updateDirectories: build.mutation({
+    updatePolicyDirectories: build.mutation({
       query: ({ policyDirectoryId, ...body }) => ({
         url: `/policyDirectory/${policyDirectoryId}/update`,
         method: "PATCH",
@@ -108,7 +108,7 @@ export const directoriesApi = apiSlice.injectEndpoints({
       invalidatesTags: (result, err, arg) => [{ type: 'Directory', id: arg.policyDirectoryId }],
     }),
 
-    deleteDirectories: build.mutation({
+    deletePolicyDirectories: build.mutation({
       query: ({ policyDirectoryId }) => ({
         url: `policyDirectory/${policyDirectoryId}/remove`,
         method: "DELETE",
@@ -119,9 +119,9 @@ export const directoriesApi = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetDirectoriesQuery,
+  useGetPolicyDirectoriesQuery,
   useGetPolicyDirectoriesIdQuery,
-  usePostDirectoriesMutation,
-  useDeleteDirectoriesMutation,
-  useUpdateDirectoriesMutation,
-} = directoriesApi;
+  usePostPolicyDirectoriesMutation,
+  useDeletePolicyDirectoriesMutation,
+  useUpdatePolicyDirectoriesMutation,
+} = policyDirectoriesApi;

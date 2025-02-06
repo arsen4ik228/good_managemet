@@ -3,7 +3,7 @@ import classes from './MainWorkingPlan.module.css'
 import InputTextContainer from './ContainerForInputText/InputTextContainer'
 import Header from '../Custom/CustomHeader/Header'
 import Task from './TaskContainer/Task'
-import { useTargetsHook } from '../../hooks/useTargetsHook'
+import { useTargetsHook } from '@hooks'
 
 export default function MainWorkingPlan() {
 

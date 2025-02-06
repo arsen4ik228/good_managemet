@@ -3,8 +3,8 @@ import Header from "../Custom/CustomHeader/Header";
 import classes from "./Objective.module.css";
 import HandlerQeury from "../Custom/HandlerQeury";
 import HandlerMutation from "../Custom/HandlerMutation";
-import { useObjectiveHook } from '../../hooks/useObjectiveHook'
-import { useStartegyHook } from '../../hooks/useStrategyHook';
+import { useObjectiveHook } from '@hooks'
+import { useStrategyHook } from '@hooks';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer';
 import CustomtextArea from '../Custom/CustomTextarea/CustomtextArea';
 
@@ -40,7 +40,7 @@ function Objective(props) {
         archiveStrategies,
         isLoadingStrateg,
         isErrorStrateg
-    } = useStartegyHook()
+    } = useStrategyHook()
 
     const CONTENT_TYPE = {
         0: { array: contentEditors, setFunction: setContentEditors },
