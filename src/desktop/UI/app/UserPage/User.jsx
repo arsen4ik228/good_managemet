@@ -182,7 +182,6 @@ export default function User() {
         await Promise.all(
           arrayCheckedPostsIds.map(async (id) => {
             await updatePost({
-              postId: id,
               _id: id,
               responsibleUserId: createdUserId,
             })

@@ -6,10 +6,10 @@ export const controlPanelApi = apiSlice.injectEndpoints({
       query: ({ organizationId }) => ({
         url: `controlPanels/${organizationId}`,
       }),
-      providesTags: result =>
-        result
+      providesTags: (result) =>
+        Array.isArray(result)
           ? [
-              ...result?.data.map(({ id }) => ({
+              ...result?.map(({ id }) => ({
                 type: 'ControlPanel',
                 id,
               })),

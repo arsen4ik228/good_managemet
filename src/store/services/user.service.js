@@ -8,14 +8,14 @@ export const userApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ['User'],
     }),
 
     getUserNew: build.query({
       query: ({ organizationId }) => ({
         url: `users/${organizationId}/new`,
       }),
-      providesTags: ["User"]
+      providesTags: ['User'],
     }),
 
   }),

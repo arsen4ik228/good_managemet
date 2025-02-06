@@ -5,10 +5,11 @@ import {
     usePostControlPanelMutation,
     useUpdateControlPanelMutation,
   } from "@services";
-  import useGetOrganizationId from "./useGetReduxOrganization";
-  
+  import useGetReduxOrganization from "./useGetReduxOrganization";
+  import { useMutationHandler } from "./useMutationHandler";
+
   export default function useControlPanel({selectedControlPanelId}) {
-    const { reduxSelectedOrganizationId, reduxSelectedOrganizationReportDay } = useGetOrganizationId();
+    const { reduxSelectedOrganizationId, reduxSelectedOrganizationReportDay } = useGetReduxOrganization();
   
     const {
       allControlPanel = [],
@@ -56,8 +57,16 @@ import {
         isSuccess: isSuccessPostControlPanelMutation,
         isError: isErrorPostControlPanelMutation,
         error: ErrorPostControlPanel,
+        reset: resetPostControlPanelMutation,
       },
     ] = usePostControlPanelMutation();
+  
+     
+    const localIsResponsePostControlPanelMutation = useMutationHandler(
+      isSuccessPostControlPanelMutation,
+      isErrorPostControlPanelMutation,
+      resetPostControlPanelMutation
+    );
   
     const [
       updateControlPanel,
@@ -66,8 +75,15 @@ import {
         isSuccess: isSuccessUpdateControlPanelMutation,
         isError: isErrorUpdateControlPanelMutation,
         error: ErrorUpdateControlPanel,
+        reset: resetUpdateControlPanelMutation,
       },
     ] = useUpdateControlPanelMutation();
+  
+    const localIsResponseUpdateControlPanelMutation = useMutationHandler(
+      isSuccessUpdateControlPanelMutation,
+      isErrorUpdateControlPanelMutation,
+      resetUpdateControlPanelMutation
+    );
   
     const [
       deleteControlPanel,
@@ -76,47 +92,57 @@ import {
         isSuccess: isSuccessDeleteControlPanelMutation,
         isError: isErrorDeleteControlPanelMutation,
         error: ErrorDeleteControlPanel,
+        reset: resetDeleteControlPanelMutation,
       },
     ] = useDeleteControlPanelMutation();
   
-    return {
-      reduxSelectedOrganizationId,
-      reduxSelectedOrganizationReportDay,
-  
-      // Получение всех панелей по организации
-      allControlPanel,
-      isErrorGetAllControlPanel,
-      isLoadingGetAllControlPanel,
-      isFetchingGetAllControlPanel,
-  
-      // Получение панели по id
-      currentControlPanel,
-      statisticsIdsInPanel,
-      statisticsPoints,
-      isLoadingGetontrolPanelId,
-      isFetchingGetontrolPanelId,
-      isErrorGetontrolPanelId,
-  
-      // Создание панели
-      postControlPanel,
-      isLoadingPostControlPanelMutation,
-      isSuccessPostControlPanelMutation,
-      isErrorPostControlPanelMutation,
-      ErrorPostControlPanel,
-  
-      //  Обновление
-      updateControlPanel,
-      isLoadingUpdateControlPanelMutation,
-      isSuccessUpdateControlPanelMutation,
-      isErrorUpdateControlPanelMutation,
-      ErrorUpdateControlPanel,
-  
-      // Удаление статистики
-      deleteControlPanel,
-      isLoadingDeleteControlPanelMutation,
+    const localIsResponseDeleteControlPanelMutation = useMutationHandler(
       isSuccessDeleteControlPanelMutation,
       isErrorDeleteControlPanelMutation,
-      ErrorDeleteControlPanel,
+      resetDeleteControlPanelMutation
+    );
+  
+    return {
+    reduxSelectedOrganizationId,
+    reduxSelectedOrganizationReportDay,
+
+    // Получение всех панелей по организации
+    allControlPanel,
+    isErrorGetAllControlPanel,
+    isLoadingGetAllControlPanel,
+    isFetchingGetAllControlPanel,
+
+    // Получение панели по id
+    currentControlPanel,
+    statisticsIdsInPanel,
+    statisticsPoints,
+    isLoadingGetontrolPanelId,
+    isFetchingGetontrolPanelId,
+    isErrorGetontrolPanelId,
+
+    // Создание панели
+    postControlPanel,
+    isLoadingPostControlPanelMutation,
+    isSuccessPostControlPanelMutation,
+    isErrorPostControlPanelMutation,
+    ErrorPostControlPanel,
+    localIsResponsePostControlPanelMutation,
+
+    //  Обновление
+    updateControlPanel,
+    isLoadingUpdateControlPanelMutation,
+    isSuccessUpdateControlPanelMutation,
+    isErrorUpdateControlPanelMutation,
+    ErrorUpdateControlPanel,
+    localIsResponseUpdateControlPanelMutation,
+
+    // Удаление статистики
+    deleteControlPanel,
+    isLoadingDeleteControlPanelMutation,
+    isSuccessDeleteControlPanelMutation,
+    isErrorDeleteControlPanelMutation,
+    ErrorDeleteControlPanel,
+    localIsResponseDeleteControlPanelMutation
     };
   }
   

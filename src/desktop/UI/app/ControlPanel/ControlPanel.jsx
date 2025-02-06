@@ -4,12 +4,13 @@ import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import {useControlPanel} from "@hooks";
-import {usePostsHook} from "@hooks";
+import { useControlPanel } from "@hooks";
+import { usePostsHook } from "@hooks";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks";
 import ModalWindow from "@Custom/ModalWindow";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
 import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
@@ -264,33 +265,33 @@ export default function ControlPanel() {
     }
   };
 
-  // useEffect(() => {
-  //   if (Object.keys(allControlPanel).length > 0) {
-  //     loadFromIndexedDB(reduxSelectedOrganizationId, (data) => {
-  //       if (data.length > 0) {
-  //         setArrayAllControlPanel(() => {
-  //           return allControlPanel
-  //             .map((panel) => {
-  //               const matchingData = data.find((item) => item.id === panel.id);
-  //               if (matchingData) {
-  //                 return {
-  //                   ...panel,
-  //                   orderNumber: matchingData.orderNumber,
-  //                   isActive: matchingData.isActive,
-  //                 };
-  //               }
-  //               return panel;
-  //             })
-  //             .sort((a, b) => a.orderNumber - b.orderNumber);
-  //         });
-  //       } else {
-  //         setArrayAllControlPanel(allControlPanel);
-  //       }
-  //     });
-  //   } else {
-  //     setArrayAllControlPanel(allControlPanel);
-  //   }
-  // }, [allControlPanel]);
+  useEffect(() => {
+    if (Object.keys(allControlPanel).length > 0) {
+      loadFromIndexedDB(reduxSelectedOrganizationId, (data) => {
+        if (data.length > 0) {
+          setArrayAllControlPanel(() => {
+            return allControlPanel
+              .map((panel) => {
+                const matchingData = data.find((item) => item.id === panel.id);
+                if (matchingData) {
+                  return {
+                    ...panel,
+                    orderNumber: matchingData.orderNumber,
+                    isActive: matchingData.isActive,
+                  };
+                }
+                return panel;
+              })
+              .sort((a, b) => a.orderNumber - b.orderNumber);
+          });
+        } else {
+          setArrayAllControlPanel(allControlPanel);
+        }
+      });
+    } else {
+      setArrayAllControlPanel(allControlPanel);
+    }
+  }, [allControlPanel]);
 
   useEffect(() => {
     if (statisticsPoints.length > 0) {
@@ -298,6 +299,7 @@ export default function ControlPanel() {
     }
   }, [statisticsPoints]);
 
+  console.log(cards);
   return (
     <div className={classes.dialog}>
       <Headers name={"панель управления"}>
@@ -372,13 +374,25 @@ export default function ControlPanel() {
           </DndContext>
         )}
 
-        {openModalSetting && (
+        {!isErrorGetontrolPanelId && !isLoadingGetontrolPanelId && !isFetchingGetontrolPanelId && openModalSetting && (
           <ModalSetting
             exit={() => setOpenModalSetting(false)}
             updateControlPanel={updateControlPanel}
             currentControlPanel={currentControlPanel}
             statisticsIdsInPanel={statisticsIdsInPanel}
           ></ModalSetting>
+        )}
+        {!isErrorGetontrolPanelId && !isLoadingGetontrolPanelId && !isFetchingGetontrolPanelId && openModalDelete && (
+          <ModalWindow
+            text={`Вы точно хотите удалить панель управления ${
+              currentControlPanel.isNameChanged
+                ? currentControlPanel.panelName
+                : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
+            }`}
+            close={setOpenModalDelete}
+            btnYes={btnYes}
+            btnNo={btnNo}
+          ></ModalWindow>
         )}
         {openModalCreate && (
           <ModalSelectRadio
@@ -396,18 +410,6 @@ export default function ControlPanel() {
             save={createControlPanel}
           ></ModalSelectRadio>
         )}
-        {openModalDelete && (
-          <ModalWindow
-            text={`Вы точно хотите удалить панель управления ${
-              currentControlPanel.isNameChanged
-                ? currentControlPanel.panelName
-                : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
-            }`}
-            close={setOpenModalDelete}
-            btnYes={btnYes}
-            btnNo={btnNo}
-          ></ModalWindow>
-        )}
         {openModalStatistic && (
           <ModalStatistic
             data={modalStatisticDatas}
@@ -420,6 +422,18 @@ export default function ControlPanel() {
         )}
 
         <div className={classes.handler}>
+          <HandlerQeury
+            Loading={isLoadingGetAllControlPanel}
+            Fetching={isFetchingGetAllControlPanel}
+            Error={isErrorGetAllControlPanel}
+          ></HandlerQeury>
+
+          <HandlerQeury
+            Loading={isLoadingGetontrolPanelId}
+            Fetching={isFetchingGetontrolPanelId}
+            Error={isErrorGetontrolPanelId}
+          ></HandlerQeury>
+
           <HandlerMutation
             Loading={isLoadingPostControlPanelMutation}
             Error={

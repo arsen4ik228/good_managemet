@@ -11,10 +11,10 @@ export const postApi = apiSlice.injectEndpoints({
       query: () => ({
         url: `posts/${selectedOrganizationId}`,
       }),
-      providesTags: result =>
-        result
+      providesTags: (result) =>
+        Array.isArray(result)
           ? [
-              ...result?.data.map(({ id }) => ({
+              ...result?.map(({ id }) => ({
                 type: 'Post',
                 id,
               })),
@@ -97,10 +97,7 @@ export const postApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { postId }) => [
-        { type: "Post", id: "LIST" },  // Инвалидация списка постов
-        { type: "Post", id: postId },  // Инвалидация конкретного поста
-      ],
+      invalidatesTags: (result, err, arg) => [{ type: 'Post', id: arg._id }],
     }),
   }),
 });
