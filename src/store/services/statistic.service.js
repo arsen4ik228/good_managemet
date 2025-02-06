@@ -48,13 +48,13 @@ export const statisticsApi = apiSlice.injectEndpoints({
               },
             }),
           };
-        });
+        }).sort((a, b) => a.name.localeCompare(b.name));
 
         console.log("Transform Data:  ", transformData);
         return transformData;
       },
-      providesTags: result =>
-        result
+      providesTags: (result) =>
+        Array.isArray(result)
           ? [
               ...result?.map(({ id }) => ({
                 type: 'Statistic',
