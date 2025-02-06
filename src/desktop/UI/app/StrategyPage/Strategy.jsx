@@ -9,7 +9,7 @@ import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import Select from "@Custom/Select/Select";
-import useStartegyHook from "@hooks/useStartegyHook";
+import {useStrategyHook} from "@hooks";
 
 export default function Strategy() {
   const [number, setNumber] = useState("");
@@ -55,7 +55,7 @@ export default function Strategy() {
     isErrorUpdateStrategyMutation,
     errorUpdateStrategyMutation,
     localIsResponseUpdateStrategyMutation
-  } = useStartegyHook(number);
+  } = useStrategyHook(number);
 
   const stateMapping = {
     Черновик: ["Активный", "Черновик"],

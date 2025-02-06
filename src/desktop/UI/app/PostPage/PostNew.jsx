@@ -5,12 +5,12 @@ import greyPolicy from "@image/greyPolicy.svg";
 import blackStatistic from "@image/blackStatistic.svg";
 
 import { useNavigate } from "react-router-dom";
-import { useGetPostNewQuery, usePostPostsMutation } from "@BLL/postApi";
+import { useGetPostNewQuery, usePostPostsMutation } from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import { useDispatch } from "react-redux";
-import { setPostCreatedId } from "@BLL/postSlice.js";
+import { setPostCreatedId } from "@slices";
 import ModalWindow from "@Custom/ModalWindow.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
@@ -19,7 +19,7 @@ import Select from "@Custom/Select/Select";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import {useModalSelectRadio} from "@hooks/useModalSelectRadio";
 import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
-import { organizationApi } from "@BLL/organizationApi";
+
 
 export default function PostNew() {
   const navigate = useNavigate();

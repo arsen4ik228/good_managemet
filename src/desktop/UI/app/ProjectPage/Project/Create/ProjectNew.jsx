@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetProjectNewQuery,
   usePostProjectMutation,
-} from "@BLL/projectApi.js";
+} from "@services";
 
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import {
   setProjectCreatedId,
   setProjectOrganizationId,
-} from "@BLL/Project/Slice/projectSlice.js";
+} from "@slices";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import BlockSections from "@Custom/sectionsProject/BlockSections.jsx";
 

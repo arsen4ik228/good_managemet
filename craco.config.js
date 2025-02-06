@@ -12,8 +12,10 @@ module.exports = {
      
 
 
-      '@services': path.resolve('src/store/services/index.js'),
+      '@services': path.resolve('src/store/services/'),
+      '@slices': path.resolve('src/store/slices/'),
       '@hooks': path.resolve('src/hooks/'),
+      '@helpers': path.resolve('src/helpers'),
     },
   },
 };

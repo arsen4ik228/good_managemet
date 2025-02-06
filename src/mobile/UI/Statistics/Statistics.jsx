@@ -11,7 +11,7 @@ import HandlerMutation from '../Custom/HandlerMutation'
 import iconExit from '../Custom/SearchModal/icon/icon _ add.svg'
 import arrowInCircle from '../Custom/icon/arrow in circle.svg'
 import { useGetPostsQuery } from '../../BLL/postApi'
-import { useStatisticsHook } from '../../hooks/useStatisticsHook'
+import { useStatisticsHook } from '@hooks'
 
 export default function Statistics() {
 

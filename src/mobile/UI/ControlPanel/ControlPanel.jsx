@@ -10,9 +10,9 @@ import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
 import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
 import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
 
-import { useModalSelectRadio } from "../../hooks/useModalSelectRadio";
-import useControlPanel from "../../hooks/useControlPanel";
-import { usePostsHook } from "../../hooks/usePostsHook";
+import { useModalSelectRadio } from "@hooks";
+import {useControlPanel} from "@hooks";
+import { usePostsHook } from "@hooks";
 
 import ModalContainer from "../Custom/ModalContainer/ModalContainer";
 
@@ -36,7 +36,7 @@ import {
   deleteFromIndexedDB,
   loadFromIndexedDB,
 } from "@utils/src/index.js";
-import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
+import {usePanelToStatisticsHook} from "@hooks";
 import { debounce } from "lodash";
 
 export default function ControlPanel() {

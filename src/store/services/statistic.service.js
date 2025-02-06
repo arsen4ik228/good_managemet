@@ -1,4 +1,5 @@
 
+import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
 
@@ -79,8 +80,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         ],
         body,
       }),
-      invalidatesTags: (result) =>
-        result ? ["Statistic"],
+      invalidatesTags: ["Statistic"],
     }),
 
     getStatisticsId: build.query({
@@ -121,5 +121,4 @@ export const {
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
-  useUpdateStatisticsToPostIdMutation,
 } = statisticsApi;

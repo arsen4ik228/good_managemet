@@ -12,7 +12,7 @@ import {
   useGetPoliciesQuery,
   useGetPoliciesIdQuery,
   useUpdatePoliciesMutation,
-} from "@BLL/policyApi.js";
+} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import addCircleBlue from "@image/addCircleBlue.svg";
@@ -22,7 +22,7 @@ import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
 import Headers from "@Custom/Headers/Headers.jsx";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders.jsx";
 import Select from "@Custom/Select/Select.jsx";
-import { useDirectories } from "./hooks/Directories";
+import {usePolicyDirectoriesHook} from "@hooks";
 import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
 import ModalFolder from "@Custom/modalFolder/ModalFolder";
 import ModalWindow from "@Custom/ModalWindow";
@@ -216,7 +216,7 @@ export default function Policy() {
     handleInputChangeModalSearch,
     handleCheckboxChange,
     handleCheckboxChangeUpdate,
-  } = useDirectories({ instructionsActive, directivesActive });
+  } = usePolicyDirectoriesHook({ instructionsActive, directivesActive });
 
   const saveUpdatePolicy = async () => {
     const Data = {};

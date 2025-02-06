@@ -2,16 +2,19 @@ import React, { useState, useEffect, useCallback } from "react";
 import classes from "./ControlPanel.module.css";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import ModalSetting from "@Custom/modalSetting/ModalSetting";
+
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import useControlPanel from "@hooks/useControlPanel";
-import usePostsHook from "@hooks/usePostsHook";
-import PanelDragDrop from "@Custom/panelDragDrop/PanelDragDrop";
+import {useControlPanel} from "@hooks";
+import {usePostsHook} from "@hooks";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
+import { useModalSelectRadio } from "@hooks";
 import ModalWindow from "@Custom/ModalWindow";
-import ModalStatistic from "@Custom/GraphicStatistics/modal/ModalStatistic";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
+
+import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
+import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
+import ModalSetting from "./modalSetting/ModalSetting";
+import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
 
 import {
   DndContext,
@@ -27,7 +30,7 @@ import {
   sortableKeyboardCoordinates,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import SortableCard from "@Custom/GraphicStatistics/card/sortable/SortableCard";
+
 import {
   saveToIndexedDB,
   deleteFromIndexedDB,
@@ -261,33 +264,33 @@ export default function ControlPanel() {
     }
   };
 
-  useEffect(() => {
-    if (Object.keys(allControlPanel).length > 0) {
-      loadFromIndexedDB(reduxSelectedOrganizationId, (data) => {
-        if (data.length > 0) {
-          setArrayAllControlPanel(() => {
-            return allControlPanel
-              .map((panel) => {
-                const matchingData = data.find((item) => item.id === panel.id);
-                if (matchingData) {
-                  return {
-                    ...panel,
-                    orderNumber: matchingData.orderNumber,
-                    isActive: matchingData.isActive,
-                  };
-                }
-                return panel;
-              })
-              .sort((a, b) => a.orderNumber - b.orderNumber);
-          });
-        } else {
-          setArrayAllControlPanel(allControlPanel);
-        }
-      });
-    } else {
-      setArrayAllControlPanel(allControlPanel);
-    }
-  }, [allControlPanel]);
+  // useEffect(() => {
+  //   if (Object.keys(allControlPanel).length > 0) {
+  //     loadFromIndexedDB(reduxSelectedOrganizationId, (data) => {
+  //       if (data.length > 0) {
+  //         setArrayAllControlPanel(() => {
+  //           return allControlPanel
+  //             .map((panel) => {
+  //               const matchingData = data.find((item) => item.id === panel.id);
+  //               if (matchingData) {
+  //                 return {
+  //                   ...panel,
+  //                   orderNumber: matchingData.orderNumber,
+  //                   isActive: matchingData.isActive,
+  //                 };
+  //               }
+  //               return panel;
+  //             })
+  //             .sort((a, b) => a.orderNumber - b.orderNumber);
+  //         });
+  //       } else {
+  //         setArrayAllControlPanel(allControlPanel);
+  //       }
+  //     });
+  //   } else {
+  //     setArrayAllControlPanel(allControlPanel);
+  //   }
+  // }, [allControlPanel]);
 
   useEffect(() => {
     if (statisticsPoints.length > 0) {

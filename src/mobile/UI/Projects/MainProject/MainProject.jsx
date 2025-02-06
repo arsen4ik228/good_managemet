@@ -5,7 +5,7 @@ import sublist from "../../Custom/icon/icon _ sublist.svg";
 import { useGetProjectQuery } from "../../../BLL/projectApi";
 import { useGetOrganizationsQuery } from "../../../BLL/organizationsApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { useProjectsHook } from "../../../hooks/useProjectsHook";
+import { useProjectsHook } from "@hooks";
 
 export default function MainProject() {
   const navigate = useNavigate();

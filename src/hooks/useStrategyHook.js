@@ -1,7 +1,7 @@
-import { useGetStrategyIdQuery, useGetStrategyQuery, usePostStrategyMutation, useUpdateStrategyMutation } from "../store/services/index";
+import { useGetStrategyIdQuery, useGetStrategiesQuery, usePostStrategyMutation, useUpdateStrategyMutation } from '@services'
 
 
-export const useStartegyHook = (strategyId) => {
+export const useStrategyHook = (strategyId) => {
 
 
     const {
@@ -10,7 +10,7 @@ export const useStartegyHook = (strategyId) => {
         activeStrategyId,
         isLoadingStrategy,
         isErrorStrategy,
-    } = useGetStrategyQuery(
+    } = useGetStrategiesQuery(
         undefined,
         {
             selectFromResult: ({ data, isLoading, isError }) => ({

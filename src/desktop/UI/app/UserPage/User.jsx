@@ -6,15 +6,15 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import Input from "@Custom/Input/Input";
 
 import InputMask from "react-input-mask";
-import { useUserHook } from "../../hooks/useUserHook";
+import { useUserHook } from "@hooks";
 import HandlerMutation from "@Custom/HandlerMutation";
-import { usePostImageMutation } from "../../../BLL/fileApi";
+import { usePostImageMutation } from "@services";
 import addCircle from "@image/addCircleGrey.svg";
 import post from "@image/post.svg";
-import ButtonAttach from "../../Custom/buttonAttach/ButtonAttach";
-import { useModalSelectCheckBox } from "../../hooks/useModalSelectCheckBox";
-import { ModalSelectCheckBox } from "../../Custom/modalSelectCheckBox/ModalSelectCheckBox";
-import usePostsHook from "../../hooks/usePostsHook";
+import ButtonAttach from "@Custom/buttonAttach/ButtonAttach";
+import { useModalSelectCheckBox } from "@hooks";
+import { ModalSelectCheckBox } from "@Custom/modalSelectCheckBox/ModalSelectCheckBox";
+import {usePostsHook} from "@hooks";
 import exitHeader from "@image/exitHeader.svg";
 
 export default function User() {

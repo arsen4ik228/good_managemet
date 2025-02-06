@@ -1,6 +1,6 @@
+import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
 
-import { selectedOrganizationId } from "./baseUrl";
 
 
 export const policyApi = apiSlice.injectEndpoints({
@@ -185,5 +185,4 @@ export const {
   usePostPoliciesMutation,
   useGetPoliciesIdQuery,
   useUpdatePoliciesMutation,
-  usePostImageMutation,
 } = policyApi;

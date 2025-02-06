@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export  function useModalSelectRadio({ array, arrayItem }) {
+export function useModalSelectRadio ({ array, arrayItem }) {
   const [selectedID, setSelectedID] = useState("null");
   const [selectedName, setSelectedName] = useState(null);
 

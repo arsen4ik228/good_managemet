@@ -8,11 +8,11 @@ import {Provider} from "react-redux";
 // import store from './BLL/index';
 import { isMobile } from 'react-device-detect'; // Импортируем функцию для определения устройства
 
+import {store} from './store/index'
+// import mobileStore from './mobile/BLL/index'
+// import desktopStore from './desktop/BLL/index'
 
-import mobileStore from './mobile/BLL/index'
-import desktopStore from './desktop/BLL/index'
-
-const store = isMobile ? mobileStore : desktopStore;
+// const store = isMobile ? mobileStore : desktopStore;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

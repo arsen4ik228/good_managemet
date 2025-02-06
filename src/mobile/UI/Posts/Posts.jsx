@@ -9,7 +9,7 @@ import Header from "../Custom/CustomHeader/Header";
 import AttachPolicy from '../Custom/AttachPolicy/AttachPolicy.jsx';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
 import { notEmpty } from '../../BLL/constans.js';
-import { usePostsHook } from '../../hooks/usePostsHook.js';
+import { usePostsHook } from '@hooks';
 
 
 const Posts = () => {

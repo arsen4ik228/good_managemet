@@ -4,9 +4,9 @@ import { QRCode } from "antd";
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-import { url } from "@BLL/baseUrl";
+import { baseUrl } from "@helpers/constants";
 
-const socket = io("http://localhost:5000/auth", {
+const socket = io(`${baseUrl}auth`, {
   cors: {
     credentials: true,
   },
@@ -51,7 +51,7 @@ export default function Content() {
 
         // Запрос на сервер
         const response = await fetch(
-          `${url}?fingerprint=${a._fingerprint}`,
+          `${baseUrl}?fingerprint=${a._fingerprint}`,
           {
             method: "GET",
             headers: {
@@ -132,7 +132,7 @@ export default function Content() {
     if (data.userId && data.userId !== "false") {
       // Сохраняем accessToken в localStorage
       localStorage.setItem("accessToken", data.accessToken);
-      fetch(`${url}auth/set-cookie`, {
+      fetch(`${baseUrl}auth/set-cookie`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${data.accessToken}` },
         body: JSON.stringify({ refreshTokenId: data.refreshTokenId }),

@@ -10,7 +10,7 @@ import {
   useGetProjectQuery,
   useGetProjectNewQuery,
   useUpdateProjectMutation,
-} from "@BLL/projectApi.js";
+} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import WaveLetters from "@Custom/WaveLetters.jsx";

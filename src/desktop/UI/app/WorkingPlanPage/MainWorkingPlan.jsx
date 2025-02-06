@@ -3,7 +3,7 @@ import classes from './MainWorkingPlam.module.css'
 import Headers from "@Custom/Headers/Headers";
 import Task from '../../../../mobile/UI/WorkingPlan/TaskContainer/Task';
 import InputTextContainer from '../../../../mobile/UI/WorkingPlan/ContainerForInputText/InputTextContainer';
-import { useTargetsHook } from '../../../../mobile/hooks/useTargetsHook';
+import { useTargetsHook } from '@hooks';
 
 export default function MainWorkingPlan() {
 

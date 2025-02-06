@@ -6,7 +6,7 @@ import HandlerQeury from "../Custom/HandlerQeury";
 import HandlerMutation from "../Custom/HandlerMutation";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import CustomtextArea from '../Custom/CustomTextarea/CustomtextArea';
-import { useGoalHook } from '../../hooks/useGoalHook';
+import { useGoalHook } from '@hooks';
 import dragIcon from '../Custom/icon/drag _ and _ drop.svg'
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer';
 

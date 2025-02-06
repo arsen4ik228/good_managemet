@@ -3,7 +3,7 @@ import Header from '../../Custom/CustomHeader/Header'
 import classes from "./EditPolicyDirectory.module.css"
 import { useNavigate, useParams } from 'react-router-dom'
 import HandlerMutation from '../../Custom/HandlerMutation'
-import { usePoliceDirectoriesHook } from '../../../hooks/usePolicyDirectoriesHook'
+import { usePolicyDirectoriesHook } from '@hooks'
 import HandlerQeury from '../../Custom/HandlerQeury'
 
 export default function EditPolicyDirectories() {
@@ -34,7 +34,7 @@ export default function EditPolicyDirectories() {
         isSuccessUpdatePolicyDirectoriesMutation,
         isErrorUpdatePolicyDirectoriesMutation,
         ErrorUpdateDirectories,
-    } = usePoliceDirectoriesHook(policyDirectoryId)
+    } = usePolicyDirectoriesHook(policyDirectoryId)
 
 
 

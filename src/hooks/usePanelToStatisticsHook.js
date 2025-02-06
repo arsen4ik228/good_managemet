@@ -1,4 +1,4 @@
-import { usePanelToStatisticsUpdateOrderNumbersMutation } from "../../BLL/panelToStatisticsApi";
+import { usePanelToStatisticsUpdateOrderNumbersMutation } from "@services";
 import { useMutationHandler } from "./useMutationHandler";
 
 export default function usePanelToStatisticsHook() {
@@ -30,3 +30,5 @@ export default function usePanelToStatisticsHook() {
     localIsResponsePanelToStatisticsUpdateOrderNumbersMutation,
   };
 }
+
+

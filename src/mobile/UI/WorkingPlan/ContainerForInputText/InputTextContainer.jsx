@@ -8,8 +8,8 @@ import { notEmpty, resizeTextarea } from '../../../BLL/constans'
 import CalendarModal from '../Modals/CalendarModal/CalendarModal'
 import FilesModal from '../Modals/FilesModal/FilesModal'
 import OrderModal from '../Modals/OrderModal/OrderModal'
-import { useTargetsHook } from '../../../hooks/useTargetsHook'
-import { useConvertsHook } from '../../../hooks/useConvertsHook'
+import { useTargetsHook } from '@hooks'
+import { useConvertsHook } from '@hooks'
 import { deleteDraft, loadDraft, saveDraft } from '../../../BLL/Function/indexedDB'
 
 export default function InputTextContainer({ userPosts }) {

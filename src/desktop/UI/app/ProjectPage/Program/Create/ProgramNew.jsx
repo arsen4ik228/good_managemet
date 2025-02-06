@@ -6,18 +6,18 @@ import Blacksavetmp from "@image/Blacksavetmp.svg";
 import iconAddProjectBlue from "@image/iconAddProjectBlue.svg";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { usePostProjectMutation } from "@BLL/projectApi.js";
+import { usePostProjectMutation } from "@services";
 
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import TableProject from "@Custom/TableProject/TableProject.jsx";
-import { useGetProgramNewQuery } from "@BLL/projectApi.js";
+import { useGetProgramNewQuery } from "@services";
 import { useDispatch } from "react-redux";
 import {
   setProgramCreatedId,
   setProgramOrganizationId,
-} from "@BLL/Program/Slice/programSlice.js";
+} from "@slices";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import BlockSections from "@Custom/sectionsProject/BlockSections.jsx";
 

@@ -5,7 +5,7 @@ import { useGetOrganizationsQuery } from '../../BLL/organizationsApi';
 import Header from "../Custom/CustomHeader/Header";
 import ModalChangeReportDay from './ModalChangeReportDay/ModalChangeReportday';
 import { notEmpty, selectedOrganizationId } from '../../BLL/constans';
-import { useStatisticsHook } from '../../hooks/useStatisticsHook';
+import { useStatisticsHook } from '@hooks';
 
 const MainStatistics = () => {
 

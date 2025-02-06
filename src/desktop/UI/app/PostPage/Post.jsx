@@ -7,11 +7,11 @@ import {
   useGetPostIdQuery,
   useGetPostsQuery,
   useUpdatePostsMutation,
-} from "@BLL/postApi.js";
+} from "@services";
 import {
   usePostStatisticsMutation,
   useUpdateStatisticsToPostIdMutation,
-} from "@BLL/statisticsApi.js";
+} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import WaveLetters from "@Custom/WaveLetters.jsx";
