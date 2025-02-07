@@ -27,6 +27,7 @@ import {Statistics} from '@app'
 import {MobileMainWorkingPlan} from '@app'
 import {ModalContainer} from '@app'
 import {MobileControlPanel} from '@app'
+import {User} from '@app'
 
 
 function MobileApp() {
@@ -77,6 +78,7 @@ function MobileApp() {
                                         {/* <Route path="Statistics/new/:paramPostID?" element={<NewStatistic />} /> */}
 
                                         <Route path='WorkingPlan' element={<MobileMainWorkingPlan />} />
+                                        <Route path='user' element={<User />} />
                                        
                                     </Routes>
                                 }

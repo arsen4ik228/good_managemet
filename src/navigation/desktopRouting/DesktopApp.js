@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./DesktopApp.css";
 import HandlerMutation from "@Custom/HandlerMutation";
-import ErrorPage from "../../UI/app/ErrorPage/ErrorPage";
+import ErrorPage from "@app/ErrorPage/ErrorPage";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const Content = React.lazy(() => import("@app/Constructions/content/Content"));

@@ -22,4 +22,5 @@ export { default as MobileMainWorkingPlan} from './WorkingPlanPage/mobile/MainWo
 export { default as MobileMain} from './Main/Main'
 export { default as MobileControlPanel} from './ControlPanel/mobile/ControlPanel'
 export { default as AuthorizationPage } from './Authorization/Main'
+export { default as User } from './UserPage/mobile/User'
 

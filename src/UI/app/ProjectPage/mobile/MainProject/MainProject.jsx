@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import classes from "./MainProject.module.css";
-import Header from "@Custom/Header/Header";
+import Header from "@Custom/CustomHeader/Header";
 import sublist from "@Custom/icon/icon _ sublist.svg";
 import { useNavigate } from "react-router-dom";
 import { useProjectsHook } from "@hooks";
