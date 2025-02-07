@@ -26,8 +26,8 @@ export const statisticsApi = apiSlice.injectEndpoints({
     // }),
 
     getStatistics: build.query({
-      query: ({ statisticData = true }) => ({
-        url: `statistics/${selectedOrganizationId}/?statisticData=${statisticData}`,
+      query: ({ organizationId, statisticData = true }) => ({
+        url: `statistics/${organizationId}/?statisticData=${statisticData}`,
       }),
       transformResponse: (response) => {
         console.log("getStatistics:  ", response);

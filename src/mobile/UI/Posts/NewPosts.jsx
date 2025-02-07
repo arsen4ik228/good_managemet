@@ -11,18 +11,19 @@ import AlertSavePost from '../Custom/AlertSavePost/AlertSavePost.jsx';
 import { selectedOrganizationId } from '../../BLL/constans.js';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
 import { usePostsHook } from '@hooks';
-
+import { useSelector } from "react-redux";
 
 const Posts = () => {
 
     const navigate = useNavigate()
+    const createdUserId = useSelector((state) => state.user.createdUserId);
 
     const [postName, setPostName] = useState()
     const [divisionName, setDivisionName] = useState('')
     const [product, setProduct] = useState()
     const [purpose, setPurpose] = useState()
     const [policy, setPolicy] = useState(null);
-    const [worker, setWorker] = useState("")
+    const [worker, setWorker] = useState(createdUserId)
     const [parentId, setParentId] = useState('');
     const [currentPolicyName, setCurrentPolicyName] = useState(null)
 

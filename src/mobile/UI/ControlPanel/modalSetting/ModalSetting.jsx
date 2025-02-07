@@ -123,8 +123,9 @@ export default function ModalSetting({
       </div>
 
       <TableCheckBox
-        name={"Прикрепленные статистики"}
+        nameTable={"Прикрепленные статистики"}
         array={statistics}
+        arrayItem={"name"}
         arrayCheked={statisticsChecked}
         handleChecboxChange={handleChecboxChange}
       ></TableCheckBox>

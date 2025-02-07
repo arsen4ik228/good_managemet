@@ -1,7 +1,17 @@
+
+
+.btnWidth190{
+    width: 190px;
+    max-width: 190px;
+}
+
+.btnWidth250{
+    width: 250px;
+    max-width: 250px;
+}
+
 .btn {
     height: 40px;
-    width: 250px;
-    max-width: 400px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;

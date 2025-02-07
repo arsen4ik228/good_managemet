@@ -28,6 +28,7 @@ import NewStatistic from './UI/Statistics/NewStatistic.jsx';
 import MainWorkingPlan from './UI/WorkingPlan/MainWorkingPlan.jsx';
 import ModalContainer from './UI/Custom/ModalContainer/ModalContainer.jsx';
 import ControlPanel from './UI/ControlPanel/ControlPanel.jsx';
+import User from './UI/User/User.jsx';
 
 function App() {
     return (
@@ -77,6 +78,7 @@ function App() {
                                         <Route path="Statistics/new/:paramPostID?" element={<NewStatistic />} />
 
                                         <Route path='WorkingPlan' element={<MainWorkingPlan />} />
+                                        <Route path='user' element={<User />} />
                                        
                                     </Routes>
                                 }
