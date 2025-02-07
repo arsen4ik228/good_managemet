@@ -1,20 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import classes from "./NewProject.module.css";
 import Target from "../Targets/Target";
-import { usePostProjectMutation } from "../../../BLL/projectApi";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomSelectModal from "../CustomSelectModal/CustomSelectModal";
 import deleteIcon from '../../Custom//icon/icon _ delete.svg'
 import Header from "../../Custom/CustomHeader/Header";
 import HandlerMutation from "../../Custom/HandlerMutation";
-import { formattedDate, notEmpty } from "../../../BLL/constans"
-import { resizeTextarea } from "../../../BLL/constans";
+import { formattedDate, notEmpty, resizeTextarea } from "@helpers/helpers"
 import listSetting from '../../Custom/icon/icon _ list setting.svg'
 import AlertOnlyOneProductTarget from "../../Custom/AlertOnlyOneProductTarget/AlertOnlyOneProductTarget";
 import CustomSelectSettingModal from "../CustomSelectSettingModal/CustomSelectSettingModal";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useProjectsHook } from "@hooks";
-import { Button } from "@mdxeditor/editor";
 import { ButtonContainer } from "../../Custom/CustomButtomContainer/ButtonContainer";
 
 export default function NewProject() {

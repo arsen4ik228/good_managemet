@@ -1,5 +1,5 @@
-import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
+import {selectedOrganizationId} from '@helpers/constants'
 
 export const organizationApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({

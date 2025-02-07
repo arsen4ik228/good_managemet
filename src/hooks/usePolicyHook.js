@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useGetPoliciesIdQuery, useGetPoliciesQuery, usePostPoliciesMutation, useUpdatePoliciesMutation } from "../store/services/index";
+import useGetReduxOrganization from "./useGetReduxOrganization";
 
 
 export const usePolicyHook = (props) => {
 
     const [localPolicyId] = useState(props?.policyId ? props.policyId : false)
+         const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+    
 
     const {
         activeDirectives = [],

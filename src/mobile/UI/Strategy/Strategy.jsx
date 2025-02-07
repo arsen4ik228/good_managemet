@@ -8,7 +8,7 @@ import CustomtextArea from '../Custom/CustomTextarea/CustomtextArea'
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer'
 import { useStrategyHook } from '@hooks';
 import HandlerQeury from '../Custom/HandlerQeury';
-import { notEmpty } from '../../BLL/constans';
+import { notEmpty } from '@helpers/helpers';
 
 const Strategy = () => {
 

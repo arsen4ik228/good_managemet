@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import classes from './Statistics.module.css'
 import Header from '../Custom/CustomHeader/Header'
 import icon from '../Custom/icon/icon _ downarrow _ 005475.svg'
-import { getDateFormatSatatistic, selectedOrganizationId, } from '../../BLL/constans'
+import { getDateFormatSatatistic } from '@helpers/helpers';
 import { useParams } from 'react-router-dom'
 import saveIcon from '../Custom/icon/icon _ save.svg'
 import Graphic from '../Custom/Graph/Graphic'
@@ -10,11 +10,13 @@ import HandlerMutation from '../Custom/HandlerMutation'
 import iconExit from '../Custom/SearchModal/icon/icon _ add.svg'
 import arrowInCircle from '../Custom/icon/arrow in circle.svg'
 import { useStatisticsHook } from '@hooks'
-import { usePostsHook, useOrganizationHook } from '@hooks'
+import { usePostsHook, useOrganizationHook, useGetReduxOrganization } from '@hooks'
 
 export default function Statistics() {
 
     const {statisticId} = useParams()
+
+    const {reduxSelectedOrganizationId} = useGetReduxOrganization()
 
     const [openMenu, setOpenMenu] = useState(false)
 
@@ -90,7 +92,7 @@ export default function Statistics() {
 
     useEffect(() => { // Установка organizationId для поиска постов и отчётного дня
         if (Object.keys(currentStatistic).length > 0 && allPosts.length > 0 && organizations.length > 0) {
-            const orgId = selectedOrganizationId
+            const orgId = reduxSelectedOrganizationId
             if (orgId) {
                 setOrganizationId(orgId)
 

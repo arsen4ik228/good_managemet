@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import classes from "./ModalChangeReportDay.module.css"
 import close from '../../Custom/SearchModal/icon/icon _ add.svg'
-import { useUpdateOrganizationsMutation } from '../../../BLL/organizationsApi';
-import { useParams } from 'react-router-dom';
-import { selectedOrganizationId } from '../../../BLL/constans';
+import { useUpdateOrganizationsMutation } from '@services';
+import {useGetReduxOrganization} from '@hooks';
 
-export default function ModalChangeReportDay({ setModalOpen, organizationId, parenReportDay }) {
+export default function ModalChangeReportDay({ setModalOpen, parenReportDay }) {
 
-    const { userId } = useParams()
     const [reportDay, setReportDay] = useState(parenReportDay)
+
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization()
 
     useEffect(() => {
         setReportDay(parenReportDay)
@@ -28,7 +28,7 @@ export default function ModalChangeReportDay({ setModalOpen, organizationId, par
 
     const saveUpdateOrganization = async () => {
         await updateOrganization({
-            _id: selectedOrganizationId,
+            _id: reduxSelectedOrganizationId,
             reportDay: +reportDay,
         })
             .unwrap()

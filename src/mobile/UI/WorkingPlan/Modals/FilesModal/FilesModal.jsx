@@ -4,7 +4,8 @@ import classes from './FilesModal.module.css';
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer';
 import { usePolicyHook } from '@hooks';
 import { usePostFilesMutation } from '@services';
-import { baseUrl, notEmpty } from '../../../../BLL/constans';
+import { baseUrl } from '@helpers/constants';
+import { notEmpty } from '@helpers/helpers';
 
 export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOrganizationId, files, setFiles, setUnpinFiles }) {
     const [selectedFiles, setSelectedFiles] = useState([]);

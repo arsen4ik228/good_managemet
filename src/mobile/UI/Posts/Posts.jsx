@@ -8,7 +8,7 @@ import HandlerQeury from "../Custom/HandlerQeury.jsx";
 import Header from "../Custom/CustomHeader/Header";
 import AttachPolicy from '../Custom/AttachPolicy/AttachPolicy.jsx';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
-import { notEmpty } from '../../BLL/constans.js';
+import { notEmpty } from '@helpers/helpers';
 import { usePostsHook } from '@hooks';
 
 

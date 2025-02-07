@@ -8,14 +8,16 @@ import Header from "../Custom/CustomHeader/Header";
 import blackStatistic from "../Custom/icon/blackStatistic.svg";
 import AttachPolicy from '../Custom/AttachPolicy/AttachPolicy.jsx';
 import AlertSavePost from '../Custom/AlertSavePost/AlertSavePost.jsx';
-import { selectedOrganizationId } from '../../BLL/constans.js';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
-import { usePostsHook } from '@hooks';
+import { usePostsHook, useGetReduxOrganization } from '@hooks';
 
 
 const Posts = () => {
 
     const navigate = useNavigate()
+
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization()
+
 
     const [postName, setPostName] = useState()
     const [divisionName, setDivisionName] = useState('')
@@ -75,7 +77,7 @@ const Posts = () => {
             divisionName: divisionName,
             product: product,
             purpose: purpose,
-            organizationId: selectedOrganizationId,
+            organizationId: reduxSelectedOrganizationId,
             ...Data
         })
             .unwrap()
@@ -98,83 +100,83 @@ const Posts = () => {
 
                 <div className={classes.body}>
 
-                            <>
-                                <div className={classes.bodyContainer}>
-                                    <input
-                                        className={classes.first}
-                                        type={'text'}
-                                        value={postName}
-                                        onChange={(e) => {
-                                            setPostName(e.target.value);
-                                        }}
-                                    />
-                                </div>
+                    <>
+                        <div className={classes.bodyContainer}>
+                            <input
+                                className={classes.first}
+                                type={'text'}
+                                value={postName}
+                                onChange={(e) => {
+                                    setPostName(e.target.value);
+                                }}
+                            />
+                        </div>
 
-                                <div className={classes.bodyContainer}>{/* Подразделение divisionName */}
-                                    <div className={classes.name}>
-                                        Подразделение
-                                    </div>
-                                    <div className={classes.selectSection}>
-                                        <input
-                                            type="text"
-                                            value={divisionName}
-                                            onChange={(e) => {
-                                                setDivisionName(e.target.value);
-                                            }}
-                                        />
-                                    </div>
-                                </div>
+                        <div className={classes.bodyContainer}>{/* Подразделение divisionName */}
+                            <div className={classes.name}>
+                                Подразделение
+                            </div>
+                            <div className={classes.selectSection}>
+                                <input
+                                    type="text"
+                                    value={divisionName}
+                                    onChange={(e) => {
+                                        setDivisionName(e.target.value);
+                                    }}
+                                />
+                            </div>
+                        </div>
 
-                                <div className={classes.bodyContainer}>
-                                    <div className={classes.name}>
-                                        Руководитель
-                                    </div>
-                                    <div className={classes.selectSection}>
-                                        <select
-                                            name="mySelect"
-                                            className={classes.select}
-                                            value={parentId}
-                                            onChange={(e) => { setParentId(e.target.value)}}
-                                        >
-                                            <option value="">
-                                                Выберите опцию
+                        <div className={classes.bodyContainer}>
+                            <div className={classes.name}>
+                                Руководитель
+                            </div>
+                            <div className={classes.selectSection}>
+                                <select
+                                    name="mySelect"
+                                    className={classes.select}
+                                    value={parentId}
+                                    onChange={(e) => { setParentId(e.target.value) }}
+                                >
+                                    <option value="">
+                                        Выберите опцию
+                                    </option>
+                                    {parentPosts?.map((item) => {
+                                        return <option key={item.id} value={item.id}>{item.postName}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className={classes.bodyContainer}>{/* СОТРУДНИК staff */}
+                            <div className={classes.name}>
+                                Сотрудник
+                            </div>
+                            <div className={classes.selectSection}>
+                                <select
+                                    name="mySelect"
+                                    className={classes.select}
+                                    value={worker}
+                                    onChange={(e) => {
+                                        setWorker(e.target.value);
+                                    }}
+                                >
+                                    <option value="">
+                                        Выберите опцию
+                                    </option>
+                                    {staff?.map((item) => {
+                                        return (
+                                            <option key={item.id} value={item.id}>
+                                                {`${item.firstName} ${item.lastName}`}
                                             </option>
-                                            {parentPosts?.map((item) => {
-                                                return <option key={item.id} value={item.id}>{item.postName}</option>;
-                                            })}
-                                        </select>
-                                    </div>
-                                </div>
+                                        );
+                                    })}
+                                </select>
+                            </div>
 
-                                <div className={classes.bodyContainer}>{/* СОТРУДНИК staff */}
-                                    <div className={classes.name}>
-                                        Сотрудник
-                                    </div>
-                                    <div className={classes.selectSection}>
-                                        <select
-                                            name="mySelect"
-                                            className={classes.select}
-                                            value={worker}
-                                            onChange={(e) => {
-                                                setWorker(e.target.value);
-                                            }}
-                                        >
-                                            <option value="">
-                                                Выберите опцию
-                                            </option>
-                                            {staff?.map((item) => {
-                                                return (
-                                                    <option key={item.id} value={item.id}>
-                                                        {`${item.firstName} ${item.lastName}`}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
-                                    </div>
+                        </div>
+                    </>
 
-                                </div>
-                            </>
-                        
 
                     <div className={classes.main}>
                         {isErrorGetNew ? (

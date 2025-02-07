@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
 import classes from './DetailsTaskModal.module.css'
 import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
-import { notEmpty, resizeTextarea } from '../../../../BLL/constans'
+import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import { useTargetsHook } from '@hooks'
 import { usePolicyHook } from '@hooks'
-import { baseUrl } from '../../../../BLL/constans'
+import { baseUrl } from '@helpers/constants'
 import AttachmentModal from '../AttachmentsModal/AttachmentModal'
 
 export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) {

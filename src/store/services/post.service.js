@@ -1,15 +1,12 @@
 import apiSlice from "./api";
 
-import { selectedOrganizationId } from "../../mobile/BLL/constans";
-
-
 
 export const postApi = apiSlice.injectEndpoints({
 
   endpoints: (build) => ({
     getPosts: build.query({
-      query: () => ({
-        url: `posts/${selectedOrganizationId}`,
+      query: ({organizationId}) => ({
+        url: `posts/${organizationId}`,
       }),
       providesTags: (result) =>
         Array.isArray(result)

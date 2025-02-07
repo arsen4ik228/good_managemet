@@ -17,9 +17,9 @@ import {
     Separator,
 } from "@mdxeditor/editor";
 import i18n from "./i18n";
-import { baseUrl } from "../../../BLL/constans";
+import { baseUrl } from "@helpers/constants";
 import classes from "./Mdxeditor.module.css";
-import { usePostImageMutation } from "../../../BLL/policyApi";
+import { usePostImageMutation } from "@services";
 
 export default function Mdxeditor({ editorState, setEditorState, userId, isArchive}) {
     const editorRef = useRef(null); // Ссылка на редактор
