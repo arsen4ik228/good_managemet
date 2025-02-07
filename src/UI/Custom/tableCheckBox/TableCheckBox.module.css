@@ -1,0 +1,71 @@
+
+.table {
+    width: 100%;
+}
+
+.table th {
+    height: 35px;
+    width: 100%;
+
+    border-radius: 10px;
+    background-color: #DDEBF1;
+
+    color: #005475;
+    font-family: 'Montserrat';
+
+
+    white-space: nowrap;
+    vertical-align: center;
+}
+
+.table tbody {
+
+    width: 100%;
+    max-width: 100%;
+
+    border-radius: 10px;
+
+}
+
+.table tbody tr {
+    min-height: 200px;
+    height: calc(75vh - 185px);
+
+    width: 100%;
+    max-width: 100%;
+
+    display: block;
+
+    overflow-y: auto;
+}
+
+
+.table td {
+    width: 100%;
+
+    display: flex;
+    row-gap: 5px;
+    flex-direction: column;
+
+
+    font-family: 'Montserrat';
+    vertical-align: top;
+}
+
+.row {
+    max-width: 375px;
+
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+
+    padding: 5px;
+
+    background-color: #f0f3f5;
+    border-radius: 10px;
+
+
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+}

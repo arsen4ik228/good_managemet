@@ -1,0 +1,51 @@
+.body{
+    min-height: calc(100vh - 60px);
+    min-width:calc(100vw - 70px);
+    border-radius: 25px 0px 0px 0px;
+    background-color: #F1F5F9;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.text{
+    color: black;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.link{
+    position: relative;
+    font-weight: 600;
+    font-style: italic;
+    color:rgb(0, 84, 117);
+    text-shadow: 0px 8px 10px;
+}
+.link:before{
+    content:'';
+    position: absolute;
+    bottom:-2px;
+    background-color: rgb(0, 84, 117);
+    width: 100%;
+    height: 2px;
+}
+
+.QR{
+    display: flex;
+    flex-direction: row;
+    column-gap: 40px;
+}
+.vk{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 20px;
+}
+
+.telegram{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 20px;
+}

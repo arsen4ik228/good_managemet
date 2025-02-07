@@ -1,0 +1,154 @@
+
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: "'Montserrat', sans-serif'";
+    overflow: hidden;
+}
+
+.body {
+    flex: 1 1 auto;
+    /* margin-top: 5px; */
+    overflow: auto;
+    padding-bottom: 10px;
+}
+
+.ColumnContainer {
+    display: flex;
+    flex-direction: column;
+    /* margin-top: 10px; */
+}
+
+.ContainerElem {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    padding: 10px 10px;
+    border-bottom: 1px solid grey;
+
+}
+
+.ContainerElem1 {
+    display: flex;
+    /* justify-content: space-between; */
+    flex-direction: column;
+    padding: 0 10px;
+
+}
+
+.ElemTitle {
+    font-size: 1.8rem;
+    color: #005475
+}
+
+.Elem1Title {
+    font-size: 1.4rem;
+    padding: 5px 15px;
+    border: 1px solid black;
+
+}
+
+.ListOfProjects {
+    padding-left: 15px;
+    /* Убираем отступы слева */
+    list-style-type: disc;
+}
+
+.ProjectListItem {
+    font-size: 1.4rem;
+    padding: 5px 5px;
+}
+
+.projectsOfProgram {
+
+    div {
+        font-size: 1.1rem;
+        margin-left: 5px;
+        padding: 5px;
+        /* text-decoration: underline; */
+        color: #005475;
+        /* border: 1px solid red; */
+        display: block;
+    }
+
+    /* ol{
+        padding-left: 20px;
+        list-style-type: circle;
+    } */
+
+
+}
+
+.ListOfProgram {
+    padding-left: 20px;
+    list-style-type: circle;
+
+    li {
+        padding: 5px 5px;
+        font-size: 1.2rem;
+    }
+}
+
+.bodyContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 25px;
+    /* font-family: "'Montserrat', sans-serif'"; */
+    /* height: 20px; */
+    /*border-bottom: #005475 solid 1px;*/
+}
+
+.name{
+    font-size: 1.25rem;
+    width: 50%;
+    /*border: black solid 1px;*/
+}
+
+.selectSection{
+    display: flex;
+    font-size: 1.2rem;
+    width: 50%;
+    /*border: black solid 1px;*/
+
+    >select{
+        font-size: 1.2rem;
+        font-family:"'Montserrat', sans-serif'";
+        border-bottom: #005475 1px solid;
+        height: 30px;
+        width: 100%;
+        text-align: center;
+    }
+
+    >input{
+        font-size: 1.2rem;
+        /* height: 30px; */
+        font-family: "'Montserrat', sans-serif";
+        border-bottom: #005475 1px solid;
+        padding-left: 10px;
+        width: 100%;
+    }
+
+  
+}
+
+.directoryMenu{
+
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin: 0 10px;
+    box-shadow: 0 0 2px black;
+    max-width: 230px;
+
+    >span{
+        font-size: 20px;
+        /* font-style: italic; */
+        color: grey;          
+    }
+
+}

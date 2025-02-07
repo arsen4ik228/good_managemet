@@ -3,31 +3,32 @@ import React from 'react';
 import { Route, Routes, Navigate } from "react-router-dom";
 import AuthorizationPage from './UI/Authorization/AuthorizationPage.jsx'
 import Main from './UI/Main/Main.jsx'
-import HelperChat from './UI/Chat/Chat.jsx'
-import MainPolicy from './UI/Policy/MainPolicy.jsx'
-import Policy from './UI/Policy/Policy.jsx'
-import CreatePolicyDirectory from './UI/Policy/PolicyDirectory/CreatePolicyDirectory.jsx';
-import EditPolicyDirectories from './UI/Policy/PolicyDirectory/EditPolicyDirectory.jsx';
-import MainPost from './UI/Posts/MainPost.jsx'
-import Posts from './UI/Posts/Posts'
-import NewPosts from "./UI/Posts/NewPosts";
-import AttachStatistics from './UI/Posts/AttachStatistics/AttachStatistics.jsx';
-import MainStrategy from './UI/Strategy/MainStartegy.jsx';
-import Strategy from "./UI/Strategy/Strategy";
-import Goal from "./UI/Goal/Goal";
-import Objective from "./UI/Objective/Objective.jsx"
-import Projects from './UI/Projects/Projects.jsx';
-import MainProject from './UI/Projects/MainProject/MainProject.jsx';
-import Target from './UI/Projects/Targets/Target.jsx';
-import NewProject from './UI/Projects/NewProject/NewProject.jsx';
-import Programs from './UI/Projects/Programs.jsx';
-import ProjectArchive from './UI/Projects/Archive/ProjectArchive.jsx';
-import MainStatistics from './UI/Statistics/MainStatistics.jsx';
-import Statistics from './UI/Statistics/Statistics.jsx';
-import NewStatistic from './UI/Statistics/NewStatistic.jsx';
-import MainWorkingPlan from './UI/WorkingPlan/MainWorkingPlan.jsx';
-import ModalContainer from './UI/Custom/ModalContainer/ModalContainer.jsx';
-import ControlPanel from './UI/ControlPanel/ControlPanel.jsx';
+import HelperChat from '@app'
+import MainPolicy from '@app'
+import Policy from '@app'
+import CreatePolicyDirectory from '@app'
+import EditPolicyDirectories from '@app'
+import MainPost from '@app'
+import Posts from '@app'
+import NewPosts from '@app'
+import AttachStatistics from '@app'
+import MainStrategy from '@app'
+import Strategy from '@app'
+import Goal from '@app'
+import Objective from '@app'
+import Projects from '@app'
+import MainProject from '@app'
+import Target from '@app'
+import NewProject from '@app'
+import Programs from '@app'
+import ProjectArchive from '@app'
+import MainStatistics from '@app'
+import Statistics from '@app'
+import NewStatistic from '@app'
+import MainWorkingPlan from '@app'
+import ModalContainer from '@app'
+import ControlPanel from '@app'
+
 
 function MobileApp() {
     return (
@@ -38,7 +39,7 @@ function MobileApp() {
                 <Route path="/*"
                     element={
                         <Routes>
-                            <Route path="test" element={<ModalContainer />} />
+                            {/* <Route path="test" element={<ModalContainer />} /> */}
                             <Route path="Main" element={<Main />} />
                             <Route path='ControlPanel' element={<ControlPanel />} />
                             <Route path="pomoshnik/*"
