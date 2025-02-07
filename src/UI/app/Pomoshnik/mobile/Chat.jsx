@@ -90,7 +90,7 @@ const Chat = () => {
                                 <div key={item.id} className={classes.bodyRow}>
                                     <div
                                         className={classes.bodyElement}
-                                        onClick={() => navigate(`/Chat/${item.link}`)}
+                                        onClick={() => navigate(`/pomoshnik/${item.link}`)}
                                     >
                                         <img src={item.icon} alt="icon" />
                                         <div className={classes.bodyElementText}>{item.text}</div>
