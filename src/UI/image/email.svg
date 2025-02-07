@@ -1,0 +1,15 @@
+<svg width="16.000000" height="16.000000" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>
+			Created with Pixso.
+	</desc>
+	<defs>
+		<clipPath id="clip77_1482">
+			<rect id="email-fast" width="16.000000" height="16.000000" fill="white" fill-opacity="0"/>
+		</clipPath>
+	</defs>
+	<rect id="icon / email-fast" width="16.000000" height="16.000000" fill="#FFFFFF" fill-opacity="0"/>
+	<rect id="email-fast" width="16.000000" height="16.000000" fill="#FFFFFF" fill-opacity="0"/>
+	<g clip-path="url(#clip77_1482)">
+		<path id="Vector" d="M14.66 3.66L6 3.66C5.26 3.66 4.66 4.26 4.66 5L4.66 11C4.66 11.74 5.26 12.33 6 12.33L14.66 12.33C15.4 12.33 16 11.74 16 11L16 5C16 4.26 15.4 3.66 14.66 3.66ZM14.66 6.11L10.33 8.33L6 6.11L6 5L10.33 7.2L14.66 5L14.66 6.11ZM3.33 11C3.33 11.11 3.35 11.22 3.36 11.33L0.66 11.33C0.29 11.33 0 11.03 0 10.66C0 10.3 0.29 10 0.66 10L3.33 10L3.33 11ZM2 4.66L3.36 4.66C3.35 4.78 3.33 4.88 3.33 5L3.33 6L2 6C1.63 6 1.33 5.7 1.33 5.33C1.33 4.96 1.63 4.66 2 4.66ZM0.66 8C0.66 7.63 0.96 7.33 1.33 7.33L3.33 7.33L3.33 8.66L1.33 8.66C0.96 8.66 0.66 8.36 0.66 8Z" fill="#B4B4B4" fill-opacity="1.000000" fill-rule="nonzero"/>
+	</g>
+</svg>

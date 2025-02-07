@@ -1,0 +1,366 @@
+.dialog {
+    width: 75%;
+    border-radius: 0px 8px 8px 0px;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffff;
+    box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.5);
+}
+
+.pomoshnik {
+    display: flex;
+    flex-direction: row;
+    column-gap: 30px;
+    align-items: center;
+}
+
+.iconBack:hover {
+    background-color: rgb(240, 240, 240);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.search {
+    -webkit-appearance: none;
+    /* Удаляет стандартные стили WebKit */
+    width: 10vw;
+    /* Регулирует ширину */
+    height: 50%;
+    /* Регулирует высоту */
+    border-bottom: 1px solid #ccc;
+}
+
+
+.spanPomoshnik {
+    align-self: flex-start;
+    font-family: "Montserrat";
+    font-size: 12px;
+    position: relative;
+    font-weight: 600;
+}
+
+.spanPomoshnik span {
+    color: rgb(58, 58, 58);
+}
+
+.spanPomoshnik::after {
+    content: 'ЦЕЛИ';
+    position: absolute;
+    left: 0;
+    bottom: -15px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.one {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+.one img:hover,
+.two img:hover,
+.three img:hover {
+    background-color: rgb(240, 240, 240);
+    border-radius: 20%;
+}
+
+
+.five {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    column-gap: 30px;
+    margin-left: 5%;
+    margin-right: 20px !important;
+}
+
+.seven {
+    height: 60%;
+    width: 20%;
+    display: flex;
+    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.25);
+    padding-left: 5px;
+}
+
+.sixth {
+    height: 60%;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconAdd {
+    position: relative;
+}
+
+.iconAdd:hover::after {
+    content: "Создать";
+    white-space: nowrap;
+    position: absolute;
+    width: 80px;
+    height: 20px;
+    bottom: -120%;
+    left: -120%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3A3A3A;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+}
+
+.iconSave {
+    position: relative;
+}
+
+.iconSave:hover::after {
+    content: "Сохранить";
+    white-space: nowrap;
+    position: absolute;
+    width: 80px;
+    height: 20px;
+    bottom: -120%;
+    left: -120%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3A3A3A;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+}
+
+.iconPrint {
+    position: relative;
+}
+
+.iconPrint:hover::after {
+    content: "Печатать";
+    white-space: nowrap;
+    position: absolute;
+    width: 80px;
+    height: 20px;
+    bottom: -120%;
+    left: -120%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3A3A3A;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+}
+
+.image:hover {
+    background-color: rgb(240, 240, 240);
+    border-radius: 20%;
+}
+
+.image {
+    height: auto;
+    cursor: pointer;
+    margin-right: 0.5%;
+}
+
+.blockSelect {
+    position: relative;
+
+    & > img:hover {
+        background-color: rgb(240, 240, 240);
+        border-radius: 20%;
+    }
+}
+
+.option {
+    position: absolute;
+    display: none;
+    white-space: nowrap;
+    right: 1%;
+    background-color: #ffff;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    padding: 5px;
+    padding-bottom: 8px;
+}
+
+.option li:first-child {
+    margin-top: 0px;
+}
+
+.option li {
+    margin-top: 7px;
+    position: relative;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.option li:hover {
+    background-color: rgb(240, 240, 240)
+}
+
+.option li:before {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    bottom: -4px;
+    left: 0;
+    background-color: rgb(240, 240, 240);
+}
+
+.blockSelect:hover .option {
+    display: block;
+}
+
+.two {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    margin-left: 2%;
+}
+
+.three {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    margin-left: 2%;
+}
+
+.four {
+    height: 60%;
+    width: 200px;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    & select {
+        max-width: 300px;
+    }
+
+}
+
+
+.four span {
+    font-weight: 600;
+    font-family: 'Montserrat';
+    color: rgb(58, 58, 58);
+    font-size: 14px;
+}
+
+
+.main {
+    position: relative;
+    flex: 1 0 120px; 
+    overflow-y: auto;
+    background-color: #F0F0F0;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1%;
+}
+
+.editorContainer {
+    margin-top: 20px;
+    position: relative;
+    /* Это позволит дочернему элементу быть позиционированным относительно этого контейнера */
+    margin-bottom: 16px;
+    /* Расстояние между редакторами */
+}
+
+.deleteIcon {
+    position: absolute;
+    /* Позиционируем элемент абсолютно */
+    top: -10px;
+    /* Расстояние от верхней части контейнера */
+    right: -30px;
+    /* Расстояние от правой части контейнера */
+    cursor: pointer;
+    /* Изменяем курсор при наведении на иконку */
+}
+
+.add {
+    height: 50px;
+    width: 400px;
+    background-color: #ffff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 1%;
+    column-gap: 5%;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.25);
+    align-self: flex-start;
+    margin-left: 25%;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.add:hover {
+    background-color: #B4B4B4;
+    color: #FFFF;
+}
+
+.nameButton {
+    font-size: 14px;
+    font-family: 'Montserrat';
+    color: #3A3A3A;
+    font-weight: 400;
+}
+
+.add:hover span {
+    font-size: 14px;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    color: #FFFF;
+}
+
+.add div {
+    color: #3A3A3A;
+    font-size: 14px;
+    font-family: 'Montserrat';
+    font-weight: 400;
+}
+
+.add svg {
+    transition: fill 0.3s ease;
+    /* Добавляем анимацию для цвета SVG */
+}
+
+.add:hover svg path {
+    fill: #FFFFFF;
+    /* Меняем цвет SVG при наведении */
+}
+
+mark {
+    background-color: lightblue;
+    color: black;
+}
+
+.highlight {
+    background-color: yellow;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.selectImage {
+    margin-right: 5px;
+}
+
+.select{
+    font-family: 'Montserrat';
+}

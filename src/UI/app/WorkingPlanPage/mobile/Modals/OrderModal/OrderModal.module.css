@@ -1,0 +1,52 @@
+.content {
+    min-width: 300px;
+    max-width: 500px;
+    >input {
+
+        display: block;
+
+        width: 200px;
+
+        padding-left: 5px;
+        margin: 0 auto;
+
+        border-bottom: 1px solid #bfbfbf;
+
+        font-size: 1.1rem;
+
+    }
+}
+
+.selectPostContainer {
+    display: flex;
+
+    margin: 1% 0;
+}
+
+.left {
+    width: 100px;
+
+    padding: calc(1% + 5px) 1%;
+
+    border-right: 1px solid #005475;
+}
+
+.right {
+    overflow: auto;
+    width: calc(100% - 100px);
+    min-height: 150px;
+    max-height: 300px;    
+    padding: 1%;
+
+    >div {
+        display: flex;
+    }
+
+    span {
+        overflow: hidden;
+        display: block;
+
+        padding: 5px 0 5px 2%;
+
+    }
+}

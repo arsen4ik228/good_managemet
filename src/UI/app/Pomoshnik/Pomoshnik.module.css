@@ -1,0 +1,202 @@
+.dialog {
+    width: 75%;
+    border-radius: 0px 8px 8px 0px;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffff;
+    box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.5);
+}
+
+.header {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.25);
+}
+
+.fon {
+    height:  32px;
+    background-color: #005475;
+    border-radius: 0px 8px 0px 0px;
+}
+
+.pomoshnik {
+    height: 48px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 30px;
+    padding-left: 4%;
+    align-items: center;
+}
+
+.spanPomoshnik {
+    padding-top: 8px;
+    align-self: flex-start;
+    color: rgb(58, 58, 58);
+    font-family: "Montserrat";
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.main {
+    height: calc(100vh - 80px - 24px - 25px - 50px);
+    flex: 1 1 100px;
+    overflow: auto;
+    padding-bottom: 5px;
+    /* scrollbar-width: thin;
+    scrollbar-color: #005475 #FFFFFF; */
+}
+
+.mainHeader {
+    height: 20%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 35px;
+    height: 20%;
+    padding-left: 4%;
+}
+
+.mainBody {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    row-gap: 25px;
+    column-gap: 25px;
+    padding-left: 3%;
+}
+
+.element {
+    position: relative;
+    background-color: #005475;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    column-gap: 5px;
+    height: 50px;
+    min-width: 120px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 0px 10px 10px 0px;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease
+        /* Анимация перехода */
+}
+
+.element span {
+    font-family: "Montserrat";
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
+}
+
+.element:hover {
+    background-color: rgb(207, 222, 229);
+    cursor: pointer;
+}
+
+.element:hover span {
+    color: #005475;
+}
+
+.element svg {
+    transition: fill 0.3s ease;
+    /* Добавляем анимацию для цвета SVG */
+}
+
+.element:hover svg path {
+    fill: #005475;
+    /* Меняем цвет SVG при наведении */
+}
+
+.element:hover svg path:not([fill]) {
+    stroke: white !important;
+}
+
+.question {
+    padding: 6px 25px 7px 35px;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+    background-color: #DDEBF1;
+    border-radius: 10px 10px 10px 0px;
+}
+
+.question span {
+    color: #005475;
+    font-family: "Montserrat";
+    font-size: 24px !important;
+    font-weight: 600;
+}
+
+.footer {
+    height: 40px;
+    box-shadow: 0px -2px 4px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.search {
+    height: 100%;
+    padding-top: 0.6%;
+
+}
+
+.telegram {
+    margin-left: 5%;
+    cursor: pointer;
+}
+
+
+.search input[type="search"] {
+    -webkit-appearance: none;
+    /* Удаляет стандартные стили WebKit */
+    width: 45vw;
+    /* Регулирует ширину */
+    height: 80%;
+    /* Регулирует высоту */
+    padding: 5px;
+    /* Добавляет внутренний отступ */
+    border-radius: 15px;
+    /* Скругляет углы */
+    border: 1px solid #ccc;
+    /* Добавляет границу */
+}
+
+.search input[type="search"]::-webkit-input-placeholder {
+    font-style: italic;
+    color: gray;
+    /* Необязательно: меняет цвет текста плейсхолдера */
+}
+
+
+.search input:focus {
+    color: #005475;
+    border: 1px solid rgb(0, 84, 117);
+}
+
+.search input:focus::placeholder {
+    position: absolute;
+    font-style: normal;
+    font-weight: 100;
+    top: -2px;
+    left: 5%;
+    color: #005475;
+    background-image: none;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    background-image: url('@image/iconСlose.svg');
+    background-position: center;
+}
