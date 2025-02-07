@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import classes from "./CustomSelectModalProgram.module.css"
-import close from "../../Custom/SearchModal/icon/icon _ add.svg"
+import close from "@Custom/SearchModal/icon/icon _ add.svg"
 
 export default function CustomSelectModalProgram({ setModalOpen, workers, projectsList, setProjectsList, setParentFiltredProjects, parentFilteredProjects }) {
     console.log('workers in Modal ', workers)

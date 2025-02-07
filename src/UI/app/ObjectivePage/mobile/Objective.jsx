@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Header from "../Custom/CustomHeader/Header";
+import Header from "@Custom/CustomHeader/Header";
 import classes from "./Objective.module.css";
 import HandlerQeury from "../../../../mobile/UI/Custom/HandlerQeury";
 import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation";
 import { useObjectiveHook } from '@hooks'
 import { useStrategyHook } from '@hooks';
-import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer';
-import CustomtextArea from '../Custom/CustomTextarea/CustomtextArea';
+import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer';
+import CustomtextArea from '@Custom/CustomTextarea/CustomtextArea';
 
 
 function MobileObjective(props) {

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 // import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import classes from './MainStartegy.module.css'
 import { useNavigate } from "react-router-dom";
-import Header from "../Custom/CustomHeader/Header";
-import addIcon from '../Custom/icon/icon _ add _ blue.svg'
-import AlertDraftIsExists from '../Custom/AlertDraftIsExists/AlertDraftIsExists';
-import HandlerMutation from '../../../../mobile/UI/Custom/HandlerMutation';
-import HandlerQeury from '../../../../mobile/UI/Custom/HandlerQeury';
+import Header from "@Custom/CustomHeader/Header";
+import addIcon from '@Custom/icon/icon _ add _ blue.svg'
+import AlertDraftIsExists from '@Custom/AlertDraftIsExists/AlertDraftIsExists';
+import HandlerMutation from '@Custom/HandlerMutation';
+import HandlerQeury from '@Custom/HandlerQeury';
 import { useStrategyHook } from '@hooks';
 
 const MainStrategy = () => {

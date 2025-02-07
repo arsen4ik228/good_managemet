@@ -1,9 +1,9 @@
 import React from 'react';
 import classes from './MainPost.module.css'
 import { useNavigate } from "react-router-dom";
-import Header from "../Custom/CustomHeader/Header";
+import Header from "@Custom/CustomHeader/Header";
 import { usePostsHook } from '@hooks';
-import HandlerQeury from '../../../../mobile/UI/Custom/HandlerQeury';
+import HandlerQeury from '@Custom/HandlerQeury';
 
 
 const MainPost = () => {

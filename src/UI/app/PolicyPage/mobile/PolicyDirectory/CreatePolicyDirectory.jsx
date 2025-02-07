@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { useMemo } from 'react'
-import Header from '../../Custom/CustomHeader/Header'
+import Header from '@Custom/CustomHeader/Header'
 import classes from "./CreatePolicyDirectory.module.css"
 import { useNavigate } from 'react-router-dom'
-import HandlerMutation from '../../Custom/HandlerMutation'
+import HandlerMutation from '@Custom/HandlerMutation'
 import { usePolicyDirectoriesHook } from '@hooks'
-import HandlerQeury from '../../Custom/HandlerQeury'
-import { ButtonContainer } from '../../Custom/CustomButtomContainer/ButtonContainer'
+import HandlerQeury from '@Custom/HandlerQeury'
+import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer'
 import { usePolicyHook } from '@hooks'
 
 export default function CreatePolicyDirectory() {

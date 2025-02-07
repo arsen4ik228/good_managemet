@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import classes from './Policy.module.css';
 import { useParams } from "react-router-dom";
-import Header from "../Custom/CustomHeader/Header";
-import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation";
-import AlertUpdateData from '../Custom/AlertUpdateData/AlertUpdateData';
-import Mdxeditor from '../../../../mobile/UI/Custom/MDXEditor/Mdxeditor';
+import Header from "@Custom/CustomHeader/Header";
+import HandlerMutation from "@Custom/HandlerMutation";
+import AlertUpdateData from '@Custom/AlertUpdateData/AlertUpdateData';
+import Mdxeditor from '@Custom/MDXEditorMobile/Mdxeditor';
 import { notEmpty } from '@helpers/helpers';
 import { usePolicyHook } from '@hooks';
-import HandlerQeury from '../../../../mobile/UI/Custom/HandlerQeury';
-import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer';
+import HandlerQeury from '@Custom/HandlerQeury';
+import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer';
 
 
 const MobilePolicy = () => {

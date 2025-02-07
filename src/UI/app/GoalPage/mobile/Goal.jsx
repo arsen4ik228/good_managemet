@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import classes from "./Goal.module.css"
 import Header from "@Custom/CustomHeader/Header";
-import deleteImage from "../Custom/icon/delete.svg"
-import HandlerQeury from "../../../../mobile/UI/Custom/HandlerQeury";
-import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation";
+import deleteImage from "@Custom/icon/delete.svg"
+import HandlerQeury from "@Custom/HandlerQeury";
+import HandlerMutation from "@Custom/HandlerMutation";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import CustomtextArea from '@Custom/CustomTextarea/CustomtextArea';
 import { useGoalHook } from '@hooks';
-import dragIcon from '../Custom/icon/drag _ and _ drop.svg'
+import dragIcon from '@Custom/icon/drag _ and _ drop.svg'
 import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer';
 
 function MobileGoal(props) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import classes from "./ControlPanel.module.css";
-import Header from "../Custom/CustomHeader/Header";
+import Header from "@Custom/CustomHeader/Header";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import ModalSetting from "./modalSetting/ModalSetting";
@@ -14,7 +14,7 @@ import { useModalSelectRadio } from "@hooks";
 import { useControlPanel } from "@hooks";
 import { usePostsHook } from "@hooks";
 
-import ModalContainer from "../Custom/ModalContainer/ModalContainer";
+import ModalContainer from "@Custom/ModalContainer/ModalContainer";
 
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
@@ -42,7 +42,7 @@ import {
 import { usePanelToStatisticsHook } from "@hooks";
 import { debounce } from "lodash";
 
-export default function ControlPanel() {
+export default function MobileControlPanel() {
   const [openModalSetting, setOpenModalSetting] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);

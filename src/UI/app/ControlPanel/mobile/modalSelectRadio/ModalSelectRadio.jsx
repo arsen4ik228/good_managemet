@@ -3,7 +3,7 @@ import classes from "./ModalSelectRadio.module.css";
 import exitModal from "@image/exitModal.svg";
 import Blacksavetmp from "@image/Blacksavetmp.svg";
 import ButtonImage from "@Custom/buttonImage/ButtonImage";
-import ModalContainer from "../../Custom/ModalContainer/ModalContainer";
+import ModalContainer from "@Custom/ModalContainer/ModalContainer";
 
 export function ModalSelectRadio({
   nameTable,

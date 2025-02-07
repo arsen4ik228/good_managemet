@@ -155,17 +155,17 @@
     border-bottom: #005475 1px solid;
     font-weight: 600;
     margin-top: 10px;
-    background-image: url(../../Custom/icon/icon\ _\ add\ _\ 005476.svg);
+    background-image: url(@Custom/icon/icon\ _\ add\ _\ 005476.svg);
     background-repeat: no-repeat;
     background-position: 98% 50%;
 }
 
 [data-section-id="2"] {
-    background-image:url(../../Custom/icon/icon\ _\ uparrow\ _\ 005475.svg) ; 
+    background-image:url(@Custom/icon/icon\ _\ uparrow\ _\ 005475.svg) ; 
   }
 
 [data-section-id="1"] {
-    background-image:url(../../Custom/icon/icon\ _\ downarrow\ _\ 005475.svg) ; 
+    background-image:url(@Custom/icon/icon\ _\ downarrow\ _\ 005475.svg) ; 
   } 
 
 .targetContainer{

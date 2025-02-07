@@ -17,8 +17,8 @@ import Input from "@Custom/Input/Input";
 import Select from "@Custom/Select/Select";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
-import { usePostsHook } from "../../../../hooks/usePostsHook";
-import ButtonAttach from "../../Custom/buttonAttach/ButtonAttach";
+import { usePostsHook } from "@hooks";
+import ButtonAttach from "@Custom/buttonAttach/ButtonAttach";
 
 export default function PostNew() {
   const navigate = useNavigate();

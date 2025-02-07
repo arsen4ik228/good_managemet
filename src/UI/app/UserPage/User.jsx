@@ -19,7 +19,7 @@ import exitHeader from "@image/exitHeader.svg";
 import iconAdd from "@image/iconAdd.svg";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setCreatedUserId } from "../../../../store";
+import { setCreatedUserId } from "@slices";
 
 export default function User() {
   const [firstName, setFirstName] = useState("");

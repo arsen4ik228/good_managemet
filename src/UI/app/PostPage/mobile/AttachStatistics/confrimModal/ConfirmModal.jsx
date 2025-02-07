@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from "./ConfirmModal.module.css"
-import close from '../../../Custom/SearchModal/icon/icon _ add.svg'
+import close from '@Custom/SearchModal/icon/icon _ add.svg'
 
 export default function ConfirmModal({ setModalOpen, requestFunc, selectedStatistics }) {
 

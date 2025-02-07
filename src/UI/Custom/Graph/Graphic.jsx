@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import classes from "./Graphic.module.css";
-import { useWindowSize } from 'react-window-size';
-import { getDateFormatSatatistic } from "../../../BLL/constans";
+import { getDateFormatSatatistic } from "@helpers/helpers";
 
 const Graphic = ({ data, name, setName, typeGraphic, type }) => {
   const svgRef = useRef();

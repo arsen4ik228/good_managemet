@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import classes from './NewPosts.module.css';
 import attachpolicy from './icon/icon _ attach policy.svg'
 import { useNavigate } from "react-router-dom";
-import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../../../mobile/UI/Custom/HandlerQeury.jsx";
-import Header from "../Custom/CustomHeader/Header";
-import blackStatistic from "../Custom/icon/blackStatistic.svg";
-import AttachPolicy from '../Custom/AttachPolicy/AttachPolicy.jsx';
-import AlertSavePost from '../Custom/AlertSavePost/AlertSavePost.jsx';
-import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import Header from "@Custom/CustomHeader/Header";
+import blackStatistic from "@Custom/icon/blackStatistic.svg";
+import AttachPolicy from '@Custom/AttachPolicy/AttachPolicy.jsx';
+import AlertSavePost from '@Custom/AlertSavePost/AlertSavePost.jsx';
+import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer.jsx';
 import { usePostsHook, useGetReduxOrganization } from '@hooks';
 
 

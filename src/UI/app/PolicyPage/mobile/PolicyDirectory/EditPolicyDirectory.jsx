@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import Header from '../../Custom/CustomHeader/Header'
+import Header from '@Custom/CustomHeader/Header'
 import classes from "./EditPolicyDirectory.module.css"
 import { useNavigate, useParams } from 'react-router-dom'
-import HandlerMutation from '../../../../../mobile/UI/Custom/HandlerMutation'
+import HandlerMutation from '@Custom/HandlerMutation'
 import { usePolicyDirectoriesHook } from '@hooks'
-import HandlerQeury from '../../../../../mobile/UI/Custom/HandlerQeury'
+import HandlerQeury from '@Custom/HandlerQeury'
 
 export default function EditPolicyDirectories() {
 

@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react'
 import classes from './AttachmentMOdal.module.css'
-import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
+import ModalContainer from '@Custom/ModalContainer/ModalContainer'
 import { baseUrl } from '@helpers/constants'
 import { usePostFilesMutation } from '@services'
-import { FullScreenImageModal } from '../../../Custom/FullScreanImageModal/FullScreanImageModal'
+import { FullScreenImageModal } from '@Custom/FullScreanImageModal/FullScreanImageModal'
 
 
 export default function AttachmentModal({ setOpenModal, attachments, setAttachments, isOrder }) {

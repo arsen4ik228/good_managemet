@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import classes from './InputTextContainer.module.css'
-import sendIcon from '../../Custom/icon/send.svg'
-import shareIcon from '../../Custom/icon/subbar _ share.svg'
-import calenderIcon from '../../Custom/icon/icon _ calendar.svg'
-import attachIcon from '../../Custom/icon/subbar _ attach.svg'
+import sendIcon from '@Custom/icon/send.svg'
+import shareIcon from '@Custom/icon/subbar _ share.svg'
+import calenderIcon from '@Custom/icon/icon _ calendar.svg'
+import attachIcon from '@Custom/icon/subbar _ attach.svg'
 import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../Modals/CalendarModal/CalendarModal'
 import FilesModal from '../Modals/FilesModal/FilesModal'

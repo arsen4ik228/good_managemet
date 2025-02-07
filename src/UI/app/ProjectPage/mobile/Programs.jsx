@@ -3,13 +3,12 @@ import classes from "./Programs.module.css"
 import Target from "./Targets/Target"
 import { useGetProgramIdQuery, useGetProgramNewQuery, useUpdateProjectMutation } from "@services"
 import { useNavigate, useParams } from "react-router-dom"
-import listSetting from '../Custom/icon/icon _ list setting.svg'
-import CustomSelectModal from "./CustomSelectModal/CustomSelectModal"
-import deleteIcon from '../Custom//icon/icon _ delete.svg'
-import Header from "../Custom/Header/Header"
-import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation"
+import listSetting from '@Custom/icon/icon _ list setting.svg'
+import deleteIcon from '@Custom//icon/icon _ delete.svg'
+import Header from "@Custom/Header/Header"
+import HandlerMutation from "@Custom/HandlerMutation"
 import { formattedDate, transformArraiesForRequset } from "@helpers/helpers"
-import editIcon from '../Custom/icon/icon _ edit.svg'
+import editIcon from '@Custom/icon/icon _ edit.svg'
 import CustomSelectModalProgram from "./CustomSelectModalProgram/CustomSelectModalProgram"
 import CustomSelectSettingModal from "./CustomSelectSettingModal/CustomSelectSettingModal"
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classes from './MainStatistics.module.css'
 import { useNavigate } from "react-router-dom";
-import Header from "../Custom/CustomHeader/Header";
+import Header from "@Custom/CustomHeader/Header";
 import ModalChangeReportDay from './ModalChangeReportDay/ModalChangeReportday';
 import { notEmpty } from '@helpers/helpers';
 import { useStatisticsHook, useGetReduxOrganization } from '@hooks';

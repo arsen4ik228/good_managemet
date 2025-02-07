@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from './CalendarModal.module.css'
-import ModalContainer from '../../../Custom/ModalContainer/ModalContainer'
+import ModalContainer from '@Custom/ModalContainer/ModalContainer'
 
 export default function CalendarModal({setOpenModal, dateStart, setDateStart, dateDeadline, setDateDeadline}) {
     return (

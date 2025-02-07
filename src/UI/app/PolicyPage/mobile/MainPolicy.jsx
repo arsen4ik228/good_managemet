@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import edit from '../Custom/icon/icon _ edit _ grey.svg'
+import edit from '@Custom/icon/icon _ edit _ grey.svg'
 import classes from './MainPolicy.module.css'
-import add from '../Custom/icon/icon _ add _ 005476.svg'
+import add from '@Custom/icon/icon _ add _ 005476.svg'
 import { useNavigate } from "react-router-dom";
-import Header from "../Custom/CustomHeader/Header";
-import sublist from '../Custom/icon/icon _ sublist.svg'
-import leftArrow from '../Custom/icon/icon _ leftarrow.svg'
-import rightArrow from '../Custom/icon/icon _ rightarrow.svg'
-import HandlerQeury from '../../../../mobile/UI/Custom/HandlerQeury';
-import HandlerMutation from '../../../../mobile/UI/Custom/HandlerMutation';
+import Header from "@Custom/CustomHeader/Header";
+import sublist from '@Custom/icon/icon _ sublist.svg'
+import leftArrow from '@Custom/icon/icon _ leftarrow.svg'
+import rightArrow from '@Custom/icon/icon _ rightarrow.svg'
+import HandlerQeury from '@Custom/HandlerQeury';
+import HandlerMutation from '@Custom/HandlerMutation';
 import { usePolicyHook } from '@hooks';
 import { usePolicyDirectoriesHook } from '@hooks';
 import { useGetReduxOrganization } from '@hooks'

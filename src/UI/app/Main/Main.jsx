@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./Main.module.css";
 import { useOrganizationHook } from "@hooks";
-import NavigationBar from "../Custom/NavigationBar/NavigationBar";
-import Header from "../Custom/CustomHeader/Header";
+import NavigationBar from "@Custom/NavigationBar/NavigationBar";
+import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
 import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@slices";
 
-const Main = () => {
+const MobileMain = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedOrg, setSelectedOrg] = useState();
@@ -120,4 +120,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default MobileMain;

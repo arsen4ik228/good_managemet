@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import classes from './FilesModal.module.css';
 
-import ModalContainer from '../../../Custom/ModalContainer/ModalContainer';
+import ModalContainer from '@Custom/ModalContainer/ModalContainer';
 import { usePolicyHook } from '@hooks';
 import { usePostFilesMutation } from '@services';
 import { baseUrl } from '@helpers/constants';

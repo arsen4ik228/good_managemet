@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import classes from './AttachStatistics.module.css'
-import Header from '../../Custom/CustomHeader/Header'
-import addIcon from '../../Custom/icon/icon _ add _ blue.svg'
+import Header from '@Custom/CustomHeader/Header'
+import addIcon from '@Custom/icon/icon _ add _ blue.svg'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetPostIdQuery, useUpdateStatisticsToPostIdMutation, useGetStatisticsQuery } from '@services'
 import { compareArraysWithObjects } from '@helpers/helpers'
 import ConfirmModal from './confrimModal/ConfirmModal'
-import { ButtonContainer } from '../../Custom/CustomButtomContainer/ButtonContainer'
+import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer'
 
 export default function AttachStatistics() {
 

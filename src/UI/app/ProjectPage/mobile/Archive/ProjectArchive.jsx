@@ -3,8 +3,8 @@ import classes from './ProjectArchive.module.css'
 import Target from "../Targets/Target"
 import { useGetProjectIdQuery, useGetProjectNewQuery, useUpdateProjectMutation } from "@services"
 import { useParams } from "react-router-dom"
-import Header from "../../Custom/Header/Header"
-import HandlerMutation from "../../../../../mobile/UI/Custom/HandlerMutation"
+import Header from "@Custom/Header/Header"
+import HandlerMutation from "@Custom/HandlerMutation"
 import { formattedDate, resizeTextarea, transformArraiesForUpdate } from "@helpers/helpers"
 
 export default function ProjectArchive() {

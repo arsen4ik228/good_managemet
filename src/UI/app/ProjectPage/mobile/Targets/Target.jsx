@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import classes from "./Target.module.css";
-import remove from "../../Custom/icon/icon _ remove.svg"
-import ConfirmRemoveModal from "../../Custom/ConfirmRemoveModal/ConfirmRemoveModal";
+import remove from "@Custom/icon/icon _ remove.svg"
+import ConfirmRemoveModal from "@Custom/ConfirmRemoveModal/ConfirmRemoveModal";
 import { formattedDate, resizeTextarea } from "@helpers/helpers";
-import ConfirmCompleteModal from "../../Custom/ConfirmCompleteModal/ConfirmCompleteModal";
+import ConfirmCompleteModal from "@Custom/ConfirmCompleteModal/ConfirmCompleteModal";
 
 function Target({ item, isNew, edit, contentSender, workersList, setSelectedWorker, setDeadlineDate, setTargetState, isArchive, requestFunc }) {
   const textareaHeight = 50;

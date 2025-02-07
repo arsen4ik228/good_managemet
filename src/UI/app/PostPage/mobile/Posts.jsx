@@ -3,11 +3,11 @@ import classes from './Posts.module.css';
 import stats from './icon/_icon _ stats.svg'
 import attachpolicy from './icon/icon _ attach policy.svg'
 import { useNavigate, useParams } from "react-router-dom";
-import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation.jsx";
-import HandlerQeury from "../../../../mobile/UI/Custom/HandlerQeury.jsx";
-import Header from "../Custom/CustomHeader/Header";
-import AttachPolicy from '../Custom/AttachPolicy/AttachPolicy.jsx';
-import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer.jsx';
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import Header from "@Custom/CustomHeader/Header";
+import AttachPolicy from '@Custom/AttachPolicy/AttachPolicy.jsx';
+import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer.jsx';
 import { notEmpty } from '@helpers/helpers';
 import { usePostsHook } from '@hooks';
 

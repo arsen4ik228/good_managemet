@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from './CustomSelectSettingModal.module.css'
-import close from '../../Custom/SearchModal/icon/icon _ add.svg'
+import close from '@Custom/SearchModal/icon/icon _ add.svg'
 
 export default function CustomSelectSettingModal({ setModalOpen, listSelectedSections, setListSelectedSections }) {
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import classes from "./ModalChangeReportDay.module.css"
-import close from '../../Custom/SearchModal/icon/icon _ add.svg'
+import close from '@Custom/SearchModal/icon/icon _ add.svg'
 import { useUpdateOrganizationsMutation } from '@services';
 import {useGetReduxOrganization} from '@hooks';
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import classes from "./CustomSelectModal.module.css"
-import close from "../../Custom/SearchModal/icon/icon _ add.svg"
+import close from "@Custom/SearchModal/icon/icon _ add.svg"
 import { formattedDate } from '@helpers/helpers';
 
 export default function CustomSelectModal({ setModalOpen, projects, workers, selectedProject, setSelectedProject, setParentFilteredProjects }) {

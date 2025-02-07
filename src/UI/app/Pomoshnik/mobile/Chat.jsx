@@ -7,9 +7,9 @@ import listView from './icon/icon _ list view.svg'
 import post from './icon/icon _ post.svg'
 import strategy from './icon/icon _ strategy.svg'
 import policy from './icon/icon _policy.svg'
-import avatar from '../Custom/icon/messendger _ avatar.svg'
+import avatar from '@Custom/icon/messendger _ avatar.svg'
 import { useNavigate, useParams } from "react-router-dom";
-import Header from '../Custom/CustomHeader/Header';
+import Header from '@Custom/CustomHeader/Header';
 import { useOrganizationHook } from '@hooks';
 import { notEmpty } from '@helpers/helpers';
 
