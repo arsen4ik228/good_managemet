@@ -9,7 +9,7 @@ export const usePostsHook = (postId) => {
         allPosts = [],
         isLoadingGetPosts,
         isErrorGetPosts,
-    } = useGetPostsQuery(undefined, {
+    } = useGetPostsQuery({organizationId: reduxSelectedOrganizationId}, {
         selectFromResult: ({ data, isLoading, isError }) => ({
             allPosts: data || [],
             isLoadingGetPosts: isLoading,

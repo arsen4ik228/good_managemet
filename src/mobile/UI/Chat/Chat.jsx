@@ -11,7 +11,7 @@ import avatar from '../Custom/icon/messendger _ avatar.svg'
 import { useNavigate, useParams } from "react-router-dom";
 import Header from '../Custom/CustomHeader/Header';
 import { useOrganizationHook } from '@hooks';
-import { notEmpty } from '../../BLL/constans';
+import { notEmpty } from '@helpers/helpers';
 
 const Chat = () => {
 

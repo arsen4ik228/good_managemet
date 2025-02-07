@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import classes from './MainStatistics.module.css'
 import { useNavigate } from "react-router-dom";
-import { useGetOrganizationsQuery } from '../../BLL/organizationsApi';
 import Header from "../Custom/CustomHeader/Header";
 import ModalChangeReportDay from './ModalChangeReportDay/ModalChangeReportday';
-import { notEmpty, selectedOrganizationId } from '../../BLL/constans';
+import { notEmpty } from '@helpers/helpers';
 import { useStatisticsHook, useGetReduxOrganization } from '@hooks';
 
 const MainStatistics = () => {
 
     const navigate = useNavigate()
+
+    const {reduxSelectedOrganizationId} = useGetReduxOrganization()
 
     const [modalOpen, setModalOpen] = useState(false)
     const [reportDay, setReportDay] = useState()
@@ -38,7 +39,7 @@ const MainStatistics = () => {
 
     useEffect(() => {
         if (!notEmpty(organizations)) return 
-        setReportDay(organizations?.find(item => item.id === selectedOrganizationId).reportDay)
+        setReportDay(organizations?.find(item => item.id === reduxSelectedOrganizationId).reportDay)
     }, [organizations])
 
     return (

@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react"
 import classes from './ProjectArchive.module.css'
 import Target from "../Targets/Target"
-import { useGetProjectIdQuery, useGetProjectNewQuery, useUpdateProjectMutation } from "../../../BLL/projectApi"
+import { useGetProjectIdQuery, useGetProjectNewQuery, useUpdateProjectMutation } from "@services"
 import { useParams } from "react-router-dom"
-// import CustomSelectModal from "./CustomSelectModal/CustomSelectModal"
-import deleteIcon from '../../Custom//icon/icon _ delete.svg'
 import Header from "../../Custom/Header/Header"
 import HandlerMutation from "../../Custom/HandlerMutation"
-import { formattedDate, resizeTextarea, transformArraiesForUpdate } from "../../../BLL/constans"
-import editIcon from '../../Custom/icon/icon _ save.svg'
+import { formattedDate, resizeTextarea, transformArraiesForUpdate } from "@helpers/helpers"
 
 export default function ProjectArchive() {
   const { userId, projectId } = useParams();

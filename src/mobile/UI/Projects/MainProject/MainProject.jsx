@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import classes from "./MainProject.module.css";
 import Header from "../../Custom/Header/Header";
 import sublist from "../../Custom/icon/icon _ sublist.svg";
-import { useGetProjectQuery } from "../../../BLL/projectApi";
-import { useGetOrganizationsQuery } from "../../../BLL/organizationsApi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProjectsHook } from "@hooks";
 
 export default function MainProject() {

@@ -1,13 +1,11 @@
 import apiSlice from "./api";
-import { selectedOrganizationId } from "../../mobile/BLL/constans";
-
 
 export const projectApi = apiSlice.injectEndpoints({
 
   endpoints: (build) => ({
     getProject: build.query({
-      query: () => ({
-        url: `projects/${selectedOrganizationId}/projects`,
+      query: ({organizationId}) => ({
+        url: `projects/${organizationId}/projects`,
       }),
       transformResponse: (response) => {
         console.log('getProject    ',response); // Отладка ответа
@@ -79,8 +77,8 @@ export const projectApi = apiSlice.injectEndpoints({
     }),
 
     getProgramNew: build.query({
-      query: () => ({
-        url: `/projects/${selectedOrganizationId}/program/new`,
+      query: ({organizationId}) => ({
+        url: `/projects/${organizationId}/program/new`,
       }),
       transformResponse: (response) => {
         console.log(response); // Отладка ответа
@@ -106,8 +104,8 @@ export const projectApi = apiSlice.injectEndpoints({
 
 
     getProjectNew: build.query({
-      query: () => ({
-        url: `/projects/${selectedOrganizationId}/new`,
+      query: ({organizationId}) => ({
+        url: `/projects/${organizationId}/new`,
       }),
       transformResponse: (response) => {
         console.log(response); // Отладка ответа

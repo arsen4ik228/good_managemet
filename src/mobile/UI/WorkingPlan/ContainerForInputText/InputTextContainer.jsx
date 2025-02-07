@@ -4,13 +4,13 @@ import sendIcon from '../../Custom/icon/send.svg'
 import shareIcon from '../../Custom/icon/subbar _ share.svg'
 import calenderIcon from '../../Custom/icon/icon _ calendar.svg'
 import attachIcon from '../../Custom/icon/subbar _ attach.svg'
-import { notEmpty, resizeTextarea } from '../../../BLL/constans'
+import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../Modals/CalendarModal/CalendarModal'
 import FilesModal from '../Modals/FilesModal/FilesModal'
 import OrderModal from '../Modals/OrderModal/OrderModal'
 import { useTargetsHook } from '@hooks'
 import { useConvertsHook } from '@hooks'
-import { deleteDraft, loadDraft, saveDraft } from '../../../BLL/Function/indexedDB'
+import { deleteDraft, loadDraft, saveDraft } from '@helpers/indexedDB'
 
 export default function InputTextContainer({ userPosts }) {
 

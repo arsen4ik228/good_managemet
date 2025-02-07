@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react"
 import classes from "./Programs.module.css"
 import Target from "./Targets/Target"
-import { useGetProgramIdQuery, useGetProgramNewQuery, useUpdateProjectMutation } from "../../BLL/projectApi"
+import { useGetProgramIdQuery, useGetProgramNewQuery, useUpdateProjectMutation } from "@services"
 import { useNavigate, useParams } from "react-router-dom"
 import listSetting from '../Custom/icon/icon _ list setting.svg'
 import CustomSelectModal from "./CustomSelectModal/CustomSelectModal"
 import deleteIcon from '../Custom//icon/icon _ delete.svg'
 import Header from "../Custom/Header/Header"
 import HandlerMutation from "../Custom/HandlerMutation"
-import { formattedDate, transformArraiesForRequset } from "../../BLL/constans"
+import { formattedDate, transformArraiesForRequset } from "@helpers/helpers"
 import editIcon from '../Custom/icon/icon _ edit.svg'
 import CustomSelectModalProgram from "./CustomSelectModalProgram/CustomSelectModalProgram"
 import CustomSelectSettingModal from "./CustomSelectSettingModal/CustomSelectSettingModal"
 
 export default function Programs() {
-  const { userId, programId } = useParams();
+  const {userId, programId } = useParams();
   const navigate = useNavigate()
   const [edit, setEdit] = useState(false)
   const [dummyKey, setDummyKey] = useState(0)
@@ -101,7 +101,7 @@ export default function Programs() {
     currentProject = [],
     targets = [],
     currentProjects = [],
-  } = useGetProgramIdQuery({ userId, programId }, {
+  } = useGetProgramIdQuery({programId }, {
     selectFromResult: ({ data }) => ({
       currentProject: data?.currentProgram,
       targets: data?.targets,
@@ -116,7 +116,7 @@ export default function Programs() {
     projects = [],
     strategies = [],
     organizations = [],
-  } = useGetProgramNewQuery(userId, {
+  } = useGetProgramNewQuery(undefined, {
     selectFromResult: ({ data }) => ({
       workers: data?.workers,
       projects: data?.projects,
@@ -425,7 +425,6 @@ export default function Programs() {
 
     console.log(Data)
     await updateProject({
-      userId,
       projectId: programId,
       _id: programId,
       type: 'Программа',

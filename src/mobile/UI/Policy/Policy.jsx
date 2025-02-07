@@ -5,7 +5,7 @@ import Header from "../Custom/CustomHeader/Header";
 import HandlerMutation from "../Custom/HandlerMutation";
 import AlertUpdateData from '../Custom/AlertUpdateData/AlertUpdateData';
 import Mdxeditor from '../Custom/MDXEditor/Mdxeditor';
-import { notEmpty } from '../../BLL/constans';
+import { notEmpty } from '@helpers/helpers';
 import { usePolicyHook } from '@hooks';
 import HandlerQeury from '../Custom/HandlerQeury';
 import { ButtonContainer } from '../Custom/CustomButtomContainer/ButtonContainer';

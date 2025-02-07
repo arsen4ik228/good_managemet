@@ -1,12 +1,11 @@
-import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
 
 
 export const policyDirectoriesApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getPolicyDirectories: build.query({
-      query: () => ({
-        url: `policyDirectory/${selectedOrganizationId}`,
+      query: ({organizationId}) => ({
+        url: `policyDirectory/${organizationId}`,
       }),
       transformResponse: (response) => {
         //Валерка

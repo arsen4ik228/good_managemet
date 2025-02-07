@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react"
 import classes from "./Projects.module.css"
 import Target from "./Targets/Target"
-import { useGetProjectIdQuery, useGetProjectNewQuery, useUpdateProjectMutation } from "../../BLL/projectApi"
+import { useGetProjectIdQuery, useGetProjectNewQuery, useUpdateProjectMutation } from "@services"
 import { useNavigate, useParams } from "react-router-dom"
 import deleteIcon from '../Custom//icon/icon _ delete.svg'
 import Header from "../Custom/Header/Header"
 import HandlerMutation from "../Custom/HandlerMutation"
-import { resizeTextarea, transformArraiesForRequset } from "../../BLL/constans"
+import { resizeTextarea, transformArraiesForRequset } from "@helpers/helpers"
 import editIcon from '../Custom/icon/icon _ edit.svg'
 import listSetting from '../Custom/icon/icon _ list setting.svg'
 import CustomSelectSettingModal from "./CustomSelectSettingModal/CustomSelectSettingModal"
@@ -14,7 +14,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd"
 
 
 export default function NewProject() {
-  const { userId, projectId } = useParams();
+  const { projectId } = useParams();
   const uniqueIdRef = useRef(0);
   const navigate = useNavigate()
 
@@ -95,7 +95,7 @@ export default function NewProject() {
   const {
     currentProject = [],
     targets = [],
-  } = useGetProjectIdQuery({ userId, projectId }, {
+  } = useGetProjectIdQuery({ projectId }, {
     selectFromResult: ({ data }) => ({
       currentProject: data?.currentProject,
       targets: data?.targets,
@@ -106,7 +106,7 @@ export default function NewProject() {
     programs = [],
     strategies = [],
     workers = []
-  } = useGetProjectNewQuery(userId, {
+  } = useGetProjectNewQuery(undefined, {
     selectFromResult: ({ data }) => ({
       organizations: data?.organizations,
       programs: data?.programs,
@@ -429,7 +429,6 @@ export default function NewProject() {
 
     console.log(Data)
     await updateProject({
-      userId,
       projectId,
       _id: projectId,
       type: 'Проект',

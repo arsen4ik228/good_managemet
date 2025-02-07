@@ -5,7 +5,7 @@ import { useOrganizationHook } from "@hooks";
 import NavigationBar from "../Custom/NavigationBar/NavigationBar";
 import Header from "../Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
-import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "../../BLL/localStorageSlice";
+import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@slices";
 
 const Main = () => {
   const dispatch = useDispatch();
