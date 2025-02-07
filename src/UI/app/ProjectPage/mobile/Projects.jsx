@@ -4,7 +4,7 @@ import Target from "./Targets/Target"
 import { useGetProjectIdQuery, useGetProjectNewQuery, useUpdateProjectMutation } from "@services"
 import { useNavigate, useParams } from "react-router-dom"
 import deleteIcon from '@Custom//icon/icon _ delete.svg'
-import Header from "@Custom/Header/Header"
+import Header from "@Custom/CustomHeader/Header"
 import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation"
 import { resizeTextarea, transformArraiesForRequset } from "@helpers/helpers"
 import editIcon from '@Custom/icon/icon _ edit.svg'

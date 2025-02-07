@@ -5,7 +5,7 @@ import { useGetProgramIdQuery, useGetProgramNewQuery, useUpdateProjectMutation }
 import { useNavigate, useParams } from "react-router-dom"
 import listSetting from '@Custom/icon/icon _ list setting.svg'
 import deleteIcon from '@Custom//icon/icon _ delete.svg'
-import Header from "@Custom/Header/Header"
+import Header from "@Custom/CustomHeader/Header"
 import HandlerMutation from "@Custom/HandlerMutation"
 import { formattedDate, transformArraiesForRequset } from "@helpers/helpers"
 import editIcon from '@Custom/icon/icon _ edit.svg'
