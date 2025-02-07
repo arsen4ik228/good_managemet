@@ -14,7 +14,6 @@ const ModalStatistic = ({
   exit,
   reportDay,
 }) => {
-  console.log("ModalStatistic");
   
   const svgRef = useRef();
   const [width, setWidth] = useState(850);

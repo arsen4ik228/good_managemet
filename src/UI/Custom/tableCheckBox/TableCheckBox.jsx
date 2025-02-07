@@ -1,12 +1,12 @@
 import React from "react";
 import classes from "./TableCheckBox.module.css";
 
-export default function TableCheckBox({name, array, arrayCheked, handleChecboxChange}) {
+export default function TableCheckBox({nameTable, array, arrayItem, arrayCheked, handleChecboxChange}) {
   return (
     <table className={classes.table}>
       <thead>
         <tr>
-          <th>{name}</th>
+          <th>{nameTable}</th>
         </tr>
       </thead>
 
@@ -23,7 +23,7 @@ export default function TableCheckBox({name, array, arrayCheked, handleChecboxCh
                     type="checkbox"
                     checked={arrayCheked.includes(item.id)}
                   />
-                  {item.name}
+                  {item[arrayItem]}
                 </div>
               ))}
             </td>

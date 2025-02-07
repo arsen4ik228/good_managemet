@@ -40,7 +40,7 @@ import {
   loadFromIndexedDB,
 } from "@utils/src/index.js";
 import { usePanelToStatisticsHook } from "@hooks";
-import { debounce } from "lodash";
+import { debounce, isEqual } from "lodash";
 
 export default function MobileControlPanel() {
   const [openModalSetting, setOpenModalSetting] = useState(false);
@@ -150,7 +150,8 @@ export default function MobileControlPanel() {
       await deleteControlPanel({
         controlPanelId: selectedControlPanelId,
       }).unwrap();
-
+      
+      setSelectedControlPanelId();
       // Закрываем модальное окно
       setOpenModalDelete(false);
 
@@ -295,11 +296,18 @@ export default function MobileControlPanel() {
     }
   }, [allControlPanel]);
 
-  useEffect(() => {
-    if (statisticsPoints.length > 0) {
-      setCards(statisticsPoints);
-    }
-  }, [statisticsPoints]);
+ // Сброс cards при изменении reduxSelectedOrganizationId
+useEffect(() => {
+  setCards([]);
+}, [reduxSelectedOrganizationId]);
+
+// Обновление cards при изменении statisticsPoints
+useEffect(() => {
+  if (statisticsPoints && !isEqual(statisticsPoints, cards)) {
+    setCards(statisticsPoints);
+  }
+}, [statisticsPoints]); 
+
   return (
     <div className={classes.wrapper}>
       <Header onRightIcon={true} rightIconClick={openCreate}>

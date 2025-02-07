@@ -38,7 +38,8 @@ import {
   loadFromIndexedDB,
 } from "@utils/src/index.js";
 import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
-import { debounce } from "lodash";
+import { debounce, isEqual } from "lodash";
+
 
 export default function ControlPanel() {
   const [openModalSetting, setOpenModalSetting] = useState(false);
@@ -121,6 +122,7 @@ export default function ControlPanel() {
       })),
       id
     );
+    console.log("getControlPanelId");
     setSelectedControlPanelId(id);
   };
 
@@ -149,6 +151,7 @@ export default function ControlPanel() {
         controlPanelId: selectedControlPanelId,
       }).unwrap();
 
+      setSelectedControlPanelId();
       // Закрываем модальное окно
       setOpenModalDelete(false);
 
@@ -258,6 +261,7 @@ export default function ControlPanel() {
           orderStatisticNumber: index + 1,
         }));
 
+
         debouncedUpdate(updatedStatistics);
 
         return newItems;
@@ -293,11 +297,17 @@ export default function ControlPanel() {
     }
   }, [allControlPanel]);
 
-  useEffect(() => {
-    if (statisticsPoints.length > 0) {
-      setCards(statisticsPoints);
-    }
-  }, [statisticsPoints]);
+ // Сброс cards при изменении reduxSelectedOrganizationId
+useEffect(() => {
+  setCards([]);
+}, [reduxSelectedOrganizationId]);
+
+// Обновление cards при изменении statisticsPoints
+useEffect(() => {
+  if (statisticsPoints && !isEqual(statisticsPoints, cards)) {
+    setCards(statisticsPoints);
+  }
+}, [statisticsPoints]); 
 
   return (
     <div className={classes.dialog}>

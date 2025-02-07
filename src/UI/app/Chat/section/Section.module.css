@@ -57,21 +57,22 @@
     background-color: var(--white);
 
     :hover {
-        background-color: var(--grey);
+        background-color: var(--primary-light);
 
         & span {
-            color: var(--white);
+            color: var(--primary);
         }
 
-        & svg{
-            fill: var(--white);
+        & svg {
+            fill: var(--primary);
         }
     }
 }
 
-.icon{
+.icon {
     fill: var(--grey);
 }
+
 .row {
     padding-left: 12.5px;
 
@@ -92,18 +93,18 @@
 }
 
 .row_active {
-    background-color: var(--grey);
+    background-color: var(--primary-light);
 
     & span {
-        color: var(--white);
+        color: var(--primary);
     }
 
-    & svg{
-        fill: var(--white);
+    & svg {
+        fill: var(--primary);
     }
 }
 
-.controlPanel{
+.controlPanel {
     width: 100%;
     height: 36px;
 
@@ -112,21 +113,21 @@
     column-gap: 12.5px;
 
     padding-left: 12.5px;
-
     background-color: var(--grey-light);
 
-    & svg{
+    & svg {
         width: 24px;
         height: 24px;
 
-        fill:var(--grey);
+        fill: var(--grey);
         fill-opacity: 1;
     }
 
-    & span{
-        color: var(--dark);
+    & span {
+        color: var(--grey);
         font-weight: 600;
     }
+
 }
 
 .line {

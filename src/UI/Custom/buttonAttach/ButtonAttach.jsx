@@ -8,11 +8,14 @@ export default function ButtonAttach({
   prefix,
   btnName,
   disabled,
+  widthBtn
 }) {
+  const btnClass = widthBtn === "190px" ? classes.btnWidth190 : classes.btnWidth250;
+
   return (
     <>
       {disabled ? (
-        <div className={classes.btn} disabled={disabled}>
+        <div className={`${btnClass} ${classes.btn}`} disabled={disabled}>
           <img src={image} alt="" />
           <div className={classes.btnItem}>
             {selectArray?.length > 0 ? (
@@ -35,7 +38,7 @@ export default function ButtonAttach({
           </div>
         </div>
       ) : (
-        <div className={classes.btn} onClick={onClick}>
+        <div className={`${btnClass} ${classes.btn}`} onClick={onClick}>
           <img src={image} alt="" />
           <div className={classes.btnItem}>
             {selectArray?.length > 0 ? (

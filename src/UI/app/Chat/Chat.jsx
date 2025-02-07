@@ -7,9 +7,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function Chat() {
   const navigate = useNavigate();
-  
-  const handleButtonClick = () => {
+
+  const handleUserButtonClick = () => {
     navigate("/pomoshnik/user");
+  };
+  const handleStartButtonClick = () => {
+    navigate("/pomoshnik/start");
   };
 
   return (
@@ -22,12 +25,14 @@ export default function Chat() {
         <input type="search" placeholder="поиск"></input>
       </div>
       <div className={classes.main}>
-        <div className={classes.item}>
+        <button className={classes.btnPomoshnik} onClick={handleStartButtonClick}>
           <img src={iconHeader} alt="iconHeader" />
           <span>Личный помощник</span>
-        </div>
+        </button>
         <Section></Section>
-        <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
+        <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
+          <span> Добавить пользователя </span>
+        </button>
       </div>
     </div>
   );
