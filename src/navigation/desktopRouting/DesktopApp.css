@@ -161,7 +161,7 @@ input[type="search"] {
 }
 
 input[type="search"]::-webkit-input-placeholder {
-    background-image: url('../../desktop/UI/image/search.svg');
+    background-image: url('@image/search.svg');
     /* Укажите здесь путь к вашему изображению */
     background-repeat: no-repeat;
     /* Предотвращает повторение изображения */
@@ -193,7 +193,7 @@ input[type="search"]::-webkit-search-cancel-button {
     cursor: pointer;
     height: 20px;
     width: 20px;
-    background-image: url('../../desktop/UI/image/iconСlose.svg');
+    background-image: url('@image/iconСlose.svg');
     background-position: center;
 }
 

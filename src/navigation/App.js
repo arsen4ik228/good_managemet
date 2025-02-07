@@ -1,6 +1,6 @@
 import { isMobile } from "react-device-detect"; // Импортируем функцию для определения устройства
-import MobileApp from "../mobile/MobileApp";
 import DesktopApp from "./desktopRouting/DesktopApp";
+import MobileApp from "./mobileRouting/MobileApp";
 
 
 function App() {

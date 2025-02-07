@@ -1,5 +1,3 @@
-
-import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
 
@@ -26,7 +24,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
     // }),
 
     getStatistics: build.query({
-      query: ({ organizationId, statisticData = true }) => ({
+      query: ({organizationId ,statisticData = true }) => ({
         url: `statistics/${organizationId}/?statisticData=${statisticData}`,
       }),
       transformResponse: (response) => {

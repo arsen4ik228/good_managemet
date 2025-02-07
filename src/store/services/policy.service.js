@@ -1,4 +1,3 @@
-import { selectedOrganizationId } from "../../mobile/BLL/constans";
 import apiSlice from "./api";
 
 
@@ -150,13 +149,13 @@ export const policyApi = apiSlice.injectEndpoints({
     // }),
 
     postPolicies: build.mutation({
-      query: () => ({
+      query: ({organizationId}) => ({
         url: `policies/new`,
         method: "POST",
         body: {
           policyName: "Политика",
           content: " ",
-          organizationId: selectedOrganizationId,
+          organizationId: organizationId,
         },
       }),
       transformResponse: (response) => ({

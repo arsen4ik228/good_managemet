@@ -5,7 +5,7 @@ import telegram from '../Custom/icon/telegram.svg'
 import logo from '../Custom/icon/logo.svg'
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { baseUrl } from "../../BLL/constans";
+import { baseUrl } from "@helpers/constants";
 
 //5000
 const socket = io(`${baseUrl}auth`, {

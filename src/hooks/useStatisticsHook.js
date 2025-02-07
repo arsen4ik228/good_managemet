@@ -1,18 +1,18 @@
 import { useGetStatisticsIdQuery, useGetStatisticsQuery, usePostStatisticsMutation, useUpdateStatisticsMutation } from "../store/services/index"
-import useGetReduxOrganization from "./useGetReduxOrganization";
+import { useGetReduxOrganization } from '@hooks'
+
 
 
 export const useStatisticsHook = ({ statisticData, statisticId }) => {
-    const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+
+    const {reduxSelectedOrganizationId} = useGetReduxOrganization()
+
     const {
         statistics = [],
         isLoadingGetStatistics,
         isFetchingGetStatistics,
         isErrorGetStatistics,
-    } = useGetStatisticsQuery( {
-        organizationId: reduxSelectedOrganizationId,
-        statisticData: statisticData,
-      }, {
+    } = useGetStatisticsQuery({organizationId: reduxSelectedOrganizationId ,statisticData: statisticData }, {
         selectFromResult: ({ data, isError, isFetching, isLoading }) => ({
             statistics: data || [],
             isLoadingGetStatistics: isLoading,

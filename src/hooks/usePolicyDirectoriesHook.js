@@ -1,14 +1,17 @@
 
 import { useDeletePolicyDirectoriesMutation, useGetPolicyDirectoriesIdQuery, useGetPolicyDirectoriesQuery, usePostPolicyDirectoriesMutation, useUpdatePolicyDirectoriesMutation } from '@services'
-import { selectedOrganizationId } from '../mobile/BLL/constans';
+import { useGetReduxOrganization } from '@hooks' 
 
 
 export const usePolicyDirectoriesHook = (policyDirectoryId) => {
+
+    const {reduxSelectedOrganizationId} = useGetReduxOrganization()
+
     const {
         policyDirectories = [],
         isLoadingPolicyDirectories,
         isErrorPolicyDirectories,
-    } = useGetPolicyDirectoriesQuery(undefined, {
+    } = useGetPolicyDirectoriesQuery({organizationId: reduxSelectedOrganizationId}, {
         selectFromResult: ({ data, isLoading, isError }) => ({
             policyDirectories: data || [],
             isLoadingPolicyDirectories: isLoading,
@@ -34,7 +37,7 @@ export const usePolicyDirectoriesHook = (policyDirectoryId) => {
         isLoadingGetPolicyDirectories,
         isErrorGetPolicyDirectories,
         isFetchingGetPolicyDirectories,
-    } = useGetPolicyDirectoriesIdQuery({ organizationId: selectedOrganizationId, policyDirectoryId }, {
+    } = useGetPolicyDirectoriesIdQuery({ organizationId: reduxSelectedOrganizationId, policyDirectoryId }, {
         selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
             activeDirectives: data?.activeDirectives || [],
             activeInstructions: data?.activeInstructions || [],

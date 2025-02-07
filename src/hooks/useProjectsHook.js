@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useGetProgramNewQuery, useGetProjectNewQuery, useGetProjectQuery, usePostProjectMutation } from "../store/services/index";
-
+import useGetReduxOrganization from "./useGetReduxOrganization";
 
 export const useProjectsHook = ({ IsTypeProgram }) => {
 
     const [localIsTypeProgram, setLocalIsTypeProgram] = useState(false)
+    const {reduxSelectedOrganizationId} = useGetReduxOrganization()
 
     useEffect(() => {
         if (IsTypeProgram !== undefined)
@@ -18,7 +19,7 @@ export const useProjectsHook = ({ IsTypeProgram }) => {
         archivesPrograms = [],
         projectsWithProgram = [],
         archivesProjectsWithProgram = [],
-    } = useGetProjectQuery(undefined, {
+    } = useGetProjectQuery({organizationId: reduxSelectedOrganizationId}, {
         selectFromResult: ({ data }) => ({
             projects: data?.projects || [],
             archivesProjects: data?.archivesProjects || [],
@@ -32,7 +33,7 @@ export const useProjectsHook = ({ IsTypeProgram }) => {
 
     const {
         projectData = [],
-    } = useGetProjectNewQuery(undefined, {
+    } = useGetProjectNewQuery({organizationId: reduxSelectedOrganizationId}, {
         selectFromResult: ({ data }) => ({
             projectData: data
         }),
@@ -42,7 +43,7 @@ export const useProjectsHook = ({ IsTypeProgram }) => {
 
     const {
         programData = [],
-    } = useGetProgramNewQuery(undefined, {
+    } = useGetProgramNewQuery({organizationId: reduxSelectedOrganizationId}, {
         selectFromResult: ({ data }) => ({
             programData: data
         }),
