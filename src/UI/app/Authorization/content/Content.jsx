@@ -5,6 +5,8 @@ import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { isMobile } from "react-device-detect";
 import { baseUrl } from "@helpers/constants";
+import telegram from '@Custom/icon/telegram.svg'
+import logo from '@Custom/icon/logo.svg'
 
 const socket = io(`${baseUrl}auth`, {
   cors: {
@@ -166,46 +168,42 @@ export default function Content() {
   }, [socketId, tokenForTG]);
 
   return (
-    {
-      isMobile? (
-      <>
-    <div className={classes.Container}>
-      <div className={classes.background}></div>
-      <div className={classes.logoContainer}>
-        <img src={logo} alt='logo' />
+    isMobile ? (
+      <div className={classes.Container}>
+        <div className={classes.background}></div>
+        <div className={classes.logoContainer}>
+          <img src={logo} alt='logo' />
+        </div>
+        <div className={classes.textContainer}>
+          <img src={telegram} alt="Telegram" />
+          <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>
+            Войти через Telegram
+          </a>
+        </div>
       </div>
-
-      <div className={classes.textContainer}>
-        <img src={telegram} alt="Telegram" />
-        <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>Войти через Telegram</a>
-      </div>
-    </div>
-        </>
     ) : (
-    <div className={classes.body}>
-      <span className={classes.text}>Для входа отсканируйте QR-код</span>
-      <div className={classes.QR}>
-        {!socketId ? (
-          <div>Подключение к сокету...</div>
-        ) : tokenForTG && qrUrl ? (
-          <div className={classes.telegram}>
-            <QRCode errorLevel="H" value={qrUrl} />
-            <a
-              href={qrUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={classes.link}
-            >
-              Или перейдите по ссылке
-            </a>
-          </div>
-        ) : (
-          <> Подождите </>
-        )}
+      <div className={classes.body}>
+        <span className={classes.text}>Для входа отсканируйте QR-код</span>
+        <div className={classes.QR}>
+          {!socketId ? (
+            <div>Подключение к сокету...</div>
+          ) : tokenForTG && qrUrl ? (
+            <div className={classes.telegram}>
+              <QRCode errorLevel="H" value={qrUrl} />
+              <a
+                href={qrUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.link}
+              >
+                Или перейдите по ссылке
+              </a>
+            </div>
+          ) : (
+            <>Подождите</>
+          )}
+        </div>
       </div>
-    </div>
-  )
-}
-
+    )
   );
 }

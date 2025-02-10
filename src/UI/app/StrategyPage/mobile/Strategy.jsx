@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import classes from './Strategy.module.css';
 import { useParams } from "react-router-dom";
 import Header from "@Custom/CustomHeader/Header";
-import HandlerMutation from "../../../../mobile/UI/Custom/HandlerMutation";
+import HandlerMutation from "@Custom/HandlerMutation";
 import ModalWindow from '@Custom/ConfirmStrategyToComplited/ModalWindow';
 import CustomtextArea from '@Custom/CustomTextarea/CustomtextArea'
 import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer'
 import { useStrategyHook } from '@hooks';
-import HandlerQeury from '../../../../mobile/UI/Custom/HandlerQeury';
+import HandlerQeury from '@Custom/HandlerQeury';
 import { notEmpty } from '@helpers/helpers';
 
 const MobileStartegy = () => {
