@@ -6,7 +6,7 @@ import { getDateFormatSatatistic } from '@helpers/helpers';
 import { useParams } from 'react-router-dom'
 import saveIcon from '@Custom/icon/icon _ save.svg'
 import Graphic from '@Custom/Graph/Graphic'
-import HandlerMutation from '../../../../mobile/UI/Custom/HandlerMutation'
+import HandlerMutation from '@Custom/HandlerMutation'
 import iconExit from '@Custom/SearchModal/icon/icon _ add.svg'
 import arrowInCircle from '@Custom/icon/arrow in circle.svg'
 import { useStatisticsHook } from '@hooks'
