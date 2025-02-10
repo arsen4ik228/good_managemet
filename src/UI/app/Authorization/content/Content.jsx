@@ -170,7 +170,6 @@ export default function Content() {
   return (
     isMobile ? (
       <div className={classes.Container}>
-        <div className={classes.background}></div>
         <div className={classes.logoContainer}>
           <img src={logo} alt='logo' />
         </div>
