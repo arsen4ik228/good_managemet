@@ -6,6 +6,8 @@
     top:25%;
     column-gap: 15px;
     z-index: 10000;
+    left: 50%; /* Центрирует по горизонтали */
+    transform: translate(-50%, -50%); 
 }
 
 .loadImage {
