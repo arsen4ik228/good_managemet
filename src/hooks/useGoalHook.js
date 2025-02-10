@@ -1,47 +1,89 @@
-import { useGetGoalQuery, usePostGoalMutation, useUpdateGoalMutation } from "@services";
-import { useGetReduxOrganization } from '@hooks'
-
-
-export const useGoalHook = () => {
-
-    const {reduxSelectedOrganizationId} = useGetReduxOrganization()
-
+import {
+    useGetGoalQuery,
+    usePostGoalMutation,
+    useUpdateGoalMutation,
+  } from "@services";
+  import useGetReduxOrganization from "./useGetReduxOrganization";
+  import { useMutationHandler } from "./useMutationHandler";
+  
+  export function useGoalHook() {
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+  
     const {
-        currentGoal = {},
-        isErrorGetGoal,
-        isLoadingGetGoal,
-        isFetchingGetGoal,
-    } = useGetGoalQuery({organizationId: reduxSelectedOrganizationId}, {
+      currentGoal = {},
+      isErrorGetGoal,
+      isLoadingGetGoal,
+      isFetchingGetGoal,
+    } = useGetGoalQuery(
+      { organizationId: reduxSelectedOrganizationId },
+      {
         selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-            currentGoal: data?.currentGoal || {},
-            isErrorGetGoal: isError,
-            isLoadingGetGoal: isLoading,
-            isFetchingGetGoal: isFetching,
+          currentGoal: data?.currentGoal || {},
+          isErrorGetGoal: isError,
+          isLoadingGetGoal: isLoading,
+          isFetchingGetGoal: isFetching,
         }),
-    });
-    console.log(currentGoal)
-    const [updateGoal, { isLoading: isLoadingUpdateGoalMutation, isSuccess: isSuccessUpdateGoalMutation, isError: isErrorUpdateGoalMutation, error: ErrorUpdateGoalMutation }] = useUpdateGoalMutation();
-
-    const [postGoal, { isLoading: isLoadingPostPoliciesMutation, isSuccess: isSuccessPostPoliciesMutation, isError: isErrorPostPoliciesMutation, error: ErrorPostPoliciesMutation }] = usePostGoalMutation();
-
-
+      }
+    );
+  
+    const [
+      updateGoal,
+      {
+        isLoading: isLoadingUpdateGoalMutation,
+        isSuccess: isSuccessUpdateGoalMutation,
+        isError: isErrorUpdateGoalMutation,
+        error: ErrorUpdateGoalMutation,
+        reset: resetUpdateGoalMutation
+      },
+    ] = useUpdateGoalMutation();
+  
+  
+    const localIsResponseUpdateGoalMutation = useMutationHandler(
+      isSuccessUpdateGoalMutation,
+      isErrorUpdateGoalMutation,
+      resetUpdateGoalMutation
+    );
+  
+  
+    const [
+      postGoal,
+      {
+        isLoading: isLoadingPostGoalMutation,
+        isSuccess: isSuccessPostGoalMutation,
+        isError: isErrorPostGoalMutation,
+        error: ErrorPostGoalMutation,
+        reset: resetPostGoalMutation
+      },
+    ] = usePostGoalMutation();
+  
+  
+     const localIsResponsePostGoalMutation = useMutationHandler(
+      isSuccessPostGoalMutation,
+      isErrorPostGoalMutation,
+      resetPostGoalMutation
+      );
+    
+  
     return {
-        currentGoal,
-        isErrorGetGoal,
-        isLoadingGetGoal,
-        isFetchingGetGoal,
-
-        updateGoal,
-        isLoadingUpdateGoalMutation,
-        isSuccessUpdateGoalMutation,
-        isErrorUpdateGoalMutation,
-        ErrorUpdateGoalMutation,
-
-        postGoal,
-        isLoadingPostPoliciesMutation,
-        isSuccessPostPoliciesMutation,
-        isErrorPostPoliciesMutation,
-        ErrorPostPoliciesMutation
-
-    }
-}
+      reduxSelectedOrganizationId,
+  
+      currentGoal,
+      isErrorGetGoal,
+      isLoadingGetGoal,
+      isFetchingGetGoal,
+  
+      updateGoal,
+      isLoadingUpdateGoalMutation,
+      isSuccessUpdateGoalMutation,
+      isErrorUpdateGoalMutation,
+      ErrorUpdateGoalMutation,
+      localIsResponseUpdateGoalMutation,
+  
+      postGoal,
+      isLoadingPostGoalMutation,
+      isSuccessPostGoalMutation,
+      isErrorPostGoalMutation,
+      ErrorPostGoalMutation,
+      localIsResponsePostGoalMutation
+    };
+  }

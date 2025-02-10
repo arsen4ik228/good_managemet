@@ -1,47 +1,57 @@
-import { useGetObjectiveIdQuery, useUpdateObjectiveMutation } from "../store/services/index.js"
-
-export const useObjectiveHook = (selectedStrategyId) => {
-
-        const {
-            currentSpeedGoal,
-            isArchive,
-            isLoadingGetSpeedGoalId,
-            isErrorGetSpeedGoalId,
-            isFetchingGetSpeedGoalId,
-        } = useGetObjectiveIdQuery(
-            { strategyId: selectedStrategyId },
-            {
-                selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-                    currentSpeedGoal: data?.currentSpeedGoal || {},
-                    isArchive: data?.isArchive,
-                    isLoadingGetSpeedGoalId: isLoading,
-                    isErrorGetSpeedGoalId: isError,
-                    isFetchingGetSpeedGoalId: isFetching,
-                }),
-                skip: !selectedStrategyId,
-            }
-        );
-
-
-            const [
-                updateSpeedGoal,
-                {
-                    isLoading: isLoadingUpdateSpeedGoalMutation,
-                    isSuccess: isSuccessUpdateSpeedGoalMutation,
-                    isError: isErrorUpdateSpeedGoalMutation,
-                },
-            ] = useUpdateObjectiveMutation();
-
-        return {
-            currentSpeedGoal,
-            isArchive,
-            isLoadingGetSpeedGoalId,
-            isErrorGetSpeedGoalId,
-            isFetchingGetSpeedGoalId,
-
-            updateSpeedGoal,
-            isLoadingUpdateSpeedGoalMutation,
-            isSuccessUpdateSpeedGoalMutation,
-            isErrorUpdateSpeedGoalMutation
-        }
-}
+import {
+    useGetObjectiveIdQuery,
+    useUpdateObjectiveMutation,
+  } from "@services";
+  import { useMutationHandler } from "./useMutationHandler";
+  
+  export const useObjectiveHook = (strategyId) => {
+  
+    const {
+      currentObjective,
+      isLoadingGetObjectiveId,
+      isErrorGetObjectiveId,
+      isFetchingGetObjectiveId,
+    } = useGetObjectiveIdQuery(
+      { strategyId },
+      {
+        selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
+          currentObjective: data?.currentObjective || {},
+          isLoadingGetObjectiveId: isLoading,
+          isErrorGetObjectiveId: isError,
+          isFetchingGetObjectiveId: isFetching,
+        }),
+        skip: !strategyId,
+      }
+    );
+  
+    const [
+      updateObjective,
+      {
+        isLoading: isLoadingUpdateObjectiveMutation,
+        isSuccess: isSuccessUpdateObjectiveMutation,
+        isError: isErrorUpdateObjectiveMutation,
+        error: errorUpdateObjectiveMutation,
+        reset: resetUpdateObjectiveMutation,
+      },
+    ] = useUpdateObjectiveMutation();
+  
+    const localIsResponseUpdateObjectiveMutation = useMutationHandler(
+      isSuccessUpdateObjectiveMutation,
+      isErrorUpdateObjectiveMutation,
+      resetUpdateObjectiveMutation
+    );
+  
+    return {
+      currentObjective,
+      isLoadingGetObjectiveId,
+      isErrorGetObjectiveId,
+      isFetchingGetObjectiveId,
+  
+      updateObjective,
+      isLoadingUpdateObjectiveMutation,
+      isSuccessUpdateObjectiveMutation,
+      isErrorUpdateObjectiveMutation,
+      errorUpdateObjectiveMutation,
+      localIsResponseUpdateObjectiveMutation,
+    };
+  };
