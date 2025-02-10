@@ -3,7 +3,7 @@ import classes from "./Content.module.css"; // Ваши стили
 import { QRCode } from "antd";
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-
+import { isMobile } from "react-device-detect";
 import { baseUrl } from "@helpers/constants";
 
 const socket = io(`${baseUrl}auth`, {
@@ -20,7 +20,7 @@ export default function Content() {
     refreshTokenId: "",
     userId: "",
   });
-  
+
   const [tokenForTG, setTokenForTG] = useState("");
   const [socketId, setSocketId] = useState("");
   const [qrUrl, setQrUrl] = useState("");
@@ -64,7 +64,7 @@ export default function Content() {
 
         if (serverData.isLogged && localStorage.getItem("accessToken")) {
           localStorage.setItem("fingerprint", fp.visitorId);
-          window.location.href = "#/pomoshnik/start";
+          window.location.href = isMobile ? `#/Main` : "#/pomoshnik/start";
         }
         console.log("Ответ от /:", serverData);
         setTokenForTG(serverData.tokenForTG);
@@ -108,7 +108,7 @@ export default function Content() {
         console.log(ip);
         console.log(tokenForTG);
         console.log("--------------------");
-        
+
         localStorage.setItem("fingerprint", fingerprint);
 
         socket.emit("responseFromClient", {
@@ -141,7 +141,7 @@ export default function Content() {
         .then((response) => {
           if (response.ok) {
             console.log("Куки установлены");
-            window.location.href = `#/pomoshnik/start`;
+            window.location.href = isMobile ? `#/Main` : `#/pomoshnik/start`;
           } else {
             console.error("Ошибка установки куки");
             alert("Не удалось выполнить аутентификацию. Попробуйте снова.");
@@ -166,6 +166,22 @@ export default function Content() {
   }, [socketId, tokenForTG]);
 
   return (
+    {
+      isMobile? (
+      <>
+    <div className={classes.Container}>
+      <div className={classes.background}></div>
+      <div className={classes.logoContainer}>
+        <img src={logo} alt='logo' />
+      </div>
+
+      <div className={classes.textContainer}>
+        <img src={telegram} alt="Telegram" />
+        <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>Войти через Telegram</a>
+      </div>
+    </div>
+        </>
+    ) : (
     <div className={classes.body}>
       <span className={classes.text}>Для входа отсканируйте QR-код</span>
       <div className={classes.QR}>
@@ -188,5 +204,8 @@ export default function Content() {
         )}
       </div>
     </div>
+  )
+}
+
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import style from "./AuthorizationPage.module.css"; // Ваши стили
+import classes from "./AuthorizationPage.module.css"; // Ваши стили
 // import telegram from "../../../image/telegram.svg"; 
 import telegram from '../Custom/icon/telegram.svg'
 import logo from '../Custom/icon/logo.svg'
@@ -164,18 +164,15 @@ export default function AuthorizationPage() {
   }, [socketId, tokenForTG]);
     return (
         <>
-            <div className={style.Container}>
-                <div className={style.background}></div>
-                <div className={style.logoContainer}>
+            <div className={classes.Container}>
+                <div className={classes.background}></div>
+                <div className={classes.logoContainer}>
                     <img src={logo} alt='logo' />
                 </div>
 
-                <div className={style.textContainer}>
+                <div className={classes.textContainer}>
                     <img src={telegram} alt="Telegram" />
-                    <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={style.link}>Войти через Telegram</a>
-                    {/* <Link to="6ac81119-f508-48ec-9d4a-6fb3328731c6"> <div>ВОЙТИ</div> </Link> */}
-                    {/* <div>{data.sessionId}</div>        */}
-
+                    <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>Войти через Telegram</a>
                 </div>
             </div>
         </>
