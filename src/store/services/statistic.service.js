@@ -119,4 +119,5 @@ export const {
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
+  useUpdateStatisticsToPostIdMutation
 } = statisticsApi;

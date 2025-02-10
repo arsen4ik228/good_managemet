@@ -1,153 +1,192 @@
-import { useGetPostIdQuery, useGetPostNewQuery, useGetPostsQuery, usePostPostsMutation, useUpdatePostsMutation, useGetUnderPostsQuery } from "../store/services/index";
+import {
+  useGetPostIdQuery,
+  useGetPostNewQuery,
+  useGetPostsQuery,
+  usePostPostsMutation,
+  useUpdatePostsMutation,
+  useGetUnderPostsQuery,
+} from "../store/services/index";
 import useGetReduxOrganization from "./useGetReduxOrganization";
+import { useMutationHandler } from "./useMutationHandler";
 
 export const usePostsHook = (postId) => {
+  const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
-     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
-
-    const {
-        allPosts = [],
-        isLoadingGetPosts,
-        isErrorGetPosts,
-    } = useGetPostsQuery({organizationId: reduxSelectedOrganizationId}, {
-        selectFromResult: ({ data, isLoading, isError }) => ({
-            allPosts: data || [],
-            isLoadingGetPosts: isLoading,
-            isErrorGetPosts: isError,
-        }),
-    });
-
-
-    const {
-        currentPost = {},
-        workers = [],
-        posts = [],
-        parentPost = {},
-        policiesActive = [],
-        statisticsIncludedPost = [],
-        isLoadingGetPostId,
-        isErrorGetPostId,
-        isFetchingGetPostId,
-    } = useGetPostIdQuery(
-        { postId },
-        {
-            selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-                currentPost: data?.currentPost || {},
-                workers: data?.workers || [],
-                parentPost: data?.parentPost || {},
-                posts: data?.posts || [],
-                policiesActive: data?.policiesActive || [],
-                statisticsIncludedPost: data?.statisticsIncludedPost || [],
-                isLoadingGetPostId: isLoading,
-                isErrorGetPostId: isError,
-                isFetchingGetPostId: isFetching,
-            }),
-            skip: !postId
-        }
-    );
-
-    const {
-        underPosts = {},
-        isLoadingGetUnderPosts,
-        isErrorGetUnderPosts,
-        isFetchingGetUnderPosts,
-    } = useGetUnderPostsQuery(
-        { postId },
-        {
-            selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-                underPosts: data?.underPosts || [],
-                isLoadingGetUnderPosts: isLoading,
-                isErrorGetUnderPosts: isError,
-                isFetchingGetUnderPosts: isFetching,
-            }),
-            skip: !postId
-        }
-    );
-
-    const [
-        updatePost,
-        {
-            isLoading: isLoadingUpdatePostMutation,
-            isSuccess: isSuccessUpdatePostMutation,
-            isError: isErrorUpdatePostMutation,
-            error: ErrorUpdatePostMutation
-        },
-    ] = useUpdatePostsMutation();
-
-
-    const {
-        staff = [],
-        policies = [],
-        parentPosts = [],
-        maxDivisionNumber = undefined,
-        isLoadingGetNew,
-        isErrorGetNew,
-    } = useGetPostNewQuery({organizationId: reduxSelectedOrganizationId}, {
-        selectFromResult: ({ data, isLoading, isError }) => ({
-            staff: data?.workers || [],
-            policies: data?.policies || [],
-            parentPosts: data?.posts || [],
-            maxDivisionNumber: data?.maxDivisionNumber + 1 || undefined,
-            isLoadingGetNew: isLoading,
-            isErrorGetNew: isError,
-            data: data,
-        }),
-    });
-
-    const [
-        postPosts,
-        {
-            isLoading: isLoadingPostMutation,
-            isSuccess: isSuccessPostMutation,
-            isError: isErrorPostMutation,
-            error: ErrorPostMutation
-        },
-    ] = usePostPostsMutation();
-
-
-    return {
-
-        reduxSelectedOrganizationId,
-
-        allPosts,
-        isLoadingGetPosts,
-        isErrorGetPosts,
-
-
-        currentPost,
-        workers,
-        posts,
-        parentPost,
-        policiesActive,
-        statisticsIncludedPost,
-        isLoadingGetPostId,
-        isErrorGetPostId,
-        isFetchingGetPostId,
-
-        underPosts,
-        isLoadingGetUnderPosts,
-        isErrorGetUnderPosts,
-        isFetchingGetUnderPosts,
-
-
-        staff,
-        policies,
-        parentPosts,
-        maxDivisionNumber,
-        isLoadingGetNew,
-        isErrorGetNew,
-
-
-        postPosts,
-        isLoadingPostMutation,
-        isSuccessPostMutation,
-        isErrorPostMutation,
-        ErrorPostMutation,
-
-        updatePost,
-        isLoadingUpdatePostMutation,
-        isSuccessUpdatePostMutation,
-        isErrorUpdatePostMutation,
-        ErrorUpdatePostMutation
+  const {
+    allPosts = [],
+    isLoadingGetPosts,
+    isErrorGetPosts,
+  } = useGetPostsQuery(
+    { organizationId: reduxSelectedOrganizationId },
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        allPosts: data || [],
+        isLoadingGetPosts: isLoading,
+        isErrorGetPosts: isError,
+      }),
     }
-}
+  );
+
+  const {
+    currentPost = {},
+    workers = [],
+    posts = [],
+    parentPost = {},
+    statisticsIncludedPost = [],
+    isLoadingGetPostId,
+    isErrorGetPostId,
+    isFetchingGetPostId,
+    policiesActive = [],
+    //Валера
+    selectedPolicyIDInPost = null,
+    selectedPolicyNameInPost = null,
+    refetch: refetchPostIdQuery,
+  } = useGetPostIdQuery(
+    { postId },
+    {
+      selectFromResult: ({
+        data,
+        isLoading,
+        isError,
+        isFetching,
+        refetch,
+      }) => ({
+        currentPost: data?.currentPost || {},
+        workers: data?.workers || [],
+        parentPost: data?.parentPost || {},
+        posts: data?.posts || [],
+        policiesActive: data?.policiesActive || [],
+        statisticsIncludedPost: data?.statisticsIncludedPost || [],
+        isLoadingGetPostId: isLoading,
+        isErrorGetPostId: isError,
+        isFetchingGetPostId: isFetching,
+        selectedPolicyIDInPost: data?.selectedPolicyIDInPost || null,
+        selectedPolicyNameInPost: data?.selectedPolicyNameInPost || null,
+        statisticsIncludedPost: data?.statisticsIncludedPost || [],
+        refetch,
+      }),
+      skip: !postId,
+    }
+  );
+
+  const {
+    underPosts = {},
+    isLoadingGetUnderPosts,
+    isErrorGetUnderPosts,
+    isFetchingGetUnderPosts,
+  } = useGetUnderPostsQuery(
+    { postId },
+    {
+      selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
+        underPosts: data?.underPosts || [],
+        isLoadingGetUnderPosts: isLoading,
+        isErrorGetUnderPosts: isError,
+        isFetchingGetUnderPosts: isFetching,
+      }),
+      skip: !postId,
+    }
+  );
+
+  const {
+    staff = [],
+    policies = [],
+    parentPosts = [],
+    maxDivisionNumber = undefined,
+    isLoadingGetNew,
+    isErrorGetNew,
+  } = useGetPostNewQuery(
+    { organizationId: reduxSelectedOrganizationId },
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        staff: data?.workers || [],
+        policies: data?.policies || [],
+        parentPosts: data?.posts || [],
+        maxDivisionNumber: data?.maxDivisionNumber + 1 || undefined,
+        isLoadingGetNew: isLoading,
+        isErrorGetNew: isError,
+        data: data,
+      }),
+    }
+  );
+
+  const [
+    updatePost,
+    {
+      isLoading: isLoadingUpdatePostMutation,
+      isSuccess: isSuccessUpdatePostMutation,
+      isError: isErrorUpdatePostMutation,
+      error: ErrorUpdatePostMutation,
+      reset:resetUpdatePostMutation,
+    },
+  ] = useUpdatePostsMutation();
+
+  const localIsResponseUpdatePostMutation = useMutationHandler(
+    isSuccessUpdatePostMutation,
+    isErrorUpdatePostMutation,
+    resetUpdatePostMutation
+  );
+
+  const [
+    postPosts,
+    {
+      isLoading: isLoadingPostMutation,
+      isSuccess: isSuccessPostMutation,
+      isError: isErrorPostMutation,
+      error: ErrorPostMutation,
+      reset:resetPostPostMutation,
+    },
+  ] = usePostPostsMutation();
+
+  const localIsResponsePostPostMutation = useMutationHandler(
+    isLoadingPostMutation,
+    isSuccessPostMutation,
+    resetPostPostMutation
+  );
+
+  return {
+    reduxSelectedOrganizationId,
+
+    allPosts,
+    isLoadingGetPosts,
+    isErrorGetPosts,
+
+    currentPost,
+    workers,
+    posts,
+    parentPost,
+    policiesActive,
+    statisticsIncludedPost,
+    isLoadingGetPostId,
+    isErrorGetPostId,
+    isFetchingGetPostId,
+    selectedPolicyIDInPost,
+    selectedPolicyNameInPost,
+    refetchPostIdQuery,
+
+    underPosts,
+    isLoadingGetUnderPosts,
+    isErrorGetUnderPosts,
+    isFetchingGetUnderPosts,
+
+    staff,
+    policies,
+    parentPosts,
+    maxDivisionNumber,
+    isLoadingGetNew,
+    isErrorGetNew,
+
+    postPosts,
+    isLoadingPostMutation,
+    isSuccessPostMutation,
+    isErrorPostMutation,
+    ErrorPostMutation,
+    localIsResponsePostPostMutation,
+
+    updatePost,
+    isLoadingUpdatePostMutation,
+    isSuccessUpdatePostMutation,
+    isErrorUpdatePostMutation,
+    ErrorUpdatePostMutation,
+    localIsResponseUpdatePostMutation
+  };
+};

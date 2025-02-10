@@ -1,17 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import classes from "./Post.module.css";
 import greyPolicy from "@image/greyPolicy.svg";
 import blackStatistic from "@image/blackStatistic.svg";
 import { useNavigate } from "react-router-dom";
-import {
-  useGetPostIdQuery,
-  useGetPostsQuery,
-  useUpdatePostsMutation,
-} from "@services";
-import {
-  usePostStatisticsMutation,
-  useUpdateStatisticsToPostIdMutation,
-} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import WaveLetters from "@Custom/WaveLetters.jsx";
@@ -26,7 +17,8 @@ import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalCheckBoxStatistic } from "@hooks/useModalCheckBoxStatistic";
 import { ModalSelectedStatistic } from "@Custom/modalSelectedStatistic/ModalSelectedStatistic";
-import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
+import { usePostsHook } from "@hooks";
+import { useStatisticsHook } from "../../../hooks/useStatisticsHook";
 
 export default function Post() {
   const navigate = useNavigate();
@@ -54,8 +46,6 @@ export default function Post() {
   const [isPurposeChanges, setIsPurposeChanges] = useState(false);
 
   const [selectParentPost, setSelectParentPost] = useState();
-  const [manualSuccessReset, setManualSuccessReset] = useState(false);
-  const [manualErrorReset, setManualErrorReset] = useState(false);
 
   const [openModalPolicy, setOpenModalPolicy] = useState(false);
 
@@ -68,94 +58,52 @@ export default function Post() {
   const [openModalStatisticWarning, setOpenModalStatisticWarning] =
     useState(false);
   const [openModalStatisticSave, setOpenModalStatisticSave] = useState(false);
-  const [manualSuccessResetStatistic, setManualSuccessResetStatistic] =
-    useState(false);
-  const [manualErrorResetStatistic, setManualErrorResetStatistic] =
-    useState(false);
-
-  const { reduxNewSelectedOrganizationId } = useGetOldAndNewOrganizationId();
 
   const {
-    data = [],
+    allPosts,
     isLoadingGetPosts,
     isErrorGetPosts,
-  } = useGetPostsQuery(
-    { organizationId: reduxNewSelectedOrganizationId },
-    {
-      selectFromResult: ({ data, isLoading, isError }) => ({
-        data: data || [],
-        isLoadingGetPosts: isLoading,
-        isErrorGetPosts: isError,
-      }),
-    }
-  );
 
-  const {
-    currentPost = {},
-    workers = [],
-    policies = [],
-    selectedPolicyIDInPost = null,
-    selectedPolicyNameInPost = null,
-    posts = [],
-    parentPost = {},
-    statisticsIncludedPost = [],
+    currentPost,
+    workers,
+    posts,
+    parentPost,
+    policiesActive,
+    statisticsIncludedPost,
     isLoadingGetPostId,
     isErrorGetPostId,
     isFetchingGetPostId,
-    refetch: refetchPostIdQuery,
-  } = useGetPostIdQuery(
-    { postId: selectedPostId },
-    {
-      selectFromResult: ({
-        data,
-        isLoading,
-        isError,
-        isFetching,
-        refetch,
-      }) => ({
-        currentPost: data?.currentPost || {},
-        workers: data?.workers || [],
-        policies: data?.policies || [],
-        posts: data?.posts || [],
-        parentPost: data?.parentPost || {},
-        selectedPolicyIDInPost: data?.selectedPolicyIDInPost || null,
-        selectedPolicyNameInPost: data?.selectedPolicyNameInPost || null,
-        statisticsIncludedPost: data?.statisticsIncludedPost || [],
-        isLoadingGetPostId: isLoading,
-        isErrorGetPostId: isError,
-        isFetchingGetPostId: isFetching,
-        refetch,
-      }),
-      skip: !selectedPostId,
-    }
-  );
+    selectedPolicyIDInPost,
+    selectedPolicyNameInPost,
+    refetchPostIdQuery,
 
-  const [
     updatePost,
-    {
-      isLoading: isLoadingUpdatePostMutation,
-      isSuccess: isSuccessUpdatePostMutation,
-      isError: isErrorUpdatePostMutation,
-      error: ErrorUpdatePostMutation,
-    },
-  ] = useUpdatePostsMutation();
+    isLoadingUpdatePostMutation,
+    isSuccessUpdatePostMutation,
+    isErrorUpdatePostMutation,
+    ErrorUpdatePostMutation,
+    localIsResponseUpdatePostMutation,
+  } = usePostsHook(selectedPostId);
 
-  const [
+  const {
+    postStatistics,
+    isLoadingPostStatisticMutation,
+    isSuccessPostStatisticMutation,
+    isErrorPostStatisticMutation,
+    ErrorPostStatisticMutation,
+    localIsResponsePostStatisticsMutation,
+
     updateStatisticsToPostId,
-    {
-      isLoading: isLoadingStatisticsToPostIdMutation,
-      isSuccess: isSuccessUpdateStatisticsToPostIdMutation,
-      isError: isErrorUpdateStatisticsToPostIdMutation,
-      error: ErrorUpdateStatisticsToPostIdMutation,
-    },
-  ] = useUpdateStatisticsToPostIdMutation();
+    isLoadingStatisticsToPostIdMutation,
+    isSuccessUpdateStatisticsToPostIdMutation,
+    isErrorUpdateStatisticsToPostIdMutation,
+    ErrorUpdateStatisticsToPostIdMutation,
+    localIsResponseUpdateStatisticsToPostIdMutation,
+  } = useStatisticsHook();
 
   const methodForLupa = (parametr) => {
-    setManualSuccessResetStatistic(true);
-    setManualErrorResetStatistic(true);
     setIsOpenSearch(parametr);
   };
-
 
   useEffect(() => {
     if (createdId) {
@@ -221,9 +169,6 @@ export default function Post() {
   }, [currentPost.id]);
 
   const saveUpdatePost = async () => {
-    setManualSuccessResetStatistic(true);
-    setManualErrorResetStatistic(true);
-
     // Создаем объект с измененными полями
     const updatedData = {};
 
@@ -266,17 +211,11 @@ export default function Post() {
     // Проверяем, если есть данные для обновления
     if (Object.keys(updatedData).length > 0) {
       await updatePost({
-        postId: selectedPostId,
         _id: selectedPostId,
         ...updatedData, // отправляем только измененные поля
       })
         .unwrap()
-        .then(() => {
-          setManualSuccessReset(false);
-          setManualErrorReset(false);
-        })
         .catch((error) => {
-          setManualErrorReset(false);
           console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
     } else {
@@ -285,8 +224,6 @@ export default function Post() {
   };
 
   const selectPost = (id) => {
-    setManualSuccessReset(true);
-    setManualErrorReset(true);
     setSelectedPostId(id);
     setIsOpenSearch(false);
   };
@@ -304,7 +241,7 @@ export default function Post() {
 
     filterArraySearchModal,
     inputSearchModal,
-  } = useModalSelectRadio({ array: policies, arrayItem: "policyName" });
+  } = useModalSelectRadio({ array: policiesActive, arrayItem: "policyName" });
 
   useEffect(() => {
     const ids = statisticsIncludedPost.map((item) => item.id);
@@ -315,8 +252,9 @@ export default function Post() {
   // Статистика
   const {
     statistics,
-    isErrorStatistic,
-    isLoadingStatistic,
+    isLoadingGetStatistics,
+    isFetchingGetStatistics,
+    isErrorGetStatistics,
     inputSearchModalStatistics,
     filterArraySearchModalStatistics,
 
@@ -326,9 +264,6 @@ export default function Post() {
   } = useModalCheckBoxStatistic({ openModalStatistic, setStatisticsChecked });
 
   const saveStatisticsId = async () => {
-    setManualSuccessReset(true);
-    setManualErrorReset(true);
-
     const data = statisticsChecked.filter((item) => {
       return !disabledStatisticsChecked
         .map((disabled) => disabled)
@@ -345,11 +280,8 @@ export default function Post() {
           refetchPostIdQuery();
           setOpenModalStatisticWarning(false);
           setOpenModalStatisticSave(false);
-          setManualSuccessResetStatistic(false);
-          setManualErrorResetStatistic(false);
         })
         .catch((error) => {
-          setManualErrorResetStatistic(false);
           console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
     }
@@ -369,8 +301,6 @@ export default function Post() {
     });
 
     if (data.length > 0) {
-      setManualSuccessResetStatistic(true);
-      setManualErrorResetStatistic(true);
       setOpenModalStatisticWarning(true);
     } else {
       exitStatistic();
@@ -392,16 +322,6 @@ export default function Post() {
   };
 
   // Переход к созданию статистики
-  const [
-    postStatistics,
-    {
-      isLoading: isLoadingPostStatisticMutation,
-      isSuccess: isSuccessPostStatisticMutation,
-      isError: isErrorPostStatisticMutation,
-      error: Error,
-    },
-  ] = usePostStatisticsMutation();
-
   const createNewStatistic = async () => {
     await postStatistics({
       name: "Статистика",
@@ -427,7 +347,7 @@ export default function Post() {
               setIsOpenSearch={methodForLupa}
               isOpenSearch={isOpenSearch}
               select={selectPost}
-              array={data}
+              array={allPosts}
               arrayItem={"postName"}
             ></Lupa>
           </Input>
@@ -570,20 +490,22 @@ export default function Post() {
                               setOpenModalPolicy(false);
                             }}
                             filterArray={filterArraySearchModal}
-                            array={policies}
+                            array={policiesActive}
                             arrayItem={"policyName"}
                             selectedItemID={selectedPolicyID}
                           ></ModalSelectRadio>
                         )}
 
-                        {isErrorStatistic ? (
-                          <HandlerQeury Error={isErrorStatistic}></HandlerQeury>
+                        {isErrorGetStatistics ? (
+                          <HandlerQeury
+                            Error={isErrorGetStatistics}
+                          ></HandlerQeury>
                         ) : (
                           <>
                             <HandlerQeury
-                              Loading={isLoadingStatistic}
+                              Loading={isLoadingGetStatistics}
                             ></HandlerQeury>
-                            {!isErrorStatistic && (
+                            {!isErrorGetStatistics && (
                               <>
                                 {openModalStatistic && (
                                   <ModalSelectedStatistic
@@ -636,10 +558,14 @@ export default function Post() {
 
                         <HandlerMutation
                           Loading={isLoadingUpdatePostMutation}
-                          Error={isErrorUpdatePostMutation && !manualErrorReset} 
+                          Error={
+                            isErrorUpdatePostMutation &&
+                            localIsResponseUpdatePostMutation
+                          }
                           Success={
-                            isSuccessUpdatePostMutation && !manualSuccessReset
-                          } 
+                            isSuccessUpdatePostMutation &&
+                            localIsResponseUpdatePostMutation
+                          }
                           textSuccess={"Пост обновлен"}
                           textError={
                             ErrorUpdatePostMutation?.data?.errors?.[0]
@@ -653,12 +579,12 @@ export default function Post() {
                           Loading={isLoadingStatisticsToPostIdMutation}
                           Error={
                             isErrorUpdateStatisticsToPostIdMutation &&
-                            !manualErrorResetStatistic
-                          } 
+                            localIsResponseUpdateStatisticsToPostIdMutation
+                          }
                           Success={
                             isSuccessUpdateStatisticsToPostIdMutation &&
-                            !manualSuccessResetStatistic
-                          } 
+                            localIsResponseUpdateStatisticsToPostIdMutation
+                          }
                           textSuccess={"Статистика для поста обновлена"}
                           textError={
                             ErrorUpdateStatisticsToPostIdMutation?.data
@@ -666,6 +592,27 @@ export default function Post() {
                               ? ErrorUpdateStatisticsToPostIdMutation.data
                                   .errors[0].errors[0]
                               : ErrorUpdateStatisticsToPostIdMutation?.data
+                                  ?.message
+                          }
+                        ></HandlerMutation>
+
+                        <HandlerMutation
+                          Loading={isLoadingPostStatisticMutation}
+                          Error={
+                            isErrorPostStatisticMutation &&
+                            localIsResponsePostStatisticsMutation
+                          }
+                          Success={
+                            isSuccessPostStatisticMutation &&
+                            localIsResponsePostStatisticsMutation
+                          }
+                          textSuccess={"Статистика для поста создана"}
+                          textError={
+                            ErrorPostStatisticMutation?.data
+                              ?.errors?.[0]?.errors?.[0]
+                              ? ErrorPostStatisticMutation.data
+                                  .errors[0].errors[0]
+                              : ErrorPostStatisticMutation?.data
                                   ?.message
                           }
                         ></HandlerMutation>

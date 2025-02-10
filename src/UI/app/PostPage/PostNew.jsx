@@ -56,6 +56,7 @@ export default function PostNew() {
     isSuccessPostMutation,
     isErrorPostMutation,
     ErrorPostMutation,
+    localIsResponsePostPostMutation
   } = usePostsHook();
 
   const successCreatePost = (id) => {
@@ -222,8 +223,8 @@ export default function PostNew() {
 
                 <HandlerMutation
                   Loading={isLoadingPostMutation}
-                  Error={isErrorPostMutation}
-                  Success={isSuccessPostMutation}
+                  Error={isErrorPostMutation && localIsResponsePostPostMutation}
+                  Success={isSuccessPostMutation && localIsResponsePostPostMutation}
                   textSuccess={`Пост ${postName} успешно создан.`}
                   textError={
                     ErrorPostMutation?.data?.errors?.[0]?.errors?.[0]
