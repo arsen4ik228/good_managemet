@@ -27,14 +27,14 @@ const MainPolicy = () => {
     const [manualSuccessReset, setManualSuccessReset] = useState(false)
     const [manualErrorReset, setManualErrorReset] = useState(false)
 
-    const {organizationsId} = useGetReduxOrganization()
-
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization()
+    console.log(reduxSelectedOrganizationId)
     const {
         activeDirectives,
         draftDirectives,
         archiveDirectives,
         activeInstructions,
-        draftInstructions ,
+        draftInstructions,
         archiveInstructions,
         isLoadingGetPolicies,
         isErrorGetPolicies,
@@ -46,8 +46,8 @@ const MainPolicy = () => {
         isErrorPostPoliciesMutation,
         ErrorPostPoliciesMutation,
 
-    } = usePolicyHook({organizationsId: organizationsId})
- 
+    } = usePolicyHook({ organizationId: reduxSelectedOrganizationId })
+
 
     const TYPE_DISPLAY = {
         0: { type: 'Отменён', arrayDirectives: archiveDirectives, arrayInstruction: archiveInstructions },
@@ -66,7 +66,7 @@ const MainPolicy = () => {
 
     console.log('policyDirectories ', policyDirectories)
     const savePolicy = async () => {
-        await postPolicy()
+        await postPolicy({ organizationId: reduxSelectedOrganizationId })
             .unwrap()
             .then((result) => {
                 navigate(result?.id)
@@ -155,7 +155,7 @@ const MainPolicy = () => {
                                                     // style={{ color: item?.state === 'Активный' ? 'black' : 'grey' }}
                                                     onClick={() => navigate(item?.id)}
                                                 >
-                                                    {item?.policyName}
+                                                        {item?.policyName}
                                                 </li>
                                             ))}
                                         </ul>
@@ -208,7 +208,7 @@ const MainPolicy = () => {
                                                     // style={{ color: item?.state === 'Активный' ? 'black' : 'grey' }}
                                                     onClick={() => navigate(item?.id)}
                                                 >
-                                                    {item?.policyName}
+                                                        {item?.policyName}
                                                 </li>
                                             ))}
                                         </ul>

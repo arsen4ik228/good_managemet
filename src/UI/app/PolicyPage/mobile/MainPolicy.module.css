@@ -51,17 +51,20 @@
 }
 
 .selectList{
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
-    font-size: 1.3em;
+    font-size: 1.2rem;
     padding-bottom: 10px;
     list-style-type: circle;
 
     li{
         display: flex;
-        /* width: 60vw; */
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
         padding: 0.4rem 0.8rem;
         justify-content: flex-start;
+        text-overflow: ellipsis;
 
         >div {
             padding-left: 5px;

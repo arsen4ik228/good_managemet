@@ -8,6 +8,7 @@ import { usePolicyDirectoriesHook } from '@hooks'
 import HandlerQeury from '@Custom/HandlerQeury'
 import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer'
 import { usePolicyHook } from '@hooks'
+import {useGetReduxOrganization} from '@hooks'
 
 export default function CreatePolicyDirectory() {
 
@@ -16,13 +17,15 @@ export default function CreatePolicyDirectory() {
     const [directoryName, setDirectoryName] = useState('')
     const [searchTerm, setSearchTerm] = useState('');
 
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+
 
     const {
         activeDirectives,
         activeInstructions,
         isLoadingGetPolicies,
         isErrorGetPolicies,
-    } = usePolicyHook()
+    } = usePolicyHook({organizationId: reduxSelectedOrganizationId})
 
     const {
 
