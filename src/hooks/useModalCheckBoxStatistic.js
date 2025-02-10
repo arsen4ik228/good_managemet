@@ -1,6 +1,5 @@
-import { useGetStatisticsQuery } from "@services";
 import { useState, useEffect } from "react";
-import useGetOrganizationId from "./useGetReduxOrganization";
+import { useStatisticsHook } from "./useStatisticsHook";
 
 export function useModalCheckBoxStatistic({
   openModalStatistic,
@@ -14,24 +13,13 @@ export function useModalCheckBoxStatistic({
   const [inputSearchModalStatistics, setInputSearchModalStatistics] =
     useState("");
 
-  const { reduxNewSelectedOrganizationId } = useGetOrganizationId();
-
   const {
-    statistics = [],
-    isLoadingStatistic,
-    isErrorStatistic,
-  } = useGetStatisticsQuery(
-    { organizationId: reduxNewSelectedOrganizationId, statisticData: false },
-    {
-      selectFromResult: ({ data, isLoading, isError }) => ({
-        statistics: data || [],
-        isLoadingStatistic: isLoading,
-        isErrorStatistic: isError,
-      }),
-      skip: !openModalStatistic,
-    }
-  );
-
+    statistics,
+    isLoadingGetStatistics,
+    isFetchingGetStatistics,
+    isErrorGetStatistics,
+  } = useStatisticsHook();
+  
   const handleChecboxChangeStatistics = (id) => {
     setStatisticsChecked((prev) => {
       if (prev.includes(id)) {
@@ -67,8 +55,9 @@ export function useModalCheckBoxStatistic({
 
   return {
     statistics,
-    isErrorStatistic,
-    isLoadingStatistic,
+    isLoadingGetStatistics,
+    isFetchingGetStatistics,
+    isErrorGetStatistics,
     inputSearchModalStatistics,
     filterArraySearchModalStatistics,
 

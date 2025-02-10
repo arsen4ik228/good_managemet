@@ -176,7 +176,7 @@ export default function Content() {
         </div>
         <div className={classes.textContainer}>
           <img src={telegram} alt="Telegram" />
-          <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>
+          <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.linkMobile}>
             Войти через Telegram
           </a>
         </div>

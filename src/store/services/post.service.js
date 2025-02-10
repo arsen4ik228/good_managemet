@@ -56,14 +56,30 @@ export const postApi = apiSlice.injectEndpoints({
       providesTags: (result, error, arg) => [{ type: 'Post', id: arg.postId }],
       transformResponse: (response) => {
         console.log('getPostId    ',response); // Отладка ответа
+        const sortWorkers = response?.workers?.sort((a, b) => {
+          const lastNameComparison = a.lastName.localeCompare(b.lastName);
+          if (lastNameComparison !== 0) {
+            return lastNameComparison; // Если фамилии разные, сортируем по ним
+          }
+          return a.firstName.localeCompare(b.firstName); // Если фамилии одинаковы, сортируем по имени
+        });
+
+        const sortPoliciesActive = response?.policiesActive?.sort((a, b) =>
+          a.policyName.localeCompare(b.policyName)
+        );
+        const sortPosts = response?.posts?.sort((a, b) =>
+          a.postName.localeCompare(b.postName)
+        );
+ 
         return {
           currentPost: response?.currentPost || {},
           parentPost: response?.parentPost || {},
-          policiesActive: response?.policiesActive || [],
-          posts: response?.posts || [],
-          workers: response?.workers || [],
-          organizations: response?.organizations || [],
+          policiesActive: sortPoliciesActive || [],
+          posts: sortPosts || [],
+          workers: sortWorkers || [],
           statisticsIncludedPost: response?.currentPost?.statistics || [],
+          selectedPolicyIDInPost: response?.currentPost?.policy?.id || null,
+          selectedPolicyNameInPost: response?.currentPost?.policy?.policyName || null,
         };
       },
     }),
@@ -99,4 +115,4 @@ export const postApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetPostsQuery, useGetPostNewQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery , useUpdateStatisticsToPostIdMutation} = postApi;
+export const { useGetPostsQuery, useGetPostNewQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery} = postApi;
