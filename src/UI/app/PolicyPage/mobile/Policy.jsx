@@ -13,7 +13,7 @@ import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer';
 
 const MobilePolicy = () => {
 
-    const { userId, policyId } = useParams()
+    const { policyId } = useParams()
     const [editorState, setEditorState] = useState('');
     const [valueType, setValueType] = useState('')
     const [policyState, setPolicyState] = useState('')
@@ -32,7 +32,7 @@ const MobilePolicy = () => {
         isSuccessUpdatePoliciesMutation,
         isErrorUpdatePoliciesMutation,
         ErrorUpdatePoliciesMutation,
-    } = usePolicyHook(policyId)
+    } = usePolicyHook({policyId: policyId})
 
 
     useEffect(() => {
@@ -108,7 +108,6 @@ const MobilePolicy = () => {
                                 key={currentPolicy?.id}
                                 editorState={currentPolicy?.content}
                                 setEditorState={setEditorState}
-                                userId={userId}
                                 isArchive={disabled}
                             >
                             </Mdxeditor>

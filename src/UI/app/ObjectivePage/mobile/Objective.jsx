@@ -15,25 +15,26 @@ function MobileObjective(props) {
     const [manualSuccessReset, setManualSuccessReset] = useState(false);
     const [manualErrorReset, setManualErrorReset] = useState(false);
     const [index, setIndex] = useState()
-    const [isArchive,setIsArchive] = useState(false)
+    const [isArchive, setIsArchive] = useState(false)
 
     const [contentEditors, setContentEditors] = useState([]);
     const [situationEditors, setSituationEditors] = useState([]);
     const [rootCauseEditors, setRootCauseEditors] = useState([]);
 
-  
-    const {
-        currentSpeedGoal,
-        isLoadingGetSpeedGoalId,
-        isErrorGetSpeedGoalId,
 
-        updateSpeedGoal,
-        isLoadingUpdateSpeedGoalMutation,
-        isSuccessUpdateSpeedGoalMutation,
-        isErrorUpdateSpeedGoalMutation,
+    const {
+        currentObjective,
+        isLoadingGetObjectiveId,
+        isErrorGetObjectiveId,
+
+        updateObjective,
+        isLoadingUpdateObjectiveMutation,
+        isSuccessUpdateObjectiveMutation,
+        isErrorUpdateObjectiveMutation,
+        errorUpdateObjectiveMutation,
     } = useObjectiveHook(selectedStrategyId)
 
-    console.log(currentSpeedGoal)
+    console.log(currentObjective)
 
     const {
         activeAndDraftStrategies,
@@ -48,18 +49,18 @@ function MobileObjective(props) {
         2: { array: rootCauseEditors, setFunction: setRootCauseEditors },
     }
 
-    const saveUpdateSpeedGoal = async () => {
+    const saveupdateObjective = async () => {
 
         const Data = {}
-        if (currentSpeedGoal.content[0] !== contentEditors[0] || currentSpeedGoal.content[1] !== contentEditors[1])
+        if (currentObjective.content[0] !== contentEditors[0] || currentObjective.content[1] !== contentEditors[1])
             Data.content = contentEditors
-        if (currentSpeedGoal.situation[0] !== situationEditors[0])
+        if (currentObjective.situation[0] !== situationEditors[0])
             Data.situation = situationEditors
-        if (currentSpeedGoal.rootCause[0] !== rootCauseEditors[0])
+        if (currentObjective.rootCause[0] !== rootCauseEditors[0])
             Data.rootCause = rootCauseEditors
         if (Object.keys(Data).length > 0) {
-            await updateSpeedGoal({
-                _id: currentSpeedGoal.id,
+            await updateObjective({
+                _id: currentObjective.id,
                 ...Data
             })
                 .unwrap()
@@ -97,7 +98,7 @@ function MobileObjective(props) {
 
     useEffect(() => {
 
-        if (!Object.keys(currentSpeedGoal).length > 0) return
+        if (!Object.keys(currentObjective).length > 0) return
 
         const initializeEditors = (array, setArray) => {
             if (!Array.isArray(array) || array === null)
@@ -107,11 +108,11 @@ function MobileObjective(props) {
 
         };
 
-        initializeEditors(currentSpeedGoal.content, setContentEditors);
-        initializeEditors(currentSpeedGoal.situation, setSituationEditors);
-        initializeEditors(currentSpeedGoal.rootCause, setRootCauseEditors);
+        initializeEditors(currentObjective.content, setContentEditors);
+        initializeEditors(currentObjective.situation, setSituationEditors);
+        initializeEditors(currentObjective.rootCause, setRootCauseEditors);
 
-    }, [currentSpeedGoal]);
+    }, [currentObjective]);
 
 
 
@@ -187,17 +188,17 @@ function MobileObjective(props) {
 
                 {!isArchive && (
                     <ButtonContainer
-                    clickFunction={saveUpdateSpeedGoal}
-                    disabled={isArchive}
-                >
-                    сохранить
-                </ButtonContainer>
+                        clickFunction={saveupdateObjective}
+                        disabled={isArchive}
+                    >
+                        сохранить
+                    </ButtonContainer>
                 )}
             </div>
 
             <HandlerQeury
-                Loading={isLoadingGetSpeedGoalId}
-                Error={isErrorGetSpeedGoalId}
+                Loading={isLoadingGetObjectiveId}
+                Error={isErrorGetObjectiveId}
             />
 
             <HandlerQeury
@@ -206,9 +207,9 @@ function MobileObjective(props) {
             />
 
             <HandlerMutation
-                Loading={isLoadingUpdateSpeedGoalMutation}
-                Error={isErrorUpdateSpeedGoalMutation && !manualErrorReset}
-                Success={isSuccessUpdateSpeedGoalMutation && !manualSuccessReset}
+                Loading={isLoadingUpdateObjectiveMutation}
+                Error={isErrorUpdateObjectiveMutation && !manualErrorReset}
+                Success={isSuccessUpdateObjectiveMutation && !manualSuccessReset}
                 textSuccess={"Краткосрочная цель обновлена"}
             />
 

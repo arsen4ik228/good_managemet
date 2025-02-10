@@ -21,7 +21,7 @@ import { baseUrl } from "@helpers/constants";
 import classes from "./Mdxeditor.module.css";
 import { usePostImageMutation } from "@services";
 
-export default function Mdxeditor({ editorState, setEditorState, userId, isArchive}) {
+export default function Mdxeditor({ editorState, setEditorState, isArchive}) {
     const editorRef = useRef(null); // Ссылка на редактор
 
     // Функция для обновления содержимого редактора и состояния
@@ -43,7 +43,6 @@ export default function Mdxeditor({ editorState, setEditorState, userId, isArchi
             formData.append("file", file);
             // Вызов postImage для отправки файла на сервер
             const response = await postImage({
-                userId,
                 formData,
             }).unwrap();
 

@@ -49,7 +49,7 @@ const Chat = () => {
     //     return array.filter((item) => item.text.toLowerCase().includes(searchTerm.toLowerCase()));
     // }, [array, searchTerm]);
     const filteredArray = useMemo(() =>
-        array.filter((item) => item.text.toLowerCase().includes(searchTerm.toLowerCase())),
+        array.reverse().filter((item) => item.text.toLowerCase().includes(searchTerm.toLowerCase())),
         [searchTerm]
     );
 
@@ -59,9 +59,9 @@ const Chat = () => {
 
         const saveId = window.localStorage.getItem('selectedOrganizationId')
 
-        if (saveId) 
+        if (saveId)
             return setSelectedOrg(saveId)
-        
+
         setSelectedOrg(organizations[0].id)
 
         // if (typeof window !== 'undefined' && window.localStorage) {
@@ -100,24 +100,24 @@ const Chat = () => {
 
                         })}
                     </div>
-                        <div className={classes.questionContainer}>
-                            <div className={classes.questionBody}>
-                                <div className={classes.imgContainer}>
-                                    <img src={avatar} alt="" />
-                                </div>
-                                <div className={classes.textContainer}>
-                                    <span>С чем будем работать в</span>
-                                    <span>
+                    <div className={classes.questionContainer}>
+                        <div className={classes.questionBody}>
+                            <div className={classes.imgContainer}>
+                                <img src={avatar} alt="avatar" />
+                            </div>
+                            <div className={classes.textContainer}>
+                                <span>С чем будем работать в</span>
+                                <span>
                                     <select name="oragnization" value={selectedOrg} onChange={(e) => selectOrganization(e.target.value)}>
                                         {organizations.map((item, index) => (
                                             <option key={index} value={item.id}>{item.organizationName}</option>
                                         ))}
                                     </select>
-                                    
+
                                     ?</span>
-                                </div>
                             </div>
                         </div>
+                    </div>
 
                 </div>
                 <footer className={classes.inputContainer}>

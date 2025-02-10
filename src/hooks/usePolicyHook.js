@@ -6,8 +6,8 @@ import useGetReduxOrganization from "./useGetReduxOrganization";
 export const usePolicyHook = (props) => {
 
     const [localPolicyId] = useState(props?.policyId ? props.policyId : false)
-         const { reduxSelectedOrganizationId } = useGetReduxOrganization();
-    
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+
 
     const {
         activeDirectives = [],
@@ -19,7 +19,7 @@ export const usePolicyHook = (props) => {
         isLoadingGetPolicies,
         isErrorGetPolicies,
         isFetchingGetPolicies
-    } = useGetPoliciesQuery({organizationId: props?.organizationId}, {
+    } = useGetPoliciesQuery({ organizationId: props?.organizationId }, {
         selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
             activeDirectives: data?.activeDirectives || [],
             draftDirectives: data?.draftDirectives || [],

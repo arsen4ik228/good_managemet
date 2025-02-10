@@ -5,63 +5,6 @@
     font-family: "'Montserrat', sans-serif'";
 }
 
-.headContainer {
-    box-shadow: 0px 0px 10px black;
-    background-color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-
-}
-
-.headRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 50px;
-    width: 100%;
-    flex-direction: column;
-    /*img{*/
-    /*    display: inline-block;*/
-    /*    margin-right: 15px;*/
-    /*}*/
-}
-
-.blueLine {
-    display: block;
-    height: 10px;
-    width: 100%;
-    background-color: #005475;
-}
-
-.headElem {
-    display: flex;
-    flex: 1 0 auto;
-    width: 100%;
-    padding: 0 0 0 1px;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.icon {
-    margin: 0 15px;
-}
-
-.txt {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    background: url("@Custom/icon/messendger _ avatar.svg") 0 40% no-repeat;
-    padding: 0 0 0 30px;
-}
-
-.headText {
-    color: #005475;
-    font-size: 20px;
-    font-weight: 600;
-
-}
 
 .body {
     /* margin-top: 57px; */
@@ -125,11 +68,11 @@
 
 .bodyColumn {
     display: flex;
-    flex-direction: column-reverse;
-    height: calc(100vh - 127px);
+    flex-direction: column;
+    height: calc(100vh - 123px);
     overflow: auto;
 
-    padding-top: 110px;
+    padding-top: 100px;
 }
 
 .bodyRow {
