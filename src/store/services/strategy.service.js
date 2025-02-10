@@ -37,10 +37,15 @@ export const strategyApi = apiSlice.injectEndpoints({
           hasDraftStrategies: hasDraftStrategies,
         };
       },
-      providesTags: result =>
+      providesTags: (result) =>
         result
           ? [
-              ...result?.data.map(({ id }) => ({
+              ...(result.archiveStrategies || []).map(({ id }) => ({
+                type: 'Strategy',
+                id,
+              })),
+              'Strategy',
+              ...(result.activeAndDraftStrategies || []).map(({ id }) => ({
                 type: 'Strategy',
                 id,
               })),
