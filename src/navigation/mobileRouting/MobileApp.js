@@ -18,16 +18,16 @@ import {MobileGoal} from '@app'
 import {MobileObjective} from '@app'
 import {Projects} from '@app'
 import {MainProject} from '@app'
-// import {Target} from '@app'
 import {NewProject} from '@app'
 import {Programs} from '@app'
 import {ProjectArchive} from '@app'
 import {MainStatistics} from '@app'
 import {Statistics} from '@app'
 import {MobileMainWorkingPlan} from '@app'
-import {ModalContainer} from '@app'
 import {MobileControlPanel} from '@app'
 import {User} from '@app'
+import Socket from '../../UI/app/Socket/Socket.jsx';
+import { DialogContainer } from '../../UI/Custom/DialogContainer/DialogContainer.jsx';
 
 
 function MobileApp() {
@@ -39,7 +39,7 @@ function MobileApp() {
                 <Route path="/*"
                     element={
                         <Routes>
-                            {/* <Route path="test" element={<ModalContainer />} /> */}
+                            <Route path="test" element={<DialogContainer/>} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"

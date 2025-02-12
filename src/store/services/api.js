@@ -7,7 +7,23 @@ const apiSlice = createApi({
     baseUrl: process.env.REACT_APP_BASE_URL,
     prepareHeaders
   }),
-  tagTypes: ['ControlPanel','Convert', 'File', 'Goal', 'Objective', 'Organization', 'Directory', 'Policy', 'Post', 'Project', 'Program', 'Statistic', 'Strategy', 'Target', 'User'],
+  tagTypes: [
+    'ControlPanel',
+    'Convert',
+    'File',
+    'Goal',
+    'Objective',
+    'Organization',
+    'Directory',
+    'Policy',
+    'Post',
+    'Project',
+    'Program',
+    'Statistic',
+    'Strategy',
+    'Target',
+    'User',
+  ],
   endpoints: builder => ({}),
 })
 
