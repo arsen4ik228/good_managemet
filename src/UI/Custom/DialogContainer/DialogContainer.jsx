@@ -1,20 +1,28 @@
 import React from 'react'
 import classes from './DialogContainer.module.css'
-import { useConvertsHook } from '../../../hooks/useConvertsHook'
+import avatar from '@Custom/icon/icon _ GM.svg'
 
 export const DialogContainer = () => {
 
-    const {allConverts} = useConvertsHook()
-    console.log(allConverts)
-  return (
-    <>  
-        <div className={classes.dialogContainer}>
-            <div className={classes.content}>
-                <div className={classes.avatar}></div>
-                <div className={classes.name}></div>
-                <div className={classes.bage}></div>
-            </div>
-        </div>
-    </>
-  )
+    return (
+        <>
+            {/* <div className={classes.dialogContainer}>
+                <div className={classes.content}>
+                    <div className={classes.avatar}>
+                        <img src={elem?.user?.avatar_url || avatar} alt="avatar" />
+                    </div>
+                    <div className={classes.name}>
+                        <div className={classes.postName}>{elem?.postName.toUpperCase()}</div>
+                        <div className={classes.userName}>{elem?.user?.lastName + ' ' + elem?.user?.firstName}</div>
+                    </div>
+                    <div className={classes.bage}>
+                        <div>
+                            <span>3</span>
+                        </div>
+                    </div>
+                </div>
+            </div> */}
+            
+        </>
+    )
 }
