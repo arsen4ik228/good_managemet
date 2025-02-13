@@ -54,10 +54,10 @@ function MobileApp() {
                                         <Route path="Policy/CreateDirectory" element={<CreatePolicyDirectory />} />
                                         <Route path="Policy/EditDirectory/:policyDirectoryId" element={<EditPolicyDirectories />} />
 
-                                        <Route path="Posts" element={<MainPost />} />
-                                        <Route path="Posts/:postId" element={<Posts />} />
-                                        <Route path="Posts/new" element={<NewPosts />} />
-                                        <Route path="Posts/:postId/attachStatistics" element={<AttachStatistics />} />
+                                        <Route path="Post" element={<MainPost />} />
+                                        <Route path="Post/:postId" element={<Posts />} />
+                                        <Route path="Post/new" element={<NewPosts />} />
+                                        <Route path="Post/:postId/attachStatistics" element={<AttachStatistics />} />
 
                                         <Route path="Strategy" element={<MainStrategy />} />
                                         <Route path="Strategy/:strategyId" element={<MobileStrategy />} />
