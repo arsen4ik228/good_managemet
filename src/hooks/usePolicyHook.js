@@ -7,7 +7,7 @@ export const usePolicyHook = (props) => {
 
     const [localPolicyId] = useState(props?.policyId ? props.policyId : false)
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
-
+    console.warn(localPolicyId)
 
     const {
         activeDirectives = [],

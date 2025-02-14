@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./Main.module.css";
-import { useOrganizationHook } from "@hooks";
+import { useOrganizationHook, useConvertsHook } from "@hooks";
 import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
@@ -14,10 +14,13 @@ const MobileMain = () => {
 
   const { organizations } = useOrganizationHook();
 
+  const { allConverts } = useConvertsHook()
+  console.log(allConverts)
+
   const selectOrganization = (id, reportDay) => {
     if (typeof window !== "undefined" && window.localStorage) {
       let savedId = window.localStorage.getItem("selectedOrganizationId");
-      console.log (savedId, '  ', id.toString())
+
       if (savedId && savedId === id.toString()) return setSelectedOrg(id);
 
       window.localStorage.setItem("selectedOrganizationId", id.toString());
@@ -102,6 +105,8 @@ const MobileMain = () => {
             </>
           ))}
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
+
+
         </div>
       </div>
       <footer className={classes.footer}>

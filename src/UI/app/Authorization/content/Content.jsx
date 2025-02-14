@@ -134,6 +134,7 @@ export default function Content() {
     if (data.userId && data.userId !== "false") {
       // Сохраняем accessToken в localStorage
       localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userId", data.userId)
       fetch(`${baseUrl}auth/set-cookie`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${data.accessToken}` },

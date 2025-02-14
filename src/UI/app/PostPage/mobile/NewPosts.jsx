@@ -83,7 +83,7 @@ const Posts = () => {
             .unwrap()
             .then((result) => {
                 // reset();
-                navigate(`/Posts/${result?.id}`)
+                navigate(`/pomoshnik/Post/${result?.id}`)
             })
             .catch((error) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
