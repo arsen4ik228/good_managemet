@@ -16,7 +16,7 @@ import { notEmpty } from '@helpers/helpers';
 const Chat = () => {
 
     const array = [
-        { id: '1', icon: post, text: 'Посты', link: 'Posts' },
+        { id: '1', icon: post, text: 'Посты', link: 'Post' },
         { id: '2', icon: listView, text: 'Проекты', link: 'Projects' },
         { id: '3', icon: strategy, text: 'Стратегия', link: 'Strategy' },
         { id: '4', icon: star, text: 'Краткосрочная цель', link: 'Objective', },
