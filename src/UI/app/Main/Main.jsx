@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./Main.module.css";
-import { useOrganizationHook } from "@hooks";
+import { useOrganizationHook, useConvertsHook } from "@hooks";
 import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
@@ -14,20 +14,22 @@ const MobileMain = () => {
 
   const { organizations } = useOrganizationHook();
 
+  const { allConverts } = useConvertsHook()
+  console.log(allConverts)
+
   const selectOrganization = (id, reportDay) => {
-    setSelectedOrg(id);
-
-    localStorage.setItem("reportDay", reportDay);
-    dispatch(setSelectedOrganizationId(id));
-    dispatch(setSelectedOrganizationReportDay(reportDay));
-
     if (typeof window !== "undefined" && window.localStorage) {
       let savedId = window.localStorage.getItem("selectedOrganizationId");
 
-      if (savedId && savedId === id.toString()) return;
+      if (savedId && savedId === id.toString()) return setSelectedOrg(id);
 
       window.localStorage.setItem("selectedOrganizationId", id.toString());
     }
+    console.log('bam-bam')
+    setSelectedOrg(id)
+    localStorage.setItem("reportDay", reportDay);
+    dispatch(setSelectedOrganizationId(id));
+    dispatch(setSelectedOrganizationReportDay(reportDay));
   };
 
   const getStylesLine = useMemo(
@@ -59,7 +61,7 @@ const MobileMain = () => {
   const handleButtonClick = () => {
     navigate("/pomoshnik/user");
   };
-  
+
   useEffect(() => {
     if (organizations.length > 0 && !selectedOrg)
       selectOrganization(organizations[0]?.id);
@@ -103,19 +105,14 @@ const MobileMain = () => {
             </>
           ))}
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
+
+
         </div>
       </div>
       <footer className={classes.footer}>
-        {/* <div className={classes.navigationContainer}>
-                    <div className={classes.imgContainer}></div>
-                    <div className={classes.imgContainer}></div>
-                    <div className={classes.imgContainer}></div>
-                </div> */}
 
         <NavigationBar></NavigationBar>
-        {/* <div className={classes.inputRow}>
-                    <div className={classes.inputElement}><input type="search" placeholder="Поиск" /></div>
-                </div> */}
+
       </footer>
     </div>
   );

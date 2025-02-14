@@ -113,8 +113,8 @@ const Chat = () => {
                                             <option key={index} value={item.id}>{item.organizationName}</option>
                                         ))}
                                     </select>
-
-                                    ?</span>
+                                    ?
+                                </span>
                             </div>
                         </div>
                     </div>
