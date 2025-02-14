@@ -1,31 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import classes from "./Policy.module.css";
-
 import subbarSearch from "@image/subbarSearch.svg";
-import Blacksavetmp from "@image/Blacksavetmp.svg";
-
 import folder from "@image/folder.svg";
 import iconSublist from "@image/iconSublist.svg";
-import deleteGrey from "@image/deleteGrey.svg";
-import {
-  usePostPoliciesMutation,
-  useGetPoliciesQuery,
-  useGetPoliciesIdQuery,
-  useUpdatePoliciesMutation,
-} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import addCircleBlue from "@image/addCircleBlue.svg";
-import exitModal from "@image/exitModal.svg";
 import WaveLetters from "@Custom/WaveLetters.jsx";
 import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
 import Headers from "@Custom/Headers/Headers.jsx";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders.jsx";
 import Select from "@Custom/Select/Select.jsx";
-import {usePolicyDirectoriesHook} from "@hooks";
-import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
 import ModalFolder from "@Custom/modalFolder/ModalFolder";
 import ModalWindow from "@Custom/ModalWindow";
+import { usePolicyHook, useGetReduxOrganization } from "@hooks";
+import { useDirectories } from "./hooks/Directories";
 
 export default function Policy() {
   const selectRef = useRef(null);
@@ -39,103 +28,46 @@ export default function Policy() {
   const [editorState, setEditorState] = useState("");
   const [disabledArchive, setDisabledArchive] = useState(false);
 
-  const [manualSuccessReset, setManualSuccessReset] = useState(false);
-  const [manualErrorReset, setManualErrorReset] = useState(false);
-
-  const [manualCreateSuccessReset, setManualCreateSuccessReset] =
-    useState(false);
-  const [manualCreateErrorReset, setManualCreateErrorReset] = useState(false);
-
-  const { reduxNewSelectedOrganizationId } = useGetOldAndNewOrganizationId();
-
-  const [
-    postPolicy,
-    {
-      isLoading: isLoadingPostPoliciesMutation,
-      isSuccess: isSuccessPostPoliciesMutation,
-      isError: isErrorPostPoliciesMutation,
-      error: ErrorPostPolicies,
-    },
-  ] = usePostPoliciesMutation();
-
-  const savePostPolicy = async () => {
-    await postPolicy({
-      policyName: "Политика",
-      content: " ",
-      organizationId: reduxNewSelectedOrganizationId,
-    })
-      .unwrap()
-      .then((result) => {
-        setSelectedPolicyId(result.id);
-        setManualCreateSuccessReset(false);
-        setManualCreateErrorReset(false);
-      })
-      .catch((error) => {
-        setManualCreateErrorReset(false);
-        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
-      });
-  };
+  const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
   const {
-    instructionsActive = [],
-    instructionsDraft = [],
-    instructionsCompleted = [],
-
-    directivesActive = [],
-    directivesDraft = [],
-    directivesCompleted = [],
-
+    //useGetPoliciesQuery
     isLoadingGetPolicies,
     isErrorGetPolicies,
     isFetchingGetPolicies,
-  } = useGetPoliciesQuery(
-    { organizationId: reduxNewSelectedOrganizationId },
-    {
-      selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-        isLoadingGetPolicies: isLoading,
-        isErrorGetPolicies: isError,
-        isFetchingGetPolicies: isFetching,
-        directives: data?.directives || [],
-        instructions: data?.instructions || [],
 
-        instructionsActive: data?.instructionsActive || [],
-        instructionsDraft: data?.instructionsDraft || [],
-        instructionsCompleted: data?.instructionsCompleted || [],
+    //Valera
+    instructionsActive,
+    instructionsDraft,
+    instructionsCompleted,
 
-        directivesActive: data?.directivesActive || [],
-        directivesDraft: data?.directivesDraft || [],
-        directivesCompleted: data?.directivesCompleted || [],
-      }),
-    }
-  );
+    directivesActive,
+    directivesDraft,
+    directivesCompleted,
 
-  const {
-    currentPolicy = {},
+    //useGetPoliciesIdQuery
+    currentPolicy,
     isLoadingGetPoliciesId,
     isFetchingGetPoliciesId,
     isErrorGetPoliciesId,
-  } = useGetPoliciesIdQuery(
-    { policyId: selectedPolicyId },
-    {
-      selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-        currentPolicy: data?.currentPolicy || {},
-        isLoadingGetPoliciesId: isLoading,
-        isErrorGetPoliciesId: isError,
-        isFetchingGetPoliciesId: isFetching,
-      }),
-      skip: !selectedPolicyId,
-    }
-  );
 
-  const [
+    postPolicy,
+    isLoadingPostPoliciesMutation,
+    isSuccessPostPoliciesMutation,
+    isErrorPostPoliciesMutation,
+    ErrorPostPoliciesMutation,
+    localIsResponsePostPoliciesMutation,
+
     updatePolicy,
-    {
-      isLoading: isLoadingUpdatePoliciesMutation,
-      isSuccess: isSuccessUpdatePoliciesMutation,
-      isError: isErrorUpdatePoliciesMutation,
-      error: Error,
-    },
-  ] = useUpdatePoliciesMutation();
+    isLoadingUpdatePoliciesMutation,
+    isSuccessUpdatePoliciesMutation,
+    isErrorUpdatePoliciesMutation,
+    ErrorUpdatePoliciesMutation,
+    localIsResponseUpdatePoliciesMutation,
+  } = usePolicyHook({
+    policyId: selectedPolicyId,
+    organizationId: reduxSelectedOrganizationId,
+  });
 
   const {
     setCurrentDirectoryInstructions,
@@ -154,12 +86,12 @@ export default function Policy() {
     inputSearchModalDirectory,
     filterArraySearchModalDirectives,
     filterArraySearchModalInstructions,
-    foldersSort,
 
     //Получение папок
-    isLoadingGetPolicyDirectoriesMutation,
-    isErrorGetPolicyDirectoriesMutation,
-    isFetchingGetPolicyDirectoriesMutation,
+    foldersSort,
+    isLoadingGetPolicyDirectories,
+    isErrorGetPolicyDirectories,
+    isFetchingGetPolicyDirectories,
 
     //Создание папки
     openModalCreateDirectory,
@@ -169,15 +101,11 @@ export default function Policy() {
 
     saveFolder,
 
-    manualCreateSuccessResetDirectory,
-    setManualCreateSuccessResetDirectory,
-    manualCreateErrorResetDirectory,
-    setManualCreateErrorResetDirectory,
-
-    isLoadingPostPolicyDirectoriesMutation,
-    isSuccessPostPolicyDirectoriesMutation,
-    isErrorPostPolicyDirectoriesMutation,
-    ErrorPolicyDirectories,
+    isLoadingPostPoliciesDirectoriesMutation,
+    isSuccessPostPoliciesDirectoriesMutation,
+    isErrorPostPoliciesDirectoriesMutation,
+    ErrorPostPoliciesDirectoriesMutation,
+    localIsResponsePostPolicyDirectoriesMutation,
 
     //Обновление папки
     openModalUpdateDirectory,
@@ -187,15 +115,11 @@ export default function Policy() {
 
     saveUpdateFolder,
 
-    manualUpdateSuccessResetDirectory,
-    setManualUpdateSuccessResetDirectory,
-    manualUpdateErrorResetDirectory,
-    setManualUpdateErrorResetDirectory,
-
     isLoadingUpdatePolicyDirectoriesMutation,
     isSuccessUpdatePolicyDirectoriesMutation,
     isErrorUpdatePolicyDirectoriesMutation,
     ErrorUpdateDirectories,
+    localIsResponseUpdatePolicyDirectoriesMutation,
 
     //Удаление папки
     openModalDeleteDirectory,
@@ -203,20 +127,29 @@ export default function Policy() {
 
     saveDeleteFolder,
 
-    manualDeleteSuccessResetDirectory,
-    setManualDeleteSuccessResetDirectory,
-    manualDeleteErrorResetDirectory,
-    setManualDeleteErrorResetDirectory,
-
     isLoadingDeletePolicyDirectoriesMutation,
     isSuccessDeletePolicyDirectoriesMutation,
     isErrorDeletePolicyDirectoriesMutation,
     ErrorDeleteDirectories,
+    localIsResponseDeletePolicyDirectoriesMutation,
 
     handleInputChangeModalSearch,
     handleCheckboxChange,
     handleCheckboxChangeUpdate,
-  } = usePolicyDirectoriesHook({ instructionsActive, directivesActive });
+  } = useDirectories({ instructionsActive, directivesActive });
+
+  const savePostPolicy = async () => {
+    await postPolicy({
+      organizationId: reduxSelectedOrganizationId,
+    })
+      .unwrap()
+      .then((result) => {
+        setSelectedPolicyId(result.id);
+      })
+      .catch((error) => {
+        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+      });
+  };
 
   const saveUpdatePolicy = async () => {
     const Data = {};
@@ -238,33 +171,14 @@ export default function Policy() {
       ...Data,
     })
       .unwrap()
-      .then(() => {
-        setManualSuccessReset(false);
-        setManualErrorReset(false);
-      })
+      .then(() => {})
       .catch((error) => {
-        setManualErrorReset(false);
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
 
   const getPolicyId = (id) => {
-    setManualUpdateSuccessResetDirectory(true);
-    setManualUpdateErrorResetDirectory(true);
-
-    setManualCreateSuccessResetDirectory(true);
-    setManualCreateErrorResetDirectory(true);
-
-    setManualDeleteSuccessResetDirectory(true);
-    setManualDeleteErrorResetDirectory(true);
-
     setSelectedPolicyId(id);
-
-    setManualSuccessReset(true);
-    setManualErrorReset(true);
-
-    setManualCreateSuccessReset(true);
-    setManualCreateErrorReset(true);
   };
 
   useEffect(() => {
@@ -326,8 +240,6 @@ export default function Policy() {
   ];
 
   const btnYes = () => {
-    setManualDeleteSuccessResetDirectory(true);
-    setManualDeleteErrorResetDirectory(true);
     saveDeleteFolder();
   };
 
@@ -685,21 +597,18 @@ export default function Policy() {
 
       <div className={classes.main}>
         {isErrorPostPoliciesMutation ||
-        (isErrorGetPolicies && isErrorGetPolicyDirectoriesMutation) ? (
+        (isErrorGetPolicies && isErrorGetPolicyDirectories) ? (
           <>
             <HandlerQeury
               Error={
                 isErrorGetPolicies ||
-                isErrorGetPolicyDirectoriesMutation ||
+                isErrorGetPolicyDirectories ||
                 isErrorPostPoliciesMutation
               }
             ></HandlerQeury>
           </>
         ) : (
           <>
-            {isLoadingPostPoliciesMutation && (
-              <HandlerQeury Error={isErrorGetPoliciesId}></HandlerQeury>
-            )}
             {isErrorGetPoliciesId ? (
               <HandlerQeury Error={isErrorGetPoliciesId}></HandlerQeury>
             ) : (
@@ -710,8 +619,8 @@ export default function Policy() {
                 ></HandlerQeury>
 
                 <HandlerQeury
-                  Loading={isLoadingGetPolicyDirectoriesMutation}
-                  Fetching={isFetchingGetPolicyDirectoriesMutation}
+                  Loading={isLoadingGetPolicyDirectories}
+                  Fetching={isFetchingGetPolicyDirectories}
                 ></HandlerQeury>
 
                 {isFetchingGetPoliciesId || isLoadingGetPoliciesId ? (
@@ -731,94 +640,42 @@ export default function Policy() {
                         ></Mdxeditor>
 
                         <HandlerMutation
-                          Loading={isLoadingPostPolicyDirectoriesMutation}
-                          Error={
-                            isErrorPostPolicyDirectoriesMutation &&
-                            !manualCreateErrorResetDirectory
-                          }
-                          Success={
-                            isSuccessPostPolicyDirectoriesMutation &&
-                            !manualCreateSuccessResetDirectory
-                          }
-                          textSuccess={"Папка создана"}
-                          textError={
-                            ErrorPolicyDirectories?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? ErrorPolicyDirectories.data.errors[0].errors[0]
-                              : ErrorPolicyDirectories?.data?.message
-                          }
-                        ></HandlerMutation>
-
-                        <HandlerMutation
-                          Loading={isLoadingUpdatePolicyDirectoriesMutation}
-                          Error={
-                            isErrorUpdatePolicyDirectoriesMutation &&
-                            !manualUpdateErrorResetDirectory
-                          }
-                          Success={
-                            isSuccessUpdatePolicyDirectoriesMutation &&
-                            !manualUpdateSuccessResetDirectory
-                          }
-                          textSuccess={"Папка обновлена"}
-                          textError={
-                            ErrorUpdateDirectories?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? ErrorUpdateDirectories.data.errors[0].errors[0]
-                              : ErrorUpdateDirectories?.data?.message
-                          }
-                        ></HandlerMutation>
-
-                        <HandlerMutation
-                          Loading={isLoadingDeletePolicyDirectoriesMutation}
-                          Error={
-                            isErrorDeletePolicyDirectoriesMutation &&
-                            !manualDeleteErrorResetDirectory
-                          }
-                          Success={
-                            isSuccessDeletePolicyDirectoriesMutation &&
-                            !manualDeleteSuccessResetDirectory
-                          }
-                          textSuccess={"Папка удалена"}
-                          textError={
-                            ErrorDeleteDirectories?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? ErrorDeleteDirectories.data.errors[0].errors[0]
-                              : ErrorDeleteDirectories?.data?.message
-                          }
-                        ></HandlerMutation>
-
-                        <HandlerMutation
                           Loading={isLoadingPostPoliciesMutation}
                           Error={
                             isErrorPostPoliciesMutation &&
-                            !manualCreateSuccessReset
+                            localIsResponsePostPoliciesMutation
                           }
                           Success={
                             isSuccessPostPoliciesMutation &&
-                            !manualCreateErrorReset
+                            localIsResponsePostPoliciesMutation
                           }
                           textSuccess={"Политика успешно создана."}
                           textError={
-                            ErrorPostPolicies?.data?.errors?.[0]?.errors?.[0]
-                              ? ErrorPostPolicies.data.errors[0].errors[0]
-                              : ErrorPostPolicies?.data?.message
+                            ErrorPostPoliciesMutation?.data?.errors?.[0]
+                              ?.errors?.[0]
+                              ? ErrorPostPoliciesMutation.data.errors[0]
+                                  .errors[0]
+                              : ErrorPostPoliciesMutation?.data?.message
                           }
                         ></HandlerMutation>
 
                         <HandlerMutation
                           Loading={isLoadingUpdatePoliciesMutation}
                           Error={
-                            isErrorUpdatePoliciesMutation && !manualErrorReset
+                            isErrorUpdatePoliciesMutation &&
+                            localIsResponseUpdatePoliciesMutation
                           }
                           Success={
                             isSuccessUpdatePoliciesMutation &&
-                            !manualSuccessReset
+                            localIsResponseUpdatePoliciesMutation
                           }
-                          textSuccess={"Политика обновлена"}
+                          textSuccess={`Политика ${policyName} обновлена`}
                           textError={
-                            Error?.data?.errors?.[0]?.errors?.[0]
-                              ? Error.data.errors[0].errors[0]
-                              : Error?.data?.message
+                            ErrorUpdatePoliciesMutation?.data?.errors?.[0]
+                              ?.errors?.[0]
+                              ? ErrorUpdatePoliciesMutation.data.errors[0]
+                                  .errors[0]
+                              : ErrorUpdatePoliciesMutation?.data?.message
                           }
                         ></HandlerMutation>
                       </>
@@ -827,67 +684,65 @@ export default function Policy() {
                         <WaveLetters
                           letters={"Выберите политику"}
                         ></WaveLetters>
-
-                        <HandlerMutation
-                          Loading={isLoadingPostPolicyDirectoriesMutation}
-                          Error={
-                            isErrorPostPolicyDirectoriesMutation &&
-                            !manualCreateErrorResetDirectory
-                          }
-                          Success={
-                            isSuccessPostPolicyDirectoriesMutation &&
-                            !manualCreateSuccessResetDirectory
-                          }
-                          textSuccess={"Папка создана"}
-                          textError={
-                            ErrorPolicyDirectories?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? ErrorPolicyDirectories.data.errors[0].errors[0]
-                              : ErrorPolicyDirectories?.data?.message
-                          }
-                        ></HandlerMutation>
-
-                        <HandlerMutation
-                          Loading={isLoadingUpdatePolicyDirectoriesMutation}
-                          Error={
-                            isErrorUpdatePolicyDirectoriesMutation &&
-                            !manualUpdateErrorResetDirectory
-                          }
-                          Success={
-                            isSuccessUpdatePolicyDirectoriesMutation &&
-                            !manualUpdateSuccessResetDirectory
-                          }
-                          textSuccess={"Папка обновлена"}
-                          textError={
-                            ErrorUpdateDirectories?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? ErrorUpdateDirectories.data.errors[0].errors[0]
-                              : ErrorUpdateDirectories?.data?.message
-                          }
-                        ></HandlerMutation>
-
-                        <HandlerMutation
-                          Loading={isLoadingDeletePolicyDirectoriesMutation}
-                          Error={
-                            isErrorDeletePolicyDirectoriesMutation &&
-                            !manualDeleteErrorResetDirectory
-                          }
-                          Success={
-                            isSuccessDeletePolicyDirectoriesMutation &&
-                            !manualDeleteSuccessResetDirectory
-                          }
-                          textSuccess={"Папка удалена"}
-                          textError={
-                            ErrorDeleteDirectories?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? ErrorDeleteDirectories.data.errors[0].errors[0]
-                              : ErrorDeleteDirectories?.data?.message
-                          }
-                        ></HandlerMutation>
                       </>
                     )}
 
-              
+                    <HandlerMutation
+                      Loading={isLoadingPostPoliciesDirectoriesMutation}
+                      Error={
+                        isErrorPostPoliciesDirectoriesMutation &&
+                        localIsResponsePostPolicyDirectoriesMutation
+                      }
+                      Success={
+                        isSuccessPostPoliciesDirectoriesMutation &&
+                        localIsResponsePostPolicyDirectoriesMutation
+                      }
+                      textSuccess={`Папка ${directoryName} создана`}
+                      textError={
+                        ErrorPostPoliciesDirectoriesMutation?.data?.errors?.[0]
+                          ?.errors?.[0]
+                          ? ErrorPostPoliciesDirectoriesMutation.data.errors[0]
+                              .errors[0]
+                          : ErrorPostPoliciesDirectoriesMutation?.data?.message
+                      }
+                    ></HandlerMutation>
+
+                    <HandlerMutation
+                      Loading={isLoadingUpdatePolicyDirectoriesMutation}
+                      Error={
+                        isErrorUpdatePolicyDirectoriesMutation &&
+                        localIsResponseUpdatePolicyDirectoriesMutation
+                      }
+                      Success={
+                        isSuccessUpdatePolicyDirectoriesMutation &&
+                        localIsResponseUpdatePolicyDirectoriesMutation
+                      }
+                      textSuccess={`Папка ${currentDirectoryName} обновлена`}
+                      textError={
+                        ErrorUpdateDirectories?.data?.errors?.[0]?.errors?.[0]
+                          ? ErrorUpdateDirectories.data.errors[0].errors[0]
+                          : ErrorUpdateDirectories?.data?.message
+                      }
+                    ></HandlerMutation>
+
+                    <HandlerMutation
+                      Loading={isLoadingDeletePolicyDirectoriesMutation}
+                      Error={
+                        isErrorDeletePolicyDirectoriesMutation &&
+                        localIsResponseDeletePolicyDirectoriesMutation
+                      }
+                      Success={
+                        isSuccessDeletePolicyDirectoriesMutation &&
+                        localIsResponseDeletePolicyDirectoriesMutation
+                      }
+                      textSuccess={`Папка ${currentDirectoryName} удалена`}
+                      textError={
+                        ErrorDeleteDirectories?.data?.errors?.[0]?.errors?.[0]
+                          ? ErrorDeleteDirectories.data.errors[0].errors[0]
+                          : ErrorDeleteDirectories?.data?.message
+                      }
+                    ></HandlerMutation>
+
                     {openModalCreateDirectory && (
                       <ModalFolder
                         searchArrayDirectives={filterArraySearchModalDirectives}
@@ -943,7 +798,6 @@ export default function Policy() {
                         btnNo={btnNo}
                       ></ModalWindow>
                     )}
-
                   </>
                 )}
               </>

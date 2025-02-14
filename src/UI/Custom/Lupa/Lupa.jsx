@@ -16,7 +16,8 @@ export default function Lupa({
   archivesPrograms,
 
   array,
-  arrayItem
+  arrayItem,
+  positionBottomStyle,
 }) {
   const selectRef = useRef(null);
 
@@ -43,7 +44,12 @@ export default function Lupa({
         }}
       />
       {isOpenSearch && (
-        <ul className={classes.ul}>
+        <ul
+          className={classes.ul}
+          style={{
+            bottom: positionBottomStyle,
+          }}
+        >
           {projects?.length !== 0 && projects && (
             <li value="Активные" disabled className={classes.activeText}>
               Активные

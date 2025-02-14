@@ -10,7 +10,10 @@ const Chat = React.lazy(() => import("@app/Chat/Chat"));
 
 export default function Content() {
   const { group, route } = useParams();
-  const Component = pageComponents[group]?.[route];
+  const Component =
+    typeof pageComponents[group] === "object"
+      ? pageComponents[group]?.[route]
+      : pageComponents[group];
 
   return (
     <>
@@ -25,9 +28,8 @@ export default function Content() {
           </>
         ) : (
           <div className={classes.notFound}>
-             <NotFound />
+            <NotFound />
           </div>
-         
         )}
       </React.Suspense>
     </>

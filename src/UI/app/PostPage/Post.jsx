@@ -36,7 +36,7 @@ export default function Post() {
   const [postName, setPostName] = useState(null);
   const [divisionName, setDivisionName] = useState(null);
   const [disabledDivisionName, setDisabledDivisionName] = useState(false);
-  const [parentPostId, setParentPostId] = useState(null);
+  const [parentPostId, setParentPostId] = useState("");
   const [worker, setWorker] = useState(null);
 
   const [product, setProduct] = useState(null);
@@ -121,10 +121,10 @@ export default function Post() {
     setSelectParentPost(obj);
 
     if (parentPostId && currentPost?.isHasChildPost === false) {
-      setDivisionName(obj?.divisionName || "");
+      setDivisionName(obj?.divisionName || null);
       setDisabledDivisionName(true);
     } else {
-      setDivisionName(currentPost?.divisionName || "");
+      setDivisionName(currentPost?.divisionName || null);
       setDisabledDivisionName(false);
     }
   }, [parentPostId]);
@@ -145,7 +145,7 @@ export default function Post() {
     if (currentPost?.user?.id) {
       setWorker(currentPost?.user?.id);
     } else {
-      setWorker("");
+      setWorker(null);
     }
 
     if (parentPost?.id) {
@@ -200,7 +200,7 @@ export default function Post() {
     }
 
     if (worker !== currentPost?.user?.id && worker !== null) {
-      updatedData.responsibleUserId = worker === "" ? null : worker;
+      updatedData.responsibleUserId = worker === null ? null : worker;
     }
 
     if (selectedPolicyID !== selectedPolicyIDInPost) {
@@ -366,13 +366,16 @@ export default function Post() {
                 onChange={setParentPostId}
                 array={posts}
                 arrayItem={"postName"}
-              ></Select>
+              >
+                  <option value=""> — </option>
+              </Select>
               <Select
                 name={"Сотрудник"}
                 value={worker}
                 onChange={setWorker}
                 array={workers}
                 arrayItem={"lastName"}
+                arrayItemTwo={"firstName"}
               ></Select>
             </>
           )}

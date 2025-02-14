@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classes from './Strategy.module.css';
 import { useParams } from "react-router-dom";
 import Header from "@Custom/CustomHeader/Header";
-import HandlerMutation from "@Custom/HandlerMutation";
+import HandlerMutation from "@Custom/mobileHandler/HandlerMutation";
 import ModalWindow from '@Custom/ConfirmStrategyToComplited/ModalWindow';
 import CustomtextArea from '@Custom/CustomTextarea/CustomtextArea'
 import { ButtonContainer } from '@Custom/CustomButtomContainer/ButtonContainer'
@@ -31,7 +31,8 @@ const MobileStartegy = () => {
         isLoadingUpdateStrategyMutation,
         isSuccessUpdateStrategyMutation,
         isErrorUpdateStrategyMutation,
-        ErrorStrategyMutation,
+        errorUpdateStrategyMutation,
+        localIsResponseUpdateStrategyMutation
 
     } = useStrategyHook(strategyId)
 
@@ -174,17 +175,19 @@ const MobileStartegy = () => {
                 Error={isErrorStrategyId}
             />
 
-            <HandlerMutation
-                Loading={isLoadingUpdateStrategyMutation}
-                Error={isErrorUpdateStrategyMutation}
-                Success={isSuccessUpdateStrategyMutation}
-                textSuccess={"Cтратегия успешно обновлена."}
-                textError={
-                    ErrorStrategyMutation?.data?.errors?.[0]?.errors?.[0]
-                        ? ErrorStrategyMutation.data.errors[0].errors[0]
-                        : ErrorStrategyMutation?.data?.message
-                }
-            ></HandlerMutation>
+                       <HandlerMutation
+                                    Loading={isLoadingUpdateStrategyMutation}
+                                    Error={isErrorUpdateStrategyMutation && localIsResponseUpdateStrategyMutation}
+                                    Success= {isSuccessUpdateStrategyMutation && localIsResponseUpdateStrategyMutation}
+                                    textSuccess={"Стратегия обновлена"}
+                                    textError={
+                                      errorUpdateStrategyMutation?.data?.errors?.[0]
+                                        ?.errors?.[0]
+                                        ? errorUpdateStrategyMutation.data.errors[0]
+                                            .errors[0]
+                                        : errorUpdateStrategyMutation?.data?.message
+                                    }
+                                  ></HandlerMutation>
 
         </>
     );

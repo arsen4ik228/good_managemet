@@ -2,13 +2,14 @@ import React from "react";
 import classes from "./Select.module.css";
 
 export default function Select({
+  children,
   name,
   value,
   onChange,
   array,
   arrayItem,
   arrayItemTwo,
-  disabledPole
+  disabledPole,
 }) {
   return (
     <div className={classes.item}>
@@ -27,7 +28,7 @@ export default function Select({
           }}
           disabled={disabledPole}
         >
-
+          {children}
           {array?.map((item) => {
             return (
               <option key={item.id} value={item.id}>

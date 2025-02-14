@@ -19,9 +19,10 @@ const WorkingPlan = React.lazy(() => import("@app/WorkingPlanPage/MainWorkingPla
 
 const pageComponents = {
   pomoshnik: {
-    start: Pomoshnik,
     controlPanel: ControlPanel,
     user: User,
+    
+    start: Pomoshnik,
     goal: Goal,
     policy: Policy,
     statistic: Statistic,

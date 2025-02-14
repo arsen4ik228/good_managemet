@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export function useModalSelectRadio ({ array, arrayItem }) {
-  const [selectedID, setSelectedID] = useState("null");
+  const [selectedID, setSelectedID] = useState(null);
   const [selectedName, setSelectedName] = useState(null);
 
   const [filterArraySearchModal, setFilterArraySearchModal] = useState([]);

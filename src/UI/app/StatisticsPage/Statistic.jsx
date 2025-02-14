@@ -8,33 +8,40 @@ import statisticsArrowRight from "@image/statisticsArrowRight.svg";
 import trash from "@image/trash.svg";
 import addBlock from "@image/iconAdd.svg";
 import hint from "@image/hint.svg";
-import {
-  useGetStatisticsIdQuery,
-  useGetStatisticsQuery,
-  useUpdateStatisticsMutation,
-  usePostStatisticsMutation,
-} from "@services";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import exit from "@image/exitModal.svg";
-import {
-  useGetOrganizationIdQuery,
-  useUpdateOrganizationsMutation,
-} from "@services";
 import WaveLetters from "@Custom/WaveLetters.jsx";
 import getDateFormatSatatistic from "@Custom/Function/getDateFormatStatistic.js";
 import Headers from "@Custom/Headers/Headers";
-import { useGetPostsQuery } from "@services";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import Select from "@Custom/Select/Select";
 import Input from "@Custom/Input/Input";
 import Lupa from "@Custom/Lupa/Lupa";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
-import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
-import useGetOldAndNewOrganizationId from "@hooks/useGetReduxOrganization";
+import { useModalSelectRadio } from "@hooks";
+import { useStatisticsHook } from "@hooks";
+import { usePostsHook } from "@hooks";
+import { useOrganizationHook } from "@hooks";
 
 export default function Statistic() {
-  
+  // Организация
+  const {
+    reduxSelectedOrganizationId,
+    reduxSelectedOrganizationReportDay,
+
+    currentOrganization,
+    isLoadingOrganizationId,
+    isFetchingOrganizationId,
+
+    updateOrganization,
+    isLoadingUpdateOrganizationMutation,
+    isSuccessUpdateOrganizationMutation,
+    isErrorUpdateOrganizationMutation,
+    ErrorOrganization,
+    localIsResponseUpdateOrganizationMutation,
+  } = useOrganizationHook();
+
   const [openModalForCreated, setOpenModalForCreated] = useState(false);
 
   const [isOpenSearch, setIsOpenSearch] = useState(false);
@@ -51,7 +58,14 @@ export default function Statistic() {
   const [oldReceivedPoints, setOldReceivedPoints] = useState([]);
   const [createPoints, setCreatePoints] = useState([]);
 
-  const [reportDay, setReportDay] = useState();
+  const [reportDay, setReportDay] = useState(reduxSelectedOrganizationReportDay);
+
+  useEffect(() => {
+    if (reduxSelectedOrganizationReportDay !== undefined && reduxSelectedOrganizationReportDay !== null) {
+      setReportDay(reduxSelectedOrganizationReportDay);
+    }
+  }, [reduxSelectedOrganizationReportDay]);
+
   const [typeGraphic, setTypeGraphic] = useState("Ежедневный");
   const [disabledPoints, setDisabledPoints] = useState(false);
 
@@ -62,48 +76,44 @@ export default function Statistic() {
   const [activeIndex, setActiveIndex] = useState(null);
   const [count, setCount] = useState(0);
 
-  const [openModaReportDay, setOpenModalReportDay] = useState(false);
+  const [openModalReportDay, setOpenModalReportDay] = useState(false);
   const [showReportDay, setShowReportDay] = useState();
   const [showReportDayComes, setShowReportDayComes] = useState();
 
-  // Добавляем флаги для управления ручным сбросом состояния успеха и ошибки
-  const [manualSuccessReset, setManualSuccessReset] = useState(false);
-  const [manualErrorReset, setManualErrorReset] = useState(false);
-
-  // Добавляем флаги для управления ручным сбросом состояния успеха и ошибки
-  const [manualSuccessResetOrganization, setManualSuccessResetOrganization] =
-    useState(true);
-  const [manualErrorResetOrganization, setManualErrorResetOrganization] =
-    useState(true);
-
- const { reduxNewSelectedOrganizationId } = useGetOldAndNewOrganizationId();
-
-  // Получение постов
   const {
-    posts = [],
-    isLoadingGetPosts,
-    isErrorGetPosts,
-  } = useGetPostsQuery({organizationId:reduxNewSelectedOrganizationId}, {
-    selectFromResult: ({ data, isLoading, isError }) => ({
-      posts: data || [],
-      isLoadingGetPosts: isLoading,
-      isErrorGetPosts: isError,
-    }),
+    statistics,
+    isLoadingGetStatistics,
+    isFetchingGetStatistics,
+    isErrorGetStatistics,
+
+    currentStatistic,
+    statisticDatas,
+    isLoadingGetStatisticId,
+    isErrorGetStatisticId,
+    isFetchingGetStatisticId,
+
+    updateStatistics,
+    isLoadingUpdateStatisticMutation,
+    isSuccessUpdateStatisticMutation,
+    isErrorUpdateStatisticMutation,
+    ErrorUpdateStatisticMutation,
+    localIsResponseUpdateStatisticsMutation,
+
+    postStatistics,
+    isLoadingPostStatisticMutation,
+    isSuccessPostStatisticMutation,
+    isErrorPostStatisticMutation,
+    ErrorPostStatisticMutation,
+    localIsResponsePostStatisticsMutation,
+  } = useStatisticsHook({
+    statisticData: true,
+    statisticId: statisticId,
   });
 
-
+  // Получение постов
+  const { allPosts, isLoadingGetPosts, isErrorGetPosts } = usePostsHook();
 
   // Создание статистики
-  const [
-    postStatistics,
-    {
-      isLoading: isLoadingPostStatisticMutation,
-      isSuccess: isSuccessPostStatisticMutation,
-      isError: isErrorPostStatisticMutation,
-      error: Error,
-    },
-  ] = usePostStatisticsMutation();
-
   const {
     selectedID: selectedPostIdForCreated,
 
@@ -112,7 +122,7 @@ export default function Statistic() {
 
     filterArraySearchModal,
     inputSearchModal,
-  } = useModalSelectRadio({ array: posts, arrayItem: "postName" });
+  } = useModalSelectRadio({ array: allPosts, arrayItem: "postName" });
 
   const functionOpenModalForCreated = () => {
     setOpenModalForCreated(true);
@@ -132,87 +142,6 @@ export default function Statistic() {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
-
-
-  // Организация
-  const [
-    updateOrganization,
-    {
-      isLoading: isLoadingUpdateOrganizationMutation,
-      isSuccess: isSuccessUpdateOrganizationMutation,
-      isError: isErrorUpdateOrganizationMutation,
-      error: ErrorOrganization,
-    },
-  ] = useUpdateOrganizationsMutation();
-
-  const {
-    currentOrganization = {},
-    isLoadingOrganizationId,
-    isFetchingOrganizationId,
-  } = useGetOrganizationIdQuery(undefined, {
-    selectFromResult: ({ data, isLoading, isFetching }) => ({
-      currentOrganization: data || {},
-      isLoadingOrganizationId: isLoading,
-      isFetchingOrganizationId: isFetching,
-    }),
-  });
-
-  useEffect(() => {
-    if (currentOrganization) {
-      setReportDay(String(currentOrganization.reportDay));
-    }
-  }, [currentOrganization]);
-
-
-  
-  //Статистика
-  const {
-    statistics = [],
-    isLoadingStatistic,
-    isFetchingStatistic,
-    isErrorStatistic,
-    refetch,
-  } = useGetStatisticsQuery(
-    { organizationId: reduxNewSelectedOrganizationId, statisticData: true },
-    {
-      selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-        statistics: data || [],
-        isLoadingStatistic: isLoading,
-        isFetchingStatistic: isFetching,
-        isErrorStatistic: isError,
-      }),
-    }
-  );
-
-  const {
-    currentStatistic = {},
-    statisticDatas = [],
-    isLoadingGetStatisticId,
-    isErrorGetStatisticId,
-    isFetchingGetStatisticId,
-  } = useGetStatisticsIdQuery(
-    { statisticId: statisticId },
-    {
-      selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-        currentStatistic: data?.currentStatistic || {},
-        statisticDatas: data?.statisticDatas || [],
-        isLoadingGetStatisticId: isLoading,
-        isErrorGetStatisticId: isError,
-        isFetchingGetStatisticId: isFetching,
-      }),
-      skip: !statisticId,
-    }
-  );
-
-  const [
-    updateStatistics,
-    {
-      isLoading: isLoadingUpdateStatisticMutation,
-      isSuccess: isSuccessUpdateStatisticMutation,
-      isError: isErrorUpdateStatisticMutation,
-      error: ErrorUpdateStatistics,
-    },
-  ] = useUpdateStatisticsMutation();
 
   // Все для начальной страницы
   const addPoint = () => {
@@ -283,17 +212,19 @@ export default function Statistic() {
 
   const saveUpdateStatistics = async () => {
     const Data = {};
+    
+    if (Object.keys(currentStatistic).length == 0) return;
 
-    if (type !== currentStatistic.type) {
+    if (type !== currentStatistic?.type) {
       Data.type = type;
     }
-    if (name !== currentStatistic.name) {
+    if (name !== currentStatistic?.name) {
       Data.name = name;
     }
     if (postId !== currentStatistic?.post?.id) {
       Data.postId = postId;
     }
-    if (description !== currentStatistic.description) {
+    if (description !== currentStatistic?.description) {
       Data.description = description;
     }
     if (createPoints.length > 0) {
@@ -324,24 +255,13 @@ export default function Statistic() {
       })
         .unwrap()
         .then(() => {
-          setManualSuccessReset(false);
-          setManualErrorReset(false);
-
-          setManualSuccessResetOrganization(true);
-          setManualErrorResetOrganization(true);
-
           if (Data.name) {
-            refetch();
+            // refetch();
           }
 
           setOpenModalReportDay(false);
         })
         .catch((error) => {
-          setManualErrorReset(false);
-
-          setManualSuccessResetOrganization(true);
-          setManualErrorResetOrganization(true);
-
           console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
         });
     }
@@ -780,20 +700,39 @@ export default function Statistic() {
     }
   };
 
+  // const updateModalPoint = (value, index) => {
+  //   const updatedShowPoints = [...showPoints];
+  //   const update = updatedShowPoints.map((item) => ({
+  //     ...item,
+  //     isCorrelation: false,
+  //   })); /// добавил 26.11.2024
+  //   if (typeGraphic === "Ежемесячный" || typeGraphic === "Ежегодовой") {
+  //     // update[index]["value"] = Number(value);
+  //     update[index]["value"] = value === null ? "" : Number(value);
+  //     update[index]["isCorrelation"] = true;
+  //     setShowPoints(update);
+  //   } else {
+  //     // update[index]["value"] = Number(value);
+  //     update[index]["value"] = value === null ? "" : Number(value);
+  //     setShowPoints(update);
+  //   }
+  // };
+
   const updateModalPoint = (value, index) => {
-    const updatedShowPoints = [...showPoints];
-    const update = updatedShowPoints.map((item) => ({
+    if (index < 0 || index >= showPoints.length) return; 
+  
+    const update = showPoints.map((item) => ({
       ...item,
       isCorrelation: false,
-    })); /// добавил 26.11.2024
-    if (typeGraphic === "Ежемесячный" || typeGraphic === "Ежегодовой") {
-      update[index]["value"] = Number(value);
-      update[index]["isCorrelation"] = true;
-      setShowPoints(update);
-    } else {
-      update[index]["value"] = Number(value);
-      setShowPoints(update);
-    }
+    }));
+  
+    update[index] = {
+      ...update[index],
+      value: value === null ? "" : Number(value),
+      isCorrelation: typeGraphic === "Ежемесячный" || typeGraphic === "Ежегодовой",
+    };
+  
+    setShowPoints(update);
   };
 
   const saveModalPoints = async (array) => {
@@ -850,13 +789,10 @@ export default function Statistic() {
     })
       .unwrap()
       .then(() => {
-        setManualSuccessReset(false);
-        setManualErrorReset(false);
         setOpenModal(false);
         setActiveIndex(null);
       })
       .catch((error) => {
-        setManualErrorReset(false);
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
@@ -1174,67 +1110,41 @@ export default function Statistic() {
   }, [count]);
 
   // Все для модального окна при смене отчетного дня
-  const dayWeek = (day, type) => {
-    if (type === "reportDay") {
-      switch (day) {
-        case 0:
-          setShowReportDay("Воскресенье");
-          break;
-        case 1:
-          setShowReportDay("Понедельник");
-          break;
-        case 2:
-          setShowReportDay("Вторник");
-          break;
-        case 3:
-          setShowReportDay("Среда");
-          break;
-        case 4:
-          setShowReportDay("Четверг");
-          break;
-        case 5:
-          setShowReportDay("Пятница");
-          break;
-        case 6:
-          setShowReportDay("Суббота");
-          break;
-        default:
-          break;
-      }
-    } else {
-      switch (day) {
-        case 0:
-          setShowReportDayComes("Воскресенье");
-          break;
-        case 1:
-          setShowReportDayComes("Понедельник");
-          break;
-        case 2:
-          setShowReportDayComes("Вторник");
-          break;
-        case 3:
-          setShowReportDayComes("Среда");
-          break;
-        case 4:
-          setShowReportDayComes("Четверг");
-          break;
-        case 5:
-          setShowReportDayComes("Пятница");
-          break;
-        case 6:
-          setShowReportDayComes("Суббота");
-          break;
-        default:
-          break;
-      }
+  const dayWeek = (day, func) => {
+    switch (Number(day)) {
+      case 0:
+        func("Воскресенье");
+        break;
+      case 1:
+        func("Понедельник");
+        break;
+      case 2:
+        func("Вторник");
+        break;
+      case 3:
+        func("Среда");
+        break;
+      case 4:
+        func("Четверг");
+        break;
+      case 5:
+        func("Пятница");
+        break;
+      case 6:
+        func("Суббота");
+        break;
+      default:
+        break;
     }
   };
 
   const save = () => {
-    if (reportDay !== currentOrganization?.reportDay) {
+    console.log(`reportDay =${reportDay}`)
+    console.log(`currentOrganization?.reportDay =${currentOrganization?.reportDay}`)
+    if (reportDay != currentOrganization?.reportDay) {
       setOpenModalReportDay(true);
-      dayWeek(reportDay, "reportDay");
-      dayWeek(currentOrganization?.reportDay, "");
+      dayWeek(reportDay, setShowReportDay);
+      dayWeek(currentOrganization?.reportDay, setShowReportDayComes);
     } else {
       saveUpdateStatistics();
     }
@@ -1243,7 +1153,8 @@ export default function Statistic() {
   const btnYes = async () => {
     try {
       await saveUpdateOrganization(); // Сначала выполняем обновление организации
-
+      localStorage.setItem("reportDay", Number(reportDay));
+      setOpenModalReportDay(false);
       // Добавляем задержку в 1 секунду
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -1259,18 +1170,14 @@ export default function Statistic() {
 
   const saveUpdateOrganization = async () => {
     await updateOrganization({
+      _id: reduxSelectedOrganizationId,
       reportDay: Number(reportDay),
     })
       .unwrap()
       .then(() => {
         setOpenModalReportDay(false);
-
-        setManualSuccessResetOrganization(false);
-        setManualErrorResetOrganization(false);
       })
       .catch((error) => {
-        setManualErrorResetOrganization(false);
-        setManualSuccessResetOrganization(false);
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
@@ -1293,16 +1200,14 @@ export default function Statistic() {
 
   const selectViewGraphic = [
     { id: "Ежедневный", value: "Ежедневный", view: "Ежедневный" },
-    { id:  "Ежемесячный", value: "Ежемесячный", view: "Ежемесячный" },
+    { id: "Ежемесячный", value: "Ежемесячный", view: "Ежемесячный" },
     { id: "Ежегодовой", value: "Ежегодовой", view: "Ежегодовой" },
     { id: "13", value: "13", view: "13 недель" },
-    { id:  "26", value: "26", view: "26 недель" },
+    { id: "26", value: "26", view: "26 недель" },
     { id: "52", value: "52", view: "52 недели" },
   ];
 
   const selectStatistics = (id) => {
-    setManualSuccessReset(true);
-    setManualErrorReset(true);
     setStatisticId(id);
   };
 
@@ -1321,10 +1226,10 @@ export default function Statistic() {
       </Headers>
 
       <div className={classes.main}>
-        {isErrorStatistic && isErrorGetPosts ? (
+        {isErrorGetStatistics && isErrorGetPosts ? (
           <>
             <HandlerQeury
-              Error={isErrorStatistic || isErrorGetPosts}
+              Error={isErrorGetStatistics || isErrorGetPosts}
             ></HandlerQeury>
           </>
         ) : (
@@ -1334,8 +1239,8 @@ export default function Statistic() {
             ) : (
               <>
                 <HandlerQeury
-                  Loading={isLoadingStatistic}
-                  Fetching={isFetchingStatistic}
+                  Loading={isLoadingGetStatistics}
+                  Fetching={isFetchingGetStatistics}
                 ></HandlerQeury>
 
                 <HandlerQeury Loading={isLoadingGetPosts}></HandlerQeury>
@@ -1540,6 +1445,7 @@ export default function Statistic() {
                                 select={selectStatistics}
                                 array={statistics}
                                 arrayItem={"name"}
+                                positionBottomStyle={"0"}
                               ></Lupa>
                             </Input>
 
@@ -1555,7 +1461,7 @@ export default function Statistic() {
                               name={"Пост"}
                               value={postId}
                               onChange={setPostId}
-                              array={posts}
+                              array={allPosts}
                               arrayItem={"postName"}
                             ></Select>
 
@@ -1579,38 +1485,42 @@ export default function Statistic() {
                         </div>
 
                         <HandlerMutation
-                          Loading={isLoadingUpdateStatisticMutation}
+                          Loading={isLoadingPostStatisticMutation}
                           Error={
-                            isErrorUpdateStatisticMutation && !manualErrorReset
+                            isErrorPostStatisticMutation &&
+                            localIsResponsePostStatisticsMutation
                           } // Учитываем ручной сброс
                           Success={
-                            isSuccessUpdateStatisticMutation &&
-                            !manualSuccessReset
+                            isSuccessPostStatisticMutation &&
+                            localIsResponsePostStatisticsMutation
                           } // Учитываем ручной сброс
-                          textSuccess={"Статистика обновлена"}
+                          textSuccess={"Статистика создана"}
                           textError={
-                            ErrorUpdateStatistics?.data?.errors?.[0]
+                            ErrorPostStatisticMutation?.data?.errors?.[0]
                               ?.errors?.[0]
-                              ? ErrorUpdateStatistics.data.errors[0].errors[0]
-                              : ErrorUpdateStatistics?.data?.message
+                              ? ErrorPostStatisticMutation.data.errors[0]
+                                  .errors[0]
+                              : ErrorPostStatisticMutation?.data?.message
                           }
                         ></HandlerMutation>
 
                         <HandlerMutation
-                          Loading={isLoadingUpdateOrganizationMutation}
+                          Loading={isLoadingUpdateStatisticMutation}
                           Error={
-                            isErrorUpdateOrganizationMutation &&
-                            !manualErrorResetOrganization
-                          }
+                            isErrorUpdateStatisticMutation &&
+                            localIsResponseUpdateStatisticsMutation
+                          } // Учитываем ручной сброс
                           Success={
-                            isSuccessUpdateOrganizationMutation &&
-                            !manualSuccessResetOrganization
-                          }
-                          textSuccess={"Организация обновлена"}
+                            isSuccessUpdateStatisticMutation &&
+                            localIsResponseUpdateStatisticsMutation
+                          } // Учитываем ручной сброс
+                          textSuccess={"Статистика обновлена"}
                           textError={
-                            ErrorOrganization?.data?.errors?.[0]?.errors?.[0]
-                              ? ErrorOrganization.data.errors[0].errors[0]
-                              : ErrorOrganization?.data?.message
+                            ErrorUpdateStatisticMutation?.data?.errors?.[0]
+                              ?.errors?.[0]
+                              ? ErrorUpdateStatisticMutation.data.errors[0]
+                                  .errors[0]
+                              : ErrorUpdateStatisticMutation?.data?.message
                           }
                         ></HandlerMutation>
 
@@ -1690,14 +1600,10 @@ export default function Statistic() {
                                             type="text"
                                             inputMode="numeric"
                                             placeholder="—"
-                                            value={item.value || ""}
+                                            value={item.value === null || item.value === "" ? "" : item.value}
                                             onChange={(e) => {
-                                              const newValue =
-                                                e.target.value.replace(
-                                                  /[^0-9]/g,
-                                                  ""
-                                                );
-                                              updateModalPoint(newValue, index);
+                                              const newValue = e.target.value.replace(/[^0-9]/g, "");
+                                              updateModalPoint(newValue === "" ? null : newValue, index);
                                             }}
                                           />
                                         </div>
@@ -1706,50 +1612,6 @@ export default function Statistic() {
                                   </tr>
                                 </tbody>
                               </table>
-                            </div>
-                          </>
-                        )}
-
-                        {openModaReportDay && (
-                          <>
-                            <div className={classes.modalDelete}>
-                              <div className={classes.modalDeleteElement}>
-                                <img
-                                  src={exit}
-                                  alt="exit"
-                                  className={classes.exitImage}
-                                  onClick={() => setOpenModalReportDay(false)}
-                                />
-                                <div className={classes.modalRow1}>
-                                  <span className={classes.text}>
-                                    Вы поменяли отчетный день с <span> </span>
-                                    <span style={{ fontWeight: "700" }}>
-                                      {showReportDayComes}
-                                    </span>
-                                    <span> на </span>
-                                    <span style={{ fontWeight: "700" }}>
-                                      {showReportDay}
-                                    </span>
-                                    . Если подтвердите действие, то отчетный
-                                    день поменяется у всей организации.
-                                  </span>
-                                </div>
-
-                                <div className={classes.modalRow2}>
-                                  <button
-                                    className={`${classes.btnYes} ${classes.textBtnYes}`}
-                                    onClick={btnYes}
-                                  >
-                                    Да
-                                  </button>
-                                  <button
-                                    className={`${classes.btnNo} ${classes.textBtnNo}`}
-                                    onClick={btnNo}
-                                  >
-                                    Нет
-                                  </button>
-                                </div>
-                              </div>
                             </div>
                           </>
                         )}
@@ -1774,6 +1636,7 @@ export default function Statistic() {
                                 select={selectStatistics}
                                 array={statistics}
                                 arrayItem={"name"}
+                                positionBottomStyle={"0"}
                               ></Lupa>
                             </Input>
                           </div>
@@ -1787,6 +1650,68 @@ export default function Statistic() {
                       </>
                     )}
 
+                    {openModalReportDay && (
+                      <>
+                        <div className={classes.modalDelete}>
+                          <div className={classes.modalDeleteElement}>
+                            <img
+                              src={exit}
+                              alt="exit"
+                              className={classes.exitImage}
+                              onClick={() => setOpenModalReportDay(false)}
+                            />
+                            <div className={classes.modalRow1}>
+                              <span className={classes.text}>
+                                Вы поменяли отчетный день с <span> </span>
+                                <span style={{ fontWeight: "700" }}>
+                                  {showReportDayComes}
+                                </span>
+                                <span> на </span>
+                                <span style={{ fontWeight: "700" }}>
+                                  {showReportDay}
+                                </span>
+                                . Если подтвердите действие, то отчетный день
+                                поменяется у всей организации.
+                              </span>
+                            </div>
+
+                            <div className={classes.modalRow2}>
+                              <button
+                                className={`${classes.btnYes} ${classes.textBtnYes}`}
+                                onClick={btnYes}
+                              >
+                                Да
+                              </button>
+                              <button
+                                className={`${classes.btnNo} ${classes.textBtnNo}`}
+                                onClick={btnNo}
+                              >
+                                Нет
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    <HandlerMutation
+                      Loading={isLoadingUpdateOrganizationMutation}
+                      Error={
+                        isErrorUpdateOrganizationMutation &&
+                        localIsResponseUpdateOrganizationMutation
+                      }
+                      Success={
+                        isSuccessUpdateOrganizationMutation &&
+                        localIsResponseUpdateOrganizationMutation
+                      }
+                      textSuccess={`Обновился отчетный день у организации на ${showReportDay}`}
+                      textError={
+                        ErrorOrganization?.data?.errors?.[0]?.errors?.[0]
+                          ? ErrorOrganization.data.errors[0].errors[0]
+                          : ErrorOrganization?.data?.message
+                      }
+                    ></HandlerMutation>
+
                     {openModalForCreated && (
                       <ModalSelectRadio
                         nameTable={"Название поста"}
@@ -1797,7 +1722,7 @@ export default function Statistic() {
                           setOpenModalForCreated(false);
                         }}
                         filterArray={filterArraySearchModal}
-                        array={posts}
+                        array={allPosts}
                         arrayItem={"postName"}
                         selectedItemID={selectedPostIdForCreated}
                         save={createStatistics}

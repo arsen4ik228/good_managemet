@@ -1,5 +1,4 @@
 import apiSlice from "./api";
-import {selectedOrganizationId} from '@helpers/constants'
 
 export const organizationApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
@@ -11,7 +10,7 @@ export const organizationApi = apiSlice.injectEndpoints({
       transformResponse: (response) => {
         const organizations = response?.map(
           ({ createdAt, updatedAt, ...rest }) => ({ ...rest })
-        );
+        ).sort((a, b) => a.organizationName.localeCompare(b.organizationName) );
         return organizations;
       },
 
@@ -39,15 +38,12 @@ export const organizationApi = apiSlice.injectEndpoints({
 
     updateOrganizations: build.mutation({
       query: (body) => ({
-        url: `organizations/${selectedOrganizationId}/update`,
+        url: `organizations/${body._id}/update`,
         method: "PATCH",
-        body: {
-          _id: selectedOrganizationId,
-          ...body,
-        },
+        body,
       }),
       invalidatesTags: (result, err, arg) => [
-        { type: "Organization", id: arg.selectedOrganizationId },
+        { type: "Organization", id: arg._id },
       ],
     }),
   }),

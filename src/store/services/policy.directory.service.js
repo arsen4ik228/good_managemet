@@ -31,7 +31,7 @@ export const policyDirectoriesApi = apiSlice.injectEndpoints({
               return 0;
             }),
         }));
-
+        console.log("foldersSort     ", foldersSort);
         //Илюша
         console.log("getPolicyDirectories     ", response);
         let Data = [];
