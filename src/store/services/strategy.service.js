@@ -65,7 +65,7 @@ export const strategyApi = apiSlice.injectEndpoints({
       providesTags: (result, err, arg) => [{ type: 'Strategy', id: arg.strategyId }],
     }),
 
-// Илья body другое postStrategy
+
     postStrategy: build.mutation({
       query: (body) => ({
         url: `strategies/new`,

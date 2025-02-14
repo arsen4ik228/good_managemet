@@ -39,21 +39,17 @@ export default function HandlerMutation({
   return (
     <>
     
-      {Loading && (
+    {Loading && (
         <div className={classes.load}>
           <img src={icon} alt="Loading..." className={classes.loadImage} />
           <div className={classes.wave}>
-            <span style={{ "--i": 1 }}>З</span>
-            <span style={{ "--i": 2 }}>А</span>
-            <span style={{ "--i": 3 }}>Г</span>
-            <span style={{ "--i": 4 }}>Р</span>
-            <span style={{ "--i": 5 }}>У</span>
-            <span style={{ "--i": 6 }}>З</span>
-            <span style={{ "--i": 7 }}>К</span>
-            <span style={{ "--i": 8 }}>А</span>
-            <span style={{ "--i": 9 }}>.</span>
-            <span style={{ "--i": 10 }}>.</span>
-            <span style={{ "--i": 11 }}>.</span>
+            {["З", "А", "Г", "Р", "У", "З", "К", "А", ".", ".", "."].map(
+              (char, index) => (
+                <span key={index} style={{ "--i": index + 1 }}>
+                  {char}
+                </span>
+              )
+            )}
           </div>
         </div>
       )}

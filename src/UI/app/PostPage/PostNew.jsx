@@ -33,7 +33,7 @@ export default function PostNew() {
   const [divisionNameDB, setDivisionNameDB] = useState();
 
   const [parentId, setParentId] = useState("null");
-  const [worker, setWorker] = useState(createdUserId);
+  const [worker, setWorker] = useState(createdUserId || "null");
 
   const [product, setProduct] = useState("");
   const [purpose, setPurpose] = useState("");
@@ -77,9 +77,11 @@ export default function PostNew() {
     if (parentId !== "null") {
       Data.parentId = parentId;
     }
+  
     if (worker !== "null") {
       Data.responsibleUserId = worker;
     }
+
     await postPosts({
       postName: postName,
       ...Data,
@@ -114,6 +116,7 @@ export default function PostNew() {
     setDivisionNameDB(`Подразделение №${maxDivisionNumber}`);
   }, [maxDivisionNumber]);
 
+  console.log(`worker = ${worker}`)
   return (
     <div className={classes.dialog}>
       <Headers name={"создание поста"} back={back}>
@@ -145,7 +148,7 @@ export default function PostNew() {
             arrayItem={"lastName"}
             arrayItemTwo={"firstName"}
           >
-            <option value="null"> — </option>
+            <option value="null" disabled> — </option>
           </Select>
         </BottomHeaders>
       </Headers>

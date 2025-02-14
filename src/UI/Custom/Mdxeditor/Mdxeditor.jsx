@@ -1,4 +1,4 @@
-import React, { useRef, useEffect  } from "react";
+import React, { useRef, useEffect } from "react";
 import "@mdxeditor/editor/style.css";
 import {
   MDXEditor,
@@ -21,48 +21,51 @@ import classes from "./Mdxeditor.module.css";
 import { usePostImageMutation } from "@services";
 import { baseUrl } from "@helpers/constants";
 
-export default function Mdxeditor({ editorState, setEditorState, userId, readOnly }) {
+export default function Mdxeditor({
+  editorState,
+  setEditorState,
+  userId,
+  readOnly,
+}) {
   const editorRef = useRef(null); // Ссылка на редактор
 
-    // Функция для обновления содержимого редактора и состояния
-    const updateEditorContent = (newContent) => {
-        if (editorRef.current) {
-            editorRef.current.setMarkdown(newContent); // Обновляем содержимое через setMarkdown
-            setEditorState(newContent); // Обновляем состояние редактора
-        }
-    };
+  // Функция для обновления содержимого редактора и состояния
+  const updateEditorContent = (newContent) => {
+    if (editorRef.current) {
+      editorRef.current.setMarkdown(newContent); // Обновляем содержимое через setMarkdown
+      setEditorState(newContent); // Обновляем состояние редактора
+    }
+  };
 
-    const [postImage] = usePostImageMutation();
+  const [postImage] = usePostImageMutation();
 
-    // Функция для обработки загрузки изображений
-    const imageUploadHandler = async (file) => {
-        try {
-            const formData = new FormData();
-            formData.append("file", file);
-            // Вызов postImage для отправки файла на сервер
-            const response = await postImage({
-                userId,
-                formData,
-            }).unwrap();
+  // Функция для обработки загрузки изображений
+  const imageUploadHandler = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      // Вызов postImage для отправки файла на сервер
+      const response = await postImage(formData).unwrap();
 
-            // Проверка формата ответа
-            const filePath = (response.filePath || response.data?.filePath)?.replace(/\\/g, "/");
+      // Проверка формата ответа
+      const filePath = (response.filePath || response.data?.filePath)?.replace(
+        /\\/g,
+        "/"
+      );
 
-            if (!filePath) {
-                throw new Error("filePath не найден в ответе сервера");
-            }
+      if (!filePath) {
+        throw new Error("filePath не найден в ответе сервера");
+      }
 
-            console.log("Успешно загружено:", filePath);
+      console.log("Успешно загружено:", filePath);
 
-            return `${baseUrl}${filePath}`;
+      return `${baseUrl}${filePath}`;
+    } catch (error) {
+      console.error("Ошибка загрузки изображения:", error);
+      return Promise.reject(error);
+    }
+  };
 
-        } catch (error) {
-            console.error("Ошибка загрузки изображения:", error);
-            return Promise.reject(error);
-        }
-    };
-
-    
   return (
     <div className={classes.wrapper}>
       <div className={classes.editorContainer}>
@@ -79,7 +82,7 @@ export default function Mdxeditor({ editorState, setEditorState, userId, readOnl
           plugins={[
             linkPlugin(),
             linkDialogPlugin(),
-            imagePlugin({imageUploadHandler}),
+            imagePlugin({ imageUploadHandler }),
             tablePlugin(),
             listsPlugin(),
             toolbarPlugin({
@@ -107,5 +110,5 @@ export default function Mdxeditor({ editorState, setEditorState, userId, readOnl
         />
       </div>
     </div>
-  ); 
+  );
 }

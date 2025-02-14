@@ -4,10 +4,10 @@ import {
   useGetDirectoriesQuery,
   usePostDirectoriesMutation,
   useUpdateDirectoriesMutation,
-} from "@BLL/directoriesApi.js";
+} from "@hooks";
+import { usePolicyDirectoriesHook } from "../../../../hooks/usePolicyDirectoriesHook";
 
-export function useDirectories({instructionsActive, directivesActive}) {
-
+export function useDirectories({ instructionsActive, directivesActive }) {
   const [currentDirectoryName, setCurrentDirectoryName] = useState();
   const [currentDirectoryId, setCurrentDirectoryId] = useState();
 
@@ -18,16 +18,16 @@ export function useDirectories({instructionsActive, directivesActive}) {
   const [openModalDeleteDirectory, setOpenModalDeleteDirectory] =
     useState(false);
 
-   const [directoryName, setDirectoryName] = useState("");
+  const [directoryName, setDirectoryName] = useState("");
 
   const [directoriesSendBD, setDirectoriesSendBD] = useState([]);
   const [directoriesUpdate, setDirectoriesUpdate] = useState([]);
 
-    const [currentDirectoryInstructions, setCurrentDirectoryInstructions] =
-      useState([]);
-    const [currentDirectoryDirectives, setCurrentDirectoryDirectives] =
-      useState([]);
-
+  const [currentDirectoryInstructions, setCurrentDirectoryInstructions] =
+    useState([]);
+  const [currentDirectoryDirectives, setCurrentDirectoryDirectives] = useState(
+    []
+  );
 
   const [inputSearchModalDirectory, setInputSearchModalDirectory] =
     useState("");
@@ -40,75 +40,37 @@ export function useDirectories({instructionsActive, directivesActive}) {
     setFilterArraySearchModalInstructions,
   ] = useState([]);
 
-  const [
-    manualCreateSuccessResetDirectory,
-    setManualCreateSuccessResetDirectory,
-  ] = useState(true);
-  const [manualCreateErrorResetDirectory, setManualCreateErrorResetDirectory] =
-    useState(true);
-
-  const [
-    manualUpdateSuccessResetDirectory,
-    setManualUpdateSuccessResetDirectory,
-  ] = useState(true);
-  const [manualUpdateErrorResetDirectory, setManualUpdateErrorResetDirectory] =
-    useState(true);
-
-  const [
-    manualDeleteSuccessResetDirectory,
-    setManualDeleteSuccessResetDirectory,
-  ] = useState(true);
-  const [manualDeleteErrorResetDirectory, setManualDeleteErrorResetDirectory] =
-    useState(true);
-
   const {
-    folders = [],
-    foldersSort = [],
-    isLoadingGetPolicyDirectoriesMutation,
-    isErrorGetPolicyDirectoriesMutation,
-    isFetchingGetPolicyDirectoriesMutation,
-  } = useGetDirectoriesQuery(undefined, {
-    selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-      isLoadingGetPolicyDirectoriesMutation: isLoading,
-      isErrorGetPolicyDirectoriesMutation: isError,
-      isFetchingGetPolicyDirectoriesMutation: isFetching,
-      folders: data?.folders || [],
-      foldersSort: data?.foldersSort || [],
-    }),
-  });
+    folders,
+    foldersSort,
+    isLoadingGetPolicyDirectories,
+    isErrorGetPolicyDirectories,
+    isFetchingGetPolicyDirectories,
 
-  const [
-    postPolicyDirectories,
-    {
-      isLoading: isLoadingPostPolicyDirectoriesMutation,
-      isSuccess: isSuccessPostPolicyDirectoriesMutation,
-      isError: isErrorPostPolicyDirectoriesMutation,
-      error: ErrorPolicyDirectories,
-    },
-  ] = usePostDirectoriesMutation();
-
-  const [
-    updatePolicyDirectories,
-    {
-      isLoading: isLoadingUpdatePolicyDirectoriesMutation,
-      isSuccess: isSuccessUpdatePolicyDirectoriesMutation,
-      isError: isErrorUpdatePolicyDirectoriesMutation,
-      error: ErrorUpdateDirectories,
-    },
-  ] = useUpdateDirectoriesMutation();
-
-  const [
     deletePolicyDirectories,
-    {
-      isLoading: isLoadingDeletePolicyDirectoriesMutation,
-      isSuccess: isSuccessDeletePolicyDirectoriesMutation,
-      isError: isErrorDeletePolicyDirectoriesMutation,
-      error: ErrorDeleteDirectories,
-    },
-  ] = useDeleteDirectoriesMutation();
+    isLoadingDeletePolicyDirectoriesMutation,
+    isSuccessDeletePolicyDirectoriesMutation,
+    isErrorDeletePolicyDirectoriesMutation,
+    ErrorDeleteDirectories,
+    localIsResponseDeletePolicyDirectoriesMutation,
+
+    updatePolicyDirectories,
+    isLoadingUpdatePolicyDirectoriesMutation,
+    isSuccessUpdatePolicyDirectoriesMutation,
+    isErrorUpdatePolicyDirectoriesMutation,
+    ErrorUpdateDirectories,
+    localIsResponseUpdatePolicyDirectoriesMutation,
+
+    postDirectory,
+    isLoadingPostPoliciesDirectoriesMutation,
+    isSuccessPostPoliciesDirectoriesMutation,
+    isErrorPostPoliciesDirectoriesMutation,
+    ErrorPostPoliciesDirectoriesMutation,
+    localIsResponsePostPolicyDirectoriesMutation,
+  } = usePolicyDirectoriesHook();
 
   const saveFolder = async () => {
-    await postPolicyDirectories({
+    await postDirectory({
       directoryName: directoryName,
       policyToPolicyDirectories: directoriesSendBD,
     })
@@ -116,13 +78,10 @@ export function useDirectories({instructionsActive, directivesActive}) {
       .then(() => {
         setDirectoryName("");
         setDirectoriesSendBD([]);
-        setManualCreateSuccessResetDirectory(false);
-        setManualCreateErrorResetDirectory(false);
+
         setOpenModalCreateDirectory(false);
       })
       .catch((error) => {
-        setManualCreateSuccessResetDirectory(false);
-        setManualCreateErrorResetDirectory(false);
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
@@ -135,13 +94,9 @@ export function useDirectories({instructionsActive, directivesActive}) {
     })
       .unwrap()
       .then(() => {
-        setManualUpdateSuccessResetDirectory(false);
-        setManualUpdateErrorResetDirectory(false);
         exitUpdateDirectory();
       })
       .catch((error) => {
-        setManualUpdateSuccessResetDirectory(false);
-        setManualUpdateErrorResetDirectory(false);
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
@@ -154,12 +109,8 @@ export function useDirectories({instructionsActive, directivesActive}) {
       .then(() => {
         setOpenModalDeleteDirectory(false);
         setOpenModalUpdateDirectory(false);
-        setManualDeleteSuccessResetDirectory(false);
-        setManualDeleteErrorResetDirectory(false);
       })
       .catch((error) => {
-        setManualDeleteSuccessResetDirectory(false);
-        setManualDeleteErrorResetDirectory(false);
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
   };
@@ -174,8 +125,10 @@ export function useDirectories({instructionsActive, directivesActive}) {
   const updateDirectory = (element) => {
     const obj = folders?.filter((item) => item.id === element.id);
     if (obj?.length > 0) {
-      const { id, directoryName, policyToPolicyDirectories} = obj[0];
-      const policyIds = policyToPolicyDirectories.map((element) => element.policy.id);
+      const { id, directoryName, policyToPolicyDirectories } = obj[0];
+      const policyIds = policyToPolicyDirectories.map(
+        (element) => element.policy.id
+      );
       setDirectoriesUpdate(policyIds);
       const filterArray = instructionsActive
         .filter((item) => policyIds.includes(item.id))
@@ -342,12 +295,12 @@ export function useDirectories({instructionsActive, directivesActive}) {
     inputSearchModalDirectory,
     filterArraySearchModalDirectives,
     filterArraySearchModalInstructions,
-    foldersSort,
 
     //Получение папок
-    isLoadingGetPolicyDirectoriesMutation,
-    isErrorGetPolicyDirectoriesMutation,
-    isFetchingGetPolicyDirectoriesMutation,
+    foldersSort,
+    isLoadingGetPolicyDirectories,
+    isErrorGetPolicyDirectories,
+    isFetchingGetPolicyDirectories,
 
     //Создание папки
     openModalCreateDirectory,
@@ -357,15 +310,11 @@ export function useDirectories({instructionsActive, directivesActive}) {
 
     saveFolder,
 
-    manualCreateSuccessResetDirectory,
-    setManualCreateSuccessResetDirectory,
-    manualCreateErrorResetDirectory, 
-    setManualCreateErrorResetDirectory,
-
-    isLoadingPostPolicyDirectoriesMutation,
-    isSuccessPostPolicyDirectoriesMutation,
-    isErrorPostPolicyDirectoriesMutation,
-    ErrorPolicyDirectories,
+    isLoadingPostPoliciesDirectoriesMutation,
+    isSuccessPostPoliciesDirectoriesMutation,
+    isErrorPostPoliciesDirectoriesMutation,
+    ErrorPostPoliciesDirectoriesMutation,
+    localIsResponsePostPolicyDirectoriesMutation,
 
     //Обновление папки
     openModalUpdateDirectory,
@@ -375,15 +324,12 @@ export function useDirectories({instructionsActive, directivesActive}) {
 
     saveUpdateFolder,
 
-    manualUpdateSuccessResetDirectory,
-    setManualUpdateSuccessResetDirectory,
-    manualUpdateErrorResetDirectory, 
-    setManualUpdateErrorResetDirectory,
-
     isLoadingUpdatePolicyDirectoriesMutation,
     isSuccessUpdatePolicyDirectoriesMutation,
     isErrorUpdatePolicyDirectoriesMutation,
     ErrorUpdateDirectories,
+    localIsResponseUpdatePolicyDirectoriesMutation,
+
 
     //Удаление папки
     openModalDeleteDirectory,
@@ -391,15 +337,11 @@ export function useDirectories({instructionsActive, directivesActive}) {
 
     saveDeleteFolder,
 
-    manualDeleteSuccessResetDirectory,
-    setManualDeleteSuccessResetDirectory,
-    manualDeleteErrorResetDirectory, 
-    setManualDeleteErrorResetDirectory,
-
     isLoadingDeletePolicyDirectoriesMutation,
     isSuccessDeletePolicyDirectoriesMutation,
     isErrorDeletePolicyDirectoriesMutation,
     ErrorDeleteDirectories,
+    localIsResponseDeletePolicyDirectoriesMutation,
 
     handleInputChangeModalSearch,
     handleCheckboxChange,
