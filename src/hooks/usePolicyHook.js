@@ -1,4 +1,3 @@
-
 import {
   useGetPoliciesIdQuery,
   useGetPoliciesQuery,
@@ -73,7 +72,8 @@ export const usePolicyHook = ({
         isFetchingGetPoliciesId: isFetching,
       }),
       skip: !policyId,
-
+    }
+  );
 
   const [
     postPolicy,

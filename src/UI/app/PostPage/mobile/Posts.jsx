@@ -3,7 +3,7 @@ import classes from './Posts.module.css';
 import stats from './icon/_icon _ stats.svg'
 import attachpolicy from './icon/icon _ attach policy.svg'
 import { useNavigate, useParams } from "react-router-dom";
-import HandlerMutation from "@Custom/HandlerMutation.jsx";
+import HandlerMutation from "@Custom/mobileHandler/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import Header from "@Custom/CustomHeader/Header";
 import AttachPolicy from '@Custom/AttachPolicy/AttachPolicy.jsx';
@@ -51,7 +51,8 @@ const Posts = () => {
         isLoadingUpdatePostMutation,
         isSuccessUpdatePostMutation,
         isErrorUpdatePostMutation,
-        ErrorUpdatePostMutation
+        ErrorUpdatePostMutation,
+        localIsResponseUpdatePostMutation,
     } = usePostsHook(postId)
 
 
@@ -348,15 +349,24 @@ const Posts = () => {
 
                                                         </div>
                                                     </div>
-                                                    <HandlerMutation
-                                                        Loading={isLoadingUpdatePostMutation}
-                                                        Error={isErrorUpdatePostMutation && !manualErrorReset} // Учитываем ручной сброс
-                                                        Success={
-                                                            isSuccessUpdatePostMutation && !manualSuccessReset
-                                                        } // Учитываем ручной сброс
-                                                        textSuccess={"Пост обновлен"}
-                                                        textError={ErrorUpdatePostMutation?.data?.errors[0]?.errors}
-                                                    ></HandlerMutation>
+                                                  <HandlerMutation
+                                                                          Loading={isLoadingUpdatePostMutation}
+                                                                          Error={
+                                                                            isErrorUpdatePostMutation &&
+                                                                            localIsResponseUpdatePostMutation
+                                                                          }
+                                                                          Success={
+                                                                            isSuccessUpdatePostMutation &&
+                                                                            localIsResponseUpdatePostMutation
+                                                                          }
+                                                                          textSuccess={"Пост обновлен"}
+                                                                          textError={
+                                                                            ErrorUpdatePostMutation?.data?.errors?.[0]
+                                                                              ?.errors?.[0]
+                                                                              ? ErrorUpdatePostMutation.data.errors[0].errors[0]
+                                                                              : ErrorUpdatePostMutation?.data?.message
+                                                                          }
+                                                                        ></HandlerMutation>
                                                 </>
                                             ) : (
                                                 <> Выберите пост </>

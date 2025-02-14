@@ -68,7 +68,6 @@ const Posts = () => {
       Data.addPolicyId = policy;
     }
     await postPosts({
-      // addPolicyId: policy,
       postName: postName,
       divisionName: divisionName,
       product: product,
@@ -79,7 +78,7 @@ const Posts = () => {
       .unwrap()
       .then((result) => {
         setTimeout(() => {
-          navigate(`pomoshnik/Posts/${result?.id}`);
+          navigate(`/pomoshnik/Post/${result?.id}`);
         }, 1500);
       })
       .catch((error) => {
@@ -87,51 +86,9 @@ const Posts = () => {
       });
   };
 
-
-
-    useEffect(() => {
-        if (divisionName === '' && maxDivisionNumber)
-            setDivisionName(`Подразделение №${maxDivisionNumber}`)
-    }, [maxDivisionNumber])
-
-    useEffect(() => {
-        const foundPolicy = policies?.find(item => item.id === policy);
-        setCurrentPolicyName(foundPolicy ? foundPolicy?.policyName : null);
-    }, [policy]);
-
-
-    const savePosts = async () => {
-        const Data = {}
-        if (parentId) {
-            Data.parentId = parentId
-        }
-        if (worker) {
-            Data.responsibleUserId = worker
-        }
-        if (policy !== null) {
-            Data.addPolicyId = policy
-        }
-        await postPosts({
-            // addPolicyId: policy,
-            postName: postName,
-            divisionName: divisionName,
-            product: product,
-            purpose: purpose,
-            organizationId: reduxSelectedOrganizationId,
-            ...Data
-        })
-            .unwrap()
-            .then((result) => {
-                // reset();
-                navigate(`/pomoshnik/Post/${result?.id}`)
-            })
-            .catch((error) => {
-                console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
-            });
-    };
-
-    return (
-
+  return (
+    <>
+      <div className={classes.wrapper}>
         <>
           <Header title={"Создание нового поста"}>Личный помощник</Header>
         </>
@@ -210,7 +167,6 @@ const Posts = () => {
               </div>
             </div>
           </>
-
           <div className={classes.main}>
             {isErrorGetNew ? (
               <HandlerQeury Error={isErrorGetNew}></HandlerQeury>
