@@ -27,7 +27,8 @@ import {MobileMainWorkingPlan} from '@app'
 import {MobileControlPanel} from '@app'
 import {User} from '@app'
 import Socket from '../../UI/app/Socket/Socket.jsx';
-import { DialogContainer } from '../../UI/Custom/DialogContainer/DialogContainer.jsx';
+import { Message } from '../../UI/Custom/Message/Message.jsx';
+
 
 
 function MobileApp() {
@@ -39,7 +40,7 @@ function MobileApp() {
                 <Route path="/*"
                     element={
                         <Routes>
-                            <Route path="test" element={<DialogContainer/>} />
+                            <Route path="test" element={<Message/>} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"

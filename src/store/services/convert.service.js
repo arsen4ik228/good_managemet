@@ -21,7 +21,7 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         })
 
-        return result.filter(item => item)
+        return response //result.filter(item => item)
       },
 
       providesTags: result =>
