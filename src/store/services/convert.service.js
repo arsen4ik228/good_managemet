@@ -10,18 +10,37 @@ export const convertApi = apiSlice.injectEndpoints({
 
       transformResponse: response => {
         console.log('getConverts', response)
-        const arraiesPosts = []
-        const result = response?.map(item => {
-          const post = item.convertToPosts[0]?.post
 
-          if (post && !arraiesPosts.includes(post.id)) {
-            arraiesPosts.push(post.id)
+        const result = []
+        const convertIds = []
 
-            return post
+        response.forEach(item => {
+          if (convertIds.some(id => id === item.userIds[0])) { // для груповых чатов вынести условие в отдельную функцию 
+            const element = result.find(elem => elem.userIds === item.userIds[0])
+            element.converts.push({
+              convertId: item.convertId,
+              convertTheme: item.c_convertTheme
+            })
+          }
+          else {
+            convertIds.push(item.userIds[0])
+            result.push(
+              {
+                userIds: item.userIds[0],
+                postName: item.postNames[0], // для груповых чатов предусмотреть своё имя "<Тип конверта> <количество собеседников>"
+                employee: item.userFirstNames[0] + ' ' + item.userLastNames[0],
+                converts: [
+                  {
+                    convertId: item.convertId,
+                    convertTheme: item.c_convertTheme
+                  }
+                ]
+              }
+            )
           }
         })
-
-        return response //result.filter(item => item)
+        console.warn(result)
+        return result //result.filter(item => item)
       },
 
       providesTags: result =>

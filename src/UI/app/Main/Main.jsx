@@ -6,6 +6,7 @@ import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
 import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@slices";
+import { DialogContainer } from "@Custom/DialogContainer/DialogContainer";
 
 const MobileMain = () => {
   const dispatch = useDispatch();
@@ -105,8 +106,10 @@ const MobileMain = () => {
             </>
           ))}
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
-
-
+          
+          {allConverts?.map((item, index) => (
+            <DialogContainer elem={item}></DialogContainer>
+          ))}
         </div>
       </div>
       <footer className={classes.footer}>
