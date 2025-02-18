@@ -40,7 +40,7 @@ function MobileApp() {
                 <Route path="/*"
                     element={
                         <Routes>
-                            <Route path="test" element={<Message/>} />
+                            <Route path="test" element={<Socket/>} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"

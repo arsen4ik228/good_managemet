@@ -68,6 +68,10 @@ const MobileMain = () => {
       selectOrganization(organizations[0]?.id);
   }, [organizations]);
 
+  useEffect(() => {
+    
+  }, [])
+
   return (
     <div className={classes.wrapper}>
       <>
@@ -106,7 +110,7 @@ const MobileMain = () => {
             </>
           ))}
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
-          
+
           {allConverts?.map((item, index) => (
             <DialogContainer elem={item}></DialogContainer>
           ))}

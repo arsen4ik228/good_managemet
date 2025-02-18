@@ -13,7 +13,7 @@ export { useStrategyHook } from './useStrategyHook'
 export { useTargetsHook } from './useTargetsHook'
 export { useUserHook } from './useUserHook'
 export { default as usePanelToStatisticsHook } from './usePanelToStatisticsHook'
-
+export {useSocket} from './useSocket'
 export {  useModalCheckBoxStatistic } from './useModalCheckBoxStatistic'
 export { useModalSelectCheckBox } from './useModalSelectCheckBox'
 export { useMutationHandler } from './useMutationHandler'
