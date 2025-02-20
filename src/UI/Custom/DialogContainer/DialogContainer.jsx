@@ -4,7 +4,7 @@ import avatar from '@Custom/icon/icon _ GM.svg'
 import {baseUrl} from '@helpers/constants'
 
 export const DialogContainer = ({elem}) => {
-    console.log(elem)
+    // console.log(elem)
     return (
         <>
             <div className={classes.dialogContainer}>
@@ -18,7 +18,7 @@ export const DialogContainer = ({elem}) => {
                     </div>
                     <div className={classes.bage}>
                         <div>
-                            <span>3</span>
+                            <span>{elem?.unseenMessagesCount}</span>
                         </div>
                     </div>
                 </div>

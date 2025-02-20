@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./Main.module.css";
 import { useOrganizationHook, useConvertsHook } from "@hooks";
@@ -7,6 +7,7 @@ import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
 import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@slices";
 import { DialogContainer } from "@Custom/DialogContainer/DialogContainer";
+import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
 
 const MobileMain = () => {
   const dispatch = useDispatch();
@@ -15,8 +16,17 @@ const MobileMain = () => {
 
   const { organizations } = useOrganizationHook();
 
-  const { allConverts } = useConvertsHook()
+  const { allConverts, refetchGetConverts } = useConvertsHook()
   console.log(allConverts)
+
+  const eventNames = useMemo(() => ['convertCreationEvent', 'messageCountEvent'], []); // Мемоизация массива событий
+
+  const handleEventData = useCallback((eventName, data) => {
+    console.log(`Data from ${eventName}:`, data);
+  }, []); // Мемоизация callback
+
+  const socketResponse = useSocket(eventNames, handleEventData);
+  console.log(socketResponse)
 
   const selectOrganization = (id, reportDay) => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -69,8 +79,8 @@ const MobileMain = () => {
   }, [organizations]);
 
   useEffect(() => {
-    
-  }, [])
+    refetchGetConverts()
+  }, [socketResponse])
 
   return (
     <div className={classes.wrapper}>
@@ -109,10 +119,13 @@ const MobileMain = () => {
               )}
             </>
           ))}
+
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
 
           {allConverts?.map((item, index) => (
-            <DialogContainer elem={item}></DialogContainer>
+            <div onClick={() => navigate(`Chat/${item?.converts[0]?.convertId}`)}>
+              <DialogContainer key={index} elem={item}></DialogContainer>
+            </div>
           ))}
         </div>
       </div>
