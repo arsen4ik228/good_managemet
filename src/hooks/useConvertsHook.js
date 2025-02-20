@@ -1,21 +1,19 @@
-import { useGetConvertsQuery, usePostConvertMutation } from "../store/services/index"
+import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery } from "../store/services/index"
 
 
-export const useConvertsHook = () => {
+export const useConvertsHook = (convertId) => {
 
     const {
-        allConverts = [],
-        isErrorGetConverts,
-        isLoadingGetConverts,
-        isFetchingGetConvert,
-    } = useGetConvertsQuery(undefined, {
-        selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-            allConverts: data || [],
-            isErrorGetConverts: isError,
-            isLoadingGetConverts: isLoading,
-            isFetchingGetConvert: isFetching,
-        })
-    })
+        data: allConverts = [],
+        isLoading: isLoadingGetConverts,
+        isError: isErrorGetConverts,
+        isFetching: isFetchingGetConvert,
+        refetch: refetchGetConverts,
+    } = useGetConvertsQuery();
+
+    const {
+        data: currentConvert = {},
+    } = useGetConvertIdQuery({convertId})
 
     const [
         postConvert,
@@ -32,6 +30,9 @@ export const useConvertsHook = () => {
         isErrorGetConverts,
         isLoadingGetConverts,
         isFetchingGetConvert,
+        refetchGetConverts,
+
+        currentConvert,
         
         postConvert,
         isLoadingPostPoliciesMutation,
