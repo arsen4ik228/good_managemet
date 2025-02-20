@@ -26,7 +26,7 @@ import {Statistics} from '@app'
 import {MobileMainWorkingPlan} from '@app'
 import {MobileControlPanel} from '@app'
 import {User} from '@app'
-import Socket from '../../UI/app/Socket/Socket.jsx';
+import {DialogPage} from '@app';
 import { Message } from '../../UI/Custom/Message/Message.jsx';
 
 
@@ -40,7 +40,7 @@ function MobileApp() {
                 <Route path="/*"
                     element={
                         <Routes>
-                            <Route path="test" element={<Socket/>} />
+                            <Route path="Chat/:convertId" element={<DialogPage/>} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"

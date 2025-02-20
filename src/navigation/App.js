@@ -1,13 +1,16 @@
 import { isMobile } from "react-device-detect"; // Импортируем функцию для определения устройства
 import DesktopApp from "./desktopRouting/DesktopApp";
 import MobileApp from "./mobileRouting/MobileApp";
+import { SocketProvider } from "@helpers/SocketContext.js";
 
 
 function App() {
 
   return (
     <>
-      {isMobile ? <MobileApp/> : <DesktopApp />}
+      <SocketProvider>
+        {isMobile ? <MobileApp /> : <DesktopApp />}
+      </SocketProvider>
     </>
   );
 }
