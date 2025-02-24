@@ -16,22 +16,20 @@ export default function Content() {
       : pageComponents[group];
 
   return (
-    <>
-      <React.Suspense fallback={<HandlerQeury Loading={true}></HandlerQeury>}>
-        {Component ? (
-          <>
-            <Panel />
-            <div className={classes.content}>
-              <Chat />
-              <Component />
-            </div>
-          </>
-        ) : (
-          <div className={classes.notFound}>
-            <NotFound />
+    <React.Suspense fallback={<HandlerQeury Loading={true}></HandlerQeury>}>
+      {Component ? (
+        <>
+          <Panel />
+          <div className={classes.content}>
+            <Chat />
+            <Component />
           </div>
-        )}
-      </React.Suspense>
-    </>
+        </>
+      ) : (
+        <div className={classes.notFound}>
+          <NotFound />
+        </div>
+      )}
+    </React.Suspense>
   );
 }

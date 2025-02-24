@@ -26,6 +26,7 @@ import {Statistics} from '@app'
 import {MobileMainWorkingPlan} from '@app'
 import {MobileControlPanel} from '@app'
 import {User} from '@app'
+import {CompanySchema} from '@app'
 import Socket from '../../UI/app/Socket/Socket.jsx';
 import { DialogContainer } from '../../UI/Custom/DialogContainer/DialogContainer.jsx';
 
@@ -79,6 +80,7 @@ function MobileApp() {
 
                                         <Route path='WorkingPlan' element={<MobileMainWorkingPlan />} />
                                         <Route path='user' element={<User />} />
+                                        <Route path='companySchema' element={<CompanySchema />} />
                                        
                                     </Routes>
                                 }

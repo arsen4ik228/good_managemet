@@ -35,3 +35,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.customForm{
+ margin: 0 !important; /* Убираем внешние отступы */
+  padding: 0 !important; /* Убираем внутренние отступы */
+}

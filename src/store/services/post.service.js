@@ -5,8 +5,8 @@ export const postApi = apiSlice.injectEndpoints({
 
   endpoints: (build) => ({
     getPosts: build.query({
-      query: ({organizationId}) => ({
-        url: `posts/${organizationId}`,
+      query: ({organizationId, structure = false}) => ({
+        url: `posts/${organizationId}/?structure=${structure}`,
       }),
       providesTags: (result) =>
         Array.isArray(result)
