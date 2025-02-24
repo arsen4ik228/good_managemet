@@ -1,0 +1,25 @@
+
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: "'Montserrat', sans-serif'";
+}
+
+
+.body{
+    flex: 1 0 auto;
+}
+
+
+
+
+.wrapperBlock{
+    width: 100%;
+    max-width: 75vw;
+    
+    display: flex;
+    column-gap: 10px;
+
+    overflow-x: auto; 
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import classes from './Chat.module.css';
 import backRow from './icon/icon _ back.svg'
 import star from './icon/icon _ star.svg'
+import companySchema from './icon/list _ schema.svg'
 import stats from './icon/_icon _ stats.svg'
 import listView from './icon/icon _ list view.svg'
 import post from './icon/icon _ post.svg'
@@ -24,6 +25,7 @@ const Chat = () => {
         { id: '6', icon: policy, text: 'Политика', link: 'Policy' },
         { id: '7', icon: star, text: 'Цели', link: 'Goal' },
         { id: '8', icon: star, text: 'Рабочий план', link: 'WorkingPlan' },
+        { id: '9', icon: companySchema, text: 'Схема компании', link: 'companySchema' },
     ]
 
     const navigate = useNavigate()

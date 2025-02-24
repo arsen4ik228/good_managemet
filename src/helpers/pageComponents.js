@@ -16,11 +16,13 @@ const ProgramNew = React.lazy(() => import("@app/ProjectPage/Program/Create/Prog
 const Post = React.lazy(() => import("@app/PostPage/Post"));
 const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
 const WorkingPlan = React.lazy(() => import("@app/WorkingPlanPage/MainWorkingPlan"))
+const CompanySchema = React.lazy(() => import("@app/CompanySchema/desktop/CompanySchema"))
 
 const pageComponents = {
   pomoshnik: {
     controlPanel: ControlPanel,
     user: User,
+    companySchema: CompanySchema,
     
     start: Pomoshnik,
     goal: Goal,

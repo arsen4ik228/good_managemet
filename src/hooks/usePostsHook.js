@@ -9,7 +9,7 @@ import {
 import useGetReduxOrganization from "./useGetReduxOrganization";
 import { useMutationHandler } from "./useMutationHandler";
 
-export const usePostsHook = (postId) => {
+export const usePostsHook = ({postId = null, structure = false} = {}) => {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
   const {
@@ -17,7 +17,7 @@ export const usePostsHook = (postId) => {
     isLoadingGetPosts,
     isErrorGetPosts,
   } = useGetPostsQuery(
-    { organizationId: reduxSelectedOrganizationId },
+    { organizationId: reduxSelectedOrganizationId, structure },
     {
       selectFromResult: ({ data, isLoading, isError }) => ({
         allPosts: data || [],
