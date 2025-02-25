@@ -1,5 +1,5 @@
-import { map } from "@mdxeditor/editor";
 import apiSlice from "./api";
+import { userId } from "@helpers/constants";
 
 export const convertApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
@@ -80,16 +80,24 @@ export const convertApi = apiSlice.injectEndpoints({
 
       //   return result
       // },
-      
+
       transformResponse: response => {
         console.log('getConverts', response);
 
         const result = [];
-        const postIdSet = new Set(); 
-        const dialogueMap = new Map(); 
+        const postIdSet = new Set();
+        const dialogueMap = new Map();
 
-        // Общая функция для добавления конверта в диалог
         const addConvertToDialogue = (dialogue, item) => {
+          // Складываем unseenMessagesCount
+          dialogue.unseenMessagesCount += parseInt(item.unseenMessagesCount) || 0;
+
+          // Обновляем latestMessageCreatedAt, если новая дата больше
+          if (item.latestMessageCreatedAt > dialogue.latestMessageCreatedAt) {
+            dialogue.latestMessageCreatedAt = item.latestMessageCreatedAt;
+          }
+
+          // Добавляем конверт
           dialogue.converts.push({
             convertId: item.convertId,
             convertTheme: item.c_convertTheme,
@@ -112,6 +120,8 @@ export const convertApi = apiSlice.injectEndpoints({
               postId,
               postName: postAndUser.postName,
               employee: `${postAndUser.user.firstName} ${postAndUser.user.lastName}`,
+              unseenMessagesCount: parseInt(item.unseenMessagesCount) || 0,
+              latestMessageCreatedAt: item.latestMessageCreatedAt,
               converts: [{
                 convertId: item.convertId,
                 convertTheme: item.c_convertTheme,
@@ -135,6 +145,8 @@ export const convertApi = apiSlice.injectEndpoints({
               stringPostIds,
               postName: 'Согласование',
               employee: `Участников: ${item.postsAndUsers.length}`,
+              unseenMessagesCount: parseInt(item.unseenMessagesCount) || 0,
+              latestMessageCreatedAt: item.latestMessageCreatedAt,
               converts: [{
                 convertId: item.convertId,
                 convertTheme: item.c_convertTheme,
@@ -160,9 +172,84 @@ export const convertApi = apiSlice.injectEndpoints({
       },
 
       providesTags: result =>
-        result?.currentGoal
+        result
           ? [{ type: "Convert", id: result.id }, "Convert"]
           : ["Convert"],
+    }),
+
+    getConvertId: build.query({
+      query: ({ convertId }) => ({
+        url: `converts/${convertId}`
+      }),
+
+      transformResponse: response => {
+        console.log('getConvertId', response);
+
+        const messages = response?.messages
+        const convertToPosts = response?.convertToPosts
+
+        const transformMessages = (messages) => {
+          // Сортируем сообщения по дате создания
+          const sortedMessages = [...messages].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+          // Проходим по каждому сообщению и модифицируем его
+          const transformedMessages = sortedMessages.map((item) => {
+            // Проверяем условие
+            if (item?.sender?.user?.id === userId) {
+              // Удаляем свойство sender и добавляем userMessage: true
+              const { sender, ...rest } = item; // Удаляем sender
+              return { ...rest, userMessage: true }; // Добавляем userMessage: true
+            } else {
+              // Добавляем userMessage: false
+              const { sender, ...rest } = item;
+              return { ...rest, userMessage: false };
+            }
+          });
+
+          return transformedMessages;
+        };
+
+      //   const selectSenderPostId = (convertToPosts, userId) => {
+      //     console.warn(userId);
+      
+      //     const senderPost = convertToPosts.find(item => item.post.user.id === userId);
+      //     return senderPost ? senderPost.post.id : null;
+      // };
+      const selectSenderPostId = (convertToPosts, userId) => {
+        console.warn(userId);
+    
+        const senderPost = convertToPosts.find(item => item.post.user.id === userId);
+        
+        if (senderPost) {
+            return {
+                id: senderPost.post.id,
+                postName: senderPost.post.postName,
+            };
+        } else {
+            return {
+                id: null,
+                postName: null,
+            };
+        }
+    };
+        // Модифицируем сообщения
+        const transformedMessages = transformMessages(messages);
+
+        const { id: senderPostId, postName: senderPostName } = selectSenderPostId(convertToPosts, userId);
+        // Возвращаем новый объект с модифицированными сообщениями
+        return {
+          currentConvert: response,
+          messages: transformedMessages,
+          senderPostId: senderPostId,
+          senderPostName: senderPostName,
+        };
+      },
+
+      providesTags: result =>
+        result
+          ? [{ type: "Convert", id: result.id }, "Convert"]
+          : ["Convert"],
+
     }),
 
     postConvert: build.mutation({
@@ -175,7 +262,17 @@ export const convertApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Convert"],
     }),
+
+    sendMessage: build.mutation({
+      query: ({convertId, ...body}) => ({
+        url: `converts/${convertId}/sendMessage`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (result, err, arg) => [{ type: 'Convert', id: arg.convertId }],
+    }),
+
   }),
 });
 
-export const { useGetConvertsQuery, usePostConvertMutation } = convertApi;
+export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } = convertApi;
