@@ -1,31 +1,17 @@
 import React from 'react'
 import classes from './Message.module.css'
 
-export const Message = () => {
+export const Message = ({ children, userMessage }) => {
 
     return (
         <>
-            <div className={classes.wrapper}>
-                <div className={classes.messageContainer}>
+            <div className={classes.wrapper} style={{ justifyContent: userMessage ? 'flex-end' : 'flex-start' }}>
+                <div className={userMessage ? classes.userMessageContainer : classes.messageContainer}>
                     <div className={classes.contentMessage}>
-        хорошо
+                        {children}
                     </div>
                 </div>
             </div>
-            {/* <div className={classes.wrapper}>
-
-
-                <div className={classes.messageContainer}>
-                <div className={classes.invisibleSection}>
-                    <div></div>
-                    <div></div>
-                </div>
-                    <div className={classes.contentMessage}>
-                        cscscscsscsbbbbbbbb
-                    </div>
-                </div>
-            </div> */}
-
         </>
     )
 }

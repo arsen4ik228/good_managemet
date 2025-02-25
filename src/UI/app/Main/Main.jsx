@@ -26,7 +26,7 @@ const MobileMain = () => {
   }, []); // Мемоизация callback
 
   const socketResponse = useSocket(eventNames, handleEventData);
-  console.log(socketResponse)
+  // console.log(socketResponse)
 
   const selectOrganization = (id, reportDay) => {
     if (typeof window !== "undefined" && window.localStorage) {

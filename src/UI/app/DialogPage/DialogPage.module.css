@@ -1,0 +1,19 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.body{
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: auto;
+    flex: 1;
+    
+    background-color: #F0F0F0;
+}
+
+.footer{
+
+}

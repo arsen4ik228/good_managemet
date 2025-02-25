@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import classes from './MainWorkingPlan.module.css'
-import InputTextContainer from './ContainerForInputText/InputTextContainer'
+import Input from './Input'
 import Header from '@Custom/CustomHeader/Header'
 import Task from './TaskContainer/Task'
 import { useTargetsHook } from '@hooks'
@@ -108,10 +108,10 @@ export default function MobileMainWorkingPlan() {
                     </div>
 
                 </div>
-                <InputTextContainer
+                <Input
                     userPosts={userPosts}
                 >
-                </InputTextContainer>
+                </Input>
             </div>
         </>
     )
