@@ -74,3 +74,21 @@ export const useSocket = (eventNames, callback) => {
 
     return response;
 };
+
+export const useEmitSocket = (eventName, data) => {
+    const { socket, isConnected } = useContext(SocketContext);
+
+    useEffect(() => {
+        if (!socket || !isConnected) {
+            console.error('Socket is not connected');
+            return;
+        }
+
+        // Отправляем событие на сервер с данными
+        socket.emit(eventName, data);
+        console.log(`${eventName} event sent with data:`, data);
+
+        // Очистка не требуется, так как мы только отправляем событие
+        return () => {};
+    }, [socket, isConnected, eventName, data]);
+};
