@@ -5,7 +5,7 @@ import { useOrganizationHook, useConvertsHook } from "@hooks";
 import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
-import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@slices";
+import { setSelectedOrganizationId, setSelectedOrganizationReportDay, setSelectedItem } from "@slices";
 import { DialogContainer } from "@Custom/DialogContainer/DialogContainer";
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
 
@@ -73,6 +73,12 @@ const MobileMain = () => {
     navigate("/pomoshnik/user");
   };
 
+  const handleItemClick = (item) => {
+    //dispatch(setSelectedItem(item));
+
+    navigate(`/Chat/${item.userIds}`)
+  } 
+
   useEffect(() => {
     if (organizations.length > 0 && !selectedOrg)
       selectOrganization(organizations[0]?.id);
@@ -123,8 +129,10 @@ const MobileMain = () => {
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
 
           {allConverts?.map((item, index) => (
-            <div onClick={() => navigate(`Chat/${item?.converts[0]?.convertId}`)}>
-              <DialogContainer key={index} elem={item}></DialogContainer>
+            <div onClick={() => handleItemClick(item)}>
+             <React.Fragment  key={index} >
+              <DialogContainer elem={item}></DialogContainer>
+             </React.Fragment>
             </div>
           ))}
         </div>
@@ -134,7 +142,7 @@ const MobileMain = () => {
         <NavigationBar></NavigationBar>
 
       </footer>
-    </div>
+    </div >
   );
 };
 

@@ -1,33 +1,34 @@
 import './MobileApp.css';
 import React from 'react';
 import { Route, Routes, Navigate } from "react-router-dom";
-import {AuthorizationPage} from '@app'
-import {MobileMain} from '@app'
-import {HelperChat} from '@app'
-import {MainPolicy} from '@app'
-import {MobilePolicy} from '@app'
-import {CreatePolicyDirectory} from '@app'
-import {EditPolicyDirectories} from '@app'
-import {MainPost} from '@app'
-import {Posts} from '@app'
-import {NewPosts} from '@app'
-import {AttachStatistics} from '@app'
-import {MainStrategy} from '@app'
-import {MobileStrategy} from '@app'
-import {MobileGoal} from '@app'
-import {MobileObjective} from '@app'
-import {Projects} from '@app'
-import {MainProject} from '@app'
-import {NewProject} from '@app'
-import {Programs} from '@app'
-import {ProjectArchive} from '@app'
-import {MainStatistics} from '@app'
-import {Statistics} from '@app'
-import {MobileMainWorkingPlan} from '@app'
-import {MobileControlPanel} from '@app'
-import {User} from '@app'
-import {DialogPage} from '@app';
+import { AuthorizationPage } from '@app'
+import { MobileMain } from '@app'
+import { HelperChat } from '@app'
+import { MainPolicy } from '@app'
+import { MobilePolicy } from '@app'
+import { CreatePolicyDirectory } from '@app'
+import { EditPolicyDirectories } from '@app'
+import { MainPost } from '@app'
+import { Posts } from '@app'
+import { NewPosts } from '@app'
+import { AttachStatistics } from '@app'
+import { MainStrategy } from '@app'
+import { MobileStrategy } from '@app'
+import { MobileGoal } from '@app'
+import { MobileObjective } from '@app'
+import { Projects } from '@app'
+import { MainProject } from '@app'
+import { NewProject } from '@app'
+import { Programs } from '@app'
+import { ProjectArchive } from '@app'
+import { MainStatistics } from '@app'
+import { Statistics } from '@app'
+import { MobileMainWorkingPlan } from '@app'
+import { MobileControlPanel } from '@app'
+import { User } from '@app'
+import { DialogPage } from '@app';
 import { Message } from '../../UI/Custom/Message/Message.jsx';
+import { ConvertsPage } from '@app';
 
 
 
@@ -40,7 +41,8 @@ function MobileApp() {
                 <Route path="/*"
                     element={
                         <Routes>
-                            <Route path="Chat/:convertId" element={<DialogPage/>} />
+                            <Route path="Chat/:userIds" element={<ConvertsPage />} />
+                            <Route path="Chat/:userIds/:convertId" element={<DialogPage />} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"
@@ -80,13 +82,10 @@ function MobileApp() {
 
                                         <Route path='WorkingPlan' element={<MobileMainWorkingPlan />} />
                                         <Route path='user' element={<User />} />
-                                       
+
                                     </Routes>
                                 }
                             />
-
-
-
                         </Routes>
                     }>
                 </Route>

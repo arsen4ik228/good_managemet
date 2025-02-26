@@ -7,6 +7,7 @@ import postReducer from './slices/post.slice'
 import programReducer from './slices/program.slice'
 import projectReducer from './slices/project.slice'
 import userReducer from './slices/user.slice'
+import selectedUserConversReducer from './slices/selectedUserConvers.slice'
 import apiSlice from './services/api'
 
 //? Actions
@@ -15,6 +16,7 @@ export * from './slices/post.slice'
 export * from './slices/program.slice'
 export * from './slices/project.slice'
 export * from './slices/user.slice'
+export * from './slices/selectedUserConvers.slice'
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +25,7 @@ export const store = configureStore({
     program: programReducer,
     project: projectReducer,
     user: userReducer,
+    selectedUserConvers: selectedUserConversReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware),

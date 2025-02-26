@@ -100,7 +100,7 @@ export const convertApi = apiSlice.injectEndpoints({
           // Добавляем конверт
           dialogue.converts.push({
             convertId: item.convertId,
-            convertTheme: item.c_convertTheme,
+            convertTheme: item.convertTheme,
           });
         };
 
@@ -124,7 +124,7 @@ export const convertApi = apiSlice.injectEndpoints({
               latestMessageCreatedAt: item.latestMessageCreatedAt,
               converts: [{
                 convertId: item.convertId,
-                convertTheme: item.c_convertTheme,
+                convertTheme: item.convertTheme,
               }],
             };
             dialogueMap.set(postId, newDialogue);
@@ -149,7 +149,7 @@ export const convertApi = apiSlice.injectEndpoints({
               latestMessageCreatedAt: item.latestMessageCreatedAt,
               converts: [{
                 convertId: item.convertId,
-                convertTheme: item.c_convertTheme,
+                convertTheme: item.convertTheme,
               }],
             };
             dialogueMap.set(stringPostIds, newDialogue);

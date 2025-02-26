@@ -1,27 +1,24 @@
-import { useEffect, useState } from 'react';
-import {
-    createConnectionSocket,
-    subscribeToConvertCreationEvent,
-    disconnectSocket,
-} from '@helpers/socket.js';
+import { useEffect, useState, useRef } from 'react';
+import { createConnectionSocket, disconnectSocket } from '@helpers/socket.js';
 
-export const useSocket = (eventName, callback) => {
-    const [response, setResponse] = useState(null);
+export const useSocket = (eventNames, callback) => {
+    const [response, setResponse] = useState({});
+    const socketRef = useRef(null);
 
     useEffect(() => {
-        let socket;
-
         const initializeSocket = async () => {
-            try {
-                socket = await createConnectionSocket();
+            if (socketRef.current) return;
 
-                // Подписываемся на указанное событие
-                console.log('subscribe to:', eventName)
-                socket.on(eventName, (data) => {
-                    setResponse(data); // Обновляем состояние
-                    if (callback) {
-                        callback(data); // Вызываем переданный callback
-                    }
+            try {
+                socketRef.current = await createConnectionSocket();
+                eventNames.forEach((eventName) => {
+                    console.log('subscribe to', eventName);
+                    socketRef.current.on(eventName, (data) => {
+                        setResponse((prev) => ({ ...prev, [eventName]: data }));
+                        if (callback) {
+                            callback(eventName, data);
+                        }
+                    });
                 });
             } catch (error) {
                 console.error('Failed to connect to socket:', error);
@@ -31,13 +28,16 @@ export const useSocket = (eventName, callback) => {
         initializeSocket();
 
         return () => {
-            if (socket) {
-                socket.off(eventName); 
-                console.log('off subscribtion: ', eventName)
-                disconnectSocket();
+            if (socketRef.current) {
+                eventNames.forEach((eventName) => {
+                    console.log('unsubscribe from', eventName);
+                    socketRef.current.off(eventName);
+                });
+                disconnectSocket(socketRef.current);
+                socketRef.current = null;
             }
         };
-    }, [eventName, callback]); 
+    }, [eventNames, callback]);
 
     return response;
 };
