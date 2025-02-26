@@ -84,6 +84,11 @@ export const useEmitSocket = (eventName, data) => {
             return;
         }
 
+        if (!eventName || !data) {
+            console.error('data is undefined')
+            return
+        }
+        
         // Отправляем событие на сервер с данными
         socket.emit(eventName, data);
         console.log(`${eventName} event sent with data:`, data);
