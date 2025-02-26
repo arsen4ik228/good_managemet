@@ -83,7 +83,7 @@ export default function Post() {
     isErrorUpdatePostMutation,
     ErrorUpdatePostMutation,
     localIsResponseUpdatePostMutation,
-  } = usePostsHook(selectedPostId);
+  } = usePostsHook({postId: selectedPostId});
 
   const {
     postStatistics,

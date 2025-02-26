@@ -79,7 +79,7 @@ const Posts = () => {
       .then((result) => {
         setTimeout(() => {
           navigate(`/pomoshnik/Post/${result?.id}`);
-        }, 1500);
+        }, 2000);
       })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку

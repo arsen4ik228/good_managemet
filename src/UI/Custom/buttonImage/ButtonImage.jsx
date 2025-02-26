@@ -1,15 +1,25 @@
 import React from "react";
 import classes from "./ButtonImage.module.css";
+import { Button, ConfigProvider, Flex, Tooltip } from 'antd';
 
-export default function ButtonImage({name, icon, onClick}) {
+export default function ButtonImage({ name, icon, onClick }) {
   return (
-    <div className={classes.wrapper} data-name={name}>
+    <Tooltip placement="bottom" title={name}>
       <img
         src={icon}
         alt="icon"
         className={classes.icon}
         onClick={() => onClick()}
       />
-    </div>
+    </Tooltip>
+
+    // <div className={classes.wrapper} data-name={name}>
+    //   <img
+    //     src={icon}
+    //     alt="icon"
+    //     className={classes.icon}
+    //     onClick={() => onClick()}
+    //   />
+    // </div>
   );
 }

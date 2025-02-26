@@ -10,7 +10,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
         isLoadingGetUnderPosts,
         isErrorGetUnderPosts,
         isFetchingGetUnderPosts,
-    } = usePostsHook(selectedPost)
+    } = usePostsHook({postId: selectedPost})
 
     const [selectedReceiverPost, setSelectedRecieverPost] = useState()
 

@@ -25,4 +25,5 @@ export { default as AuthorizationPage } from './Authorization/Main'
 export { default as User } from './UserPage/mobile/User'
 export { DialogPage } from './DialogPage/DialogPage.jsx'
 export { ConvertsPage } from './ConvertsPage//ConvertsPage.jsx'
+export { default as CompanySchema } from './CompanySchema/mobile/CompanySchema'
 
