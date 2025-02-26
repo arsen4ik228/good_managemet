@@ -16,15 +16,19 @@ export const useConvertsHook = (convertId) => {
         messages = [],
         senderPostId,
         senderPostName,
+        refetch: refetchGetConvertId,
+        isLoadingGetConvertId
     } = useGetConvertIdQuery({ convertId }, {
-        selectFromResult: ({ data, isError, isFetching, isLoading }) => ({
+        selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
             currentConvert: data?.currentConvert || {},
             messages: data?.messages || [],
             senderPostId: data?.senderPostId || null,
-            senderPostName: data?.senderPostName || null
+            senderPostName: data?.senderPostName || null,
+            isLoadingGetConvertId : isLoading,
+            refetch, // Добавляем refetch в результат
         }),
         skip: !convertId
-    })
+    });
 
     const [
         postConvert,
@@ -51,6 +55,8 @@ export const useConvertsHook = (convertId) => {
         messages,
         senderPostId,
         senderPostName,
+        refetchGetConvertId,
+        isLoadingGetConvertId,
 
         sendMessage,
 

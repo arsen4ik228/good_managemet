@@ -11,9 +11,9 @@ export const DialogPage = () => {
     const { convertId } = useParams()
 
 
-    const { currentConvert, messages, senderPostId, senderPostName, sendMessage } = useConvertsHook(convertId)
+    const { currentConvert, messages, senderPostId, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId)
 
-    console.log(currentConvert, messages, senderPostId)
+    console.log(currentConvert, messages, senderPostId, refetchGetConvertId)
 
 
 
@@ -41,6 +41,8 @@ export const DialogPage = () => {
                         sendMessage={sendMessage}
                         senderPostId={senderPostId}
                         senderPostName={senderPostName}
+                        refetchMessages={refetchGetConvertId}
+                        isLoadingGetConvertId={isLoadingGetConvertId}
                     />
                 </footer>
             </div>

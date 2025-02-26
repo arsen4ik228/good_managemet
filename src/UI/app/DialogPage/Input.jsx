@@ -5,7 +5,7 @@ import { deleteDraft, loadDraft, saveDraft } from '@helpers/indexedDB';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 
 
-const Input = ({ convertId, sendMessage, senderPostId, senderPostName }) => {
+const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMessages, isLoadingGetConvertId }) => {
     const [selectedPost, setSelectedPost] = useState();
     const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
     const [deadlineDate, setDeadlineDate] = useState(new Date().toISOString().split('T')[0]);
@@ -43,10 +43,16 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName }) => {
 
         deleteDraft('DraftDB', 'drafts', idTextArea)
 
+        const Data = {}
+        
+        if (files)
+            Data.attachmentIds = files.map(item => item.id)
+
         await sendMessage({
             convertId,
             content: contentInput,
             postId: senderPostId,
+            ...Data,
         })
             .unwrap()
             .then(() => reset())
@@ -71,7 +77,14 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName }) => {
         saveDraft('DraftDB', 'drafts', idTextArea, contentInput);
     }, [contentInput]);
 
+    useEffect(() => {
+        if (socketResponse && isLoadingGetConvertId) {
+            console.log('refetch')
+            refetchMessages()
+        }
+    }, [socketResponse])
 
+    console.log(files)
     return (
         <>
             <InputTextContainer
@@ -94,6 +107,7 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName }) => {
                 setUnpinFiles={setUnpinFiles}
                 sendClick={send}
                 idTextArea={idTextArea}
+                senderPostId={senderPostId}
                 senderPostName={senderPostName}
             />
 

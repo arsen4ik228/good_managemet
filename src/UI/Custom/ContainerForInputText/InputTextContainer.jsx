@@ -29,6 +29,7 @@ export default function InputTextContainer({
     idTextarea,
     sendClick,
     shareClick,
+    senderPostId,
     senderPostName
 }) {
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
