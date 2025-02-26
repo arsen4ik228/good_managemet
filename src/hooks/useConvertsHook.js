@@ -1,21 +1,34 @@
-import { useGetConvertsQuery, usePostConvertMutation } from "../store/services/index"
+import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } from "../store/services/index"
 
 
-export const useConvertsHook = () => {
+export const useConvertsHook = (convertId) => {
 
     const {
-        allConverts = [],
-        isErrorGetConverts,
-        isLoadingGetConverts,
-        isFetchingGetConvert,
-    } = useGetConvertsQuery(undefined, {
-        selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-            allConverts: data || [],
-            isErrorGetConverts: isError,
-            isLoadingGetConverts: isLoading,
-            isFetchingGetConvert: isFetching,
-        })
-    })
+        data: allConverts = [],
+        isLoading: isLoadingGetConverts,
+        isError: isErrorGetConverts,
+        isFetching: isFetchingGetConvert,
+        refetch: refetchGetConverts,
+    } = useGetConvertsQuery();
+
+    const {
+        currentConvert = {},
+        messages = [],
+        senderPostId,
+        senderPostName,
+        refetch: refetchGetConvertId,
+        isLoadingGetConvertId
+    } = useGetConvertIdQuery({ convertId }, {
+        selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
+            currentConvert: data?.currentConvert || {},
+            messages: data?.messages || [],
+            senderPostId: data?.senderPostId || null,
+            senderPostName: data?.senderPostName || null,
+            isLoadingGetConvertId : isLoading,
+            refetch, // Добавляем refetch в результат
+        }),
+        skip: !convertId
+    });
 
     const [
         postConvert,
@@ -27,12 +40,26 @@ export const useConvertsHook = () => {
         }
     ] = usePostConvertMutation()
 
+    const [
+        sendMessage,
+    ] = useSendMessageMutation()
+
     return {
         allConverts,
         isErrorGetConverts,
         isLoadingGetConverts,
         isFetchingGetConvert,
-        
+        refetchGetConverts,
+
+        currentConvert,
+        messages,
+        senderPostId,
+        senderPostName,
+        refetchGetConvertId,
+        isLoadingGetConvertId,
+
+        sendMessage,
+
         postConvert,
         isLoadingPostPoliciesMutation,
         isSuccessPostPoliciesMutation,

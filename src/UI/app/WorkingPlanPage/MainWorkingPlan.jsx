@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import classes from './MainWorkingPlam.module.css'
 import Headers from "@Custom/Headers/Headers";
 import Task from '@app/WorkingPlanPage/mobile/TaskContainer/Task';
-import InputTextContainer from '@app/WorkingPlanPage/mobile/ContainerForInputText/InputTextContainer';
+import InputTextContainer from '@Custom/ContainerForInputText/InputTextContainer';
 import { useTargetsHook } from '@hooks';
 
 export default function MainWorkingPlan() {

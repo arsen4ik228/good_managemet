@@ -4,6 +4,7 @@ import backRow from "../icon/icon _ back.svg";
 import add from "../icon/icon _ add _ blue.svg";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from '../icon/messendger _ avatar.svg'
+import {baseUrl} from '@helpers/constants'
 
 function Header({
     // Dialod name
@@ -93,7 +94,7 @@ function Header({
                             className={classes.headElem}>
                             {title && (
                                 <div className={classes.userAvatar}>
-                                    <img src={avatar || defaultAvatar} alt="avatar" />
+                                    <img src={avatar ? `${baseUrl}${avatar}` : defaultAvatar} alt="avatar" />
                                 </div>
                             )}
                             <div

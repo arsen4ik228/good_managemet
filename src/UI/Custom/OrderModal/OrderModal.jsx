@@ -23,7 +23,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
         setSelectedRecieverPost(value)
         setReciverPost(value)
     }
-
+    console.log(selectedPost, underPosts)
     return (
         <ModalContainer
             buttonText={'Отправить'}
@@ -43,7 +43,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
                     <div className={classes.right}>
                         {underPosts?.map((item, index) => (
                             <div key={index} onClick={() => selectPost(item.id)}>
-                                <input type="radio" checked={item.id === selectedPost} />
+                                <input type="radio" checked={item.id === selectedReceiverPost} />
                                 <span>{item.postName}</span>
                             </div>
                         ))}

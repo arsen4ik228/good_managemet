@@ -61,7 +61,7 @@
         };
     };
 
-    export const deleteDraft = async (dbName, storeName, idTextarea,) => {
+    export const deleteDraft = async (dbName, storeName, idTextarea) => {
         const db = await openDB(dbName, storeName);
         const transaction = db.transaction(storeName, 'readwrite');
         const store = transaction.objectStore(storeName);
