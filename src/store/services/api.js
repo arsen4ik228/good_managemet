@@ -23,6 +23,7 @@ const apiSlice = createApi({
     'Strategy',
     'Target',
     'User',
+    'Message'
   ],
   endpoints: builder => ({}),
 })
