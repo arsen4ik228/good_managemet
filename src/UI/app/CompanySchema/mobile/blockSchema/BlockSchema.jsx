@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import classes from "./BlockSchema.module.css";
-import colorPicker from "@image/colorPicker.svg";
+import edit from "@image/edit.svg";
 import { Popover } from "antd";
 import { Collapse } from "antd";
 
@@ -101,31 +101,122 @@ const styles = {
   },
 };
 
+
+
 const PodSchema = ({ post, level = 1, baseColor }) => {
   const backgroundColor = lightenColor(baseColor, level * 0.2);
 
   return (
     <Collapse
-      defaultActiveKey={["1"]}
       style={{ backgroundColor, borderRadius: "10px", marginBottom: "10px" }}
     >
       <Panel
         header={post.postName}
-        key="1"
+        key={post.id}
+        showArrow={post.underPosts.length > 0}
         style={{ backgroundColor, padding: "10px", borderRadius: "10px" }}
       >
-        {/* <div className={classes.nameBlock}>
-          <h2>{post.postName}</h2>
-          {post.user ? (
-            <h3>
-              {post.user.firstName} {post.user.lastName}
-            </h3>
-          ) : (
-            <h3>Пост свободен</h3>
-          )}
-        </div> */}
+        {level > 2 ? (
+          <>
+            {post.children.length > 0 && (
+              <>
+                {post.children.map((child) => (
+                  <PodSchema
+                    key={child.id}
+                    post={child}
+                    level={level > 2 ? 1 : level + 1}
+                    baseColor={baseColor}
+                  />
+                ))}
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            {post.children.length > 0 && (
+              <>
+                {post.children.map((child) => (
+                  <PodSchema
+                    key={child.id}
+                    post={child}
+                    level={level > 2 ? 1 : level + 1}
+                    baseColor={baseColor}
+                  />
+                ))}
+              </>
+            )}
+          </>
+        )}
+      </Panel>
+    </Collapse>
+  );
+};
 
+export default function BlockSchema({ post, arrayColors, setArrayColors }) {
+  const [selectedColor, setSelectedColor] = useState(null);
+
+  const handleColorSelect = (color) => {
+    setSelectedColor(color);
+    setArrayColors((prevState) => {
+      const newMap = new Map(prevState);
+      newMap.set(post.id, color);
+      return newMap;
+    });
+  };
+
+  return (
+    <Collapse
+      style={{ backgroundColor: selectedColor || arrayColors.get(post.id) }}
+    >
+      <Panel
+        header={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            {post.postName}
+            <Popover
+              placement="bottomRight"
+              content={<ColorPickerModal onColorSelect={handleColorSelect} />}
+            >
+              <img
+                src={edit}
+                alt="edit"
+                width="30px"
+                height="30px"
+              />
+            </Popover>
+          </div>
+        }
+        key={post.id}
+        style={{
+          backgroundColor: selectedColor,
+          padding: "10px",
+          borderRadius: "10px",
+        }}
+        showArrow={post.underPosts.length > 0}
+      >
         {post.children.length > 0 && (
+          <>
+            {post.children.map((child) => (
+              <PodSchema
+                key={child.id}
+                post={child}
+                baseColor={selectedColor || arrayColors.get(post.id)}
+              />
+            ))}
+          </>
+        )}
+      </Panel>
+    </Collapse>
+  );
+}
+
+
+{
+  /* {post.children.length > 0 && (
           <>
             {post.children.map((child) => (
               <PodSchema
@@ -136,63 +227,5 @@ const PodSchema = ({ post, level = 1, baseColor }) => {
               />
             ))}
           </>
-        )}
-
-      </Panel>
-    </Collapse>
-  );
-};
-
-export default function BlockSchema({ post }) {
-  const [selectedColor, setSelectedColor] = useState(null);
-
-  const handleColorSelect = (color) => {
-    setSelectedColor(color);
-  };
-
-  return (
-    <Collapse
-      defaultActiveKey={["1"]}
-      style={{ backgroundColor: selectedColor }}
-    >
-      <Panel
-        header={post.postName}
-        key="1"
-        style={{
-          backgroundColor: selectedColor,
-          padding: "10px",
-          borderRadius: "10px",
-        }}
-      >
-        {/* <Popover
-              placement="topLeft"
-              content={<ColorPickerModal onColorSelect={handleColorSelect} />}
-            >
-              <img src={colorPicker} alt="colorPicker" width="30px" height="30px" />
-            </Popover> */}
-
-        {/* <div className={classes.nameBlock}>
-              <h2>{post.postName}</h2>
-              {post.user && (
-                <h3>
-                  {post.user.firstName} {post.user.lastName}
-                </h3>
-              )}
-            </div> */}
-
-        {post.children.length > 0 && (
-          <>
-            {post.children.map((child) => (
-              <PodSchema
-                key={child.id}
-                post={child}
-                baseColor={selectedColor}
-              />
-            ))}
-          </>
-        )}
-        
-      </Panel>
-    </Collapse>
-  );
+        )} */
 }

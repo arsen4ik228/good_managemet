@@ -65,7 +65,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
         statisticsIncludedPost: data?.statisticsIncludedPost || [],
         refetch,
       }),
-      skip: !postId,
+      skip:  !postId 
     }
   );
 
@@ -83,7 +83,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
         isErrorGetUnderPosts: isError,
         isFetchingGetUnderPosts: isFetching,
       }),
-      skip: !postId,
+      skip:  !postId
     }
   );
 

@@ -2,6 +2,7 @@ import React from 'react';
 import classes from "./Header.module.css";
 import backRow from "../icon/icon _ back.svg";
 import add from "../icon/icon _ add _ blue.svg";
+import right2Icon from "../icon/icon _ add _ blue.svg";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from '../icon/messendger _ avatar.svg'
 import {baseUrl} from '@helpers/constants'

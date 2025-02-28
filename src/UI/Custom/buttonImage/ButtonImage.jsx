@@ -1,6 +1,6 @@
 import React from "react";
 import classes from "./ButtonImage.module.css";
-import { Button, ConfigProvider, Flex, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 
 export default function ButtonImage({ name, icon, onClick }) {
   return (

@@ -18,7 +18,7 @@ import { usePostsHook } from "@hooks";
 import exitHeader from "@image/exitHeader.svg";
 import iconAdd from "@image/iconAdd.svg";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setCreatedUserId } from "@slices";
 
 export default function User() {
