@@ -171,10 +171,23 @@ export const convertApi = apiSlice.injectEndpoints({
         return result;
       },
 
-      providesTags: result =>
-        result
-          ? [{ type: "Convert", id: result.id }, "Convert"]
-          : ["Convert"],
+      // providesTags: result =>
+      //   result
+      //     ? [{ type: "Convert", id: result.id }, "Convert"]
+      //     : ["Convert"],
+
+          providesTags: (result) =>
+            result
+              ? [
+                ...result?.map(({ id }) =>
+                ({
+                  type: 'Convert',
+                  id,
+                }
+                )),
+                'Convert',
+              ]
+              : ['Convert'],
     }),
 
     getConvertId: build.query({
@@ -215,9 +228,7 @@ export const convertApi = apiSlice.injectEndpoints({
       //     const senderPost = convertToPosts.find(item => item.post.user.id === userId);
       //     return senderPost ? senderPost.post.id : null;
       // };
-      const selectSenderPostId = (convertToPosts, userId) => {
-        console.warn(userId);
-    
+      const selectSenderPostId = (convertToPosts, userId) => {    
         const senderPost = convertToPosts.find(item => item.post.user.id === userId);
         
         if (senderPost) {
@@ -233,13 +244,13 @@ export const convertApi = apiSlice.injectEndpoints({
         }
     };
         // Модифицируем сообщения
-        const transformedMessages = transformMessages(messages);
+        //const transformedMessages = transformMessages(messages);
 
         const { id: senderPostId, postName: senderPostName } = selectSenderPostId(convertToPosts, userId);
         // Возвращаем новый объект с модифицированными сообщениями
         return {
           currentConvert: response,
-          messages: transformedMessages,
+          messages: [],
           senderPostId: senderPostId,
           senderPostName: senderPostName,
         };
@@ -263,16 +274,9 @@ export const convertApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Convert"],
     }),
 
-    sendMessage: build.mutation({
-      query: ({convertId, ...body}) => ({
-        url: `converts/${convertId}/sendMessage`,
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: (result, err, arg) => [{ type: 'Convert', id: arg.convertId }],
-    }),
+
 
   }),
 });
 
-export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } = convertApi;
+export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery } = convertApi;

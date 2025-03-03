@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createConnectionSocket, disconnectSocket } from '@helpers/socket.js';
 
 const SocketContext = createContext();
@@ -57,7 +57,7 @@ export const useSocket = (eventNames, callback) => {
             console.log('subscribe to', eventName);
             socket.on(eventName, (data) => {
                 console.log('Data received:', data);
-                setResponse((prev) => ({ ...prev, [eventName]: data }));
+                setResponse((prev) => ({ ...prev, ...data }));
                 if (callback) {
                     callback(eventName, data);
                 }
@@ -78,22 +78,30 @@ export const useSocket = (eventNames, callback) => {
 export const useEmitSocket = (eventName, data) => {
     const { socket, isConnected } = useContext(SocketContext);
 
+    // Мемоизируем данные, чтобы избежать лишних вызовов
+    const stableData = useMemo(() => data, [JSON.stringify(data)]);
+    const stableEventName = useMemo(() => eventName, [eventName]);
+
     useEffect(() => {
         if (!socket || !isConnected) {
             console.error('Socket is not connected');
             return;
         }
 
-        if (!eventName || !data) {
-            console.error('data is undefined')
-            return
-        }
-        
-        // Отправляем событие на сервер с данными
-        socket.emit(eventName, data);
-        console.log(`${eventName} event sent with data:`, data);
+        const dataNotEmpty = (data) => {
+            return Object.values(data).every(item => item !== null && item !== undefined && item !== '');
+        };
 
-        // Очистка не требуется, так как мы только отправляем событие
-        return () => {};
-    }, [socket, isConnected, eventName, data]);
+        if (!stableEventName || !dataNotEmpty(stableData)) {
+            console.error('Event name or data is invalid');
+            return;
+        }
+
+        // Отправляем событие на сервер с данными
+        socket.emit(stableEventName, stableData);
+        console.log(`${stableEventName} event sent with data:`, stableData);
+
+        // Очистка не требуется
+        return () => { };
+    }, [socket, isConnected, stableEventName, stableData]);
 };

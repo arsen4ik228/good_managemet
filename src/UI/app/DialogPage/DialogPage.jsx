@@ -1,39 +1,103 @@
-import React, { useState } from 'react'
-import classes from './DialogPage.module.css'
+import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import classes from './DialogPage.module.css';
 import Header from "@Custom/CustomHeader/Header";
-import { useConvertsHook } from '@hooks/useConvertsHook';
+import { useConvertsHook, useMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
 import Input from './Input';
+import { notEmpty } from '@helpers/helpers'
+import { debounce } from 'lodash';
+import { useSocket, useEmitSocket } from '@helpers/SocketContext';
+
 
 export const DialogPage = () => {
+    const { convertId } = useParams();
+    const [pagination, setPagination] = useState(0); // Состояние для пагинации
+    const bodyRef = useRef(null); // Ref для блока body
+    const [messagesArray, setMessagesArray] = useState()
+    const [socketMessages, setSocketMessages] = useState([])
 
-    const { convertId } = useParams()
+    const { currentConvert, senderPostId, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
+    const { messages, isLoading, isError, isFetching } = useMessages(convertId, pagination); // Используем useMessages с pagination
 
 
-    const { currentConvert, messages, senderPostId, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId)
+    useEmitSocket('join_convert', { convertId: convertId });
 
-    console.log(currentConvert, messages, senderPostId, refetchGetConvertId)
+    const eventNames = useMemo(() => ['messageCreationEvent'], []);
+
+    const handleEventData = useCallback((eventName, data) => {
+        console.log(`Data from ${eventName}:`, data);
+
+    }, []); // Мемоизация callback
+
+    const socketResponse = useSocket(eventNames, handleEventData);
+    console.log(socketResponse);
 
 
+    const handleScroll = debounce(() => {
+        const bodyElement = bodyRef.current;
+        if (!bodyElement) return;
 
+        const { scrollTop, scrollHeight, clientHeight } = bodyElement;
+        console.log(scrollTop, scrollHeight, clientHeight)
+        if ((Math.abs(scrollTop) >= scrollHeight - clientHeight - 200) && !isFetching) {
+            setPagination(prev => prev + 30);
+        }
+    }, 200); // Задержка 200 мс
+
+    // Добавляем обработчик скролла при монтировании компонента
+    useLayoutEffect(() => {
+        const bodyElement = bodyRef.current;
+        if (!bodyElement) {
+            console.error('Body element is not found!');
+            return;
+        }
+
+        bodyElement.addEventListener('scroll', handleScroll);
+        return () => {
+            bodyElement.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (notEmpty(messages)) {
+            if (!notEmpty(messagesArray))
+                setMessagesArray(messages)
+            else
+                setMessagesArray(prev => [...prev, ...messages])
+        }
+    }, [messages])
+
+    useEffect(() => {
+        if (!notEmpty(socketResponse)) return
+
+        console.log('transform socketMessages', socketResponse)
+        setSocketMessages(prev => [...prev, {
+            content: socketResponse.content,
+            userMessage: socketResponse.sender.id === senderPostId
+        }])
+    }, [socketResponse])
+    console.log(socketMessages)
     return (
         <>
             <div className={classes.wrapper}>
-
                 <Header>Chat</Header>
-                <div className={classes.body}>
-
-                    {messages.map((item, index) => (
+                <div className={classes.body} ref={bodyRef}>
+                    {socketMessages.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message
-                                userMessage={item?.userMessage}
-                            >
+                            <Message userMessage={item?.userMessage}>
                                 {item.content}
                             </Message>
                         </React.Fragment>
                     ))}
-
+                    {messagesArray?.map((item, index) => (
+                        <React.Fragment key={index}>
+                            <Message userMessage={item?.userMessage}>
+                                {item.content}
+                            </Message>
+                        </React.Fragment>
+                    ))}
+                    {isFetching && <div>Loading more messages...</div>}
                 </div>
                 <footer className={classes.footer}>
                     <Input
@@ -47,5 +111,7 @@ export const DialogPage = () => {
                 </footer>
             </div>
         </>
-    )
-}
+    );
+};
+
+

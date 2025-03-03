@@ -1,10 +1,10 @@
 import io from "socket.io-client";
-import { baseUrl, userId } from '@helpers/constants';
+import { socketUrl, userId } from '@helpers/constants';
 
 // Функция для создания соединения
 export const createConnectionSocket = () => {
     return new Promise((resolve, reject) => {
-        const socket = io(`${baseUrl}convert`, {
+        const socket = io(`${socketUrl}convert`, {
             cors: {
                 credentials: true,
             },
