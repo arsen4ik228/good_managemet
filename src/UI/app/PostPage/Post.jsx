@@ -215,6 +215,7 @@ export default function Post() {
         ...updatedData, // отправляем только измененные поля
       })
         .unwrap()
+        .then(() => {})
         .catch((error) => {
           console.error("Ошибка:", JSON.stringify(error, null, 2));
         });

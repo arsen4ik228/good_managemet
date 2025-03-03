@@ -19,3 +19,11 @@ export { useModalSelectCheckBox } from './useModalSelectCheckBox'
 export { useMutationHandler } from './useMutationHandler'
 export { useOrganizationHook } from './useOrganizationHook'
 export { useMessages } from './useMessages'
+
+
+//Посты
+export { useAllPosts } from './Post/useAllPosts'
+export { useGetSinglePost } from './Post/useGetSinglePost'
+export { useUpdateSinglePost } from './Post/useUpdateSinglePost'
+export { useGetDataCreatePost } from './Post/useGetDataCreatePost'
+ 

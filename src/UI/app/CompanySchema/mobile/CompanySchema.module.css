@@ -8,18 +8,7 @@
 
 
 .body{
-    flex: 1 0 auto;
+    flex: 1 0 calc(100vh - 50px);
+    overflow: auto; 
 }
 
-
-
-
-.wrapperBlock{
-    width: 100%;
-    max-width: 75vw;
-    
-    display: flex;
-    column-gap: 10px;
-
-    overflow-x: auto; 
-}
