@@ -228,9 +228,7 @@ export const convertApi = apiSlice.injectEndpoints({
       //     const senderPost = convertToPosts.find(item => item.post.user.id === userId);
       //     return senderPost ? senderPost.post.id : null;
       // };
-      const selectSenderPostId = (convertToPosts, userId) => {
-        console.warn(userId);
-    
+      const selectSenderPostId = (convertToPosts, userId) => {    
         const senderPost = convertToPosts.find(item => item.post.user.id === userId);
         
         if (senderPost) {

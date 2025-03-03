@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback, useContext } from 're
 import InputTextContainer from '@Custom/ContainerForInputText/InputTextContainer.jsx';
 import { usePostsHook, } from '@hooks';
 import { deleteDraft, loadDraft, saveDraft } from '@helpers/indexedDB';
-import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 
 
 const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMessages, isLoadingGetConvertId }) => {
@@ -18,17 +17,6 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
     const idTextArea = 1002
 
     const { userPosts } = usePostsHook()
-
-    useEmitSocket('join_convert', { convertId: convertId });
-
-    const eventNames = useMemo(() => ['messageCreationEvent'], []);
-
-    const handleEventData = useCallback((eventName, data) => {
-        console.log(`Data from ${eventName}:`, data);
-    }, []); // Мемоизация callback
-
-    const socketResponse = useSocket(eventNames, handleEventData);
-    console.log(socketResponse);
 
     const reset = () => {
         setStartDate(new Date().toISOString().split('T')[0]);
@@ -77,14 +65,6 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
         saveDraft('DraftDB', 'drafts', idTextArea, contentInput);
     }, [contentInput]);
 
-    useEffect(() => {
-        if (socketResponse && isLoadingGetConvertId) {
-            console.log('refetch')
-            refetchMessages()
-        }
-    }, [socketResponse])
-
-    console.log(files)
     return (
         <>
             <InputTextContainer
