@@ -5,7 +5,7 @@ import add from "../icon/icon _ add _ blue.svg";
 import right2Icon from "../icon/icon _ add _ blue.svg";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from '../icon/messendger _ avatar.svg'
-import {baseUrl} from '@helpers/constants'
+import { baseUrl } from '@helpers/constants'
 
 function Header({
     // Dialod name
@@ -17,7 +17,7 @@ function Header({
 
     // default: false
     offLeftIcon,
-    // dafault: back row icon
+    // default: back row icon
     leftIcon,
     // default: navigate(-1)
     leftIconClick,
