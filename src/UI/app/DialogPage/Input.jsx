@@ -29,6 +29,8 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
 
     const send = async () => {
 
+        if (contentInput.trim() === '') return
+
         deleteDraft('DraftDB', 'drafts', idTextArea)
 
         const Data = {}

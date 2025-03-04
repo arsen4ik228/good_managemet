@@ -15,6 +15,7 @@ export const useConvertsHook = (convertId) => {
         currentConvert = {},
         messages = [],
         senderPostId,
+        userInfo = {},
         senderPostName,
         refetch: refetchGetConvertId,
         isLoadingGetConvertId
@@ -22,6 +23,7 @@ export const useConvertsHook = (convertId) => {
         selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
             currentConvert: data?.currentConvert || {},
             messages: data?.messages || [],
+            userInfo: data?.userInfo || {},
             senderPostId: data?.senderPostId || null,
             senderPostName: data?.senderPostName || null,
             isLoadingGetConvertId : isLoading,
@@ -53,6 +55,7 @@ export const useConvertsHook = (convertId) => {
 
         currentConvert,
         messages,
+        userInfo,
         senderPostId,
         senderPostName,
         refetchGetConvertId,

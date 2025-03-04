@@ -17,9 +17,8 @@ export const DialogPage = () => {
     const [messagesArray, setMessagesArray] = useState()
     const [socketMessages, setSocketMessages] = useState([])
 
-    const { currentConvert, senderPostId, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
+    const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
     const { messages, isLoading, isError, isFetching } = useMessages(convertId, pagination); // Используем useMessages с pagination
-
 
     useEmitSocket('join_convert', { convertId: convertId });
 
@@ -31,7 +30,6 @@ export const DialogPage = () => {
     }, []); // Мемоизация callback
 
     const socketResponse = useSocket(eventNames, handleEventData);
-    console.log(socketResponse);
 
 
     const handleScroll = debounce(() => {
@@ -74,25 +72,31 @@ export const DialogPage = () => {
         console.log('transform socketMessages', socketResponse)
         setSocketMessages(prev => [...prev, {
             content: socketResponse.content,
-            userMessage: socketResponse.sender.id === senderPostId
+            userMessage: socketResponse.sender.id === senderPostId,
+            createdAt: socketResponse.createdAt
         }])
     }, [socketResponse])
     console.log(socketMessages)
     return (
         <>
             <div className={classes.wrapper}>
-                <Header>Chat</Header>
+                <Header
+                    title={userInfo.userName}
+                    avatar={userInfo.avatar}
+                >
+                    {userInfo.postName}
+                </Header>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage}>
+                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt}>
                                 {item.content}
                             </Message>
                         </React.Fragment>
                     ))}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage}>
+                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt}>
                                 {item.content}
                             </Message>
                         </React.Fragment>

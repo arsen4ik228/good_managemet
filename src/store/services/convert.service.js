@@ -176,18 +176,18 @@ export const convertApi = apiSlice.injectEndpoints({
       //     ? [{ type: "Convert", id: result.id }, "Convert"]
       //     : ["Convert"],
 
-          providesTags: (result) =>
-            result
-              ? [
-                ...result?.map(({ id }) =>
-                ({
-                  type: 'Convert',
-                  id,
-                }
-                )),
-                'Convert',
-              ]
-              : ['Convert'],
+      providesTags: (result) =>
+        result
+          ? [
+            ...result?.map(({ id }) =>
+            ({
+              type: 'Convert',
+              id,
+            }
+            )),
+            'Convert',
+          ]
+          : ['Convert'],
     }),
 
     getConvertId: build.query({
@@ -198,59 +198,44 @@ export const convertApi = apiSlice.injectEndpoints({
       transformResponse: response => {
         console.log('getConvertId', response);
 
-        const messages = response?.messages
         const convertToPosts = response?.convertToPosts
 
-        const transformMessages = (messages) => {
-          // Сортируем сообщения по дате создания
-          const sortedMessages = [...messages].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const selectSenderPostId = (convertToPosts, userId) => {
+          const senderPost = convertToPosts.find(item => item.post.user.id === userId);
 
-          // Проходим по каждому сообщению и модифицируем его
-          const transformedMessages = sortedMessages.map((item) => {
-            // Проверяем условие
-            if (item?.sender?.user?.id === userId) {
-              // Удаляем свойство sender и добавляем userMessage: true
-              const { sender, ...rest } = item; // Удаляем sender
-              return { ...rest, userMessage: true }; // Добавляем userMessage: true
-            } else {
-              // Добавляем userMessage: false
-              const { sender, ...rest } = item;
-              return { ...rest, userMessage: false };
-            }
-          });
-
-          return transformedMessages;
+          if (senderPost) {
+            return {
+              id: senderPost.post.id,
+              postName: senderPost.post.postName,
+            };
+          } else {
+            return {
+              id: null,
+              postName: null,
+            };
+          }
         };
 
-      //   const selectSenderPostId = (convertToPosts, userId) => {
-      //     console.warn(userId);
-      
-      //     const senderPost = convertToPosts.find(item => item.post.user.id === userId);
-      //     return senderPost ? senderPost.post.id : null;
-      // };
-      const selectSenderPostId = (convertToPosts, userId) => {    
-        const senderPost = convertToPosts.find(item => item.post.user.id === userId);
-        
-        if (senderPost) {
+        const extractUserInfo = (convertToPosts, userId) => {
+          const userPost = convertToPosts.find(item => item.post.user.id !== userId);
+          console.log (userPost)
+          if (userPost) {
             return {
-                id: senderPost.post.id,
-                postName: senderPost.post.postName,
-            };
-        } else {
-            return {
-                id: null,
-                postName: null,
-            };
+              postName: userPost.post.postName,
+              userName: userPost.post.user.firstName + ' ' +userPost.post.user.lastName,
+              avatar: userPost.post.user.avatar_url
+            }
+          }
+
         }
-    };
-        // Модифицируем сообщения
-        //const transformedMessages = transformMessages(messages);
 
         const { id: senderPostId, postName: senderPostName } = selectSenderPostId(convertToPosts, userId);
-        // Возвращаем новый объект с модифицированными сообщениями
+        const userInfo = extractUserInfo(convertToPosts, userId)
+
         return {
           currentConvert: response,
           messages: [],
+          userInfo,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
         };
