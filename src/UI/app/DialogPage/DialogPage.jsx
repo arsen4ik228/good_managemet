@@ -20,7 +20,6 @@ export const DialogPage = () => {
     const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
     const { messages, isLoading, isError, isFetching } = useMessages(convertId, pagination); // Используем useMessages с pagination
 
-    console.log(userInfo)
     useEmitSocket('join_convert', { convertId: convertId });
 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
@@ -31,7 +30,6 @@ export const DialogPage = () => {
     }, []); // Мемоизация callback
 
     const socketResponse = useSocket(eventNames, handleEventData);
-    console.log(socketResponse);
 
 
     const handleScroll = debounce(() => {
