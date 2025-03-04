@@ -96,3 +96,13 @@ export const formattedDate = (date) => {
   
     return true;
   }
+
+ export function extractHoursMinutes(timestamp) {
+    // Разделяем строку по символу 'T' и берем вторую часть
+    const timePart = timestamp.split('T')[1];
+
+    // Разделяем оставшуюся часть по символу ':' и берем часы и минуты
+    const [hours, minutes] = timePart.split(':');
+
+    return  hours + ":" + minutes ;
+}
