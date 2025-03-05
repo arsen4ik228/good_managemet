@@ -89,7 +89,7 @@ export const useEmitSocket = (eventName, data) => {
         }
 
         const dataNotEmpty = (data) => {
-            return Object.values(data).every(item => item !== null && item !== undefined && item !== '');
+            return Object.values(data).every(item => item !== null && item !== undefined && item !== '' && item.length>0);
         };
 
         if (!stableEventName || !dataNotEmpty(stableData)) {
