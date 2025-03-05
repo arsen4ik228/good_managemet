@@ -31,17 +31,19 @@
 //     };
 // }
 
-import { useLazyGetMessagesIdQuery, useSendMessageMutation } from '@services'; // Импортируем useLazyQuery
+import { useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery, useSendMessageMutation } from '@services'; // Импортируем useLazyQuery
 import { useEffect } from 'react';
 
 export function useMessages(convertId, pagination) {
-    const [fetchMessages, { data: messages, isLoading, isError, isFetching }] = useLazyGetMessagesIdQuery();
-
+    const [fetchSeeenMessages, { data: seenMessages, isLoadingSeenMessages, isErrorSeenMessages, isFetchingSeenMessages }] = useLazyGetSeenMessagesQuery();
+    const [fetchUnSeenMessages, { data, isLoadingUnSeenMessages, isErrorUnSeenMessages, isFetchingUnSeenMessages }] = useLazyGetUnSeenMessagesQuery();
     useEffect(() => {
         // Выполняем запрос при изменении convertId или pagination
-        fetchMessages({ convertId, pagination });
+        fetchSeeenMessages({ convertId, pagination });
+        fetchUnSeenMessages({ convertId, pagination })
     }, [convertId, pagination]);
 
+    console.log(data)
 
     const [
         sendMessage,
@@ -49,11 +51,17 @@ export function useMessages(convertId, pagination) {
 
 
     return {
-        messages: messages || [],
-        isLoading,
-        isError,
-        isFetching,
+        seenMessages,
+        isLoadingSeenMessages,
+        isErrorSeenMessages,
+        isFetchingSeenMessages,
 
-        sendMessage
+        unSeenMessages: data?.unSeenMessages || [],
+        unSeenMessagesIds: data?.unSeenMessagesIds || [],
+        isLoadingUnSeenMessages,
+        isErrorUnSeenMessages,
+        isFetchingUnSeenMessages,
+
+        sendMessage,
     };
 }

@@ -12,15 +12,29 @@ import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 
 export const DialogPage = () => {
     const { convertId } = useParams();
-    const [pagination, setPagination] = useState(0); // Состояние для пагинации
+    const [paginationSeenMessages, setPaginationSeenMessages] = useState(0); // Состояние для пагинации
+    const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0); // Состояние для пагинации
     const bodyRef = useRef(null); // Ref для блока body
     const [messagesArray, setMessagesArray] = useState()
     const [socketMessages, setSocketMessages] = useState([])
 
     const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
-    const { messages, isLoading, isError, isFetching } = useMessages(convertId, pagination); // Используем useMessages с pagination
+    const {
+        seenMessages,
+        isLoadingSeenMessages,
+        isErrorSeenMessages,
+        isFetchingSeenMessages,
+
+        unSeenMessages,
+        unSeenMessagesIds,
+        isLoadingUnSeenMessages,
+        isErrorUnSeenMessages,
+        isFetchingUnSeenMessages,
+    } = useMessages(convertId, paginationSeenMessages); // Используем useMessages с pagination
+    const seenMessagesRef = useRef(seenMessages);
 
     useEmitSocket('join_convert', { convertId: convertId });
+    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: unSeenMessagesIds })
 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
 
@@ -37,11 +51,11 @@ export const DialogPage = () => {
         if (!bodyElement) return;
 
         const { scrollTop, scrollHeight, clientHeight } = bodyElement;
-        console.log(scrollTop, scrollHeight, clientHeight)
-        if ((Math.abs(scrollTop) >= scrollHeight - clientHeight - 200) && !isFetching) {
-            setPagination(prev => prev + 30);
-        }
-    }, 200); // Задержка 200 мс
+        console.log(scrollTop, scrollHeight, clientHeight, seenMessagesRef.current);
+        if (Math.abs(scrollTop) >= scrollHeight - clientHeight - 200 && !isFetchingSeenMessages && notEmpty(seenMessagesRef.current))
+            setPaginationSeenMessages((prev) => prev + 30);
+
+    }, 200);
 
     // Добавляем обработчик скролла при монтировании компонента
     useLayoutEffect(() => {
@@ -58,13 +72,17 @@ export const DialogPage = () => {
     }, []);
 
     useEffect(() => {
-        if (notEmpty(messages)) {
-            if (!notEmpty(messagesArray))
-                setMessagesArray(messages)
-            else
-                setMessagesArray(prev => [...prev, ...messages])
+        if (notEmpty(seenMessages)) {
+            if (!notEmpty(messagesArray)) {
+                seenMessagesRef.current = seenMessages;
+                setMessagesArray(seenMessages)
+            }
+            else {
+                seenMessagesRef.current = seenMessages;
+                setMessagesArray(prev => [...prev, ...seenMessages])
+            }
         }
-    }, [messages])
+    }, [seenMessages])
 
     useEffect(() => {
         if (!notEmpty(socketResponse)) return
@@ -76,7 +94,12 @@ export const DialogPage = () => {
             createdAt: socketResponse.createdAt
         }])
     }, [socketResponse])
-    console.log(socketMessages)
+
+    // useEffect(() => { }, [unSeenMessagesIds])
+    console.log(unSeenMessages)
+    console.log(unSeenMessagesIds)
+    // console.log(unSeenMessagesIds)
+    // console.log(socketMessages)
     return (
         <>
             <div className={classes.wrapper}>
@@ -101,7 +124,7 @@ export const DialogPage = () => {
                             </Message>
                         </React.Fragment>
                     ))}
-                    {isFetching && <div>Loading more messages...</div>}
+                    {isFetchingSeenMessages && <div>Loading more messages...</div>}
                 </div>
                 <footer className={classes.footer}>
                     <Input
