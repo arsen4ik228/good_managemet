@@ -17,6 +17,7 @@ export const DialogPage = () => {
     const bodyRef = useRef(null); // Ref для блока body
     const [messagesArray, setMessagesArray] = useState()
     const [socketMessages, setSocketMessages] = useState([])
+    const unSeenMessagesRef = useRef(null);
 
     const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
     const {
@@ -34,7 +35,7 @@ export const DialogPage = () => {
     const seenMessagesRef = useRef(seenMessages);
 
     useEmitSocket('join_convert', { convertId: convertId });
-    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: unSeenMessagesIds })
+    //useEmitSocket('messagesSeen', { convertId: convertId, messageIds: unSeenMessagesIds })
 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
 
@@ -95,6 +96,20 @@ export const DialogPage = () => {
         }])
     }, [socketResponse])
 
+        // Управление скроллом при загрузке страницы
+        useLayoutEffect(() => {
+            console.warn(unSeenMessages.length > 0, unSeenMessagesRef.current)
+        if (unSeenMessages.length > 0 && unSeenMessagesRef.current) {
+            const firstUnSeenMessageElement = unSeenMessagesRef.current;
+            const bodyElement = bodyRef.current;
+            console.warn(firstUnSeenMessageElement, bodyElement)
+            if (firstUnSeenMessageElement && bodyElement) {
+                const offset = firstUnSeenMessageElement.offsetTop;
+                bodyElement.scrollTop = offset;
+            }
+        }
+    }, [unSeenMessages, messagesArray]);
+
     // useEffect(() => { }, [unSeenMessagesIds])
     console.log(unSeenMessages)
     console.log(unSeenMessagesIds)
@@ -117,6 +132,18 @@ export const DialogPage = () => {
                             </Message>
                         </React.Fragment>
                     ))}
+                    {unSeenMessages.length > 0 && (
+                        <>
+                            {unSeenMessages?.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <Message userMessage={item?.userMessage} createdMessage={item?.createdAt} ref={index === 0 ? unSeenMessagesRef : null}>
+                                        {item.content}
+                                    </Message>
+                                </React.Fragment>
+                            ))}
+                            <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+                        </>
+                    )}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
                             <Message userMessage={item?.userMessage} createdMessage={item?.createdAt}>
