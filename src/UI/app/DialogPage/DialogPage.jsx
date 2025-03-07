@@ -9,15 +9,16 @@ import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 
-
 export const DialogPage = () => {
     const { convertId } = useParams();
-    const [paginationSeenMessages, setPaginationSeenMessages] = useState(0); // Состояние для пагинации
-    const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0); // Состояние для пагинации
-    const bodyRef = useRef(null); // Ref для блока body
-    const [messagesArray, setMessagesArray] = useState()
-    const [socketMessages, setSocketMessages] = useState([])
+    const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
+    const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
+    const bodyRef = useRef(null);
+    const [messagesArray, setMessagesArray] = useState();
+    const [socketMessages, setSocketMessages] = useState([]);
     const unSeenMessagesRef = useRef(null);
+    const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
+    const historySeenIds = []
 
     const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
     const {
@@ -25,40 +26,33 @@ export const DialogPage = () => {
         isLoadingSeenMessages,
         isErrorSeenMessages,
         isFetchingSeenMessages,
-
         unSeenMessages,
         unSeenMessagesIds,
         isLoadingUnSeenMessages,
         isErrorUnSeenMessages,
         isFetchingUnSeenMessages,
-    } = useMessages(convertId, paginationSeenMessages); // Используем useMessages с pagination
+    } = useMessages(convertId, paginationSeenMessages);
     const seenMessagesRef = useRef(seenMessages);
 
     useEmitSocket('join_convert', { convertId: convertId });
-    //useEmitSocket('messagesSeen', { convertId: convertId, messageIds: unSeenMessagesIds })
+    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds })
 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
-
     const handleEventData = useCallback((eventName, data) => {
         console.log(`Data from ${eventName}:`, data);
-
-    }, []); // Мемоизация callback
+    }, []);
 
     const socketResponse = useSocket(eventNames, handleEventData);
-
 
     const handleScroll = debounce(() => {
         const bodyElement = bodyRef.current;
         if (!bodyElement) return;
 
         const { scrollTop, scrollHeight, clientHeight } = bodyElement;
-        console.log(scrollTop, scrollHeight, clientHeight, seenMessagesRef.current);
         if (Math.abs(scrollTop) >= scrollHeight - clientHeight - 200 && !isFetchingSeenMessages && notEmpty(seenMessagesRef.current))
             setPaginationSeenMessages((prev) => prev + 30);
-
     }, 200);
 
-    // Добавляем обработчик скролла при монтировании компонента
     useLayoutEffect(() => {
         const bodyElement = bodyRef.current;
         if (!bodyElement) {
@@ -76,45 +70,75 @@ export const DialogPage = () => {
         if (notEmpty(seenMessages)) {
             if (!notEmpty(messagesArray)) {
                 seenMessagesRef.current = seenMessages;
-                setMessagesArray(seenMessages)
-            }
-            else {
+                setMessagesArray(seenMessages);
+            } else {
                 seenMessagesRef.current = seenMessages;
-                setMessagesArray(prev => [...prev, ...seenMessages])
+                setMessagesArray(prev => [...prev, ...seenMessages]);
             }
         }
-    }, [seenMessages])
+    }, [seenMessages]);
 
     useEffect(() => {
-        if (!notEmpty(socketResponse)) return
+        if (!notEmpty(socketResponse)) return;
 
-        console.log('transform socketMessages', socketResponse)
         setSocketMessages(prev => [...prev, {
+            id: socketResponse.id,
             content: socketResponse.content,
             userMessage: socketResponse.sender.id === senderPostId,
             createdAt: socketResponse.createdAt
-        }])
-    }, [socketResponse])
+        }]);
+    }, [socketResponse]);
 
-        // Управление скроллом при загрузке страницы
-        useLayoutEffect(() => {
-            console.warn(unSeenMessages.length > 0, unSeenMessagesRef.current)
-        if (unSeenMessages.length > 0 && unSeenMessagesRef.current) {
+    useLayoutEffect(() => {
+        if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
             const firstUnSeenMessageElement = unSeenMessagesRef.current;
             const bodyElement = bodyRef.current;
-            console.warn(firstUnSeenMessageElement, bodyElement)
             if (firstUnSeenMessageElement && bodyElement) {
                 const offset = firstUnSeenMessageElement.offsetTop;
-                bodyElement.scrollTop = offset;
+                bodyElement.scrollTop = offset - 150;
             }
         }
-    }, [unSeenMessages, messagesArray]);
+    }, [unSeenMessages, messagesArray, unSeenMessagesRef.current, isLoadingUnSeenMessages]);
 
-    // useEffect(() => { }, [unSeenMessagesIds])
-    console.log(unSeenMessages)
-    console.log(unSeenMessagesIds)
-    // console.log(unSeenMessagesIds)
-    // console.log(socketMessages)
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                // Создаем временный массив для хранения id видимых элементов
+                const visibleIds = [];
+
+                entries.forEach((entry) => {
+                    const messageId = entry.target.dataset.messageId;
+                    if (entry.isIntersecting && !historySeenIds.includes(messageId)) {
+                        // Добавляем id в массив, если элемент видим и его еще нет в historySeenIds
+                        visibleIds.push(messageId);
+                        historySeenIds.push(messageId);
+                    }
+                });
+
+                // Обновляем состояние массива visibleUnSeenMessageIds
+                setVisibleUnSeenMessageIds(visibleIds);
+            },
+            {
+                root: bodyRef.current, // Область видимости — это контейнер сообщений
+                threshold: 0.4,
+            }
+        );
+
+        // Находим все элементы с data-message-id и начинаем их отслеживать
+        const messageElements = bodyRef.current.querySelectorAll('[data-message-id]');
+        messageElements.forEach((element) => observer.observe(element));
+
+        // Очистка при размонтировании
+        return () => {
+            messageElements.forEach((element) => observer.unobserve(element));
+            observer.disconnect();
+        };
+    }, [unSeenMessages, socketMessages]); // Зависимость от unSeenMessages и socketMessages
+
+    //setVisibleUnSeenMessageIds(visibleIds);
+
+    console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
+    console.log(socketMessages)
     return (
         <>
             <div className={classes.wrapper}>
@@ -127,7 +151,10 @@ export const DialogPage = () => {
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt}>
+                            <Message userMessage={item?.userMessage}
+                                createdMessage={item?.createdAt}
+                                {...(!item.userMessage && { 'data-message-id': item.id })}
+                            >
                                 {item.content}
                             </Message>
                         </React.Fragment>
@@ -136,8 +163,13 @@ export const DialogPage = () => {
                         <>
                             {unSeenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
-                                    <Message userMessage={item?.userMessage} createdMessage={item?.createdAt} ref={index === 0 ? unSeenMessagesRef : null}>
-                                        {item.content}
+                                    <Message
+                                        userMessage={item?.userMessage}
+                                        createdMessage={item?.createdAt}
+                                        ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
+                                        data-message-id={item.id} // Добавляем data-атрибут
+                                    >
+                                        {item.id}
                                     </Message>
                                 </React.Fragment>
                             ))}
@@ -146,7 +178,7 @@ export const DialogPage = () => {
                     )}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt}>
+                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt} >
                                 {item.content}
                             </Message>
                         </React.Fragment>
@@ -167,5 +199,3 @@ export const DialogPage = () => {
         </>
     );
 };
-
-
