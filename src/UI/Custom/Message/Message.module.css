@@ -70,6 +70,17 @@
     /* color: ; */
 }
 
+.isSeen{
+    /* border: 1px solid red; */
+    display: flex;
+    padding-left: 4px;
+
+    >img{
+        height: 8px;
+        /* border: 1px solid green; */
+    }
+}
+
 .wrapper {
     display: flex;
     justify-content: flex-start;

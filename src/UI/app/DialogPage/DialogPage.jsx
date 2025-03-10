@@ -37,11 +37,10 @@ export const DialogPage = () => {
     useEmitSocket('join_convert', { convertId: convertId });
     useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds })
 
-    const eventNames = useMemo(() => ['messageCreationEvent'], []);
+    const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
     const handleEventData = useCallback((eventName, data) => {
         console.log(`Data from ${eventName}:`, data);
     }, []);
-
     const socketResponse = useSocket(eventNames, handleEventData);
 
     const handleScroll = debounce(() => {
@@ -78,16 +77,16 @@ export const DialogPage = () => {
         }
     }, [seenMessages]);
 
-    useEffect(() => {
-        if (!notEmpty(socketResponse)) return;
+    // useEffect(() => {
+    //     if (!notEmpty(socketResponse)) return;
 
-        setSocketMessages(prev => [...prev, {
-            id: socketResponse.id,
-            content: socketResponse.content,
-            userMessage: socketResponse.sender.id === senderPostId,
-            createdAt: socketResponse.createdAt
-        }]);
-    }, [socketResponse]);
+    //     setSocketMessages(prev => [...prev, {
+    //         id: socketResponse.id,
+    //         content: socketResponse.content,
+    //         userMessage: socketResponse.sender.id === senderPostId,
+    //         createdAt: socketResponse.createdAt
+    //     }]);
+    // }, [socketResponse]);
 
     useLayoutEffect(() => {
         if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
@@ -137,8 +136,9 @@ export const DialogPage = () => {
 
     //setVisibleUnSeenMessageIds(visibleIds);
 
-    console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
-    console.log(socketMessages)
+   // console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
+    console.log(socketResponse)
+
     return (
         <>
             <div className={classes.wrapper}>
@@ -178,7 +178,7 @@ export const DialogPage = () => {
                     )}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt} >
+                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt} timeSeen={item?.timeSeen}>
                                 {item.content}
                             </Message>
                         </React.Fragment>
