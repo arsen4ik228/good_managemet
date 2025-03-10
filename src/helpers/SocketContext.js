@@ -57,7 +57,7 @@ export const useSocket = (eventNames, callback) => {
             console.log('subscribe to', eventName);
             socket.on(eventName, (data) => {
                 console.log('Data received:', data);
-                setResponse((prev) => ({ ...prev, ...data }));
+                setResponse((prev) => ({ ...prev, [eventName]: data }));
                 if (callback) {
                     callback(eventName, data);
                 }
