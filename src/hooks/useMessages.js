@@ -35,7 +35,7 @@ import { useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery, useSendMess
 import { useEffect } from 'react';
 
 export function useMessages(convertId, pagination) {
-    const [fetchSeeenMessages, { data: seenMessages, isLoadingSeenMessages, isErrorSeenMessages, isFetchingSeenMessages }] = useLazyGetSeenMessagesQuery();
+    const [fetchSeeenMessages, { data: seenMessagesResponse, isLoadingSeenMessages, isErrorSeenMessages, isFetchingSeenMessages }] = useLazyGetSeenMessagesQuery();
     const [fetchUnSeenMessages, { data, isLoadingUnSeenMessages, isErrorUnSeenMessages, isFetchingUnSeenMessages }] = useLazyGetUnSeenMessagesQuery();
     useEffect(() => {
         // Выполняем запрос при изменении convertId или pagination
@@ -43,7 +43,7 @@ export function useMessages(convertId, pagination) {
         fetchUnSeenMessages({ convertId, pagination })
     }, [convertId, pagination]);
 
-    console.log(data)
+    //console.log(seenMessagesResponse)
 
     const [
         sendMessage,
@@ -51,7 +51,8 @@ export function useMessages(convertId, pagination) {
 
 
     return {
-        seenMessages,
+        seenMessages: seenMessagesResponse?.sortedMessages || [],
+        unSeenMessageExist: seenMessagesResponse?.unSeenMessageExist || false,
         isLoadingSeenMessages,
         isErrorSeenMessages,
         isFetchingSeenMessages,

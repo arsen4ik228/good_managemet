@@ -11,16 +11,19 @@ export const messageApi = apiSlice.injectEndpoints({
             }),
             transformResponse: response => {
                 //const unSeenMessgesIds = []
+                let unSeenMessageExist = false
                 const sortedMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 sortedMessages?.forEach(item => {
                     item.userMessage = item.sender.user.id === userId;
 
+                    if (!unSeenMessageExist && item.timeSeen === null)
+                        unSeenMessageExist = true
                     // if (item.timeSeen === null)
                     //     unSeenMessgesIds.push(item.id)
                 });
 
-                return sortedMessages
+                return { sortedMessages, unSeenMessageExist }
 
             },
 
