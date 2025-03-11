@@ -15,7 +15,7 @@ export const createConnectionSocket = () => {
         });
 
         socket.on("connect", () => {
-            console.log('Socket connected');
+            //console.log('Socket connected');
             resolve(socket);
         });
 
