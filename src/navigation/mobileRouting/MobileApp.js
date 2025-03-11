@@ -30,6 +30,7 @@ import { DialogPage } from '@app';
 import { Message } from '../../UI/Custom/Message/Message.jsx';
 import { ConvertsPage } from '@app';
 import {CompanySchema} from '@app'
+import {SchemeСompanies} from '@app'
 
 
 function MobileApp() {
@@ -83,7 +84,8 @@ function MobileApp() {
                                         <Route path='WorkingPlan' element={<MobileMainWorkingPlan />} />
                                         <Route path='user' element={<User />} />
 
-                                        <Route path='companySchema' element={<CompanySchema />} />
+                                        <Route path='postSchema/:organizationId' element={<CompanySchema />} />
+                                        <Route path='companySchema' element={<SchemeСompanies />} />
                                        
                                     </Routes>
                                 }

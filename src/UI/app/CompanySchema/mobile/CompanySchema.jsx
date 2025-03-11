@@ -1,39 +1,38 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classes from "./CompanySchema.module.css";
+
+import iconAdd from "@image/iconAdd.svg";
+import arrowBack from "@image/back_white.svg";
+
+import _ from "lodash";
+import { FloatButton } from "antd";
+
 import Blacksavetmp from "@image/Blacksavetmp.svg";
 import Header from "@Custom/CustomHeader/Header";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
+
+import PostSchema from "./postSchema/PostSchema.jsx";
 import BlockSchema from "./blockSchema/BlockSchema";
-import { usePostsHook } from "@hooks/usePostsHook";
-import _ from "lodash";
-import { useOrganizationHook } from "../../../../hooks/useOrganizationHook";
+import DrawerCreatePost from "../drawer/drawerForPost/DrawerCreatePost";
 
-const buildTree = (posts) => {
-  const postMap = {};
-  const roots = [];
+import { useGetSingleOrganization, useUpdateSingleOrganization } from "@hooks";
+import { useAllPosts } from "@hooks";
 
-  // Создаем карту постов
-  posts.forEach((post) => {
-    post.children = [];
-    postMap[post.id] = post;
-  });
+import { buildTree } from "../constants/contsants.js";
 
-  // Строим дерево
-  posts.forEach((post) => {
-    if (post.parentId === null) {
-      roots.push(post);
-    } else {
-      if (postMap[post.parentId]) {
-        postMap[post.parentId].children.push(post);
-      }
-    }
-  });
-
-  return roots;
-};
-
-const PostTree = ({ posts, arrayColors, setArrayColors }) => {
+const PostTree = ({
+  posts,
+  arrayColors,
+  setArrayColors,
+  setOnePost,
+  setViewChildrenPost,
+  setHeader,
+}) => {
   const tree = buildTree(posts);
-
+  console.log(tree);
   return (
     <div className={classes.wrapper}>
       {tree.map((post) => (
@@ -42,6 +41,9 @@ const PostTree = ({ posts, arrayColors, setArrayColors }) => {
           post={post}
           arrayColors={arrayColors}
           setArrayColors={setArrayColors}
+          setOnePost={setOnePost}
+          setViewChildrenPost={setViewChildrenPost}
+          setHeader={setHeader}
         />
       ))}
     </div>
@@ -49,29 +51,44 @@ const PostTree = ({ posts, arrayColors, setArrayColors }) => {
 };
 
 export default function CompanySchema() {
+  const { organizationId } = useParams();
+  const navigate = useNavigate();
+
+  const backCompanySchema = () => {
+    navigate(`/pomoshnik/companySchema`);
+  };
+
   const {
     allPosts = [],
     isLoadingGetPosts,
+    isFetchingGetPosts,
     isErrorGetPosts,
-  } = usePostsHook({ structure: true });
+  } = useAllPosts({ organizationId, structure: true });
 
   const {
-    reduxSelectedOrganizationId,
-
     currentOrganization,
     isLoadingOrganizationId,
     isFetchingOrganizationId,
+  } = useGetSingleOrganization({ organizationId: organizationId });
 
+  const {
     updateOrganization,
     isLoadingUpdateOrganizationMutation,
     isSuccessUpdateOrganizationMutation,
     isErrorUpdateOrganizationMutation,
     ErrorOrganization,
     localIsResponseUpdateOrganizationMutation,
-  } = useOrganizationHook();
+  } = useUpdateSingleOrganization();
 
   const [arrayAllPosts, setArrayAllPosts] = useState([]);
+  const [onePost, setOnePost] = useState([]);
   const [arrayColors, setArrayColors] = useState(new Map());
+  const [isViewChildrenPost, setViewChildrenPost] = useState(false);
+  const [header, setHeader] = useState({
+    postName: "фывфы",
+    divisionName: "ыфваф",
+    fullName: "фывфыв",
+  });
 
   const saveUpdateOrganization = async () => {
     const colorCodes = {};
@@ -80,24 +97,39 @@ export default function CompanySchema() {
     }
 
     await updateOrganization({
-      _id: reduxSelectedOrganizationId,
+      _id: organizationId,
       colorCodes,
     });
   };
 
   useEffect(() => {
-    setArrayAllPosts(_.cloneDeep(allPosts));
+    if (!_.isEqual(arrayAllPosts, allPosts)) {
+      setArrayAllPosts(_.cloneDeep(allPosts));
+    }
   }, [allPosts]);
 
   useEffect(() => {
-    if (currentOrganization?.colorCodes && typeof currentOrganization.colorCodes === "object") {
+    if (
+      currentOrganization?.colorCodes &&
+      typeof currentOrganization.colorCodes === "object"
+    ) {
       setArrayColors(new Map(Object.entries(currentOrganization.colorCodes)));
     }
   }, [currentOrganization]);
-  
 
-  console.log(arrayColors);
+  const [openCreatePost, setOpenCreatePost] = useState(false);
+  const createPost = () => {
+    setOpenCreatePost(true);
+  };
 
+  const hasValidHeader = () => {
+    return Object.values(header).some(
+      (value) => value !== null && value !== ""
+    );
+  };
+
+  console.log("onePost");
+  console.log(onePost);
 
   return (
     <div className={classes.wrapper}>
@@ -105,16 +137,147 @@ export default function CompanySchema() {
         onRightIcon={true}
         rightIcon={Blacksavetmp}
         rightIconClick={saveUpdateOrganization}
+        onRight2Icon={true}
+        right2Icon={iconAdd}
+        right2IconClick={createPost}
       >
         Схема компании
       </Header>
 
+      <DrawerCreatePost
+        open={openCreatePost}
+        setOpen={setOpenCreatePost}
+        organizationId={organizationId}
+      ></DrawerCreatePost>
+
       <div className={classes.body}>
-        <PostTree
-          posts={arrayAllPosts}
-          arrayColors={arrayColors}
-          setArrayColors={setArrayColors}
-        />
+        {isErrorGetPosts ? (
+          <>
+            <HandlerQeury Error={isErrorGetPosts}></HandlerQeury>
+          </>
+        ) : (
+          <>
+            {isFetchingGetPosts || isLoadingGetPosts ? (
+              <HandlerQeury
+                Loading={isLoadingGetPosts}
+                Fetching={isFetchingGetPosts}
+              ></HandlerQeury>
+            ) : (
+              <>
+                {allPosts.length === 0 ? (
+                  <div className={classes.header}>
+                    <h1 className={classes.boldText}>Посты отсутсвуют</h1>
+                    <FloatButton
+                      icon={
+                        <img
+                          src={arrowBack}
+                          alt="back"
+                          style={{ width: 20, height: 20 }}
+                        />
+                      }
+                      type="primary"
+                      tooltip="Вернуться назад"
+                      onClick={backCompanySchema}
+                      style={{
+                        insetInlineEnd: 94,
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <>
+
+                    {hasValidHeader() && (
+                      <div className={classes.header}>
+                        {header.postName && (
+                          <h1 className={classes.boldText}>
+                            {header.postName}
+                          </h1>
+                        )}
+                        {header.divisionName && (
+                          <h2 className={classes.boldText}>
+                            {header.divisionName}
+                          </h2>
+                        )}
+                        {header.fullName && <h3>{header.fullName}</h3>}
+                      </div>
+                    )}
+
+                    <>
+                      {isViewChildrenPost ? (
+                        <>
+                          {onePost[0]?.children?.map((item) => {
+                            return (
+                              <>
+                                <PostSchema
+                                  key={item.id}
+                                  post={item}
+                                  backgroundColor={onePost[0].color}
+                                  setOnePost={setOnePost}
+                                  setViewChildrenPost={setViewChildrenPost}
+                                  setHeader={setHeader}
+                                />
+                              </>
+                            );
+                          })}
+
+                          <FloatButton
+                            icon={
+                              <img
+                                src={arrowBack}
+                                alt="back"
+                                style={{ width: 20, height: 20 }}
+                              />
+                            }
+                            type="primary"
+                            tooltip="Вернуться назад"
+                            onClick={() => {
+                              setViewChildrenPost(false);
+                              setHeader({
+                                postName: "",
+                                divisionName: "",
+                                fullName: "",
+                              });
+                            }}
+                            style={{
+                              insetInlineEnd: 54,
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <PostTree
+                            posts={arrayAllPosts}
+                            arrayColors={arrayColors}
+                            setArrayColors={setArrayColors}
+                            setOnePost={setOnePost}
+                            setViewChildrenPost={setViewChildrenPost}
+                            setHeader={setHeader}
+                          />
+
+                          <FloatButton
+                            icon={
+                              <img
+                                src={arrowBack}
+                                alt="back"
+                                style={{ width: 20, height: 20 }}
+                              />
+                            }
+                            type="primary"
+                            tooltip="Вернуться назад"
+                            onClick={backCompanySchema}
+                            style={{
+                              insetInlineEnd: 54,
+                            }}
+                          />
+                        </>
+                      )}
+                    </>
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

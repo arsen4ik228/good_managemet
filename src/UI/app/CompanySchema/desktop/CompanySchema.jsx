@@ -1,43 +1,26 @@
 import React, { useState, useEffect } from "react";
 import classes from "./CompanySchema.module.css";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import _ from "lodash";
 import { FloatButton } from "antd";
 
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders.jsx";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import HandlerMutation from "@Custom/HandlerMutation.jsx";
 
 import PostSchema from "./postSchema/PostSchema";
 import BlockSchema from "./blockSchema/BlockSchema";
 
-import { usePostsHook } from "@hooks/usePostsHook";
-import { useOrganizationHook } from "@hooks/useOrganizationHook";
 import arrowBack from "@image/back_white.svg";
-import DrawerCreatePost from "./drawer/DrawerCreatePost";
+import DrawerCreatePost from "../drawer/drawerForPost/DrawerCreatePost";
+import { useGetSingleOrganization, useUpdateSingleOrganization } from "@hooks";
 
-const buildTree = (posts) => {
-  const postMap = {};
-  const roots = [];
+import { useAllPosts } from "@hooks";
 
-  // Создаем карту постов
-  posts.forEach((post) => {
-    post.children = [];
-    postMap[post.id] = post;
-  });
-
-  // Строим дерево
-  posts.forEach((post) => {
-    if (post.parentId === null) {
-      roots.push(post);
-    } else {
-      if (postMap[post.parentId]) {
-        postMap[post.parentId].children.push(post);
-      }
-    }
-  });
-
-  return roots;
-};
+import { buildTree } from "../constants/contsants.js";
 
 const PostTree = ({
   posts,
@@ -67,26 +50,34 @@ const PostTree = ({
 };
 
 export default function CompanySchema() {
+  const { organizationId } = useParams();
+  const navigate = useNavigate();
+
+  const backCompanySchema = () => {
+    navigate(`/pomoshnik/companySchema`);
+  };
+
   const {
     allPosts = [],
     isLoadingGetPosts,
+    isFetchingGetPosts,
     isErrorGetPosts,
-  } = usePostsHook({ structure: true });
+  } = useAllPosts({ organizationId, structure: true });
 
   const {
-    reduxSelectedOrganizationId,
-
     currentOrganization,
     isLoadingOrganizationId,
     isFetchingOrganizationId,
+  } = useGetSingleOrganization({ organizationId: organizationId });
 
+  const {
     updateOrganization,
     isLoadingUpdateOrganizationMutation,
     isSuccessUpdateOrganizationMutation,
     isErrorUpdateOrganizationMutation,
     ErrorOrganization,
     localIsResponseUpdateOrganizationMutation,
-  } = useOrganizationHook();
+  } = useUpdateSingleOrganization();
 
   const [arrayAllPosts, setArrayAllPosts] = useState([]);
   const [onePost, setOnePost] = useState([]);
@@ -105,13 +96,15 @@ export default function CompanySchema() {
     }
 
     await updateOrganization({
-      _id: reduxSelectedOrganizationId,
+      _id: organizationId,
       colorCodes,
     });
   };
 
   useEffect(() => {
-    setArrayAllPosts(_.cloneDeep(allPosts));
+    if (!_.isEqual(arrayAllPosts, allPosts)) {
+      setArrayAllPosts(_.cloneDeep(allPosts));
+    }
   }, [allPosts]);
 
   useEffect(() => {
@@ -127,70 +120,130 @@ export default function CompanySchema() {
   const createPost = () => {
     setOpenCreatePost(true);
   };
-  // console.log(onePost);
+
+  console.log("onePost");
+  console.log(onePost);
   return (
     <div className={classes.dialog}>
-      <Headers name={"схема компании"}>
+      <Headers name={"схема постов"}>
         <BottomHeaders update={saveUpdateOrganization} create={createPost} />
       </Headers>
 
-      <DrawerCreatePost open={openCreatePost} setOpen={setOpenCreatePost}></DrawerCreatePost>
+      <DrawerCreatePost
+        open={openCreatePost}
+        setOpen={setOpenCreatePost}
+        organizationId={organizationId}
+      ></DrawerCreatePost>
 
-      <div className={classes.main}>
-        <div className={classes.header}>
-          <h1 className={classes.boldText}>{header.postName}</h1>
-          <h2 className={classes.boldText}>{header.divisionName}</h2>
-          <h3>{header.fullName}</h3>
-        </div>
-
-        <div className={classes.wrapper}>
-          {isViewChildrenPost ? (
-            <>
-              {onePost[0]?.children?.map((item) => {
-                return (
-                  <>
-                    <PostSchema
-                      key={item.id}
-                      post={item}
-                      backgroundColor={onePost[0].color}
-                      setOnePost={setOnePost}
-                      setViewChildrenPost={setViewChildrenPost}
-                      setHeader={setHeader}
-                    />
-
-                    <FloatButton
-                      icon={
-                        <img
-                          src={arrowBack}
-                          alt="back"
-                          style={{ width: 20, height: 20 }}
-                        />
-                      }
-                      type="primary"
-                      tooltip="Вернуться назад"
-                      onClick={() => setViewChildrenPost(false)}
-                      style={{
-                        insetInlineEnd: 94,
-                      }}
-                    />
-                  </>
-                );
-              })}
-            </>
+      {isErrorGetPosts ? (
+        <>
+          <HandlerQeury Error={isErrorGetPosts}></HandlerQeury>
+        </>
+      ) : (
+        <div className={classes.main}>
+          {isFetchingGetPosts || isLoadingGetPosts ? (
+            <HandlerQeury
+              Loading={isLoadingGetPosts}
+              Fetching={isFetchingGetPosts}
+            ></HandlerQeury>
           ) : (
             <>
-              <PostTree
-                posts={arrayAllPosts}
-                arrayColors={arrayColors}
-                setArrayColors={setArrayColors}
-                setOnePost={setOnePost}
-                setViewChildrenPost={setViewChildrenPost}
-                setHeader={setHeader}
-              />
+              {allPosts.length === 0 ? (
+                <div className={classes.header}>
+                  <h1 className={classes.boldText}>Посты отсутсвуют</h1>
+                  <FloatButton
+                    icon={
+                      <img
+                        src={arrowBack}
+                        alt="back"
+                        style={{ width: 20, height: 20 }}
+                      />
+                    }
+                    type="primary"
+                    tooltip="Вернуться назад"
+                    onClick={backCompanySchema}
+                    style={{
+                      insetInlineEnd: 94,
+                    }}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className={classes.header}>
+                    <h1 className={classes.boldText}>{header.postName}</h1>
+                    <h2 className={classes.boldText}>{header.divisionName}</h2>
+                    <h3>{header.fullName}</h3>
+                  </div>
+
+                  <div className={classes.wrapper}>
+                    {isViewChildrenPost ? (
+                      <>
+                        {onePost[0]?.children?.map((item) => {
+                          return (
+                            <>
+                              <PostSchema
+                                key={item.id}
+                                post={item}
+                                backgroundColor={onePost[0].color}
+                                setOnePost={setOnePost}
+                                setViewChildrenPost={setViewChildrenPost}
+                                setHeader={setHeader}
+                              />
+                            </>
+                          );
+                        })}
+
+                        <FloatButton
+                          icon={
+                            <img
+                              src={arrowBack}
+                              alt="back"
+                              style={{ width: 20, height: 20 }}
+                            />
+                          }
+                          type="primary"
+                          tooltip="Вернуться назад"
+                          onClick={() => setViewChildrenPost(false)}
+                          style={{
+                            insetInlineEnd: 94,
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <PostTree
+                          posts={arrayAllPosts}
+                          arrayColors={arrayColors}
+                          setArrayColors={setArrayColors}
+                          setOnePost={setOnePost}
+                          setViewChildrenPost={setViewChildrenPost}
+                          setHeader={setHeader}
+                        />
+
+                        <FloatButton
+                          icon={
+                            <img
+                              src={arrowBack}
+                              alt="back"
+                              style={{ width: 20, height: 20 }}
+                            />
+                          }
+                          type="primary"
+                          tooltip="Вернуться назад"
+                          onClick={backCompanySchema}
+                          style={{
+                            insetInlineEnd: 94,
+                          }}
+                        />
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

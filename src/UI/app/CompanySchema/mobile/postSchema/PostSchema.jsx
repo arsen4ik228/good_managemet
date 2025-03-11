@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import _ from "lodash";
+import { Button, Collapse } from "antd";
 
-import edit from "@image/edit.svg";
-
-import { Popover, Collapse, Button } from "antd";
-import { lightenColor, ColorPickerModal } from "../../constants/contsants.js";
-
-import DrawerUpdatePost from "../../drawer/drawerForPost/DrawerUpdatePost";
-
-import palette from "@image/color_palette.svg";
+import { lightenColor } from "../../constants/contsants.js";
+import  DrawerUpdatePost  from "../../drawer/drawerForPost/DrawerUpdatePost";
 
 const { Panel } = Collapse;
 
@@ -26,7 +21,7 @@ const PodSchema = ({
   const handleOpenPostButtonClick = (event, element) => {
     event.stopPropagation(); // Останавливаем всплытие события
     const newElement = _.cloneDeep(element);
-    newElement.color = baseColor;
+    newElement.color = backgroundColor;
     console.log(newElement);
     setOnePost([newElement]);
     setHeader({
@@ -47,7 +42,7 @@ const PodSchema = ({
         header={
           <div
             style={{
-              width: "100%",
+              width:"100%",
               display: "flex",
               justifyContent: "space-between",
             }}
@@ -96,31 +91,17 @@ const PodSchema = ({
   );
 };
 
-export default function BlockSchema({
+export default function PostSchema({
   post,
-  arrayColors,
-  setArrayColors,
+  backgroundColor,
   setOnePost,
   setViewChildrenPost,
   setHeader,
 }) {
-  let colorPostFromBD = arrayColors.get(post.id);
-
-  const [selectedColor, setSelectedColor] = useState(null);
-
-  const handleColorSelect = (color) => {
-    setSelectedColor(color);
-    setArrayColors((prevState) => {
-      const newMap = new Map(prevState);
-      newMap.set(post.id, color);
-      return newMap;
-    });
-  };
-
   const handleOpenPostButtonClick = (event, element) => {
     event.stopPropagation(); // Останавливаем всплытие события
     const newElement = _.cloneDeep(element);
-    newElement.color = selectedColor || colorPostFromBD;
+    newElement.color = backgroundColor;
     console.log(newElement);
     setOnePost([newElement]);
     setHeader({
@@ -135,13 +116,13 @@ export default function BlockSchema({
 
   return (
     <Collapse
-      style={{ backgroundColor: selectedColor || arrayColors.get(post.id) }}
+      style={{ backgroundColor, borderRadius: "10px", marginBottom: "10px" }}
     >
       <Panel
         header={
           <div
             style={{
-              width: "80vw",
+              width:"80vw",
               display: "flex",
               justifyContent: "space-between",
             }}
@@ -164,37 +145,19 @@ export default function BlockSchema({
             </Button>
 
             <DrawerUpdatePost postId={post.id}></DrawerUpdatePost>
-
-            <Popover
-              placement="bottomRight"
-              content={<ColorPickerModal onColorSelect={handleColorSelect} />}
-            >
-              <img
-                src={palette}
-                alt="palette"
-                width="25px"
-                height="25px"
-                style={{ marginLeft: "20px" }}
-              />
-            </Popover>
           </div>
         }
         key={post.id}
-        style={{
-          backgroundColor: selectedColor,
-          padding: "10px",
-          borderRadius: "10px",
-          paddingLeft: post.underPosts.length > 0 ? "" : "28px",
-        }}
         showArrow={post.underPosts.length > 0}
+        style={{ backgroundColor, padding: "10px", borderRadius: "10px" }}
       >
-        {post.children.length > 0 && (
+        {post?.children.length > 0 && (
           <>
-            {post.children.map((child) => (
+            {post?.children.map((child) => (
               <PodSchema
                 key={child.id}
                 post={child}
-                baseColor={selectedColor || colorPostFromBD}
+                baseColor={backgroundColor}
                 setOnePost={setOnePost}
                 setViewChildrenPost={setViewChildrenPost}
                 setHeader={setHeader}

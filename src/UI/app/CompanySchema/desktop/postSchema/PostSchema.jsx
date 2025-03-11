@@ -3,21 +3,7 @@ import classes from "./PostSchema.module.css";
 import _ from "lodash";
 import { Button } from "antd";
 
-const lightenColor = (color, factor) => {
-  if (!color || typeof color !== "string" || !color.startsWith("#")) {
-    return "#ffffff"; // Дефолтный белый цвет, если цвет невалиден
-  }
-
-  let r = parseInt(color.slice(1, 3), 16);
-  let g = parseInt(color.slice(3, 5), 16);
-  let b = parseInt(color.slice(5, 7), 16);
-
-  r = Math.min(255, Math.floor(r + (255 - r) * factor));
-  g = Math.min(255, Math.floor(g + (255 - g) * factor));
-  b = Math.min(255, Math.floor(b + (255 - b) * factor));
-
-  return `rgb(${r}, ${g}, ${b})`;
-};
+import { lightenColor } from "../../constants/contsants.js";
 
 const PodSchema = ({ post, level = 1, baseColor, setOnePost, setViewChildrenPost, setHeader }) => {
   const backgroundColor = lightenColor(baseColor, level * 0.2);
@@ -45,18 +31,18 @@ const PodSchema = ({ post, level = 1, baseColor, setOnePost, setViewChildrenPost
             handleOpenPostButtonClick(event, post);
           }}
         >
-          {post.divisionName}
+          {post?.divisionName}
         </Button>
         <h2>{post.postName}</h2>
         {post.user ? (
           <h3>
-            {post.user.firstName} {post.user.lastName}
+            {post?.user.firstName} {post?.user.lastName}
           </h3>
         ) : (
           <h3>Пост свободен</h3>
         )}
       </div>
-      {post.children.length > 0 && (
+      {post?.children.length > 0 && (
         <div className={classes.childBlock}>
           {post.children.map((child) => (
             <PodSchema
@@ -107,19 +93,19 @@ export default function PostSchema({ post, backgroundColor, setOnePost, setViewC
               handleOpenPostButtonClick(post);
             }}
           >
-            {post.divisionName}
+            {post?.divisionName}
           </Button>
-          <h2>{post.postName}</h2>
-          {post.user && (
+          <h2>{post?.postName}</h2>
+          {post?.user && (
             <h3>
-              {post.user.firstName} {post.user.lastName}
+              {post?.user?.firstName} {post?.user?.lastName}
             </h3>
           )}
         </div>
 
-        {post.children.length > 0 && (
+        {post?.children.length > 0 && (
           <div className={classes.childBlock}>
-            {post.children.map((child) => (
+            {post?.children.map((child) => (
               <PodSchema
                 key={child.id}
                 post={child}

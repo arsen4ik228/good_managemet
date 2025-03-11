@@ -27,5 +27,5 @@ const apiSlice = createApi({
   ],
   endpoints: builder => ({}),
 })
-
+// keepUnusedDataFor: 0
 export default apiSlice;

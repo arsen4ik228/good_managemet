@@ -32,7 +32,7 @@ export const organizationApi = apiSlice.injectEndpoints({
         url: `organizations/${organizationId}`,
       }),
       providesTags: (result, err, arg) => [
-        { type: "ControlPanel", id: arg.organizationId },
+        { type: "Organization", id: arg.organizationId },// ControlPanel
       ],
     }),
 
@@ -46,6 +46,15 @@ export const organizationApi = apiSlice.injectEndpoints({
         { type: "Organization", id: arg._id },
       ],
     }),
+
+    createOrganization: build.mutation({
+      query: (body) => ({
+        url: `organizations/new`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Organization"],
+    }),
   }),
 });
 
@@ -53,4 +62,5 @@ export const {
   useGetOrganizationsQuery,
   useGetOrganizationIdQuery,
   useUpdateOrganizationsMutation,
+  useCreateOrganizationMutation
 } = organizationApi;

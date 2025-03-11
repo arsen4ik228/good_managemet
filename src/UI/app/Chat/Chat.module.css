@@ -14,6 +14,8 @@
 
 .header {
     height: 32px;
+    min-height: 32px;
+    max-height: 32px;
 
     display: flex;
     align-items: center;
@@ -35,6 +37,8 @@
 
 .search {
     height: 50px;
+    min-height: 50px;
+    max-height: 50px;
 
     display: flex;
     align-items: center;
@@ -107,6 +111,8 @@ input[type='search']::-webkit-search-cancel-button {
 
 .main {
     height: calc(100% - 32px - 50px);
+    min-height: calc(100% - 32px - 50px);
+    max-height: calc(100% - 32px - 50px);
 
     display: flex;
     flex-direction: column;
@@ -121,6 +127,8 @@ input[type='search']::-webkit-search-cancel-button {
 
 .btnPomoshnik {
     height: 50px;
+    min-height: 50px;
+    max-height: 50px;
 
     display: flex;
     align-items: center;
@@ -142,6 +150,8 @@ input[type='search']::-webkit-search-cancel-button {
 
 .btnAddUser {
     height: 50px;
+    min-height: 50px;
+    max-height: 50px;
 
     display: flex;
     justify-content: center;
