@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import ButtonImage from "@Custom/buttonImage/ButtonImage";
 import edit from "@image/edit.svg";
-import { Space, Button, Input, Select, Form, Drawer as DrawerAnt } from "antd";
+import {
+  Space,
+  Button,
+  Input,
+  Select,
+  Form,
+  Flex,
+  Drawer as DrawerAnt,
+} from "antd";
 import { message } from "antd";
-import { useStatisticsHook } from "../../../../../hooks/useStatisticsHook";
+import { useStatisticsHook } from "@hooks/useStatisticsHook";
 import { useGetSinglePost, useUpdateSinglePost } from "@hooks";
+import { isMobile } from "react-device-detect"; 
 
 const { TextArea } = Input;
 
-export default function Drawer({ postId }) {
+export default function DrawerUpdatePost({ postId }) {
   const [open, setOpen] = useState(false);
   const [shouldFetchData, setShouldFetchData] = useState(false); // Состояние для вызова хука
   const [formPost] = Form.useForm();
@@ -62,9 +71,12 @@ export default function Drawer({ postId }) {
 
   const handlePostValuesChange = (changedValues, allValues) => {
     const cleanedValues = Object.fromEntries(
-      Object.entries(allValues).map(([key, value]) => [key, value === undefined ? null : value])
+      Object.entries(allValues).map(([key, value]) => [
+        key,
+        value === undefined ? null : value,
+      ])
     );
-    formPost.setFieldsValue(cleanedValues); 
+    formPost.setFieldsValue(cleanedValues);
   };
 
   const handleSave = async () => {
@@ -95,6 +107,7 @@ export default function Drawer({ postId }) {
       ]);
 
       message.success("Данные успешно обновлены!");
+      setOpen(false);
     } catch (error) {
       if (error.errorFields) {
         message.error("Пожалуйста, заполните все поля корректно.");
@@ -151,7 +164,7 @@ export default function Drawer({ postId }) {
   }, [statistics, isLoadingGetPostId, isFetchingGetStatistics]);
 
   return (
-    <div div  style={{with:"100%", marginLeft: "auto"}}>
+    <div style={{ with: "100%", marginLeft: "auto" }}>
       <ButtonImage
         name={"редактировать"}
         icon={edit}
@@ -166,8 +179,13 @@ export default function Drawer({ postId }) {
         open={open}
         loading={isLoadingGetPostId || isFetchingGetPostId}
         onClose={() => setOpen(false)}
+        width={isMobile ? 300 : 350}
       >
-        <Form form={formPost} onValuesChange={handlePostValuesChange} layout="vertical">
+        <Form
+          form={formPost}
+          onValuesChange={handlePostValuesChange}
+          layout="vertical"
+        >
           {/* Название поста */}
           <Form.Item
             label="Название поста"
@@ -286,7 +304,7 @@ export default function Drawer({ postId }) {
           </Form.Item>
         </Form>
 
-        <Space>
+        <Space style={{ marginTop: "auto" }}>
           <Button type="primary" onClick={handleSave} loading={isSaving}>
             Сохранить
           </Button>

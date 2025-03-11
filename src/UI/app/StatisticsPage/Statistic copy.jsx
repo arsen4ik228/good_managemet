@@ -24,7 +24,6 @@ import { useStatisticsHook } from "@hooks";
 import { usePostsHook } from "@hooks";
 import { useOrganizationHook } from "@hooks";
 
-import _ from "lodash";
 export default function Statistic() {
   // Организация
   const {
@@ -59,15 +58,10 @@ export default function Statistic() {
   const [oldReceivedPoints, setOldReceivedPoints] = useState([]);
   const [createPoints, setCreatePoints] = useState([]);
 
-  const [reportDay, setReportDay] = useState(
-    reduxSelectedOrganizationReportDay
-  );
+  const [reportDay, setReportDay] = useState(reduxSelectedOrganizationReportDay);
 
   useEffect(() => {
-    if (
-      reduxSelectedOrganizationReportDay !== undefined &&
-      reduxSelectedOrganizationReportDay !== null
-    ) {
+    if (reduxSelectedOrganizationReportDay !== undefined && reduxSelectedOrganizationReportDay !== null) {
       setReportDay(reduxSelectedOrganizationReportDay);
     }
   }, [reduxSelectedOrganizationReportDay]);
@@ -85,8 +79,6 @@ export default function Statistic() {
   const [openModalReportDay, setOpenModalReportDay] = useState(false);
   const [showReportDay, setShowReportDay] = useState();
   const [showReportDayComes, setShowReportDayComes] = useState();
-
-  const [showCorrelationPoint, setShowCorrelationPoint] = useState([]);
 
   const {
     statistics,
@@ -220,7 +212,7 @@ export default function Statistic() {
 
   const saveUpdateStatistics = async () => {
     const Data = {};
-
+    
     if (Object.keys(currentStatistic).length == 0) return;
 
     if (type !== currentStatistic?.type) {
@@ -242,6 +234,7 @@ export default function Statistic() {
           return {
             value: item.value,
             valueDate: new Date(item.valueDate),
+            isCorrelation: false,
           };
         });
         Data.statisticDataCreateDtos = formatDate;
@@ -299,59 +292,6 @@ export default function Statistic() {
       setPostId(currentStatistic.post.id);
     }
   }, [currentStatistic.id]);
-  
-  const countMonthsForGraphicYear = () => {
-    const monthlyData = statisticDatas.reduce((acc, item) => {
-      const itemDate = new Date(item.valueDate);
-      const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
-      if (
-        !isNaN(itemDate) &&
-        item?.correlationType !== "Год" &&
-        new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
-          itemDate
-      ) {
-        if (item?.correlationType === "Месяц") {
-          acc[monthKey] = {
-            id: item.id,
-            valueSum: item.value,
-            year: itemDate.getFullYear(),
-            month: itemDate.getMonth() + 1,
-            correlationType: "Месяц",
-          };
-        }
-
-        if (!acc[monthKey]) {
-          acc[monthKey] = {
-            valueSum: 0,
-            year: itemDate.getFullYear(),
-            month: itemDate.getMonth() + 1,
-          };
-        }
-
-        if (!acc[monthKey]?.correlationType) {
-          acc[monthKey].valueSum += item.value;
-        }
-      }
-      return acc;
-    }, {});
-
-    const monthlyArray = Object.keys(monthlyData).map((monthKey) => {
-      const { id, valueSum, year, month, correlationType } =
-        monthlyData[monthKey];
-
-      const lastDayOfMonth = new Date(year, month, 0);
-      const date = lastDayOfMonth.getDate();
-
-      return {
-        id: id || null,
-        valueDate: `${year}-${month}-${date}`,
-        value: valueSum,
-        correlationType: correlationType,
-      };
-    });
-
-    return monthlyArray;
-  };
 
   useEffect(() => {
     if (!statisticDatas.length) return;
@@ -362,9 +302,10 @@ export default function Statistic() {
     setArrayPoints([]);
     setShowPoints([]);
     setCount(0);
-    setShowCorrelationPoint([]);
+    // setDay(reportDay);
 
     if (typeGraphic === "Ежедневный") {
+      console.log("Ежедневный");
       const dayNow = new Date();
 
       const currentWeekday = dayNow.getDay(); // Текущий день недели (0 - Воскресенье, 1 - Понедельник и т.д.)
@@ -424,7 +365,7 @@ export default function Statistic() {
           return (
             startDateStr <= itemDateStr &&
             itemDateStr < endDateStr &&
-            item.correlationType === null
+            item.isCorrelation !== true
           );
         })
         ?.map((item) => ({
@@ -449,6 +390,7 @@ export default function Statistic() {
             id: date,
             valueDate: date,
             value: "",
+            isCorrelation: false,
           });
         }
       });
@@ -471,39 +413,34 @@ export default function Statistic() {
     }
 
     if (typeGraphic === "Ежемесячный") {
-      const arrayPointsCorrelationTypeisMonth = statisticDatas.filter(
-        (item) => item.correlationType === "Месяц"
-      );
-      setShowCorrelationPoint(arrayPointsCorrelationTypeisMonth);
-
       // Группируем данные по месяцам и суммируем `valueDate` за каждый месяц
       const monthlyData = statisticDatas.reduce((acc, item) => {
         const itemDate = new Date(item.valueDate);
         const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
         if (
           !isNaN(itemDate) &&
-          item?.correlationType !== "Год" &&
           new Date(new Date().setMonth(new Date().getMonth() - 13)) < itemDate
         ) {
-          if (item?.correlationType === "Месяц") {
+          if (item?.isCorrelation === true) {
             acc[monthKey] = {
               id: item.id,
               valueSum: item.value,
               year: itemDate.getFullYear(),
               month: itemDate.getMonth() + 1,
-              correlationType: "Месяц",
+              isCorrelation: true,
             };
           }
 
-          if (!acc[monthKey]) {
-            acc[monthKey] = {
-              valueSum: 0,
-              year: itemDate.getFullYear(),
-              month: itemDate.getMonth() + 1,
-            };
-          }
-
-          if (!acc[monthKey]?.correlationType) {
+          // Если месяца ещё нет в acc, создаем начальный объект с valueSum = 0
+          if (!acc[monthKey] || !acc[monthKey]?.isCorrelation) {
+            if (!acc[monthKey]) {
+              acc[monthKey] = {
+                valueSum: 0,
+                year: itemDate.getFullYear(),
+                month: itemDate.getMonth() + 1,
+                isCorrelation: false,
+              };
+            }
             acc[monthKey].valueSum += item.value;
           }
         }
@@ -527,6 +464,7 @@ export default function Statistic() {
             valueSum: 0,
             year: monthDate.getFullYear(),
             month: monthDate.getMonth() + 1,
+            isCorrelation: false,
           };
         }
 
@@ -543,9 +481,7 @@ export default function Statistic() {
           id: monthlyData[monthKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${year}-${monthValue}-${date}`,
           value: monthlyData[monthKey].valueSum, // Сумма за месяц
-          ...(monthlyData[monthKey].correlationType ?? {
-            correlationType: monthlyData[monthKey].correlationType,
-          }),
+          isCorrelation: monthlyData[monthKey].isCorrelation,
         });
       }
 
@@ -555,81 +491,43 @@ export default function Statistic() {
       );
 
       setReceivedPoints(updatedMonthlyPoints);
-
-      console.log("updatedMonthlyPoints");
-      console.log(updatedMonthlyPoints);
     }
 
     if (typeGraphic === "Ежегодовой") {
-      const arrayPointsCorrelationTypeisYear = statisticDatas.filter(
-        (item) => item.correlationType === "Год"
-      );
-      setShowCorrelationPoint(arrayPointsCorrelationTypeisYear);
+      // Группируем данные по годам и суммируем `valueDate` за каждый год
+      const yearData = statisticDatas.reduce((acc, item) => {
+        const itemDate = new Date(item.valueDate);
+        const yearKey = `${itemDate.getFullYear()}`;
+        // Проверяем, что дата корректна и меньше чем на 13 лет от текущего года
+        if (
+          !isNaN(itemDate) &&
+          new Date().getFullYear() - 12 < itemDate.getFullYear()
+        ) {
+          if (item?.isCorrelation === true) {
+            acc[yearKey] = {
+              id: item.id,
+              valueSum: item.value,
+              year: itemDate.getFullYear(),
+              isCorrelation: true,
+            };
+          }
 
-      const dataMonth = countMonthsForGraphicYear();
-      const dataWithCorrelationTypeYear = statisticDatas?.filter(
-        (item) =>
-          item.correlationType === "Год" &&
-          new Date().getFullYear() - 12 < new Date(item.valueDate).getFullYear()
-      );
-
-      const prepareData = dataMonth.reduce((acc, month) => {
-        const date = new Date(month.valueDate);
-        const yearKey = `${date.getFullYear()}`;
-
-        const elementWithSameYear = dataWithCorrelationTypeYear.find(
-          (el) => new Date(el.valueDate).getFullYear() === date.getFullYear()
-        );
-
-        if (elementWithSameYear && !acc[yearKey]) {
-          acc[yearKey] = {
-            id: month.id,
-            valueSum: elementWithSameYear.value,
-            correlationType: elementWithSameYear.correlationType,
-          };
-          return acc;
+          // Если года еще нет в acc, создаем начальный объект с valueSum = 0
+          if (!acc[yearKey] || !acc[yearKey]?.isCorrelation) {
+            if (!acc[yearKey]) {
+              acc[yearKey] = {
+                valueSum: 0,
+                year: itemDate.getFullYear(),
+                isCorrelation: false,
+              };
+            }
+            acc[yearKey].valueSum += item.value;
+          }
         }
-
-        if (!acc[yearKey]) {
-          // Если года ещё нет в объекте, создаём новую запись
-          acc[yearKey] = {
-            valueSum: 0,
-            year: date.getFullYear(),
-          };
-        }
-
-        // Если у года нет свойства correlationType, добавляем значение к valueSum
-        if (!acc[yearKey]?.correlationType) {
-          acc[yearKey].valueSum += month.value;
-        }
-
         return acc;
       }, {});
 
-      const objectdataWithCorrelationTypeYear =
-        dataWithCorrelationTypeYear.reduce((acc, item) => {
-          const itemDate = new Date(item.valueDate);
-          const yearKey = `${itemDate.getFullYear()}`;
-          if (
-            new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
-            itemDate
-          ) {
-            if (!acc[yearKey]) {
-              acc[yearKey] = {
-                id: item.id,
-                valueSum: item.value,
-                correlationType: item.correlationType,
-              };
-            }
-          }
-
-          return acc;
-        }, {});
-
-      
-
-      const prepareObjectData = _.merge({}, prepareData, objectdataWithCorrelationTypeYear);
-
+      // Формируем новый массив, включающий `valueDate` и `date` (первый день года)
       const updatedYearPoints = [];
 
       // Для каждого года от 13 лет назад до текущего добавляем данные
@@ -638,28 +536,30 @@ export default function Statistic() {
         yearDate.setFullYear(yearDate.getFullYear() - i);
         const yearKey = `${yearDate.getFullYear()}`;
 
-        if (!prepareObjectData[yearKey]) {
-          prepareObjectData[yearKey] = {
+        // Если данных нет для этого года, создаем запись с суммой 0
+        if (!yearData[yearKey]) {
+          yearData[yearKey] = {
             valueSum: 0,
             year: yearDate.getFullYear(),
+            isCorrelation: false,
           };
         }
 
         updatedYearPoints.push({
-          id: prepareObjectData[yearKey]?.id || null,
+          id: yearData[yearKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${yearDate.getFullYear()}-01-01`,
-          value: prepareObjectData[yearKey].valueSum,
-          ...(prepareObjectData[yearKey].correlationType ?? {
-            correlationType: prepareObjectData[yearKey].correlationType,
-          }),
+          value: yearData[yearKey].valueSum, // Сумма за год
+          isCorrelation: yearData[yearKey].isCorrelation,
         });
       }
+
+      // Сортируем данные по дате, от последнего года к первому
       updatedYearPoints.sort(
         (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
       );
+
       setReceivedPoints(updatedYearPoints);
     }
-
     if (typeGraphic === "13" || typeGraphic === "26" || typeGraphic === "52") {
       const today = new Date();
       const end = new Date(today);
@@ -676,11 +576,13 @@ export default function Statistic() {
 
       // Перемещаем currentDate на первый выбранный день недели
       while (currentDate.getDay() !== selectedDayOfWeek) {
+        console.log("11111111111111");
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
       // Цикл по неделям
       while (currentDate <= end) {
+        console.log("2222222222222222");
         const nextDate = new Date(currentDate);
         nextDate.setDate(currentDate.getDate() + 7);
 
@@ -691,7 +593,7 @@ export default function Statistic() {
             const isValid =
               currentDate <= itemDate &&
               itemDate < nextDate &&
-              item.correlationType === null;
+              item.isCorrelation !== true;
 
             if (isValid) {
               setArrayPoints((prevState) => [...prevState, item]);
@@ -731,6 +633,7 @@ export default function Statistic() {
     isLoadingGetStatisticId,
     isFetchingGetStatisticId,
     typeGraphic,
+    // reportDay,
   ]);
 
   // Все для модального окна при нажатии на блок координат точек для статистики
@@ -745,36 +648,21 @@ export default function Statistic() {
 
     const end = new Date(id);
     let start = new Date(id);
-
-    if (typeGraphic === "Ежемесячный") {
-      const elementcorrelationType = showCorrelationPoint.filter(
-        (item) => new Date(item.valueDate).toDateString() === end.toDateString()
+    if (typeGraphic === "Ежемесячный" || typeGraphic === "Ежегодовой") {
+      const elementIsCorrelation = receivedPoints.filter(
+        (item) =>
+          new Date(item.valueDate).toDateString() === end.toDateString() &&
+          item.isCorrelation === true
       );
-      if (elementcorrelationType.length > 0) {
-        setShowPoints(elementcorrelationType);
+      if (elementIsCorrelation.length > 0) {
+        setShowPoints(elementIsCorrelation);
       } else {
         setShowPoints((prevState) => [
           ...prevState,
-          { valueDate: end, value: "" },
+          { valueDate: end, value: "", isCorrelation: false },
         ]);
       }
-    }
-
-    if (typeGraphic === "Ежегодовой") {
-      const elementcorrelationType = showCorrelationPoint.filter(
-        (item) => new Date(item.valueDate).toDateString() === end.toDateString()
-      );
-      if (elementcorrelationType.length > 0) {
-        setShowPoints(elementcorrelationType);
-      } else {
-        setShowPoints((prevState) => [
-          ...prevState,
-          { valueDate: end, value: "" },
-        ]);
-      }
-    }
-
-    if (typeGraphic !== "Ежемесячный" && typeGraphic !== "Ежегодовой") {
+    } else {
       start.setDate(end.getDate() - 7); //Вот тут происходит вычисление количества дат в модальном окне
       const array = arrayPoints
         .filter((item) => item.myID === id)
@@ -812,20 +700,38 @@ export default function Statistic() {
     }
   };
 
-  const updateModalPoint = (value, index) => {
-    if (index < 0 || index >= showPoints.length) return;
+  // const updateModalPoint = (value, index) => {
+  //   const updatedShowPoints = [...showPoints];
+  //   const update = updatedShowPoints.map((item) => ({
+  //     ...item,
+  //     isCorrelation: false,
+  //   })); /// добавил 26.11.2024
+  //   if (typeGraphic === "Ежемесячный" || typeGraphic === "Ежегодовой") {
+  //     // update[index]["value"] = Number(value);
+  //     update[index]["value"] = value === null ? "" : Number(value);
+  //     update[index]["isCorrelation"] = true;
+  //     setShowPoints(update);
+  //   } else {
+  //     // update[index]["value"] = Number(value);
+  //     update[index]["value"] = value === null ? "" : Number(value);
+  //     setShowPoints(update);
+  //   }
+  // };
 
+  const updateModalPoint = (value, index) => {
+    if (index < 0 || index >= showPoints.length) return; 
+  
     const update = showPoints.map((item) => ({
       ...item,
+      isCorrelation: false,
     }));
-
+  
     update[index] = {
       ...update[index],
       value: value === null ? "" : Number(value),
-      ...(typeGraphic === "Ежемесячный" && { correlationType: "Месяц" }),
-      ...(typeGraphic === "Ежегодовой" && { correlationType: "Год" }),
+      isCorrelation: typeGraphic === "Ежемесячный" || typeGraphic === "Ежегодовой",
     };
-
+  
     setShowPoints(update);
   };
 
@@ -837,13 +743,7 @@ export default function Statistic() {
           _id: item.id,
           value: item.value,
           valueDate: item.valueDate,
-
-          ...(typeGraphic === "Ежемесячный" && {
-            correlationType: item.correlationType,
-          }),
-          ...(typeGraphic === "Ежегодовой" && {
-            correlationType: item.correlationType,
-          }),
+          isCorrelation: item.isCorrelation,
         }));
         Data.statisticDataUpdateDtos = arrayReceived;
       } else {
@@ -851,13 +751,7 @@ export default function Statistic() {
           return {
             ...item,
             valueDate: new Date(item.valueDate),
-
-            ...(typeGraphic === "Ежемесячный" && {
-              correlationType: item.correlationType,
-            }),
-            ...(typeGraphic === "Ежегодовой" && {
-              correlationType: item.correlationType,
-            }),
+            isCorrelation: item.isCorrelation,
           };
         });
         Data.statisticDataCreateDtos = formatDate;
@@ -871,6 +765,7 @@ export default function Statistic() {
           _id: item.id,
           value: item.value,
           valueDate: item.valueDate,
+          isCorrelation: item.isCorrelation,
         }));
 
       if (create.length > 0) {
@@ -878,6 +773,7 @@ export default function Statistic() {
           return {
             ...item,
             valueDate: new Date(item.valueDate),
+            isCorrelation: item.isCorrelation,
           };
         });
         Data.statisticDataCreateDtos = formatDate;
@@ -915,7 +811,6 @@ export default function Statistic() {
     setReceivedPoints([]);
     setArrayPoints([]);
     setShowPoints([]);
-    setShowCorrelationPoint([]);
 
     if (!statisticDatas.length) return;
 
@@ -954,25 +849,23 @@ export default function Statistic() {
       // Группируем данные по дате и фильтруем
       const dataMap = statisticDatas.reduce((acc, item) => {
         const itemDate = item.valueDate.split("T")[0];
-        if (!item.correlationType) {
-          acc[itemDate] = {
-            ...item,
-            valueDate: itemDate,
-          };
-        }
-
+        acc[itemDate] = {
+          ...item,
+          valueDate: itemDate,
+        };
         return acc;
       }, {});
 
       // Создаем массив данных для последних 7 дней, добавляем нулевые значения, если данные отсутствуют
       const updatedPoints = last7Days.map((date) => {
-        if (dataMap[date] && dataMap[date].correlationType === null) {
+        if (dataMap[date] && dataMap[date].isCorrelation !== true) {
           return dataMap[date];
         } else {
           return {
             id: date,
             valueDate: date,
             value: "", // Заполняем нулевым значением, если данных за день нет
+            isCorrelation: false,
           };
         }
       });
@@ -988,10 +881,6 @@ export default function Statistic() {
     }
 
     if (typeGraphic === "Ежемесячный") {
-      const arrayPointsCorrelationTypeisMonth = statisticDatas.filter(
-        (item) => item.correlationType === "Месяц"
-      );
-      setShowCorrelationPoint(arrayPointsCorrelationTypeisMonth);
       // Группируем данные по месяцам и суммируем `valueDate` за каждый месяц
       const monthlyData = statisticDatas.reduce((acc, item) => {
         const itemDate = new Date(item.valueDate);
@@ -1001,24 +890,26 @@ export default function Statistic() {
           new Date(new Date().setMonth(new Date().getMonth() - 14 + count)) <
             itemDate
         ) {
-          if (item?.correlationType === "Месяц") {
+          if (item?.isCorrelation === true) {
             acc[monthKey] = {
               id: item.id,
               valueSum: item.value,
               year: itemDate.getFullYear(),
               month: itemDate.getMonth() + 1,
-              correlationType: "Месяц",
-            };
-          }
-          if (!acc[monthKey]) {
-            acc[monthKey] = {
-              valueSum: 0,
-              year: itemDate.getFullYear(),
-              month: itemDate.getMonth() + 1,
+              isCorrelation: true,
             };
           }
 
-          if (!acc[monthKey]?.correlationType) {
+          // Если месяца ещё нет в acc, создаем начальный объект с valueSum = 0
+          if (!acc[monthKey] || !acc[monthKey]?.isCorrelation) {
+            if (!acc[monthKey]) {
+              acc[monthKey] = {
+                valueSum: 0,
+                year: itemDate.getFullYear(),
+                month: itemDate.getMonth() + 1,
+                isCorrelation: false,
+              };
+            }
             acc[monthKey].valueSum += item.value;
           }
         }
@@ -1042,6 +933,7 @@ export default function Statistic() {
             valueSum: 0,
             year: monthDate.getFullYear(),
             month: monthDate.getMonth() + 1,
+            isCorrelation: false,
           };
         }
 
@@ -1058,9 +950,7 @@ export default function Statistic() {
           id: monthlyData[monthKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${year}-${monthValue}-${date}`, // Форматирование в 'год-месяц-день'
           value: monthlyData[monthKey].valueSum, // Сумма за месяц
-          ...(monthlyData[monthKey].correlationType ?? {
-            correlationType: monthlyData[monthKey].correlationType,
-          }),
+          isCorrelation: monthlyData[monthKey].isCorrelation,
         });
       }
 
@@ -1073,72 +963,40 @@ export default function Statistic() {
     }
 
     if (typeGraphic === "Ежегодовой") {
-      const arrayPointsCorrelationTypeisYear = statisticDatas.filter(
-        (item) => item.correlationType === "Год"
-      );
-      setShowCorrelationPoint(arrayPointsCorrelationTypeisYear);
+      // Группируем данные по годам и суммируем `valueDate` за каждый год
+      const yearData = statisticDatas.reduce((acc, item) => {
+        const itemDate = new Date(item.valueDate);
+        const yearKey = `${itemDate.getFullYear()}`;
+        // Проверяем, что дата корректна и меньше чем на 13 лет от текущего года
+        if (
+          !isNaN(itemDate) &&
+          new Date().getFullYear() - 12 < itemDate.getFullYear()
+        ) {
+          if (item?.isCorrelation === true) {
+            acc[yearKey] = {
+              id: item.id,
+              valueSum: item.value,
+              year: itemDate.getFullYear(),
+              isCorrelation: true,
+            };
+          }
 
-      const dataMonth = countMonthsForGraphicYear();
-      const dataWithCorrelationTypeYear = statisticDatas?.filter(
-        (item) =>
-          item.correlationType === "Год" &&
-          new Date().getFullYear() - 12 < new Date(item.valueDate).getFullYear()
-      );
-
-      const prepareData = dataMonth.reduce((acc, month) => {
-        const date = new Date(month.valueDate);
-        const yearKey = `${date.getFullYear()}`;
-
-        const elementWithSameYear = dataWithCorrelationTypeYear.find(
-          (el) => new Date(el.valueDate).getFullYear() === date.getFullYear()
-        );
-
-        if (elementWithSameYear && !acc[yearKey]) {
-          acc[yearKey] = {
-            id: month.id,
-            valueSum: elementWithSameYear.value,
-            correlationType: elementWithSameYear.correlationType,
-          };
-          return acc;
+          // Если года еще нет в acc, создаем начальный объект с valueSum = 0
+          if (!acc[yearKey] || !acc[yearKey]?.isCorrelation) {
+            if (!acc[yearKey]) {
+              acc[yearKey] = {
+                valueSum: 0,
+                year: itemDate.getFullYear(),
+                isCorrelation: false,
+              };
+            }
+            acc[yearKey].valueSum += item.value;
+          }
         }
-
-        if (!acc[yearKey]) {
-          // Если года ещё нет в объекте, создаём новую запись
-          acc[yearKey] = {
-            valueSum: 0,
-            year: date.getFullYear(),
-          };
-        }
-
-        // Если у года нет свойства correlationType, добавляем значение к valueSum
-        if (!acc[yearKey]?.correlationType) {
-          acc[yearKey].valueSum += month.value;
-        }
-
         return acc;
       }, {});
 
-      const objectdataWithCorrelationTypeYear =
-        dataWithCorrelationTypeYear.reduce((acc, item) => {
-          const itemDate = new Date(item.valueDate);
-          const yearKey = `${itemDate.getFullYear()}`;
-          if (
-            new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
-            itemDate
-          ) {
-            if (!acc[yearKey]) {
-              acc[yearKey] = {
-                id: item.id,
-                valueSum: item.value,
-                correlationType: item.correlationType,
-              };
-            }
-          }
-
-          return acc;
-        }, {});
-
-      const prepareObjectData = _.merge({}, prepareData, objectdataWithCorrelationTypeYear);
+      // Формируем новый массив, включающий `valueDate` и `date` (первый день года)
       const updatedYearPoints = [];
 
       // Для каждого года от 13 лет назад до текущего добавляем данные
@@ -1148,30 +1006,29 @@ export default function Statistic() {
         const yearKey = `${yearDate.getFullYear()}`;
 
         // Если данных нет для этого года, создаем запись с суммой 0
-        if (!prepareObjectData[yearKey]) {
-          prepareObjectData[yearKey] = {
+        if (!yearData[yearKey]) {
+          yearData[yearKey] = {
             valueSum: 0,
             year: yearDate.getFullYear(),
+            isCorrelation: false,
           };
         }
 
         updatedYearPoints.push({
-          id: prepareObjectData[yearKey]?.id || null, // Если id не найден, присваиваем null
+          id: yearData[yearKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${yearDate.getFullYear()}-01-01`,
-          value: prepareObjectData[yearKey].valueSum, // Сумма за год
-          ...(prepareObjectData[yearKey].correlationType ?? {
-            correlationType: prepareObjectData[yearKey].correlationType,
-          }),
+          value: yearData[yearKey].valueSum, // Сумма за год
+          isCorrelation: yearData[yearKey].isCorrelation,
         });
       }
 
+      // Сортируем данные по дате, от последнего года к первому
       updatedYearPoints.sort(
         (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
       );
 
       setReceivedPoints(updatedYearPoints);
     }
-
     if (typeGraphic === "13" || typeGraphic === "26" || typeGraphic === "52") {
       const today = new Date();
       today.setDate(today.getDate() - count * 7);
@@ -1203,14 +1060,14 @@ export default function Statistic() {
             if (
               currentDate <= itemDate &&
               itemDate < nextDate &&
-              item.correlationType === null
+              item.isCorrelation !== true
             ) {
               setArrayPoints((prevState) => [...prevState, item]);
             }
             return (
               currentDate <= itemDate &&
               itemDate < nextDate &&
-              item.correlationType === null
+              item.isCorrelation !== true
             );
           })
           .reduce((sum, item) => sum + item.value, 0);
@@ -1282,10 +1139,8 @@ export default function Statistic() {
   };
 
   const save = () => {
-    console.log(`reportDay =${reportDay}`);
-    console.log(
-      `currentOrganization?.reportDay =${currentOrganization?.reportDay}`
-    );
+    console.log(`reportDay =${reportDay}`)
+    console.log(`currentOrganization?.reportDay =${currentOrganization?.reportDay}`)
     if (reportDay != currentOrganization?.reportDay) {
       setOpenModalReportDay(true);
       dayWeek(reportDay, setShowReportDay);
@@ -1745,24 +1600,10 @@ export default function Statistic() {
                                             type="text"
                                             inputMode="numeric"
                                             placeholder="—"
-                                            value={
-                                              item.value === null ||
-                                              item.value === ""
-                                                ? ""
-                                                : item.value
-                                            }
+                                            value={item.value === null || item.value === "" ? "" : item.value}
                                             onChange={(e) => {
-                                              const newValue =
-                                                e.target.value.replace(
-                                                  /[^0-9]/g,
-                                                  ""
-                                                );
-                                              updateModalPoint(
-                                                newValue === ""
-                                                  ? null
-                                                  : newValue,
-                                                index
-                                              );
+                                              const newValue = e.target.value.replace(/[^0-9]/g, "");
+                                              updateModalPoint(newValue === "" ? null : newValue, index);
                                             }}
                                           />
                                         </div>

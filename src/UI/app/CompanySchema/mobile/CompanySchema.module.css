@@ -12,3 +12,16 @@
     overflow: auto; 
 }
 
+.header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+    
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.boldText{
+    font-weight: 600;
+}

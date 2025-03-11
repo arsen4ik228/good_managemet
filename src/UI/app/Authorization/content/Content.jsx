@@ -8,7 +8,7 @@ import { baseUrl } from "@helpers/constants";
 import telegram from '@Custom/icon/telegram.svg'
 import logo from '@Custom/icon/logo.svg'
 
-const socket = io(`${baseUrl}auth`, {
+const socket = io(`https://24academy.ru/auth`, {
   cors: {
     credentials: true,
   },
