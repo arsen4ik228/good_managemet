@@ -4,7 +4,7 @@ import { extractHoursMinutes } from '@helpers/helpers';
 import isSeenIcon from '@image/isSeen.svg'
 import notSeenIcon from '@image/notSeen.svg'
 
-export const Message = React.forwardRef(({ userMessage, createdMessage, timeSeen, children, ...props }, ref) => {
+export const Message = React.forwardRef(({ key, userMessage, createdMessage, timeSeen, children, ...props }, ref) => {
     return (
         <div
             ref={ref}
