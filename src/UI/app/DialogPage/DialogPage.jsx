@@ -23,6 +23,7 @@ export const DialogPage = () => {
     const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
     const {
         seenMessages,
+        unSeenMessageExist,
         isLoadingSeenMessages,
         isErrorSeenMessages,
         isFetchingSeenMessages,
@@ -33,6 +34,7 @@ export const DialogPage = () => {
         isFetchingUnSeenMessages,
     } = useMessages(convertId, paginationSeenMessages);
     const seenMessagesRef = useRef(seenMessages);
+    const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
     useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds })
@@ -77,16 +79,79 @@ export const DialogPage = () => {
         }
     }, [seenMessages]);
 
-    // useEffect(() => {
-    //     if (!notEmpty(socketResponse)) return;
+    useEffect(() => {
+        if (!notEmpty(socketResponse?.messageCreationEvent)) return;
 
-    //     setSocketMessages(prev => [...prev, {
-    //         id: socketResponse.id,
-    //         content: socketResponse.content,
-    //         userMessage: socketResponse.sender.id === senderPostId,
-    //         createdAt: socketResponse.createdAt
-    //     }]);
-    // }, [socketResponse]);
+        const newMessage = socketResponse.messageCreationEvent
+        setSocketMessages(prev => [...prev, {
+            id: newMessage.id,
+            content: newMessage.content,
+            userMessage: newMessage.sender.id === senderPostId,
+            timeSeen: null,
+            createdAt: newMessage.createdAt
+        }]);
+    }, [socketResponse?.messageCreationEvent]);
+
+    // useEffect(() => {
+    //     unSeenMessageExistRef.current = unSeenMessageExist;
+    // }, [unSeenMessageExist]);
+
+    useEffect(() => {
+        // Проверяем, что socketResponse.messagesAreSeen и messageIds существуют
+        if (!socketResponse?.messagesAreSeen || !Array.isArray(socketResponse.messagesAreSeen.messageIds)) {
+            return;
+        }
+
+        // Функция для обновления сообщений
+        const updateMessages = (messages) => {
+            return messages.map(message => {
+                if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
+                    return {
+                        ...message,
+                        timeSeen: socketResponse.messagesAreSeen.dateSeen,
+                    };
+                }
+                return message;
+            });
+        };
+
+        // Обновляем messagesArray, если есть непрочитанные сообщения
+        if (unSeenMessageExistRef.current) {
+            const updatedMessagesArray = updateMessages(messagesArray);
+            const hasUnSeenMessages = updatedMessagesArray.some(message =>
+                socketResponse.messagesAreSeen.messageIds.includes(message.id)
+            );
+
+            if (hasUnSeenMessages) {
+                setMessagesArray(updatedMessagesArray);
+            } else {
+                unSeenMessageExistRef.current = false;
+            }
+        }
+
+        // Обновляем socketMessages
+        const updatedSocketMessages = updateMessages(socketMessages);
+        setSocketMessages(updatedSocketMessages);
+    }, [socketResponse?.messagesAreSeen, unSeenMessageExist]); //messagesArray, socketMessages,
+
+    // useEffect(() => {
+    //     if (!notEmpty(seenMessages) && !unSeenMessageExistRef.current) return;
+
+    //     // Создаем новый массив с обновленными сообщениями
+    //     const updatedMessages = messagesArray.map(message => {
+    //         if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
+    //             // Возвращаем новый объект с обновленным полем timeSeen
+    //             return {
+    //                 ...message,
+    //                 timeSeen: socketResponse.messagesAreSeen.dateSeen,
+    //             };
+    //         }
+    //         return message;
+    //     });
+
+    //     // Обновляем состояние
+    //     setSocketMessages(updatedMessages);
+    // }, [seenMessages]);
 
     useLayoutEffect(() => {
         if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
@@ -94,10 +159,10 @@ export const DialogPage = () => {
             const bodyElement = bodyRef.current;
             if (firstUnSeenMessageElement && bodyElement) {
                 const offset = firstUnSeenMessageElement.offsetTop;
-                bodyElement.scrollTop = offset - 150;
+                bodyElement.scrollTop = offset - 170;
             }
         }
-    }, [unSeenMessages, messagesArray, unSeenMessagesRef.current, isLoadingUnSeenMessages]);
+    }, [unSeenMessages, isLoadingUnSeenMessages]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -136,8 +201,9 @@ export const DialogPage = () => {
 
     //setVisibleUnSeenMessageIds(visibleIds);
 
-   // console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
-    console.log(socketResponse)
+    // console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
+    console.log(unSeenMessageExist)
+    console.log(socketMessages)
 
     return (
         <>
@@ -153,6 +219,7 @@ export const DialogPage = () => {
                         <React.Fragment key={index}>
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
+                                timeSeen={item?.timeSeen}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
@@ -169,7 +236,7 @@ export const DialogPage = () => {
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
                                     >
-                                        {item.id}
+                                        {item.content}
                                     </Message>
                                 </React.Fragment>
                             ))}
@@ -178,7 +245,7 @@ export const DialogPage = () => {
                     )}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage} createdMessage={item?.createdAt} timeSeen={item?.timeSeen}>
+                            <Message key={index} userMessage={item?.userMessage} createdMessage={item?.createdAt} timeSeen={item?.timeSeen}>
                                 {item.content}
                             </Message>
                         </React.Fragment>
