@@ -11,7 +11,19 @@
     overflow: auto;
     flex: 1;
     
-    background-color: #F0F0F0;
+    background-color: #F5F5F5;
+    /* background-image: url('../../image/chat-background.svg'); */
+}
+
+.unSeenMessagesInfo{
+    width: 100%;
+
+    padding: 5px 0;
+
+    background-color: white;
+
+    font-size: 14px;
+    text-align: center;
 }
 
 .footer{

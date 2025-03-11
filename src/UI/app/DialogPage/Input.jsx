@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback, useContext } from 're
 import InputTextContainer from '@Custom/ContainerForInputText/InputTextContainer.jsx';
 import { usePostsHook, } from '@hooks';
 import { deleteDraft, loadDraft, saveDraft } from '@helpers/indexedDB';
-import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 
 
 const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMessages, isLoadingGetConvertId }) => {
@@ -19,17 +18,6 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
 
     const { userPosts } = usePostsHook()
 
-    useEmitSocket('join_convert', { convertId: convertId });
-
-    const eventNames = useMemo(() => ['messageCreationEvent'], []);
-
-    const handleEventData = useCallback((eventName, data) => {
-        console.log(`Data from ${eventName}:`, data);
-    }, []); // Мемоизация callback
-
-    const socketResponse = useSocket(eventNames, handleEventData);
-    console.log(socketResponse);
-
     const reset = () => {
         setStartDate(new Date().toISOString().split('T')[0]);
         setDeadlineDate(new Date().toISOString().split('T')[0]);
@@ -40,6 +28,8 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
 
 
     const send = async () => {
+
+        if (contentInput.trim() === '') return
 
         deleteDraft('DraftDB', 'drafts', idTextArea)
 
@@ -78,13 +68,22 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
     }, [contentInput]);
 
     useEffect(() => {
-        if (socketResponse && isLoadingGetConvertId) {
-            console.log('refetch')
-            refetchMessages()
-        }
-    }, [socketResponse])
+        const handleKeyDown = (event) => {
+            // Проверяем, была ли нажата клавиша Enter
+            if (event.key === 'Enter') {
+                send(); // Вызываем метод send
+            }
+        };
+        console.warn('enter button')
+        // Добавляем слушатель
+        window.addEventListener('keydown', handleKeyDown);
 
-    console.log(files)
+        // Удаляем слушатель при размонтировании компонента
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     return (
         <>
             <InputTextContainer

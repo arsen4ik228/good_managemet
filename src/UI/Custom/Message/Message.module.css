@@ -1,11 +1,12 @@
 .messageContainer {
     /* overflow: hidden; */
     position: relative;
-    max-width: 80%;
-    max-height: 9300px; 
+    max-width: 75%;
+    max-height: 9300px;
     padding: 10px;
-    background-color: #e0e0e0; 
-    border-radius: 10px; 
+    /* background-color: #e0e0e0; */
+    background-color: #ffffff;
+    border-radius: 10px;
     margin: 10px;
 }
 
@@ -13,49 +14,81 @@
     content: '';
     position: absolute;
     bottom: 0;
-    left: -12px; 
+    left: -12px;
     width: 0;
     height: 0;
     border-style: solid;
     border-width: 20px 20px 0 0;
-    border-color: transparent #e0e0e0 transparent transparent;
+    border-color: transparent #ffffff transparent transparent;
 }
 
 .userMessageContainer {
     position: relative;
-    max-width: 80%;
+    max-width: 75%;
+    max-height: 9300px;
     padding: 10px;
-    background-color: var(--primary-light); 
-    border-radius: 10px; 
+    background-color: var(--primary-light);
+    border-radius: 10px;
     margin: 10px;
 }
 
 .userMessageContainer::after {
     content: '';
     position: absolute;
-    bottom: 0px; /* Позиционируем треугольник чуть выше нижнего края */
-    right: -12px; /* Сдвигаем треугольник за пределы контейнера */
+    bottom: 0px;
+    /* Позиционируем треугольник чуть выше нижнего края */
+    right: -12px;
+    /* Сдвигаем треугольник за пределы контейнера */
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 20px 0 0 20px; /* Размеры треугольника */
-    border-color: transparent transparent transparent var(--primary-light); /* Цвет треугольника */
+    border-width: 20px 0 0 20px;
+    /* Размеры треугольника */
+    border-color: transparent transparent transparent var(--primary-light);
+    /* Цвет треугольника */
 }
 
-.contentMessage{
+.textMessage {
     overflow: hidden;
     width: 100%;
     max-height: 9280px;
     word-break: keep-all;
     height: 100%;
+    padding: 1px;
 }
 
-.wrapper{
+.contentMessage {
+    display: flex;
+    height: 100%;
+    align-items: flex-end;
+}
+
+.time {
+    /* border: 1px solid blue; */
+    height: 100%;
+    padding-left: 8px;
+    font-size: 9px;
+    /* color: ; */
+}
+
+.isSeen {
+    /* border: 1px solid red; */
+    display: flex;
+    padding-left: 4px;
+
+    >img {
+        height: 8px;
+        /* border: 1px solid green; */
+    }
+}
+
+.wrapper {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 0 10px;
 }
+
 /* 
 .messageContainer {
     position: relative;
@@ -97,4 +130,3 @@
 .invisibleSection > div:nth-child(2) {
     height: 30%;
 } */
-

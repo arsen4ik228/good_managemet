@@ -4,11 +4,13 @@ import { QRCode } from "antd";
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { isMobile } from "react-device-detect";
-import { baseUrl } from "@helpers/constants";
+import { socketUrl, baseUrl } from "@helpers/constants";
 import telegram from '@Custom/icon/telegram.svg'
 import logo from '@Custom/icon/logo.svg'
 
-const socket = io(`https://24academy.ru/auth`, {
+
+const socket = io(`${socketUrl}auth`, {
+
   cors: {
     credentials: true,
   },
