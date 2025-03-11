@@ -67,6 +67,23 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
         saveDraft('DraftDB', 'drafts', idTextArea, contentInput);
     }, [contentInput]);
 
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            // Проверяем, была ли нажата клавиша Enter
+            if (event.key === 'Enter') {
+                send(); // Вызываем метод send
+            }
+        };
+        console.warn('enter button')
+        // Добавляем слушатель
+        window.addEventListener('keydown', handleKeyDown);
+
+        // Удаляем слушатель при размонтировании компонента
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     return (
         <>
             <InputTextContainer

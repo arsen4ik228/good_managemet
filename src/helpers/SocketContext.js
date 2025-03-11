@@ -54,10 +54,10 @@ export const useSocket = (eventNames, callback) => {
         }
 
         eventNames.forEach((eventName) => {
-            console.log('subscribe to', eventName);
+            console.log('Socket: subscribe to', eventName);
             socket.on(eventName, (data) => {
                 console.log('Data received:', data);
-                setResponse((prev) => ({ ...prev, ...data }));
+                setResponse((prev) => ({ ...prev, [eventName]: data }));
                 if (callback) {
                     callback(eventName, data);
                 }
@@ -93,13 +93,13 @@ export const useEmitSocket = (eventName, data) => {
         };
 
         if (!stableEventName || !dataNotEmpty(stableData)) {
-            console.error('Event name or data is invalid');
+            console.error('Socket: Event name or data is invalid');
             return;
         }
 
         // Отправляем событие на сервер с данными
         socket.emit(stableEventName, stableData);
-        console.log(`${stableEventName} event sent with data:`, stableData);
+        console.log(`Socket: ${stableEventName} event sent with data:`, stableData);
 
         // Очистка не требуется
         return () => { };
