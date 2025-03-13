@@ -1,6 +1,10 @@
 import classes from './style.module.css'
 
 export const FullScreenImageModal = ({ imageUrl, onClose }) => {
+    console.log("imageUrl");
+    console.log(imageUrl);
+    console.log("onClose");
+    console.log(onClose);
     if (!imageUrl) return null;
 
     return (

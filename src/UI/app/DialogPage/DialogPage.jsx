@@ -87,6 +87,7 @@ export const DialogPage = () => {
             id: newMessage.id,
             content: newMessage.content,
             userMessage: newMessage.sender.id === senderPostId,
+            attachmentToMessage: newMessage.attachmentToMessage,
             timeSeen: null,
             createdAt: newMessage.createdAt,
         }]);
@@ -222,7 +223,7 @@ export const DialogPage = () => {
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
                                 timeSeen={item?.timeSeen}
-                                // attachmentToMessage={item?.attachmentToMessage}
+                                attachmentToMessage={item?.attachmentToMessage}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
@@ -238,6 +239,7 @@ export const DialogPage = () => {
                                         createdMessage={item?.createdAt}
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
+                                        attachmentToMessage={item?.attachmentToMessage}
                                     >
                                         {item.content}
                                     </Message>
