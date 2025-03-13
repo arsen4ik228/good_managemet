@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import classes from "./FilesMessages.module.css";
 import { baseUrl } from "@helpers/constants";
+import { FullScreenImageModal } from "../FullScreanImageModal/FullScreanImageModal";
 
 export default function FilesMessages({ attachmentToMessage }) {
+  const [openFullImageModal, setOpenFullImageModal] = useState(false);
+
   const images = attachmentToMessage?.filter((item) =>
     item?.attachment?.attachmentMimetype?.startsWith("image/")
   );
@@ -31,10 +34,20 @@ export default function FilesMessages({ attachmentToMessage }) {
         {images?.map((image, idx) => (
           <div key={idx} className={classes.imageWrapper}>
             <img
+              key={idx}
               src={`${baseUrl}${image?.attachment?.attachmentPath}`}
               alt={image?.attachment?.attachmentName}
               className={classes.image}
+              onClick={() => setOpenFullImageModal(true)}
             />
+
+            {openFullImageModal ? (
+              <FullScreenImageModal
+                key={idx}
+                imageUrl={`${baseUrl}${image?.attachment?.attachmentPath}`}
+                onClose={() => setOpenFullImageModal(false)}
+              ></FullScreenImageModal>
+            ) : null}
           </div>
         ))}
       </div>
