@@ -18,7 +18,7 @@ export const DialogContainer = ({elem}) => {
                     </div>
                     <div className={classes.bage}>
                         <div>
-                            <span>{elem?.unseenMessagesCount}</span>
+                            <span>{elem?.unseenMessagesCount > 99 ? '99' : elem?.unseenMessagesCount}</span>
                         </div>
                     </div>
                 </div>

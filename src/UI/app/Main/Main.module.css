@@ -40,6 +40,8 @@
 .body{
     /* margin-top: 7px; */
     flex: 1 1 auto;
+
+    overflow: auto;
 }
 
 .bodyColumn{
