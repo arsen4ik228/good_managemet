@@ -3,8 +3,9 @@ import classes from './Message.module.css';
 import { extractHoursMinutes } from '@helpers/helpers';
 import isSeenIcon from '@image/isSeen.svg'
 import notSeenIcon from '@image/notSeen.svg'
+import FilesMessages from './FilesMessages';
 
-export const Message = React.forwardRef(({ key, userMessage, createdMessage, timeSeen, children, ...props }, ref) => {
+export const Message = React.forwardRef(({ key, userMessage, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
     return (
         <div
             ref={ref}
@@ -13,6 +14,11 @@ export const Message = React.forwardRef(({ key, userMessage, createdMessage, tim
             {...props} // Передаем все пропсы, включая data-message-id
         >
             <div className={userMessage ? classes.userMessageContainer : classes.messageContainer}>
+                {
+                    attachmentToMessage?.length > 0 
+                    ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>) 
+                    : (null)
+                }
                 <div className={classes.contentMessage}>
                     <div className={classes.textMessage}>
                         {children}

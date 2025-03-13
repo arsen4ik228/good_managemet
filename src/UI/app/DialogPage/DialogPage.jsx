@@ -88,7 +88,7 @@ export const DialogPage = () => {
             content: newMessage.content,
             userMessage: newMessage.sender.id === senderPostId,
             timeSeen: null,
-            createdAt: newMessage.createdAt
+            createdAt: newMessage.createdAt,
         }]);
     }, [socketResponse?.messageCreationEvent]);
 
@@ -204,6 +204,8 @@ export const DialogPage = () => {
     // console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
     console.log(unSeenMessageExist)
     console.log(socketMessages)
+    console.log("messagesArray")
+    console.log(messagesArray)
 
     return (
         <>
@@ -220,6 +222,7 @@ export const DialogPage = () => {
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
                                 timeSeen={item?.timeSeen}
+                                // attachmentToMessage={item?.attachmentToMessage}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
@@ -245,7 +248,7 @@ export const DialogPage = () => {
                     )}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message key={index} userMessage={item?.userMessage} createdMessage={item?.createdAt} timeSeen={item?.timeSeen}>
+                            <Message key={index} userMessage={item?.userMessage} attachmentToMessage={item?.attachmentToMessage} createdMessage={item?.createdAt} timeSeen={item?.timeSeen}>
                                 {item.content}
                             </Message>
                         </React.Fragment>
