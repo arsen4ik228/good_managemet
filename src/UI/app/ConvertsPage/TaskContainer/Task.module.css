@@ -1,4 +1,152 @@
 .wrapper {
+    position: relative;
+    height: 70px;
+    padding: 5px;
+    margin: 10px 0;
+    background-color: white;
+    border-radius: 10px;
+}
+
+/* .wrapper:nth-last-child(1)::after {
+    position: absolute;
+    content: 'Текущие';
+    top: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 5px 40px;
+    white-space: nowrap;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1rem;
+    text-align: center;
+    color: #000000A6;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+} */
+
+
+.unSeenWrapper {
+    position: relative; /* Родитель должен быть relative */
+    min-height: 50px; /* Минимальная высота */
+    min-width: 200px; /* Минимальная ширина */
+}
+
+.unSeenWrapper::after {
+    position: absolute;
+    content: 'Новые сообщения';
+    top: 50%; /* Центрирование по вертикали */
+    left: 50%; /* Центрирование по горизонтали */
+    transform: translate(-50%, -50%); /* Точное выравнивание */
+    padding: 5px 40px;
+    white-space: nowrap;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1rem;
+    text-align: center;
+    color: #000000A6;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    z-index: 1; /* Убедитесь, что псевдоэлемент поверх других элементов */
+}
+
+.unSeenWrapper::after{
+    position: absolute;
+    content: 'Новые сообщения';
+    top: -50%;
+    /* Смещаем вниз на 50% от высоты родителя */
+    left: -50%;
+    /* Смещаем вправо на 50% от ширины родителя */
+    transform: translate(-50%, -50%);
+    /* Сдвигаем обратно на 50% своей ширины и высоты */
+    padding: 5px 40px;
+    /* Добавляем отступы для текста */
+    white-space: nowrap;
+    /* Запрещаем перенос текста */
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1rem;
+    text-align: center;
+    color: #000000A6;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.body {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.body::before {
+    position: absolute;
+    left: 10px;
+    top: -12px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    background-color: white;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.bodyType1::before {
+    content: 'Приказ';
+    color: #005475;
+}
+
+.bodyType2::before {
+    content: 'Заявка';
+    color: #fadb14;
+}
+
+.bodyType3::before {
+    content: 'Копия';
+    color: #0B6801;
+}
+
+.checkboxContainer {
+    margin: auto 0;
+}
+
+.checkboxContainer>input {
+    width: 15px;
+    height: 15px;
+}
+
+.titleContainer {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    height: 50px;
+    padding: 0 10px;
+    font-weight: 600;
+    color: rgb(58, 58, 58);
+    text-overflow: ellipsis;
+}
+
+.titleText {
+    overflow: hidden;
+    padding: 1px;
+}
+
+.titleTextArchive {
+    color: #00000040;
+    /* Цвет для архивированных задач */
+    padding: 1px;
+}
+
+.dateContainer {
+    padding: 20px 0;
+    font-size: 12px;
+}
+
+.dateContainer>span {
+    display: block;
+}
+
+/* .wrapper {
     height: 70px;
 
     padding: 5px;
@@ -10,54 +158,44 @@
 }
 
 .body {
-    width: 100%;
-    /* min-height: 50px;
-    max-height: 70px; */
-    height: 60px;
-
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-}
-
-._body{
     position: relative;
 
     width: 100%;
-    /* min-height: 50px;
-    max-height: 70px; */
     height: 60px;
 
 
     display: flex;
     justify-content: center;
     align-items: center;
+
 }
 
-._body::before{
+.body::before {
     position: absolute;
     left: 10px;
     top: -12px;
-
-    /* width: 100px;
-    height: 30px; */
-
     padding: 2px 8px;
-
     border-radius: 5px;
-    box-shadow: 0 0 2px rgb(0, 0, 0, 0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     background-color: white;
-
     font-weight: 600;
     font-size: 12px;
     text-transform: uppercase;
-    color: #005475;
-    
-    content: 'Приказ';
+}
 
-    /* z-index: 1000; */
+.body-type1::before {
+    content: 'Приказ';
+    color: #005475;
+}
+
+.body-type2::before {
+    content: 'Задача';
+    color: #ff0000;
+}
+
+.body-type3::before {
+    content: 'Уведомление';
+    color: #00ff00;
 }
 
 .checkboxContainer {
@@ -89,15 +227,15 @@
 
 .titleText {
     overflow: hidden;
-    /* height: 100%; */
-    /* display: flex; */
+    height: 100%; */
+/* display: flex;
 }
-
-.dateContainer {
+*/
+/* .dateContainer {
     padding: 20px 0;
     font-size: 12px;
 
     >span {
         display: block;
     }
-}
+}  */

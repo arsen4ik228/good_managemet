@@ -1,5 +1,6 @@
 import apiSlice from "./api";
 import { userId } from "@helpers/constants";
+import _ from 'lodash'
 
 export const convertApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
@@ -9,84 +10,25 @@ export const convertApi = apiSlice.injectEndpoints({
         url: 'converts'
       }),
 
-      // transformResponse: response => {
-      //   console.log('getConverts', response)
-
-      //   const result = []
-      //   const postIds = []
-
-      //   const transformPersonalDialogue = (item) => {
-      //     const postAndUser = item?.postsAndUsers[0]
-
-      //     if (postIds.includes(postAndUser.postId)) {
-      //       const exsistDialogue = result.find(elem => elem.postId === postAndUser.postId)
-      //       exsistDialogue.converts.push({
-      //         convertId: item.convertId,
-      //         convertTheme: item.c_convertTheme
-      //       })
-      //     }
-      //     else {
-      //       postIds.push(postAndUser.postId)
-      //       result.push({
-      //         userIds: postAndUser.user.userId,
-      //         avatar_url: postAndUser.user.avatar,
-      //         postId: postAndUser.postId,
-      //         postName: postAndUser.postName, // для груповых чатов предусмотреть своё имя "<Тип конверта> <количество собеседников>"
-      //         employee: postAndUser.user.firstName + ' ' + item.postsAndUsers[0]?.user.lastName,
-      //         converts: [{
-      //           convertId: item.convertId,
-      //           convertTheme: item.c_convertTheme
-      //         }]
-      //       })
-      //     }
-      //   }
-
-      //   const transformGroupDoalodue = (item) => {
-      //     const stringPostIds = item?.postsAndUsers?.reduce((acc, post) => {
-      //       return acc + post.postId;
-      //     }, '');
-
-      //     if (postIds.includes(stringPostIds)) {
-      //       const exsistDialogue = result.find(elem => elem.stringPostIds === stringPostIds)
-      //       exsistDialogue.converts.push({
-      //         convertId: item.convertId,
-      //         convertTheme: item.c_convertTheme
-      //       })
-      //     }
-      //     else {
-      //       postIds.push(stringPostIds)
-      //       result.push({
-      //         // avatar_url: null,
-      //         stringPostIds: stringPostIds,
-      //         postName: `Cогласование`,
-      //         employee: `Участников: ${item.postsAndUsers.length}`,
-      //         converts: [{
-      //           convertId: item.convertId,
-      //           convertTheme: item.c_convertTheme
-      //         }]
-      //       })
-      //     }
-      //   }
-
-      //   response.forEach(item => {
-      //     const isPersonalDialogue = item?.postsAndUsers.length === 1
-
-      //     if (isPersonalDialogue)
-      //       transformPersonalDialogue(item)
-      //     else
-      //       transformGroupDoalodue(item)
-
-      //   })
-
-      //   return result
-      // },
-
       transformResponse: response => {
         console.log('getConverts', response);
 
         const result = [];
         const postIdSet = new Set();
         const dialogueMap = new Map();
+
+        const sortConvert = (array) => {
+          return array.map(item => {
+            const sortedConverts = [...item.converts].sort((a, b) => {
+              return new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt);
+            });
+
+            return {
+              ...item,
+              converts: sortedConverts,
+            };
+          });
+        };
 
         const addConvertToDialogue = (dialogue, item) => {
           // Складываем unseenMessagesCount
@@ -101,6 +43,10 @@ export const convertApi = apiSlice.injectEndpoints({
           dialogue.converts.push({
             convertId: item.convertId,
             convertTheme: item.convertTheme,
+            convertType: item.convertType,
+            deadline: item.dateFinish,
+            latestMessageCreatedAt: item.latestMessageCreatedAt,
+            unseenMessagesCount: item.unseenMessagesCount,
           });
         };
 
@@ -125,6 +71,10 @@ export const convertApi = apiSlice.injectEndpoints({
               converts: [{
                 convertId: item.convertId,
                 convertTheme: item.convertTheme,
+                convertType: item.convertType,
+                deadline: item.dateFinish,
+                latestMessageCreatedAt: item.latestMessageCreatedAt,
+                unseenMessagesCount: item.unseenMessagesCount,
               }],
             };
             dialogueMap.set(postId, newDialogue);
@@ -150,6 +100,10 @@ export const convertApi = apiSlice.injectEndpoints({
               converts: [{
                 convertId: item.convertId,
                 convertTheme: item.convertTheme,
+                convertType: item.convertType,
+                deadline: item.dateFinish,
+                latestMessageCreatedAt: item.latestMessageCreatedAt,
+                unseenMessagesCount: item.unseenMessagesCount,
               }],
             };
             dialogueMap.set(stringPostIds, newDialogue);
@@ -157,9 +111,32 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         };
 
-        // Обработка каждого элемента ответа
-        response.forEach((item) => {
+        const isPersonalOrGroup = (item) => {
           const isPersonalDialogue = item.postsAndUsers.length === 1;
+
+          if (isPersonalDialogue)
+            return { isPersonalDialogue, item };
+
+
+          const isUserParticipantDialogue = item.postsAndUsers.some(
+            post => post.user.userId === userId
+          );
+
+          if (isUserParticipantDialogue)
+            return { isPersonalDialogue: false, item };
+
+
+          const modifiedItem = { ...item };
+          modifiedItem.postsAndUsers = [item.host];
+          modifiedItem.postsAndUsers[0].user = item.host.hostUser;
+          modifiedItem.convertType = 'Копия'
+
+          return { isPersonalDialogue: true, item: modifiedItem };
+        }
+
+        // Обработка каждого элемента ответа
+        response.forEach((convert) => {
+          const { isPersonalDialogue, item } = isPersonalOrGroup(convert)
 
           if (isPersonalDialogue) {
             transformPersonalDialogue(item);
@@ -168,7 +145,7 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         });
 
-        return result;
+        return sortConvert(result);
       },
 
       // providesTags: result =>
@@ -218,11 +195,11 @@ export const convertApi = apiSlice.injectEndpoints({
 
         const extractUserInfo = (convertToPosts, userId) => {
           const userPost = convertToPosts.find(item => item.post.user.id !== userId);
-          console.log (userPost)
+          console.log(userPost)
           if (userPost) {
             return {
               postName: userPost.post.postName,
-              userName: userPost.post.user.firstName + ' ' +userPost.post.user.lastName,
+              userName: userPost.post.user.firstName + ' ' + userPost.post.user.lastName,
               avatar: userPost.post.user.avatar_url
             }
           }
