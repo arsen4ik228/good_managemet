@@ -9,7 +9,7 @@ import { notEmpty } from '@helpers/helpers';
 
 export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOrganizationId, files, setFiles, setUnpinFiles }) {
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [postImage] = usePostFilesMutation();
+    const [postFiles] = usePostFilesMutation();
     const [deleteFile, setDeleteFile] = useState([])
     const fileInputRef = useRef(null);
     console.warn(selectedFiles)
@@ -41,9 +41,12 @@ export default function FilesModal({ setOpenModal, policyId, setPolicyId, postOr
         selectedFiles.forEach((file) => {
             formData.append('files', file); // Добавляем каждый файл в FormData
         });
-        console.log(formData)
+        // // Проверка содержимого FormData
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(key, value);
+        // } 
         try {
-            const response = await postImage({formData}).unwrap(); // Вызываем мутацию
+            const response = await postFiles({ formData }).unwrap(); // Вызываем мутацию
             console.log(response)
             setFiles(response);
             setSelectedFiles([]); // Очищаем выбранные файлы после успешной загрузки

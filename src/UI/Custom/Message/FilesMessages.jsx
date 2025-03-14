@@ -5,6 +5,7 @@ import { FullScreenImageModal } from "../FullScreanImageModal/FullScreanImageMod
 
 export default function FilesMessages({ attachmentToMessage }) {
   const [openFullImageModal, setOpenFullImageModal] = useState(false);
+  const [imgUrl, setImgUrl] = useState(null)
 
   const images = attachmentToMessage?.filter((item) =>
     item?.attachment?.attachmentMimetype?.startsWith("image/")
@@ -28,6 +29,11 @@ export default function FilesMessages({ attachmentToMessage }) {
     return "";
   };
 
+  const handleImageClick = (url) => {
+    setImgUrl(baseUrl + url)
+    setOpenFullImageModal(true)
+  }
+
   return (
     <div className={classes.container}>
       <div className={`${classes.imageGrid} ${getGridClass(images.length)}`}>
@@ -38,16 +44,8 @@ export default function FilesMessages({ attachmentToMessage }) {
               src={`${baseUrl}${image?.attachment?.attachmentPath}`}
               alt={image?.attachment?.attachmentName}
               className={classes.image}
-              onClick={() => setOpenFullImageModal(true)}
+              onClick={() => handleImageClick(image?.attachment?.attachmentPath)}
             />
-
-            {openFullImageModal ? (
-              <FullScreenImageModal
-                key={idx}
-                imageUrl={`${baseUrl}${image?.attachment?.attachmentPath}`}
-                onClose={() => setOpenFullImageModal(false)}
-              ></FullScreenImageModal>
-            ) : null}
           </div>
         ))}
       </div>
@@ -69,6 +67,14 @@ export default function FilesMessages({ attachmentToMessage }) {
           </ul>
         </div>
       )}
+
+      {openFullImageModal ? (
+              <FullScreenImageModal
+                // key={idx}
+                imageUrl={imgUrl}
+                onClose={() => setOpenFullImageModal(false)}
+              ></FullScreenImageModal>
+            ) : null}
     </div>
   );
 }
