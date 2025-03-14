@@ -63,7 +63,7 @@ export default function Goal() {
 
   const addEditor = () => {
     if (Object.keys(currentGoal).length > 0) {
-      setEditorState((prevEditors) => [...prevEditors, []]);
+      setEditorState((prevEditors) => [...prevEditors, [""]]);
     } else {
       saveGoal();
     }
