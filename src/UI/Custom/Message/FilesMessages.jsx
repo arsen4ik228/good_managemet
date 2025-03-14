@@ -3,6 +3,10 @@ import classes from "./FilesMessages.module.css";
 import { baseUrl } from "@helpers/constants";
 import { FullScreenImageModal } from "../FullScreanImageModal/FullScreanImageModal";
 
+import fileWord from "./image/fileWord.svg";
+import filePdf from "./image/filePdf.svg";
+import fileOther from "./image/fileOther.svg";
+
 export default function FilesMessages({ attachmentToMessage }) {
   const [openFullImageModal, setOpenFullImageModal] = useState(false);
 
@@ -12,6 +16,17 @@ export default function FilesMessages({ attachmentToMessage }) {
   const files = attachmentToMessage?.filter(
     (item) => !item?.attachment?.attachmentMimetype?.startsWith("image/")
   );
+
+  // Функция для определения иконки в зависимости от расширения файла
+  const getFileIcon = (fileName) => {
+    if (fileName?.endsWith(".pdf")) {
+      return filePdf;
+    } else if (fileName?.endsWith(".docx") || fileName?.endsWith(".doc")) {
+      return fileWord;
+    } else {
+      return fileOther;
+    }
+  };
 
   // Определяем класс сетки в зависимости от количества изображений (по стилю Telegram)
   const getGridClass = (count) => {
@@ -57,6 +72,14 @@ export default function FilesMessages({ attachmentToMessage }) {
           <ul>
             {files.map((file, index) => (
               <li key={index}>
+
+                 <img
+                  src={getFileIcon(file?.attachment?.attachmentName)}
+                  alt="file icon"
+                  width="20px"
+                  height="20px"
+                />
+
                 <a
                   href={`${baseUrl}${file?.attachment?.attachmentPath}`}
                   target="_blank"
