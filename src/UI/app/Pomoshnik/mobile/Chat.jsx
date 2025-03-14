@@ -81,7 +81,7 @@ const Chat = () => {
         <>
             <div className={classes.wrapper}>
                 <>
-                    <Header>Личный помощник</Header>
+                    <Header leftIconClick={() => {navigate('/Main')}}>Личный помощник</Header>
                 </>
                 <div className={classes.body}>
 
