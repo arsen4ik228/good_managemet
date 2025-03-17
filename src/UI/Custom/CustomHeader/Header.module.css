@@ -60,7 +60,12 @@
 
 }
 
-.userAvatar {}
+.userAvatar {
+
+    >img{
+        border-radius: 50%;
+    }
+}
 
 
 .txt {
