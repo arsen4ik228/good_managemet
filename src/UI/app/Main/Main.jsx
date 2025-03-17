@@ -5,9 +5,10 @@ import { useOrganizationHook, useConvertsHook } from "@hooks";
 import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
-import { setSelectedOrganizationId, setSelectedOrganizationReportDay, setSelectedItem } from "@slices";
+import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@slices";
 import { DialogContainer } from "@Custom/DialogContainer/DialogContainer";
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
+import { selectedOrganizationId } from '@helpers/constants'
 
 const MobileMain = () => {
   const dispatch = useDispatch();
@@ -77,11 +78,13 @@ const MobileMain = () => {
     //dispatch(setSelectedItem(item));
 
     navigate(`/Chat/${item.userIds}`)
-  } 
+  }
 
   useEffect(() => {
-    if (organizations.length > 0 && !selectedOrg)
+    if (organizations.length > 0 && !selectedOrg && !selectedOrganizationId)
       selectOrganization(organizations[1]?.id);
+    else
+      selectOrganization(selectedOrganizationId);
   }, [organizations]);
 
   useEffect(() => {
@@ -130,9 +133,9 @@ const MobileMain = () => {
 
           {allConverts?.map((item, index) => (
             <div onClick={() => handleItemClick(item)}>
-             <React.Fragment  key={index} >
-              <DialogContainer elem={item}></DialogContainer>
-             </React.Fragment>
+              <React.Fragment key={index} >
+                <DialogContainer elem={item}></DialogContainer>
+              </React.Fragment>
             </div>
           ))}
         </div>
