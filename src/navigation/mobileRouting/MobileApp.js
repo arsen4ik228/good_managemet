@@ -49,7 +49,7 @@ function MobileApp() {
                             <Route path="Chat/:userIds" element={<ConvertsPage />} />
                             <Route path="Chat/:userIds/:convertId" element={<DialogPage />} />
 
-                            <Route path='settings' element={<SettingsPage></SettingsPage>} />
+                            <Route path='account' element={<SettingsPage></SettingsPage>} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"
