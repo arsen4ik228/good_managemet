@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import classes from './Chat.module.css';
 import backRow from './icon/icon _ back.svg'
 import star from './icon/icon _ star.svg'
+import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import companySchema from './icon/list _ schema.svg'
 import stats from './icon/_icon _ stats.svg'
 import listView from './icon/icon _ list view.svg'
@@ -122,16 +123,8 @@ const Chat = () => {
                     </div>
 
                 </div>
-                <footer className={classes.inputContainer}>
-                    <div className={classes.inputRow}>
-                        <div className={classes.inputElement}>
-                            <input type="search"
-                                placeholder="Поиск"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                    </div>
+                <footer >
+                    <NavigationBar></NavigationBar>
                 </footer>
             </div>
         </>
