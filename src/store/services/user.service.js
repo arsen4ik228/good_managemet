@@ -1,4 +1,5 @@
 import apiSlice from "./api";
+import { userId } from '@helpers/constants'
 
 export const userApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
@@ -7,6 +8,24 @@ export const userApi = apiSlice.injectEndpoints({
         url: `/users/new`,
         method: "POST",
         body,
+      }),
+      invalidatesTags: ['User'],
+    }),
+
+    getUserId: build.query({
+      query: () => ({
+        url: `users/${userId}`
+      })
+    }),
+
+    updateUser: build.mutation({
+      query: (body) => ({
+        url: `/users/${userId}/update`,
+        method: "PATCH",
+        body: {
+          id: userId,
+          ...body
+        },
       }),
       invalidatesTags: ['User'],
     }),
@@ -21,4 +40,4 @@ export const userApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { usePostUserMutation, useGetUserNewQuery } = userApi;
+export const { usePostUserMutation, useGetUserNewQuery, useGetUserIdQuery, useUpdateUserMutation } = userApi;
