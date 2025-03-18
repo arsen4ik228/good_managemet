@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createConnectionSocket, disconnectSocket } from '@helpers/socket.js';
+import { notEmpty } from '@helpers/helpers'
 
 const SocketContext = createContext();
 
@@ -89,7 +90,7 @@ export const useEmitSocket = (eventName, data) => {
         }
 
         const dataNotEmpty = (data) => {
-            return Object.values(data).every(item => item !== null && item !== undefined && item !== '' && item.length>0);
+            return Object.values(data).every(item => item !== null && item !== undefined && item !== '' && (item.length>0 || notEmpty(item)))
         };
 
         if (!stableEventName || !dataNotEmpty(stableData)) {

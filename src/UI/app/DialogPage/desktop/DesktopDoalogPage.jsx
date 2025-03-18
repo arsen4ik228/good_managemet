@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import classes from './DialogPage.module.css';
-import Header from "@Custom/CustomHeader/Header";
+import classes from './DesktopDialogPage.module.css';
+import Headers from "@Custom/Headers/Headers";
 import { useConvertsHook, useMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
@@ -9,7 +9,7 @@ import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 
-export const DialogPage = () => {
+export default function DesktopDialogPage() {
     const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
@@ -195,72 +195,72 @@ export const DialogPage = () => {
 
     return (
         <>
-            <div className={classes.wrapper}>
-                <Header
-                    title={userInfo.userName}
-                    avatar={userInfo.avatar}
-                >
-                    {userInfo.postName}
-                </Header>
-                <div className={classes.body} ref={bodyRef}>
-                    {socketMessages.slice().reverse().map((item, index) => (
-                        <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage}
-                                createdMessage={item?.createdAt}
-                                seenStatuses={item?.seenStatuses}
+            <div className={classes.dialog}>
+                <Headers name={"Писька"}>
+                    {/* <BottomHeaders></BottomHeaders> */}
+                </Headers>
 
-                                attachmentToMessage={item?.attachmentToMessage}
-                                {...(!item.userMessage && { 'data-message-id': item.id })}
-                            >
-                                {item.content}
-                            </Message>
-                        </React.Fragment>
-                    ))}
-                    {unSeenMessages.length > 0 && (
-                        <>
-                            {unSeenMessages?.map((item, index) => (
-                                <React.Fragment key={index}>
-                                    <Message
-                                        userMessage={item?.userMessage}
-                                        createdMessage={item?.createdAt}
-                                        ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
-                                        data-message-id={item.id} // Добавляем data-атрибут
-                                        attachmentToMessage={item?.attachmentToMessage}
-                                        seenStatuses={item?.seenStatuses}
+                <div className={classes.main}>
+                    <div className={classes.body} ref={bodyRef}>
+                        {socketMessages.slice().reverse().map((item, index) => (
+                            <React.Fragment key={index}>
+                                <Message userMessage={item?.userMessage}
+                                    createdMessage={item?.createdAt}
+                                    seenStatuses={item?.seenStatuses}
 
-                                    >
-                                        {item.content}
-                                    </Message>
-                                </React.Fragment>
-                            ))}
-                            <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
-                        </>
-                    )}
-                    {messagesArray?.map((item, index) => (
-                        <React.Fragment key={index}>
-                            <Message key={index}
-                                userMessage={item?.userMessage}
-                                seenStatuses={item?.seenStatuses}
-                                senderPost={item?.sender}
-                                attachmentToMessage={item?.attachmentToMessage}
-                                createdMessage={item?.createdAt}
-                            >
-                                {item.content}
-                            </Message>
-                        </React.Fragment>
-                    ))}
-                    {isFetchingSeenMessages && <div>Loading more messages...</div>}
+                                    attachmentToMessage={item?.attachmentToMessage}
+                                    {...(!item.userMessage && { 'data-message-id': item.id })}
+                                >
+                                    {item.content}
+                                </Message>
+                            </React.Fragment>
+                        ))}
+                        {unSeenMessages.length > 0 && (
+                            <>
+                                {unSeenMessages?.map((item, index) => (
+                                    <React.Fragment key={index}>
+                                        <Message
+                                            userMessage={item?.userMessage}
+                                            createdMessage={item?.createdAt}
+                                            ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
+                                            data-message-id={item.id} // Добавляем data-атрибут
+                                            attachmentToMessage={item?.attachmentToMessage}
+                                            seenStatuses={item?.seenStatuses}
+
+                                        >
+                                            {item.content}
+                                        </Message>
+                                    </React.Fragment>
+                                ))}
+                                <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+                            </>
+                        )}
+                        {messagesArray?.map((item, index) => (
+                            <React.Fragment key={index}>
+                                <Message key={index}
+                                    userMessage={item?.userMessage}
+                                    seenStatuses={item?.seenStatuses}
+                                    senderPost={item?.sender}
+                                    attachmentToMessage={item?.attachmentToMessage}
+                                    createdMessage={item?.createdAt}
+                                >
+                                    {item.content}
+                                </Message>
+                            </React.Fragment>
+                        ))}
+                        {isFetchingSeenMessages && <div>Loading more messages...</div>}
+                    </div>
+                    <footer className={classes.footer}>
+                        <Input
+                            convertId={currentConvert?.id}
+                            sendMessage={sendMessage}
+                            senderPostId={senderPostId}
+                            senderPostName={senderPostName}
+                            refetchMessages={refetchGetConvertId}
+                            isLoadingGetConvertId={isLoadingGetConvertId}
+                        />
+                    </footer>
                 </div>
-                <footer className={classes.footer}>
-                    <Input
-                        convertId={currentConvert?.id}
-                        sendMessage={sendMessage}
-                        senderPostId={senderPostId}
-                        senderPostName={senderPostName}
-                        refetchMessages={refetchGetConvertId}
-                        isLoadingGetConvertId={isLoadingGetConvertId}
-                    />
-                </footer>
             </div>
         </>
     );

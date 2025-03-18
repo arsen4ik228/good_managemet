@@ -16,6 +16,7 @@ export const useConvertsHook = (convertId) => {
         messages = [],
         senderPostId,
         userInfo = {},
+        senderPostForSocket = {},
         senderPostName,
         refetch: refetchGetConvertId,
         isLoadingGetConvertId
@@ -26,6 +27,7 @@ export const useConvertsHook = (convertId) => {
             userInfo: data?.userInfo || {},
             senderPostId: data?.senderPostId || null,
             senderPostName: data?.senderPostName || null,
+            senderPostForSocket: data?.senderPostForSocket || {},
             isLoadingGetConvertId : isLoading,
             refetch, // Добавляем refetch в результат
         }),
@@ -58,6 +60,7 @@ export const useConvertsHook = (convertId) => {
         userInfo,
         senderPostId,
         senderPostName,
+        senderPostForSocket,
         refetchGetConvertId,
         isLoadingGetConvertId,
 

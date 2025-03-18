@@ -180,11 +180,13 @@ export const convertApi = apiSlice.injectEndpoints({
 
         const selectSenderPostId = (convertToPosts, userId) => {
           const senderPost = convertToPosts.find(item => item.post.user.id === userId);
-
           if (senderPost) {
+            const { user, ...rest } = senderPost.post
+            const senderPostForSocket = rest
             return {
               id: senderPost.post.id,
               postName: senderPost.post.postName,
+              senderPostForSocket
             };
           } else {
             return {
@@ -218,7 +220,7 @@ export const convertApi = apiSlice.injectEndpoints({
 
         }
 
-        const { id: senderPostId, postName: senderPostName } = selectSenderPostId(convertToPosts, userId);
+        const { id: senderPostId, postName: senderPostName, senderPostForSocket } = selectSenderPostId(convertToPosts, userId);
         const userInfo = extractUserInfo(watcherIds, convertToPosts, userId)
 
         return {
@@ -227,6 +229,7 @@ export const convertApi = apiSlice.injectEndpoints({
           userInfo,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
+          senderPostForSocket
         };
       },
 

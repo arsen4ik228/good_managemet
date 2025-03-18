@@ -185,7 +185,7 @@ export default function Content() {
             className={classes.linkMobile}
             aria-disabled={!tokenForTG}
             onClick={(e) => {
-              if (!tokenForTG) {
+              if (!tokenForTG || !socketId) {
                 e.preventDefault(); // Отменяем действие ссылки
               }
             }}
