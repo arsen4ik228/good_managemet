@@ -18,11 +18,13 @@ const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
 const WorkingPlan = React.lazy(() => import("@app/WorkingPlanPage/MainWorkingPlan"))
 const PostSchema = React.lazy(() => import("@app/CompanySchema/desktop/CompanySchema"))
 const SchemeСompanies = React.lazy(() => import("@app/CompanySchema/desktop/schemeСompanies/SchemeСompanies"))
+const DesktopConvertsPage = React.lazy(() => import ("@app/ConvertsPage/desktop/DesktopConvertPage.jsx"))
 
 const pageComponents = {
 
   controlPanel: ControlPanel,
   user: User,
+  Chat:DesktopConvertsPage,
 
   pomoshnik: {    
     start: Pomoshnik,

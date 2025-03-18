@@ -8,13 +8,15 @@ const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 const Panel = React.lazy(() => import("../panel/Panel"));
 const Chat = React.lazy(() => import("@app/Chat/Chat"));
 
-
 export default function Content() {
   const { group, route } = useParams();
 
-  const Component = pageComponents[group]?.[route]
-    ? pageComponents[group]?.[route]
-    : pageComponents[group];
+  const Component = route?.length > 20 
+  ? pageComponents[group]
+  : pageComponents[group]?.[route]
+      ? pageComponents[group]?.[route]
+      : pageComponents[group];
+
 
   return (
     <React.Suspense fallback={<HandlerQeury Loading={true}></HandlerQeury>}>

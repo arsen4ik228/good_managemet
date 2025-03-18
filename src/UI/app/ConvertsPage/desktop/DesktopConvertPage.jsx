@@ -8,8 +8,7 @@ import Task from '../TaskContainer/Task'
 import { useConvertsHook } from '@hooks/useConvertsHook';
 
 
-export const DesktopConvertPage = () => {
-
+export default function DesktopConvertPage () {
     const { userIds } = useParams()
     const [converts, setConverts] = useState()
     const [userInfo, setUserInfo] = useState()
