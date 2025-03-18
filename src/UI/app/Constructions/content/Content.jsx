@@ -8,9 +8,6 @@ const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 const Panel = React.lazy(() => import("../panel/Panel"));
 const Chat = React.lazy(() => import("@app/Chat/Chat"));
 
-const PostSchema = React.lazy(() =>
-  import("@app/CompanySchema/desktop/CompanySchema")
-);
 
 export default function Content() {
   const { group, route } = useParams();
