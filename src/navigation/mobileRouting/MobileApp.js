@@ -29,8 +29,9 @@ import { User } from '@app'
 import { DialogPage } from '@app';
 import { Message } from '../../UI/Custom/Message/Message.jsx';
 import { ConvertsPage } from '@app';
-import {CompanySchema} from '@app'
-import {SchemeСompanies} from '@app'
+import { CompanySchema } from '@app'
+import { SchemeСompanies } from '@app'
+import { SettingsPage } from '@app'
 import ErrorPage from '@app/ErrorPage/ErrorPage.jsx'
 
 
@@ -44,8 +45,11 @@ function MobileApp() {
                     element={
                         <Routes>
                             <Route path="error" element={<ErrorPage />} />
+
                             <Route path="Chat/:userIds" element={<ConvertsPage />} />
                             <Route path="Chat/:userIds/:convertId" element={<DialogPage />} />
+
+                            <Route path='account' element={<SettingsPage></SettingsPage>} />
                             <Route path="Main" element={<MobileMain />} />
                             <Route path='ControlPanel' element={<MobileControlPanel />} />
                             <Route path="pomoshnik/*"
@@ -88,7 +92,7 @@ function MobileApp() {
 
                                         <Route path='postSchema/:organizationId' element={<CompanySchema />} />
                                         <Route path='companySchema' element={<SchemeСompanies />} />
-                                       
+
                                     </Routes>
                                 }
                             />

@@ -49,6 +49,19 @@ export const postApi = apiSlice.injectEndpoints({
       providesTags: ['Post', 'User'],
     }),
 
+    getPostsUser: build.query({
+      query: () => ({
+        url: `posts/myPosts`,
+      }),
+      // transformResponse: (response) => {
+      //   console.log(response); // Отладка ответа
+      //   return {
+          
+      //   };
+      // },
+      providesTags: ['Post', 'User'],
+    }),
+
     getPostId: build.query({
       query: ({postId}) => ({
         url: `posts/${postId}/post`,
@@ -115,4 +128,4 @@ export const postApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetPostsQuery, useGetPostNewQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery} = postApi;
+export const { useGetPostsQuery, useGetPostNewQuery, useGetPostsUserQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery} = postApi;

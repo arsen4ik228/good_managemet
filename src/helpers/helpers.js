@@ -6,7 +6,7 @@ export const formattedDate = (date) => {
     const textarea = document.getElementById(id);
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
+      textarea.style.height = textarea.scrollHeight + 2 + 'px';
     }
   };
   

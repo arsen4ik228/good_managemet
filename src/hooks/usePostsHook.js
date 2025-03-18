@@ -5,6 +5,7 @@ import {
   usePostPostsMutation,
   useUpdatePostsMutation,
   useGetUnderPostsQuery,
+  useGetPostsUserQuery
 } from "../store/services/index";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 import { useMutationHandler } from "./useMutationHandler";
@@ -109,6 +110,8 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     }
   );
 
+  const { data: userPosts } = useGetPostsUserQuery()
+
   const [
     updatePost,
     {
@@ -174,6 +177,8 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     maxDivisionNumber,
     isLoadingGetNew,
     isErrorGetNew,
+
+    userPosts,
 
     postPosts,
     isLoadingPostMutation,

@@ -71,5 +71,7 @@
 
         border: 1px solid #bfbfbf;
         border-radius: 15px;
+
+        /* resize: none; */
     }
 }

@@ -1,4 +1,4 @@
-import { useGetUserNewQuery, usePostUserMutation } from "@services";
+import { useGetUserNewQuery, usePostUserMutation, useGetUserIdQuery, useUpdateUserMutation } from "@services";
 import { useMutationHandler } from "./useMutationHandler";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 
@@ -20,6 +20,8 @@ export function useUserHook() {
     }
   );
 
+  const { data: userInfo = {} } = useGetUserIdQuery();
+
 
   const [
     postUser,
@@ -31,6 +33,10 @@ export function useUserHook() {
       reset: resetUserMutation,
     },
   ] = usePostUserMutation();
+
+  const [
+    updateUser
+  ] = useUpdateUserMutation()
 
   const localIsResponseUserMutation = useMutationHandler(
     isSuccessUserMutation,
@@ -53,5 +59,9 @@ export function useUserHook() {
     postsWithoutUser,
     isLoadingGetUserNew,
     isErrorGetUserNew,
-  };
+
+    userInfo,
+
+    updateUser
+  }
 }

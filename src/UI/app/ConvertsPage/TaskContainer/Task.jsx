@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import classes from './Task.module.css';
 import { useNavigate } from 'react-router-dom';
+import { formattedDate } from '@helpers/helpers'
 
 export default function Task({ taskData, isArchive }) {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function Task({ taskData, isArchive }) {
         // Возвращаем класс по умолчанию, если convertType отсутствует или неизвестен
         return `${classes.body} ${typeClassMap[taskData.convertType] || ''}`;
     };
-    console.log(+taskData.unseenMessagesCount !== 0)
+
     return (
         <div className={+taskData.unseenMessagesCount !== 0 ? `${classes.wrapper} ${classes.unSeenWrapper}` : `${classes.wrapper}`}>
             <div className={getBeforeClass()}>
@@ -41,9 +42,9 @@ export default function Task({ taskData, isArchive }) {
                     </div>
                 </div>
                 <div className={classes.dateContainer}>
-                    {checkboxStatus ? 'Завершено' : 'Завершить:'}
+                    {/* {checkboxStatus ? 'Завершено' : 'Завершить:'} */}
                     <span>
-                        {/* {checkboxStatus ? transformDate(taskData.dateComplete) : transformDate(taskData.deadline)} */}
+                        {formattedDate(taskData.dateStart)}
                     </span>
                 </div>
             </div>

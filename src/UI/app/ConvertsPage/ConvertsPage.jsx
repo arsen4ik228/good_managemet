@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { notEmpty } from '@helpers/helpers'
 import Task from './TaskContainer/Task'
 import Header from "@Custom/CustomHeader/Header";
+import Input from './Input';
 
 export const ConvertsPage = () => {
 
@@ -44,7 +45,7 @@ export const ConvertsPage = () => {
           ))}
         </div>
 
-
+          <Input reciverPostId={userInfo?.postId}></Input>
       </div>
 
     </>

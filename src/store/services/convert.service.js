@@ -44,7 +44,7 @@ export const convertApi = apiSlice.injectEndpoints({
             convertId: item.convertId,
             convertTheme: item.convertTheme,
             convertType: item.convertType,
-            deadline: item.dateFinish,
+            dateStart: item.createdAt,
             latestMessageCreatedAt: item.latestMessageCreatedAt,
             unseenMessagesCount: item.unseenMessagesCount,
           });
@@ -72,7 +72,7 @@ export const convertApi = apiSlice.injectEndpoints({
                 convertId: item.convertId,
                 convertTheme: item.convertTheme,
                 convertType: item.convertType,
-                deadline: item.dateFinish,
+                dateStart: item.createdAt,
                 latestMessageCreatedAt: item.latestMessageCreatedAt,
                 unseenMessagesCount: item.unseenMessagesCount,
               }],
@@ -101,7 +101,7 @@ export const convertApi = apiSlice.injectEndpoints({
                 convertId: item.convertId,
                 convertTheme: item.convertTheme,
                 convertType: item.convertType,
-                deadline: item.dateFinish,
+                dateStart: item.createdAt,
                 latestMessageCreatedAt: item.latestMessageCreatedAt,
                 unseenMessagesCount: item.unseenMessagesCount,
               }],
@@ -176,6 +176,7 @@ export const convertApi = apiSlice.injectEndpoints({
         console.log('getConvertId', response);
 
         const convertToPosts = response?.convertToPosts
+        const watcherIds = response?.watherIds
 
         const selectSenderPostId = (convertToPosts, userId) => {
           const senderPost = convertToPosts.find(item => item.post.user.id === userId);
@@ -193,7 +194,18 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         };
 
-        const extractUserInfo = (convertToPosts, userId) => {
+        const extractUserInfo = (watcherIds, convertToPosts, userId) => {
+          // const userIsWatcher = watcherIds.includes(userId)
+
+          // if (userIsWatcher) {
+          //   return {
+          //     postName: userPost.post.postName,
+          //     userName: userPost.post.user.firstName + ' ' + userPost.post.user.lastName,
+          //     avatar: userPost.post.user.avatar_url
+          //   }
+          // }
+
+
           const userPost = convertToPosts.find(item => item.post.user.id !== userId);
           console.log(userPost)
           if (userPost) {
@@ -207,7 +219,7 @@ export const convertApi = apiSlice.injectEndpoints({
         }
 
         const { id: senderPostId, postName: senderPostName } = selectSenderPostId(convertToPosts, userId);
-        const userInfo = extractUserInfo(convertToPosts, userId)
+        const userInfo = extractUserInfo(watcherIds, convertToPosts, userId)
 
         return {
           currentConvert: response,

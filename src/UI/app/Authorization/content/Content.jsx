@@ -178,7 +178,18 @@ export default function Content() {
         </div>
         <div className={classes.textContainer}>
           <img src={telegram} alt="Telegram" />
-          <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.linkMobile}>
+          <a
+            href={qrUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.linkMobile}
+            aria-disabled={!tokenForTG}
+            onClick={(e) => {
+              if (!tokenForTG) {
+                e.preventDefault(); // Отменяем действие ссылки
+              }
+            }}
+          >
             Войти через Telegram
           </a>
         </div>
