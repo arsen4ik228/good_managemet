@@ -30,7 +30,11 @@ export default function InputTextContainer({
     sendClick,
     shareClick,
     senderPostId,
-    senderPostName
+    senderPostName,
+    offAttachIcon,
+    offSetDate,
+    offShareIcon,
+    disableDateStart,
 }) {
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [openFilesModal, setOpenFilesModal] = useState(false);
@@ -44,6 +48,14 @@ export default function InputTextContainer({
             setSelectedPostOrganizationId(organization);
         }
     };
+
+    const handleChangeContentTextarea = (e) => {
+        const value = e.target.value
+        if (!value) return
+
+        setContentInput(value)
+        resizeTextarea(idTextarea)
+    }
 
     return (
         <>
@@ -64,19 +76,34 @@ export default function InputTextContainer({
                     </div>
                     <div className={classes.inputTextContainer}>
                         <div className={classes.buttonSection}>
-                            <img src={attachIcon} alt="attachIcon" onClick={() => setOpenFilesModal(true)} />
-                            <img src={calenderIcon} alt="calenderIcon" onClick={() => setOpenCalendarModal(true)} />
+                            <div>
+                                {!offAttachIcon && (
+                                    <img src={attachIcon} alt="attachIcon" onClick={() => setOpenFilesModal(true)} />
+                                )}
+                            </div>
+                            <div>
+                                {!offSetDate && (
+                                    <img src={calenderIcon} alt="calenderIcon" onClick={() => setOpenCalendarModal(true)} />
+                                )}
+                            </div>
                         </div>
                         <div className={classes.inputText}>
                             <textarea
                                 id={idTextarea}
                                 value={contentInput}
-                                onChange={(e) => setContentInput(e.target.value)}
+                                onChange={(e) => handleChangeContentTextarea(e)}
                             />
                         </div>
                         <div className={classes.buttonSection}>
-                            <img src={shareIcon} alt="shareIcon" onClick={shareClick} />
-                            <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
+                            <div>
+
+                                {!offShareIcon && (
+                                    <img src={shareIcon} alt="shareIcon" onClick={shareClick} />
+                                )}
+                            </div>
+                            <div>
+                                <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -89,6 +116,7 @@ export default function InputTextContainer({
                     setDateStart={setStartDate}
                     dateDeadline={deadlineDate}
                     setDateDeadline={setDeadlineDate}
+                    disableDateStart={disableDateStart}
                 />
             )}
 
@@ -105,15 +133,6 @@ export default function InputTextContainer({
                 />
             )}
 
-            {/* {openOrderModal && (
-                <OrderModal
-                    setModalOpen={setOpenOrderModal}
-                    setReciverPost={setReciverPostId}
-                    selectedPost={selectedPost}
-                    setTheme={setConvertTheme}
-                    buttonFunc={createOrder}
-                />
-            )} */}
         </>
     );
 }
