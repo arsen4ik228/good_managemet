@@ -39,12 +39,14 @@ export const DialogPage = () => {
     useEmitSocket('join_convert', { convertId: convertId });
     useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds })
 
+    // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
     const handleEventData = useCallback((eventName, data) => {
         console.log(`Data from ${eventName}:`, data);
     }, []);
     const socketResponse = useSocket(eventNames, handleEventData);
 
+    // Слушатель скрола, пагинация запрашиваемых сообщений 
     const handleScroll = debounce(() => {
         const bodyElement = bodyRef.current;
         if (!bodyElement) return;
@@ -54,6 +56,8 @@ export const DialogPage = () => {
             setPaginationSeenMessages((prev) => prev + 30);
     }, 200);
 
+
+    // Монтирование слушателя скрола
     useLayoutEffect(() => {
         const bodyElement = bodyRef.current;
         if (!bodyElement) {
@@ -67,6 +71,7 @@ export const DialogPage = () => {
         };
     }, []);
 
+    // Компоновка массива архивных сообщений 
     useEffect(() => {
         if (notEmpty(seenMessages)) {
             if (!notEmpty(messagesArray)) {
@@ -79,6 +84,7 @@ export const DialogPage = () => {
         }
     }, [seenMessages]);
 
+    // Создание socket сообщений 
     useEffect(() => {
         if (!notEmpty(socketResponse?.messageCreationEvent)) return;
 
@@ -93,10 +99,7 @@ export const DialogPage = () => {
         }]);
     }, [socketResponse?.messageCreationEvent]);
 
-    // useEffect(() => {
-    //     unSeenMessageExistRef.current = unSeenMessageExist;
-    // }, [unSeenMessageExist]);
-
+    // Прочтение сообщений(смена статуса)
     useEffect(() => {
         // Проверяем, что socketResponse.messagesAreSeen и messageIds существуют
         if (!socketResponse?.messagesAreSeen || !Array.isArray(socketResponse.messagesAreSeen.messageIds)) {
@@ -133,27 +136,9 @@ export const DialogPage = () => {
         // Обновляем socketMessages
         const updatedSocketMessages = updateMessages(socketMessages);
         setSocketMessages(updatedSocketMessages);
-    }, [socketResponse?.messagesAreSeen, unSeenMessageExist]); //messagesArray, socketMessages,
-
-    // useEffect(() => {
-    //     if (!notEmpty(seenMessages) && !unSeenMessageExistRef.current) return;
-
-    //     // Создаем новый массив с обновленными сообщениями
-    //     const updatedMessages = messagesArray.map(message => {
-    //         if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-    //             // Возвращаем новый объект с обновленным полем timeSeen
-    //             return {
-    //                 ...message,
-    //                 timeSeen: socketResponse.messagesAreSeen.dateSeen,
-    //             };
-    //         }
-    //         return message;
-    //     });
-
-    //     // Обновляем состояние
-    //     setSocketMessages(updatedMessages);
-    // }, [seenMessages]);
-
+    }, [socketResponse?.messagesAreSeen, unSeenMessageExist]); 
+    
+    // Установка фокуса на не прочитанные сообщения 
     useLayoutEffect(() => {
         if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
             const firstUnSeenMessageElement = unSeenMessagesRef.current;
@@ -198,15 +183,11 @@ export const DialogPage = () => {
             messageElements.forEach((element) => observer.unobserve(element));
             observer.disconnect();
         };
-    }, [unSeenMessages, socketMessages]); // Зависимость от unSeenMessages и socketMessages
+    }, [unSeenMessages, socketMessages]); 
 
-    //setVisibleUnSeenMessageIds(visibleIds);
 
-    // console.log('Visible unSeenMessages IDs:', visibleUnSeenMessageIds);
-    console.log(unSeenMessageExist)
-    console.log(socketMessages)
-    console.log("messagesArray")
-    console.log(messagesArray)
+    console.log(currentConvert, senderPostId, userInfo, senderPostName)
+
 
     return (
         <>
