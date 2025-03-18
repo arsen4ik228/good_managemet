@@ -20,7 +20,7 @@ export const DialogPage = () => {
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
 
-    const { currentConvert, senderPostId, userInfo, senderPostName, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
+    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
     const {
         seenMessages,
         unSeenMessageExist,
@@ -37,7 +37,7 @@ export const DialogPage = () => {
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
-    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds })
+    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
 
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
@@ -136,8 +136,8 @@ export const DialogPage = () => {
         // Обновляем socketMessages
         const updatedSocketMessages = updateMessages(socketMessages);
         setSocketMessages(updatedSocketMessages);
-    }, [socketResponse?.messagesAreSeen, unSeenMessageExist]); 
-    
+    }, [socketResponse?.messagesAreSeen, unSeenMessageExist]);
+
     // Установка фокуса на не прочитанные сообщения 
     useLayoutEffect(() => {
         if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
@@ -183,11 +183,9 @@ export const DialogPage = () => {
             messageElements.forEach((element) => observer.unobserve(element));
             observer.disconnect();
         };
-    }, [unSeenMessages, socketMessages]); 
+    }, [unSeenMessages, socketMessages]);
 
-
-    console.log(currentConvert, senderPostId, userInfo, senderPostName)
-
+    console.warn(seenMessagesRef.current)
 
     return (
         <>
