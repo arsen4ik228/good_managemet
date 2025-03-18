@@ -25,7 +25,7 @@ export default function Section() {
   };
 
   const handleControlPanelButtonClick = () => {
-    navigate("/pomoshnik/controlPanel");
+    navigate("/controlPanel");
   };
   return (
     <>
