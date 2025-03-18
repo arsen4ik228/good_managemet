@@ -49,7 +49,7 @@ export default function Chat() {
         <div>
           {allConverts?.map((item, index) => (
             <div
-            //onClick={() => handleItemClick(item)}
+            onClick={() => navigate(`/Chat/${item.userIds}`)}
             >
               <React.Fragment key={index} >
                 <DialogContainer elem={item}></DialogContainer>
