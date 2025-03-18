@@ -9,7 +9,7 @@ export default function Chat() {
   const navigate = useNavigate();
 
   const handleUserButtonClick = () => {
-    navigate("/pomoshnik/user");
+    navigate("/user");
   };
   const handleStartButtonClick = () => {
     navigate("/pomoshnik/start");

@@ -20,12 +20,11 @@ const PostSchema = React.lazy(() => import("@app/CompanySchema/desktop/CompanySc
 const SchemeСompanies = React.lazy(() => import("@app/CompanySchema/desktop/schemeСompanies/SchemeСompanies"))
 
 const pageComponents = {
-  pomoshnik: {
-    controlPanel: ControlPanel,
-    user: User,
-    companySchema: SchemeСompanies,
-    postSchema: PostSchema,
-    
+
+  controlPanel: ControlPanel,
+  user: User,
+
+  pomoshnik: {    
     start: Pomoshnik,
     goal: Goal,
     policy: Policy,
@@ -40,6 +39,8 @@ const pageComponents = {
     post: Post,
     postNew: PostNew,
     workingPlan: WorkingPlan,
+    companySchema: SchemeСompanies,
+    postSchema: PostSchema,
   },
 };
 
