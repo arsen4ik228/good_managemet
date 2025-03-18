@@ -1,9 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import classes from "./Graphic.module.css";
-import getDateFormatSatatistic from '../Custom/Function/getDateFormatStatistic'
+import getDateFormatSatatistic from "../Custom/Function/getDateFormatStatistic";
 
-const Graphic = ({ data, name, setName, typeGraphic, type }) => {
+const Graphic = ({
+  colorFirstPoint,
+  data,
+  name,
+  setName,
+  typeGraphic,
+  type,
+}) => {
   const svgRef = useRef();
   const [nameStatistics, setNameStatistics] = useState(name);
 
@@ -62,7 +69,6 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
     return () => window.removeEventListener("resize", updateDimensions);
   }, [typeGraphic]);
 
-
   useEffect(() => {
     data.sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
 
@@ -83,7 +89,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
         data.map((d) =>
           d.valueDate === "" || d.valueDate === null
             ? "дата"
-            : getDateFormatSatatistic(d.valueDate,typeGraphic)
+            : getDateFormatSatatistic(d.valueDate, typeGraphic)
         )
       )
       .range([margin.left, width - margin.right])
@@ -109,7 +115,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
         x(
           d.valueDate === "" || d.valueDate === null
             ? "дата"
-            : getDateFormatSatatistic(d.valueDate,typeGraphic)
+            : getDateFormatSatatistic(d.valueDate, typeGraphic)
         )
       )
       .y((d) => y(d.value))
@@ -125,7 +131,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
     const tickValues = data.map((d) =>
       d.valueDate === "" || d.valueDate === null
         ? "дата"
-        : getDateFormatSatatistic(d.valueDate,typeGraphic)
+        : getDateFormatSatatistic(d.valueDate, typeGraphic)
     );
 
     // Получаем значения для горизонтальных линий сетки с использованием y.ticks()
@@ -204,6 +210,12 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
     });
 
     const getColor = (value, index) => {
+      if (index === 0) {
+        if (colorFirstPoint === undefined || colorFirstPoint === null)
+          return "blue";
+        const colorPoint = value >= colorFirstPoint ? "blue" : "red";
+        return colorPoint;
+      }
       if (index > 0) {
         const prevValue = data[index - 1].value;
         // Reverse the color logic for points as well
@@ -215,7 +227,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
           ? "red"
           : "blue"; // Normal logic for points
       } else {
-        return "green";
+        return "blue";
       }
     };
 
@@ -228,7 +240,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
         x(
           d.valueDate === "" || d.valueDate === null
             ? "дата"
-            : getDateFormatSatatistic(d.valueDate,typeGraphic)
+            : getDateFormatSatatistic(d.valueDate, typeGraphic)
         )
       )
       .attr("cy", (d) => y(d.value))
@@ -240,7 +252,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
         const tooltipX = x(
           d.valueDate === "" || d.valueDate === null
             ? "дата"
-            : getDateFormatSatatistic(d.valueDate,typeGraphic)
+            : getDateFormatSatatistic(d.valueDate, typeGraphic)
         );
         const tooltipY = y(d.value) - 15;
 
@@ -248,7 +260,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
         const dateText = `Дата: ${
           d.valueDate === "" || d.valueDate === null
             ? "дата"
-            : getDateFormatSatatistic(d.valueDate,typeGraphic)
+            : getDateFormatSatatistic(d.valueDate, typeGraphic)
         }`;
         const valueText = `Значение: ${d.value}`;
         const textWidth = Math.max(dateText.length, valueText.length) * 6; // Оценочная ширина в пикселях
@@ -314,7 +326,7 @@ const Graphic = ({ data, name, setName, typeGraphic, type }) => {
           .attr("fill", getColor(d.value, index)); // Apply the reversed color logic here
         svg.select("#tooltip").remove();
       });
-  }, [data, width, height, type]);
+  }, [colorFirstPoint, data, width, height, type]);
 
   return (
     <div className={classes.block}>
