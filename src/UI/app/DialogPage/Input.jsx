@@ -108,6 +108,7 @@ const Input = ({ convertId, sendMessage, senderPostId, senderPostName, refetchMe
                 idTextArea={idTextArea}
                 senderPostId={senderPostId}
                 senderPostName={senderPostName}
+                offSetDate={true}
             />
 
         </>

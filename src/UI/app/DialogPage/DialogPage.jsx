@@ -73,15 +73,19 @@ export const DialogPage = () => {
 
     // Компоновка массива архивных сообщений 
     useEffect(() => {
-        if (notEmpty(seenMessages)) {
-            if (!notEmpty(messagesArray)) {
-                seenMessagesRef.current = seenMessages;
-                setMessagesArray(seenMessages);
-            } else {
-                seenMessagesRef.current = seenMessages;
-                setMessagesArray(prev => [...prev, ...seenMessages]);
-            }
+        if (!notEmpty(seenMessages)) {
+            seenMessagesRef.current = []
+            return
         }
+
+        if (!notEmpty(messagesArray)) {
+            seenMessagesRef.current = seenMessages;
+            setMessagesArray(seenMessages);
+        } else {
+            seenMessagesRef.current = seenMessages;
+            setMessagesArray(prev => [...prev, ...seenMessages]);
+        }
+
     }, [seenMessages]);
 
     // Создание socket сообщений 
@@ -109,10 +113,12 @@ export const DialogPage = () => {
         // Функция для обновления сообщений
         const updateMessages = (messages) => {
             return messages.map(message => {
+                console.log(socketResponse.messagesAreSeen.messageIds)
                 if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
+                    console.log('bam')
                     return {
                         ...message,
-                        timeSeen: socketResponse.messagesAreSeen.dateSeen,
+                        seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
                     };
                 }
                 return message;
@@ -121,7 +127,7 @@ export const DialogPage = () => {
 
         // Обновляем messagesArray, если есть непрочитанные сообщения
         if (unSeenMessageExistRef.current) {
-            const updatedMessagesArray = updateMessages(messagesArray);
+            const updatedMessagesArray = updateMessages(unSeenMessages);
             const hasUnSeenMessages = updatedMessagesArray.some(message =>
                 socketResponse.messagesAreSeen.messageIds.includes(message.id)
             );
@@ -185,7 +191,7 @@ export const DialogPage = () => {
         };
     }, [unSeenMessages, socketMessages]);
 
-    console.warn(seenMessagesRef.current)
+    //console.warn(messagesArray)
 
     return (
         <>
@@ -201,7 +207,8 @@ export const DialogPage = () => {
                         <React.Fragment key={index}>
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
-                                timeSeen={item?.timeSeen}
+                                seenStatuses={item?.seenStatuses}
+
                                 attachmentToMessage={item?.attachmentToMessage}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
@@ -219,6 +226,8 @@ export const DialogPage = () => {
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
                                         attachmentToMessage={item?.attachmentToMessage}
+                                        seenStatuses={item?.seenStatuses}
+
                                     >
                                         {item.content}
                                     </Message>
@@ -229,7 +238,13 @@ export const DialogPage = () => {
                     )}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message key={index} userMessage={item?.userMessage} attachmentToMessage={item?.attachmentToMessage} createdMessage={item?.createdAt} timeSeen={item?.timeSeen}>
+                            <Message key={index}
+                                userMessage={item?.userMessage}
+                                seenStatuses={item?.seenStatuses}
+                                senderPost={item?.sender}
+                                attachmentToMessage={item?.attachmentToMessage}
+                                createdMessage={item?.createdAt}
+                            >
                                 {item.content}
                             </Message>
                         </React.Fragment>

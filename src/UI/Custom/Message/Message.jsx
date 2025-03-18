@@ -5,7 +5,7 @@ import isSeenIcon from '@image/isSeen.svg'
 import notSeenIcon from '@image/notSeen.svg'
 import FilesMessages from './FilesMessages';
 
-export const Message = React.forwardRef(({ key, userMessage, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
+export const Message = React.forwardRef(({ key, userMessage, seenStatuses, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
     return (
         <div
             ref={ref}
@@ -28,7 +28,7 @@ export const Message = React.forwardRef(({ key, userMessage, createdMessage, tim
                     </div>
                     {userMessage && (
                         <div className={classes.isSeen}>
-                            <img src={timeSeen ? isSeenIcon : notSeenIcon} alt="isSeen" />
+                            <img src={seenStatuses?.length>0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
                         </div>
                     )}
                 </div>
