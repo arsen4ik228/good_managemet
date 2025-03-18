@@ -25,7 +25,7 @@ function DesktopApp() {
           }
         />
         <Route
-          path="/:group/:route?/:organizationId?"
+        path="/:group/:route?/:organizationId?/:userIds?/:convertId?"
           element={
             <React.Suspense
               fallback={
