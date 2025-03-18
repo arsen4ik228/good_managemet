@@ -308,7 +308,7 @@ export default function Statistic() {
       if (
         !isNaN(itemDate) &&
         item?.correlationType !== "Год" &&
-        new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
+        new Date(new Date().setFullYear(new Date().getFullYear() - 12 + count)) <
           itemDate
       ) {
         if (item?.correlationType === "Месяц") {
@@ -662,6 +662,7 @@ export default function Statistic() {
         (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
       );
       setReceivedPoints(updatedYearPoints);
+      functionForColorFirstPoint();
     }
 
     if (typeGraphic === "13" || typeGraphic === "26" || typeGraphic === "52") {
@@ -928,7 +929,6 @@ export default function Statistic() {
     }
 
     if (typeGraphic === "Ежемесячный") {
-
       const oneMonth = statisticDatas.reduce((acc, item) => {
         const itemDate = new Date(item.valueDate);
         const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
@@ -973,7 +973,7 @@ export default function Statistic() {
       if (firstMonthData) {
         setColorFirstPoint(firstMonthData.valueSum);
       }
-      
+
       // const oneMonth = statisticDatas.reduce((acc, item) => {
       //   const itemDate = new Date(item.valueDate);
       //   const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
@@ -1020,12 +1020,13 @@ export default function Statistic() {
     }
 
     if (typeGraphic === "Ежегодовой") {
-
       const dataMonth = countMonthsForGraphicYear();
+      const startDate = new Date().getFullYear() - 12 + count;
+
       const dataWithCorrelationTypeYear = statisticDatas?.filter(
         (item) =>
           item.correlationType === "Год" &&
-          new Date().getFullYear() - 12 < new Date(item.valueDate).getFullYear()
+          startDate == new Date(item.valueDate).getFullYear()
       );
 
       const prepareData = dataMonth.reduce((acc, month) => {
@@ -1063,11 +1064,10 @@ export default function Statistic() {
 
       const objectdataWithCorrelationTypeYear =
         dataWithCorrelationTypeYear.reduce((acc, item) => {
-          const itemDate = new Date(item.valueDate);
-          const yearKey = `${itemDate.getFullYear()}`;
+          const itemDate = new Date(item.valueDate).getFullYear();
+          const yearKey = `${itemDate}`;
           if (
-            new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
-            itemDate
+            startDate === itemDate
           ) {
             if (!acc[yearKey]) {
               acc[yearKey] = {
@@ -1092,7 +1092,6 @@ export default function Statistic() {
       if (firstYearData) {
         setColorFirstPoint(firstYearData.valueSum);
       }
-      
     }
   };
 
@@ -1273,7 +1272,7 @@ export default function Statistic() {
       const dataWithCorrelationTypeYear = statisticDatas?.filter(
         (item) =>
           item.correlationType === "Год" &&
-          new Date().getFullYear() - 12 < new Date(item.valueDate).getFullYear()
+          new Date().getFullYear() - 12 + count < new Date(item.valueDate).getFullYear()
       );
 
       const prepareData = dataMonth.reduce((acc, month) => {
@@ -1314,7 +1313,7 @@ export default function Statistic() {
           const itemDate = new Date(item.valueDate);
           const yearKey = `${itemDate.getFullYear()}`;
           if (
-            new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
+            new Date(new Date().setFullYear(new Date().getFullYear() - 12 + count)) <
             itemDate
           ) {
             if (!acc[yearKey]) {
