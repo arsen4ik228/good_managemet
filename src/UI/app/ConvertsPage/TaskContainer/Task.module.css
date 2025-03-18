@@ -25,17 +25,23 @@
 
 
 .unSeenWrapper {
-    position: relative; /* Родитель должен быть relative */
-    min-height: 50px; /* Минимальная высота */
-    min-width: 200px; /* Минимальная ширина */
+    position: relative;
+    /* Родитель должен быть relative */
+    min-height: 50px;
+    /* Минимальная высота */
+    min-width: 200px;
+    /* Минимальная ширина */
 }
 
 .unSeenWrapper::after {
     position: absolute;
     content: 'Новые сообщения';
-    top: 50%; /* Центрирование по вертикали */
-    left: 50%; /* Центрирование по горизонтали */
-    transform: translate(-50%, -50%); /* Точное выравнивание */
+    top: 50%;
+    /* Центрирование по вертикали */
+    left: 50%;
+    /* Центрирование по горизонтали */
+    transform: translate(-50%, -50%);
+    /* Точное выравнивание */
     padding: 5px 40px;
     white-space: nowrap;
     border-radius: 5px;
@@ -44,10 +50,11 @@
     text-align: center;
     color: #000000A6;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    z-index: 1; /* Убедитесь, что псевдоэлемент поверх других элементов */
+    z-index: 1;
+    /* Убедитесь, что псевдоэлемент поверх других элементов */
 }
 
-.unSeenWrapper::after{
+.unSeenWrapper::after {
     position: absolute;
     content: 'Новые сообщения';
     top: -50%;
@@ -124,6 +131,10 @@
     font-weight: 600;
     color: rgb(58, 58, 58);
     text-overflow: ellipsis;
+
+    >div {
+        cursor: pointer;
+    }
 }
 
 .titleText {
@@ -139,7 +150,6 @@
 
 .dateContainer {
     padding: 20px 0;
-    font-size: 12px;
 }
 
 .dateContainer>span {
