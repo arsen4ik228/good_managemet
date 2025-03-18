@@ -82,9 +82,10 @@ const MobileMain = () => {
 
   useEffect(() => {
     if (organizations.length > 0 && !selectedOrg && !selectedOrganizationId)
-      selectOrganization(organizations[1]?.id);
-    else
+      selectOrganization(organizations[0]?.id);
+    else if (selectedOrganizationId) 
       selectOrganization(selectedOrganizationId);
+
   }, [organizations]);
 
   useEffect(() => {
