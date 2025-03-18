@@ -26,6 +26,7 @@ import { useOrganizationHook } from "@hooks";
 
 import _ from "lodash";
 export default function Statistic() {
+  const [colorFirstPoint, setColorFirstPoint] = useState();
   // Организация
   const {
     reduxSelectedOrganizationId,
@@ -299,7 +300,7 @@ export default function Statistic() {
       setPostId(currentStatistic.post.id);
     }
   }, [currentStatistic.id]);
-  
+
   const countMonthsForGraphicYear = () => {
     const monthlyData = statisticDatas.reduce((acc, item) => {
       const itemDate = new Date(item.valueDate);
@@ -468,6 +469,8 @@ export default function Statistic() {
       setOldReceivedPoints(_updatedPoints);
       setReceivedPoints(updatedPoints);
       setCreatePoints(_createdPoints);
+
+      functionForColorFirstPoint(startDate);
     }
 
     if (typeGraphic === "Ежемесячный") {
@@ -543,9 +546,9 @@ export default function Statistic() {
           id: monthlyData[monthKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${year}-${monthValue}-${date}`,
           value: monthlyData[monthKey].valueSum, // Сумма за месяц
-          ...(monthlyData[monthKey].correlationType ?? {
-            correlationType: monthlyData[monthKey].correlationType,
-          }),
+          ...(monthlyData[monthKey].correlationType
+            ? { correlationType: monthlyData[monthKey].correlationType }
+            : {}),
         });
       }
 
@@ -556,8 +559,7 @@ export default function Statistic() {
 
       setReceivedPoints(updatedMonthlyPoints);
 
-      console.log("updatedMonthlyPoints");
-      console.log(updatedMonthlyPoints);
+      functionForColorFirstPoint();
     }
 
     if (typeGraphic === "Ежегодовой") {
@@ -626,9 +628,11 @@ export default function Statistic() {
           return acc;
         }, {});
 
-      
-
-      const prepareObjectData = _.merge({}, prepareData, objectdataWithCorrelationTypeYear);
+      const prepareObjectData = _.merge(
+        {},
+        prepareData,
+        objectdataWithCorrelationTypeYear
+      );
 
       const updatedYearPoints = [];
 
@@ -649,9 +653,9 @@ export default function Statistic() {
           id: prepareObjectData[yearKey]?.id || null,
           valueDate: `${yearDate.getFullYear()}-01-01`,
           value: prepareObjectData[yearKey].valueSum,
-          ...(prepareObjectData[yearKey].correlationType ?? {
-            correlationType: prepareObjectData[yearKey].correlationType,
-          }),
+          ...(prepareObjectData[yearKey].correlationType
+            ? { correlationType: prepareObjectData[yearKey].correlationType }
+            : {}),
         });
       }
       updatedYearPoints.sort(
@@ -822,8 +826,9 @@ export default function Statistic() {
     update[index] = {
       ...update[index],
       value: value === null ? "" : Number(value),
-      ...(typeGraphic === "Ежемесячный" && { correlationType: "Месяц" }),
-      ...(typeGraphic === "Ежегодовой" && { correlationType: "Год" }),
+
+      ...(typeGraphic === "Ежегодовой" ? { correlationType: "Год" } : {}),
+      ...(typeGraphic === "Ежемесячный" ? { correlationType: "Месяц" } : {}),
     };
 
     setShowPoints(update);
@@ -837,13 +842,12 @@ export default function Statistic() {
           _id: item.id,
           value: item.value,
           valueDate: item.valueDate,
-
-          ...(typeGraphic === "Ежемесячный" && {
-            correlationType: item.correlationType,
-          }),
-          ...(typeGraphic === "Ежегодовой" && {
-            correlationType: item.correlationType,
-          }),
+          ...(typeGraphic === "Ежегодовой"
+            ? { correlationType: item.correlationType }
+            : {}),
+          ...(typeGraphic === "Ежемесячный"
+            ? { correlationType: item.correlationType }
+            : {}),
         }));
         Data.statisticDataUpdateDtos = arrayReceived;
       } else {
@@ -852,12 +856,12 @@ export default function Statistic() {
             ...item,
             valueDate: new Date(item.valueDate),
 
-            ...(typeGraphic === "Ежемесячный" && {
-              correlationType: item.correlationType,
-            }),
-            ...(typeGraphic === "Ежегодовой" && {
-              correlationType: item.correlationType,
-            }),
+            ...(typeGraphic === "Ежегодовой"
+              ? { correlationType: item.correlationType }
+              : {}),
+            ...(typeGraphic === "Ежемесячный"
+              ? { correlationType: item.correlationType }
+              : {}),
           };
         });
         Data.statisticDataCreateDtos = formatDate;
@@ -904,11 +908,192 @@ export default function Statistic() {
   //Для стрелок влева вправо график менять
 
   const handleArrowLeftClick = () => {
-    setCount((prevCount) => prevCount + 1);
+    setCount((prevCount) => prevCount - 1);
   };
 
   const handleArrowRightClick = () => {
-    setCount((prevCount) => prevCount - 1);
+    setCount((prevCount) => prevCount + 1);
+  };
+
+  const functionForColorFirstPoint = (startDate) => {
+    if (typeGraphic === "Ежедневный") {
+      const colorFirstPoint = new Date(startDate);
+      colorFirstPoint.setDate(colorFirstPoint.getDate() + (count - 1));
+      const element = statisticDatas.find(
+        (item) =>
+          new Date(item.valueDate).toISOString().split("T")[0] ===
+          colorFirstPoint.toISOString().split("T")[0]
+      );
+      setColorFirstPoint(element?.value);
+    }
+
+    if (typeGraphic === "Ежемесячный") {
+
+      const oneMonth = statisticDatas.reduce((acc, item) => {
+        const itemDate = new Date(item.valueDate);
+        const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
+
+        const minDate = new Date();
+        minDate.setMonth(minDate.getMonth() - 13 + count);
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() - 12 + count);
+        if (
+          !isNaN(itemDate) &&
+          item?.correlationType !== "Год" &&
+          itemDate >= minDate &&
+          itemDate <= maxDate
+        ) {
+          if (item?.correlationType === "Месяц") {
+            acc[monthKey] = {
+              id: item.id,
+              valueSum: item.value,
+              year: itemDate.getFullYear(),
+              month: itemDate.getMonth() + 1,
+              correlationType: "Месяц",
+            };
+          }
+
+          if (!acc[monthKey]) {
+            acc[monthKey] = {
+              valueSum: 0,
+              year: itemDate.getFullYear(),
+              month: itemDate.getMonth() + 1,
+            };
+          }
+
+          if (!acc[monthKey]?.correlationType) {
+            acc[monthKey].valueSum += item.value;
+          }
+        }
+        return acc;
+      }, {});
+
+      const firstMonthData = Object.values(oneMonth)[0];
+      console.log("firstMonthData", firstMonthData);
+      if (firstMonthData) {
+        setColorFirstPoint(firstMonthData.valueSum);
+      }
+      
+      // const oneMonth = statisticDatas.reduce((acc, item) => {
+      //   const itemDate = new Date(item.valueDate);
+      //   const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth() + 1}`; // Год-месяц как ключ
+
+      //   const minDate = new Date();
+      //   minDate.setMonth(minDate.getMonth() - 13);
+      //   const maxDate = new Date();
+      //   maxDate.setMonth(maxDate.getMonth() - 12);
+      //   if (
+      //     !isNaN(itemDate) &&
+      //     item?.correlationType !== "Год" &&
+      //     itemDate >= minDate &&
+      //     itemDate <= maxDate
+      //   ) {
+      //     if (item?.correlationType === "Месяц") {
+      //       acc[monthKey] = {
+      //         id: item.id,
+      //         valueSum: item.value,
+      //         year: itemDate.getFullYear(),
+      //         month: itemDate.getMonth() + 1,
+      //         correlationType: "Месяц",
+      //       };
+      //     }
+
+      //     if (!acc[monthKey]) {
+      //       acc[monthKey] = {
+      //         valueSum: 0,
+      //         year: itemDate.getFullYear(),
+      //         month: itemDate.getMonth() + 1,
+      //       };
+      //     }
+
+      //     if (!acc[monthKey]?.correlationType) {
+      //       acc[monthKey].valueSum += item.value;
+      //     }
+      //   }
+      //   return acc;
+      // }, {});
+
+      // const firstMonthData = Object.values(oneMonth)[0];
+      // if (firstMonthData) {
+      //   setColorFirstPoint(firstMonthData.valueSum);
+      // }
+    }
+
+    if (typeGraphic === "Ежегодовой") {
+
+      const dataMonth = countMonthsForGraphicYear();
+      const dataWithCorrelationTypeYear = statisticDatas?.filter(
+        (item) =>
+          item.correlationType === "Год" &&
+          new Date().getFullYear() - 12 < new Date(item.valueDate).getFullYear()
+      );
+
+      const prepareData = dataMonth.reduce((acc, month) => {
+        const date = new Date(month.valueDate);
+        const yearKey = `${date.getFullYear()}`;
+
+        const elementWithSameYear = dataWithCorrelationTypeYear.find(
+          (el) => new Date(el.valueDate).getFullYear() === date.getFullYear()
+        );
+
+        if (elementWithSameYear && !acc[yearKey]) {
+          acc[yearKey] = {
+            id: month.id,
+            valueSum: elementWithSameYear.value,
+            correlationType: elementWithSameYear.correlationType,
+          };
+          return acc;
+        }
+
+        if (!acc[yearKey]) {
+          // Если года ещё нет в объекте, создаём новую запись
+          acc[yearKey] = {
+            valueSum: 0,
+            year: date.getFullYear(),
+          };
+        }
+
+        // Если у года нет свойства correlationType, добавляем значение к valueSum
+        if (!acc[yearKey]?.correlationType) {
+          acc[yearKey].valueSum += month.value;
+        }
+
+        return acc;
+      }, {});
+
+      const objectdataWithCorrelationTypeYear =
+        dataWithCorrelationTypeYear.reduce((acc, item) => {
+          const itemDate = new Date(item.valueDate);
+          const yearKey = `${itemDate.getFullYear()}`;
+          if (
+            new Date(new Date().setFullYear(new Date().getFullYear() - 12)) <
+            itemDate
+          ) {
+            if (!acc[yearKey]) {
+              acc[yearKey] = {
+                id: item.id,
+                valueSum: item.value,
+                correlationType: item.correlationType,
+              };
+            }
+          }
+
+          return acc;
+        }, {});
+
+      const prepareObjectData = _.merge(
+        {},
+        prepareData,
+        objectdataWithCorrelationTypeYear
+      );
+
+      const firstYearData = Object.values(prepareObjectData)[0];
+      console.log("firstYearData", firstYearData);
+      if (firstYearData) {
+        setColorFirstPoint(firstYearData.valueSum);
+      }
+      
+    }
   };
 
   const updateStatisticsData = () => {
@@ -946,9 +1131,13 @@ export default function Statistic() {
       // Создаем массив всех дат за последние 7 дней
       const last7Days = [];
       for (let i = count; i < 7 + count; i++) {
-        const date = new Date(dayNow);
-        date.setDate(dayNow.getDate() - i);
+        const date = new Date(startDate);
+        date.setDate(dayNow.getDate() + i);
         last7Days.push(date.toISOString().split("T")[0]);
+
+        if (i === count) {
+          functionForColorFirstPoint(startDate);
+        }
       }
 
       // Группируем данные по дате и фильтруем
@@ -1029,9 +1218,9 @@ export default function Statistic() {
       const updatedMonthlyPoints = [];
 
       // Для каждого месяца от 14 месяцев назад до текущего добавляем данные
-      for (let i = count; i < 13 + count; i++) {
+      for (let i = new Date().getMonth() - 14 + count; i <= count; i++) {
         const monthDate = new Date();
-        monthDate.setMonth(monthDate.getMonth() - i);
+        monthDate.setMonth(monthDate.getMonth() + i);
         const monthKey = `${monthDate.getFullYear()}-${
           monthDate.getMonth() + 1
         }`;
@@ -1058,9 +1247,9 @@ export default function Statistic() {
           id: monthlyData[monthKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${year}-${monthValue}-${date}`, // Форматирование в 'год-месяц-день'
           value: monthlyData[monthKey].valueSum, // Сумма за месяц
-          ...(monthlyData[monthKey].correlationType ?? {
-            correlationType: monthlyData[monthKey].correlationType,
-          }),
+          ...(monthlyData[monthKey].correlationType
+            ? { correlationType: monthlyData[monthKey].correlationType }
+            : {}),
         });
       }
 
@@ -1070,6 +1259,8 @@ export default function Statistic() {
       );
 
       setReceivedPoints(updatedMonthlyPoints);
+
+      functionForColorFirstPoint();
     }
 
     if (typeGraphic === "Ежегодовой") {
@@ -1138,13 +1329,21 @@ export default function Statistic() {
           return acc;
         }, {});
 
-      const prepareObjectData = _.merge({}, prepareData, objectdataWithCorrelationTypeYear);
+      const prepareObjectData = _.merge(
+        {},
+        prepareData,
+        objectdataWithCorrelationTypeYear
+      );
       const updatedYearPoints = [];
 
       // Для каждого года от 13 лет назад до текущего добавляем данные
-      for (let i = count; i < 12 + count; i++) {
+      for (
+        let i = new Date().getFullYear() - 11 + count;
+        i <= new Date().getFullYear() + count;
+        i++
+      ) {
         const yearDate = new Date();
-        yearDate.setFullYear(yearDate.getFullYear() - i);
+        yearDate.setFullYear(i);
         const yearKey = `${yearDate.getFullYear()}`;
 
         // Если данных нет для этого года, создаем запись с суммой 0
@@ -1159,22 +1358,22 @@ export default function Statistic() {
           id: prepareObjectData[yearKey]?.id || null, // Если id не найден, присваиваем null
           valueDate: `${yearDate.getFullYear()}-01-01`,
           value: prepareObjectData[yearKey].valueSum, // Сумма за год
-          ...(prepareObjectData[yearKey].correlationType ?? {
-            correlationType: prepareObjectData[yearKey].correlationType,
-          }),
+          ...(prepareObjectData[yearKey].correlationType
+            ? { correlationType: prepareObjectData[yearKey].correlationType }
+            : {}),
         });
       }
 
       updatedYearPoints.sort(
         (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
       );
-
+      console.log("updatedYearPoints", updatedYearPoints);
       setReceivedPoints(updatedYearPoints);
     }
 
     if (typeGraphic === "13" || typeGraphic === "26" || typeGraphic === "52") {
       const today = new Date();
-      today.setDate(today.getDate() - count * 7);
+      today.setDate(today.getDate() + count * 7);
       const end = new Date(today);
 
       const start = new Date(end);
@@ -1401,6 +1600,7 @@ export default function Statistic() {
                       <>
                         <div className={classes.block1}>
                           <Graphic
+                            colorFirstPoint={colorFirstPoint}
                             data={[...receivedPoints, ...createPoints]}
                             name={name}
                             setName={setName}
