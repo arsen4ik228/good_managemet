@@ -2,7 +2,8 @@
     width: 24%;
     min-width: 24%;
     max-width: 24%;
-    height: 100%;
+
+    height: calc(100vh - 25px);
 
     display: flex;
     flex-direction: column;
