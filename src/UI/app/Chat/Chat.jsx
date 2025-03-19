@@ -43,9 +43,7 @@ export default function Chat() {
           <span>Личный помощник</span>
         </button>
         <Section></Section>
-        <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
-          <span> Добавить пользователя </span>
-        </button>
+       
         <div>
           {allConverts?.map((item, index) => (
             <div
@@ -57,6 +55,9 @@ export default function Chat() {
             </div>
           ))}
         </div>
+        <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
+          <span> Добавить пользователя </span>
+        </button>
       </div>
     </div>
   );
