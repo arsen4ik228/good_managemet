@@ -5,6 +5,7 @@ import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import { useTargetsHook } from '@hooks'
 import { usePolicyHook } from '@hooks'
 import AttachmentModal from '../AttachmentsModal/AttachmentModal'
+import { isMobile } from 'react-device-detect';
 
 export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) {
 
@@ -153,6 +154,12 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
         setOpenModal(false)
     }
 
+    const handleClickOpenFilesModal = () => {
+        if (isOrder) return
+
+        setOpenAttachmentsModal(true)
+    }
+
     return (
         <>
             <ModalContainer
@@ -160,6 +167,7 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                 clickFunction={clickFunction}
                 disabledButton={isArchive}
                 buttonText={isOrder && 'К диалогу'}
+                style={isMobile ? { 'width': '95%' } : {}}                 
             >
                 <div className={classes.content}>
                     {/* {taskData.type === 'Приказ' && (
@@ -226,63 +234,9 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                     </div>
 
 
-                    <button onClick={() => setOpenAttachmentsModal(true)} className={classes.customFileButton}>
-                        {attachments?.length > 0 ? `Вложений: ${attachments?.length}` : 'Выберите файлы'}
+                    <button onClick={() => handleClickOpenFilesModal()} className={classes.customFileButton}>
+                        {attachments?.length > 0 ? `Вложений: ${attachments?.length}` : isOrder ? 'Файлы отсутствуют' : 'Выберите файлы'}
                     </button>
-
-                    {/* <div className={classes.selectedFiles}> */}
-                    {/* {selectedFiles.map((file, index) => (
-                        <div key={index} className={classes.fileItem}>
-                            {file.type.startsWith('image/') ? (
-                                <img
-                                    src={URL.createObjectURL(file)} // Создаем временную ссылку для превью
-                                    alt={file.name}
-                                    className={classes.imagePreview}
-                                />
-                            ) : (
-                                <span>{file.name}</span> // Для не-изображений показываем имя файла
-                            )}
-                            <button onClick={() => handleRemoveFile(index)}>Удалить</button>
-                        </div>
-                    ))} */}
-                    {/* {files
-                        ?.filter((file) => !deleteFile.includes(file.id))
-                        .map((file, index) => (
-                            <div key={index} className={classes.fileItem}>
-                                {file.attachmentMimetype.startsWith('image/') ? (
-                                    <img
-                                        src={baseUrl + file.attachmentPath} // Создаем временную ссылку для превью
-                                        alt={file.name}
-                                        className={classes.imagePreview}
-                                    />
-                                ) : (
-                                    <span>{file.attachmentName}</span> // Для не-изображений показываем имя файла
-                                )}
-                                <button onClick={() => setDeleteFile(prevState => [...prevState, file.id])}>Удалить</button>
-                            </div>
-                        ))} */}
-                    {/* </div> */}
-
-                    {/* {attachments?.length > 0 && (
-                    <div className={classes.attachmentsContainer}>
-                        <h4>Прикрепленные файлы:</h4>
-                        <ul>
-                            {attachments.map((attachment, index) => (
-                                <li key={index}>
-                                    <p>{attachment.attachmentName}</p>
-                                    <img src={`${baseUrl}${attachment?.attachment.attachmentPath}`} alt="Прикрепленный файл"
-                                        onError={(e) => {
-                                            console.error('Ошибка загрузки изображения:', e);
-                                        }}
-                                    />
-                                    <p>Размер: {(attachment.attachmentSize / 1024).toFixed(2)} KB</p>
-                                    <p>Дата создания: {new Date(attachment.createdAt).toLocaleString()}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    
-                )} */}
                 </div>
             </ModalContainer>
 

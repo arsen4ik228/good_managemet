@@ -18,6 +18,8 @@ const Input = ({ userPosts }) => {
     const [convertTheme, setConvertTheme] = useState('');
     const [reciverPostId, setReciverPostId] = useState();
 
+    const idTextarea = 1001
+
     const {
         postTargets,
         isLoadingPostTargetsMutation,
@@ -131,11 +133,11 @@ const Input = ({ userPosts }) => {
     }, [userPosts]);
 
     useEffect(() => {
-        loadDraft('DraftDB', 'drafts', 1001, setContentInput);
+        loadDraft('DraftDB', 'drafts', idTextarea, setContentInput);
     }, []);
 
     useEffect(() => {
-        saveDraft('DraftDB', 'drafts', 1001, contentInput);
+        saveDraft('DraftDB', 'drafts', idTextarea, contentInput);
     }, [contentInput]);
 
     console.log(reciverPostId)
@@ -166,7 +168,7 @@ const Input = ({ userPosts }) => {
                 setReciverPostId={setReciverPostId}
                 sendClick={createTargets}
                 shareClick={() => setOpenOrderModal(true)}
-                idTextArea={1001}
+                idTextarea={idTextarea}
             />
 
             {openOrderModal && (

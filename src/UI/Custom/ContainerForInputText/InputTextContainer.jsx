@@ -51,7 +51,6 @@ export default function InputTextContainer({
 
     const handleChangeContentTextarea = (e) => {
         const value = e.target.value
-        if (!value) return
 
         setContentInput(value)
         resizeTextarea(idTextarea)

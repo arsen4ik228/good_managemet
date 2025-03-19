@@ -2,9 +2,11 @@ import React from 'react'
 import classes from './ModalContainer.module.css'
 import { ButtonContainer } from '../CustomButtomContainer/ButtonContainer'
 import close from "../SearchModal/icon/icon _ add.svg";
+import PropTypes from 'prop-types'; 
 
 
-export default function ModalContainer({ children, buttonText, setOpenModal, clickFunction, disabledButton }) {
+
+export default function ModalContainer({ children, buttonText, setOpenModal, clickFunction, disabledButton, style }) {
 
     const closeModal = () => {
         setOpenModal(false)
@@ -12,7 +14,7 @@ export default function ModalContainer({ children, buttonText, setOpenModal, cli
     return (
         <>
             <div className={classes.wrapper}>
-                <div className={classes.contentContainer}>
+                <div className={classes.contentContainer} style={style}>
                     <div className={classes.contentColumn}>
                         <div className={classes.close}>
                             <img src={close} alt="close" onClick={() => setOpenModal(false)} />
@@ -24,7 +26,7 @@ export default function ModalContainer({ children, buttonText, setOpenModal, cli
                             clickFunction={clickFunction || closeModal}
                             disabled={disabledButton}
                         >
-                            {buttonText ? buttonText : 'Сохранить'}
+                            {buttonText} 
                         </ButtonContainer>
                     </div>
                 </div>
@@ -32,3 +34,21 @@ export default function ModalContainer({ children, buttonText, setOpenModal, cli
         </>
     )
 }
+
+
+ModalContainer.propTypes = {
+    children: PropTypes.node.isRequired, 
+    buttonText: PropTypes.string, 
+    setOpenModal: PropTypes.func.isRequired, 
+    clickFunction: PropTypes.func,
+    disabledButton: PropTypes.bool, 
+    style: PropTypes.object, 
+};
+
+
+ModalContainer.defaultProps = {
+    buttonText: 'Сохранить', 
+    clickFunction: null, 
+    disabledButton: false, 
+    style: {}, 
+};

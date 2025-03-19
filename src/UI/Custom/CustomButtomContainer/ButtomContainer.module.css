@@ -18,19 +18,51 @@
 
     padding: 10px 5px;
 
+}
 
-    >button {
-        height: 2rem;
-        width: 10rem;
+.buttonContainer > button {
+    height: 2.5rem;
+    width: 10rem;
+    background: linear-gradient(145deg, #005475, #006f9c);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
+/* Стили для наведения (для устройств с поддержкой hover) */
+@media (hover: hover) and (pointer: fine) {
+    .buttonContainer > button:hover {
+        background: linear-gradient(145deg, #006f9c, #005475);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+}
 
-        background: #005475;
-        border-radius: 5px;
+/* Стили для активного состояния (для всех устройств) */
+.buttonContainer > button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    background: #005475; /* Возвращаем исходный цвет фона */
+    transition: all 0.1s ease; /* Уменьшаем время анимации для активного состояния */
+}
 
-
-        color: white;
-        font-size: 16px;
-        text-transform: uppercase;
+/* Стили для мобильных устройств (сенсорные экраны) */
+@media (hover: none) and (pointer: coarse) {
+    .buttonContainer > button {
+        /* Оставляем все стили, но добавляем гарантированный возврат анимации */
+        transition: all 0.3s ease, transform 0.1s ease; /* Разделяем transition */
     }
 
+    .buttonContainer > button:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        background: #005475; /* Возвращаем исходный цвет фона */
+        transition: all 0.1s ease; /* Быстрая анимация для активного состояния */
+    }
 }

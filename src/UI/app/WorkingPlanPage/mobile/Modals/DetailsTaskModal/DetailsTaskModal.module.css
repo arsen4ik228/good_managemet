@@ -249,18 +249,37 @@
     transition-property: transform, opacity;
 }
 
-.customFileButton:hover {
-    -webkit-transform: translateY(-5px);
-    -ms-transform: translateY(-5px);
-    transform: translateY(-5px);
+@media(hover: hover) {
+
+    .customFileButton:hover {
+        -webkit-transform: translateY(-5px);
+        -ms-transform: translateY(-5px);
+        transform: translateY(-5px);
+    }
+    
+    .customFileButton:hover:before {
+        opacity: 1;
+        -webkit-transform: translateY(5px);
+        -ms-transform: translateY(5px);
+        transform: translateY(5px);
+    }
 }
 
-.customFileButton:hover:before {
-    opacity: 1;
-    -webkit-transform: translateY(5px);
-    -ms-transform: translateY(5px);
-    transform: translateY(5px);
+@media(hover: none){
+    .customFileButton:active {
+        -webkit-transform: translateY(-5px);
+        -ms-transform: translateY(-5px);
+        transform: translateY(-5px);
+    }
+    
+    .customFileButton:active:before {
+        opacity: 1;
+        -webkit-transform: translateY(5px);
+        -ms-transform: translateY(5px);
+        transform: translateY(5px);
+    }
 }
+
 
 /* Стили для контейнера выбранных файлов */
 .selectedFiles {
