@@ -8,13 +8,20 @@ export const ButtonContainer = ({ children, clickFunction, disabled }) => {
     ? { backgroundColor: "#00000040", }
     : {};
 
+
+    const handleClick = () => {
+        if (clickFunction && !disabled) {
+            clickFunction();
+        }
+    };
+
     return (
         <>
             <div className={classes.wrapper}>
                 <div className={classes.buttonContainer}>
                     <button
                         disabled={disabled}
-                        onClick={() => clickFunction()}
+                        onClick={() => handleClick()}
                         style={buttonStyle}
                     >
                         {children}
