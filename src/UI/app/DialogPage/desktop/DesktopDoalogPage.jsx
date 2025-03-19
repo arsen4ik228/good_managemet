@@ -4,7 +4,7 @@ import Headers from "@Custom/Headers/Headers";
 import { useConvertsHook, useMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
-import Input from './Input';
+import Input from '../Input';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
