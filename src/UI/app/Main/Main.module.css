@@ -89,7 +89,7 @@
 
     padding-left: 12.5px;
 
-    background-color: var(--grey-light);
+    background-color: #f5f5f5;
 
     & svg{
         width: 24px;

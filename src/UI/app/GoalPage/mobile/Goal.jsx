@@ -33,6 +33,8 @@ function MobileGoal(props) {
     isErrorPostGoalMutation,
     ErrorPostGoalMutation,
     localIsResponsePostGoalMutation,
+
+    reduxSelectedOrganizationId
   } = useGoalHook();
 
   const setContent = (newState) => {
@@ -81,6 +83,7 @@ function MobileGoal(props) {
   const saveGoal = async () => {
     await postGoal({
       content: [""],
+      organizationId: reduxSelectedOrganizationId,
     })
       .unwrap()
       .then()

@@ -1,5 +1,4 @@
-
-.wrapper{
+.wrapper {
     display: flex;
     overflow: hidden;
     flex-direction: column;
@@ -9,7 +8,7 @@
 
 
 
-.body{
+.body {
     flex: 1 1 auto;
     /* max-height: calc(100vh - 173px); */
     /* margin-top: 60px; */
@@ -17,14 +16,14 @@
     /* border: 1px solid red; */
 }
 
-.bodyContainer{
-        display: flex;
-        /* width: 100vw; */
-        height: 100%; 
-        margin-top: 5px;
+.bodyContainer {
+    display: flex;
+    /* width: 100vw; */
+    height: 100%;
+    margin-top: 5px;
 }
 
-.left{
+.left {
     width: 45vw;
     font-size: 1.6em;
     justify-content: center;
@@ -35,14 +34,14 @@
     height: 98%;
 }
 
-.title{
+.title {
     padding: 5px;
     padding-top: 12px;
     color: #005475;
     font-size: 1.4rem;
     /* border: 1px solid red; */
 
-    >div{
+    >div {
         border-bottom: #005475 1px solid;
         display: flex;
         justify-content: space-between;
@@ -50,50 +49,50 @@
     }
 }
 
-.selectList{
-    overflow-x: hidden;
-    overflow-y: hidden;
-    font-size: 1.2rem;
+.selectList {
+    font-size: 1rem;
     padding-bottom: 10px;
     list-style-type: circle;
-
-    li{
-        display: flex;
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-        padding: 0.4rem 0.8rem;
-        justify-content: flex-start;
-        text-overflow: ellipsis;
-
-        >div {
-            padding-left: 5px;
-        }
-    }
-
-    ol{
-        display: flex;
-        font-size: 1em;
-
-        /* width: 60vw; */
-        padding: 0.4rem 0.8rem 0.4rem 30px;
-        justify-content: flex-start;
-    }
+    width: 100%;
 }
 
-.selectedDirectory{
+.selectList li {
+    display: block;
+    padding: 8px 5px;
+    width: 100%;
+    justify-content: flex-start;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.selectList li:nth-last-child(1) {
+    padding-bottom: 0px;
+}
+
+.selectList ol {
+    display: flex;
+    font-size: 1em;
+
+    /* width: 60vw; */
+    padding: 0.4rem 0.8rem 0.4rem 30px;
+    justify-content: flex-start;
+}
+
+
+.selectedDirectory {
     color: #005475;
     font-weight: 600;
     text-decoration: underline;
 }
 
-.selectType{
+.selectType {
     display: flex;
     justify-content: space-between;
     font-size: 1.3em;
     padding: 5px 3px;
 
-    >div{
+    >div {
         width: 40px;
         display: flex;
     }
@@ -101,7 +100,7 @@
 
 }
 
-.input1{
+.input1 {
     display: flex;
     width: 90%;
     height: 59%;
@@ -109,7 +108,7 @@
     margin-top: 10px;
 }
 
-.right{
+.right {
     height: 98%;
     width: 55vw;
     overflow-y: auto;
@@ -118,7 +117,7 @@
 }
 
 
-.inputContainer{
+.inputContainer {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -128,7 +127,7 @@
 }
 
 
-.inputRow1{
+.inputRow1 {
     display: flex;
     margin-top: 57px;
     justify-content: space-between;
@@ -137,13 +136,13 @@
     padding: 0 1rem;
 
 
-    div{
+    div {
         display: flex;
         flex: 1 0 auto;
         align-items: center;
     }
 
-    input{
+    input {
         padding: 0 1em;
         height: 1.5rem;
         width: 12rem;
@@ -151,25 +150,27 @@
         text-transform: uppercase;
         border-bottom: 1px solid #005475;
     }
+
     @media screen and (max-width: 375px) {
         input {
             width: 7rem;
         }
     }
+
     @media screen and (max-width: 440px) {
         input {
             width: 10rem;
         }
     }
 
-    img{
+    img {
         display: inline-block;
         border-bottom: #005475 1px solid;
         height: 1.5rem;
 
     }
 
-    select{
+    select {
         display: inline-block;
         font-family: "'Montserrat', sans-serif";
         font-size: 16px;
@@ -178,20 +179,21 @@
     }
 }
 
-.first{
+.first {
     justify-content: space-between;
     padding: 1rem;
 }
 
-.second{
+.second {
     justify-content: center;
 }
 
-.inputColumn{
+.inputColumn {
     display: flex;
     /*border: black solid 1px;*/
 }
-.inputRow2{
+
+.inputRow2 {
     display: flex;
     padding: 1rem 2.5rem;
     /*border: #005475 1px solid;*/
@@ -201,15 +203,17 @@
     @media screen and (max-width: 395px) {
         padding: 1.5rem 2rem;
     }
+
     @media screen and (max-width: 370px) {
         padding: 1.5rem 1.5rem;
     }
+
     @media screen and (max-width: 350px) {
         padding: 1.5rem 0.5rem;
     }
 
 
-    img{
+    img {
         display: inline-block;
         width: 30px;
         height: 30px;
@@ -218,7 +222,7 @@
 
     }
 
-    button{
+    button {
         height: 2rem;
         width: 11rem;
         background: #005475;
@@ -229,7 +233,7 @@
 
     }
 
-    div{
+    div {
         display: flex;
         flex: 1 1 auto;
         /*border: 1px solid #005475;*/
@@ -237,12 +241,12 @@
     }
 }
 
-.image{
+.image {
     margin: 0 1rem;
 
 }
 
-.addDraft{
+.addDraft {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -254,7 +258,7 @@
     box-shadow: 0 0 2px black;
 }
 
-.directoryMenu{
+.directoryMenu {
 
     display: flex;
     justify-content: space-between;
@@ -264,23 +268,25 @@
     box-shadow: 0 0 2px black;
     max-width: 200px;
 
-    >span{
+    >span {
         font-size: 20px;
         /* font-style: italic; */
-        color: grey;          
+        color: grey;
     }
+
     @media (max-width: 343px) {
         span {
-          font-style: normal;
+            font-style: normal;
         }
-      }
+    }
 }
 
-.iconAdd{
+.iconAdd {
     position: relative;
     z-index: 1000;
     width: 100%;
-    >img{
+
+    >img {
         z-index: 1000;
         position: absolute;
         float: left;
