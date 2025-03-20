@@ -191,7 +191,7 @@ export default function DesktopDialogPage() {
         };
     }, [unSeenMessages, socketMessages]);
 
-    //console.warn(messagesArray)
+    console.warn(messagesArray, unSeenMessages)
 
     return (
         <>

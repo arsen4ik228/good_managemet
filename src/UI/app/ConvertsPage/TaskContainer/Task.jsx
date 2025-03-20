@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import classes from './Task.module.css';
 import { useNavigate } from 'react-router-dom';
 import { formattedDate } from '@helpers/helpers'
+import { isMobile } from 'react-device-detect';
 
 export default function Task({ taskData, isArchive }) {
     const navigate = useNavigate();
@@ -23,7 +24,12 @@ export default function Task({ taskData, isArchive }) {
     console.log(taskData)
 
     return (
-        <div className={+taskData.unseenMessagesCount !== 0 ? `${classes.wrapper} ${classes.unSeenWrapper}` : `${classes.wrapper}`}>
+        <div
+            className={+taskData.unseenMessagesCount !== 0
+                ? `${classes.wrapper} ${classes.unSeenWrapper}`
+                : `${classes.wrapper}`}
+            style={{ width: !isMobile ? '700px' : 'none' }}
+        >
             <div className={getBeforeClass()}>
                 <div className={classes.checkboxContainer}>
                     <input
