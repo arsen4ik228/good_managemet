@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import classes from './InputTextContainer.module.css';
 import sendIcon from '@Custom/icon/send.svg';
 import shareIcon from '@Custom/icon/subbar _ share.svg';
@@ -55,6 +55,20 @@ export default function InputTextContainer({
         setContentInput(value)
         resizeTextarea(idTextarea)
     }
+
+    useLayoutEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key !== 'Enter' || typeof sendClick !== 'function' || !sendClick) return
+
+            sendClick(); 
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [sendClick]);
 
     return (
         <>
