@@ -5,7 +5,8 @@ import {
   usePostPostsMutation,
   useUpdatePostsMutation,
   useGetUnderPostsQuery,
-  useGetPostsUserQuery
+  useGetPostsUserQuery,
+  useGetAllChatsQuery
 } from "../store/services/index";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 import { useMutationHandler } from "./useMutationHandler";
@@ -112,6 +113,8 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
 
   const { data: userPosts } = useGetPostsUserQuery()
 
+  const { data: allChats, refetch: refetchAllChats} = useGetAllChatsQuery()
+
   const [
     updatePost,
     {
@@ -179,6 +182,9 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     isErrorGetNew,
 
     userPosts,
+
+    allChats,
+    refetchAllChats,
 
     postPosts,
     isLoadingPostMutation,

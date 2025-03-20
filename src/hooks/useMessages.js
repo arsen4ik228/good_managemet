@@ -1,35 +1,3 @@
-// import {
-//     useGetMessagesIdQuery,
-//     useSendMessageMutation
-// } from "@services";
-// import { useMutationHandler } from "./useMutationHandler";
-
-// export function useMessages(convertId, pagination) {
-
-//     const {
-//         messages = [],
-//         refetch: refetchMessagesId,
-//     } = useGetMessagesIdQuery({ convertId, pagination },
-//         {
-//             selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-//                 messages: data || [],
-
-//             }),
-//         }
-//     );
-
-//     const [
-//         sendMessage,
-//     ] = useSendMessageMutation()
-
-
-//     return {
-//         messages,
-//         refetchMessagesId,
-
-//         sendMessage
-//     };
-// }
 
 import { useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery, useSendMessageMutation } from '@services'; // Импортируем useLazyQuery
 import { useEffect } from 'react';

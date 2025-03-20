@@ -4,17 +4,17 @@ import iconHeader from "@image/iconHeader.svg";
 import burger from "@image/burger.svg";
 import Section from "./section/Section";
 import { useNavigate } from "react-router-dom";
-import { useConvertsHook } from "@hooks";
-import { DialogContainer } from "@Custom/DialogContainer/DialogContainer.jsx";
+import { usePostsHook } from '@hooks'
+import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
-
 import { FloatButton } from "antd";
 import arrowBack from "@image/back_white.svg";
 
 export default function Chat() {
   const navigate = useNavigate();
 
-  const { allConverts, refetchGetConverts } = useConvertsHook();
+const { allChats, refetchAllChats } = usePostsHook()
+
 
   const eventNames = useMemo(
     () => ["convertCreationEvent", "messageCountEvent"],
@@ -23,7 +23,7 @@ export default function Chat() {
 
   const handleEventData = useCallback((eventName, data) => {
     console.log(`Data from ${eventName}:`, data);
-  }, []); // Мемоизация callback
+  }, []); // Мемоизация callbac
 
   const socketResponse = useSocket(eventNames, handleEventData);
 
@@ -54,9 +54,12 @@ export default function Chat() {
         <Section></Section>
 
         <div>
-          {allConverts?.map((item, index) => (
-            <div onClick={() => navigate(`/Chat/${item.userIds}`)}>
-              <React.Fragment key={index}>
+
+          {allChats?.map((item, index) => (
+            <div
+            onClick={() => navigate(`/Chat/${item.id}`)}
+            >
+              <React.Fragment key={index} >
                 <DialogContainer elem={item}></DialogContainer>
               </React.Fragment>
             </div>

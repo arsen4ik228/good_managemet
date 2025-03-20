@@ -6,35 +6,25 @@ import { useParams } from 'react-router-dom';
 import { notEmpty } from '@helpers/helpers'
 import Task from '../TaskContainer/Task'
 import { useConvertsHook } from '@hooks/useConvertsHook';
+import Input from '../Input';
 
 
-export default function DesktopConvertPage () {
-    const { userIds } = useParams()
-    const [converts, setConverts] = useState()
-    const [userInfo, setUserInfo] = useState()
 
-    const { allConverts, refetchGetConverts } = useConvertsHook()
-    console.log(allConverts)
+export default function DesktopConvertPage() {
+    const { contactId } = useParams()
 
-    useEffect(() => {
-        if (!notEmpty(allConverts)) return
 
-        const user = allConverts.find(item => item.userIds === userIds)
-        if (!user) return
+  const { contactInfo, allConverts } = useConvertsHook({ contactId: contactId })
 
-        setConverts(user.converts)
-        setUserInfo(user)
-    }, [userIds, allConverts])
 
     return (
         <div className={classes.dialog}>
-            <Headers name={"Писька"}>
-                {/* <BottomHeaders></BottomHeaders> */}
+            <Headers name={contactInfo?.userName} sectionName={contactInfo?.postName} avatar={contactInfo?.avatar}>
             </Headers>
 
             <div className={classes.main}>
                 <div className={classes.body}>
-                    {converts?.map((item, index) => (
+                    {allConverts?.map((item, index) => (
                         <React.Fragment key={index}>
                             <Task taskData={item}></Task>
                         </React.Fragment>
@@ -42,6 +32,7 @@ export default function DesktopConvertPage () {
 
                 </div>
             </div>
+            <Input></Input>
 
         </div>
     )

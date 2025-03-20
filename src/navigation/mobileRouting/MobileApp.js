@@ -46,8 +46,8 @@ function MobileApp() {
                         <Routes>
                             <Route path="error" element={<ErrorPage />} />
 
-                            <Route path="Chat/:userIds" element={<ConvertsPage />} />
-                            <Route path="Chat/:userIds/:convertId" element={<DialogPage />} />
+                            <Route path="Chat/:contactId" element={<ConvertsPage />} />
+                            <Route path="Chat/:contactId/:convertId" element={<DialogPage />} />
 
                             <Route path='account' element={<SettingsPage></SettingsPage>} />
                             <Route path="Main" element={<MobileMain />} />

@@ -20,7 +20,7 @@ export default function DesktopDialogPage() {
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
 
-    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
+    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook({convertId});
     const {
         seenMessages,
         unSeenMessageExist,
@@ -196,8 +196,7 @@ export default function DesktopDialogPage() {
     return (
         <>
             <div className={classes.dialog}>
-                <Headers name={"Писька"}>
-                    {/* <BottomHeaders></BottomHeaders> */}
+                <Headers name={userInfo?.userName} sectionName={userInfo.postName} avatar={userInfo?.avatar}>
                 </Headers>
 
                 <div className={classes.main}>
@@ -208,7 +207,7 @@ export default function DesktopDialogPage() {
                                     createdMessage={item?.createdAt}
                                     seenStatuses={item?.seenStatuses}
 
-                                    attachmentToMessage={item?.attachmentToMessage}
+                                    attachmentToMessage={item?.attachmentToMessages}
                                     {...(!item.userMessage && { 'data-message-id': item.id })}
                                 >
                                     {item.content}
@@ -224,7 +223,7 @@ export default function DesktopDialogPage() {
                                             createdMessage={item?.createdAt}
                                             ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                             data-message-id={item.id} // Добавляем data-атрибут
-                                            attachmentToMessage={item?.attachmentToMessage}
+                                            attachmentToMessage={item?.attachmentToMessages}
                                             seenStatuses={item?.seenStatuses}
 
                                         >
@@ -241,7 +240,7 @@ export default function DesktopDialogPage() {
                                     userMessage={item?.userMessage}
                                     seenStatuses={item?.seenStatuses}
                                     senderPost={item?.sender}
-                                    attachmentToMessage={item?.attachmentToMessage}
+                                    attachmentToMessage={item?.attachmentToMessages}
                                     createdMessage={item?.createdAt}
                                 >
                                     {item.content}
@@ -250,17 +249,17 @@ export default function DesktopDialogPage() {
                         ))}
                         {isFetchingSeenMessages && <div>Loading more messages...</div>}
                     </div>
-                    <footer className={classes.footer}>
-                        <Input
-                            convertId={currentConvert?.id}
-                            sendMessage={sendMessage}
-                            senderPostId={senderPostId}
-                            senderPostName={senderPostName}
-                            refetchMessages={refetchGetConvertId}
-                            isLoadingGetConvertId={isLoadingGetConvertId}
-                        />
-                    </footer>
                 </div>
+                <footer className={classes.footer}>
+                    <Input
+                        convertId={currentConvert?.id}
+                        sendMessage={sendMessage}
+                        senderPostId={senderPostId}
+                        senderPostName={senderPostName}
+                        refetchMessages={refetchGetConvertId}
+                        isLoadingGetConvertId={isLoadingGetConvertId}
+                    />
+                </footer>
             </div>
         </>
     );
