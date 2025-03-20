@@ -7,19 +7,25 @@ import { useNavigate } from "react-router-dom";
 import { usePostsHook } from '@hooks'
 import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
+import { FloatButton } from "antd";
+import arrowBack from "@image/back_white.svg";
 
 export default function Chat() {
   const navigate = useNavigate();
 
 const { allChats, refetchAllChats } = usePostsHook()
 
-    const eventNames = useMemo(() => ['convertCreationEvent', 'messageCountEvent'], []); // Мемоизация массива событий
-  
-    const handleEventData = useCallback((eventName, data) => {
-      console.log(`Data from ${eventName}:`, data);
-    }, []); // Мемоизация callback
-  
-    const socketResponse = useSocket(eventNames, handleEventData);
+
+  const eventNames = useMemo(
+    () => ["convertCreationEvent", "messageCountEvent"],
+    []
+  ); // Мемоизация массива событий
+
+  const handleEventData = useCallback((eventName, data) => {
+    console.log(`Data from ${eventName}:`, data);
+  }, []); // Мемоизация callbac
+
+  const socketResponse = useSocket(eventNames, handleEventData);
 
   const handleUserButtonClick = () => {
     navigate("/user");
@@ -38,13 +44,17 @@ const { allChats, refetchAllChats } = usePostsHook()
         <input type="search" placeholder="поиск"></input>
       </div>
       <div className={classes.main}>
-        <button className={classes.btnPomoshnik} onClick={handleStartButtonClick}>
+        <button
+          className={classes.btnPomoshnik}
+          onClick={handleStartButtonClick}
+        >
           <img src={iconHeader} alt="iconHeader" />
           <span>Личный помощник</span>
         </button>
         <Section></Section>
-       
+
         <div>
+
           {allChats?.map((item, index) => (
             <div
             onClick={() => navigate(`/Chat/${item.id}`)}
@@ -55,9 +65,22 @@ const { allChats, refetchAllChats } = usePostsHook()
             </div>
           ))}
         </div>
+
         <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
           <span> Добавить пользователя </span>
         </button>
+
+        {/* <FloatButton
+          icon={
+            <img src={arrowBack} alt="back" style={{ width: 20, height: 20 }} />
+          }
+          type="primary"
+          tooltip="Добавить пользователя"
+          onClick={handleUserButtonClick}
+          style={{
+            insetInlineStart: 380,
+          }}
+        /> */}
       </div>
     </div>
   );
