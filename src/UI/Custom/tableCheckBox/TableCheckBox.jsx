@@ -1,7 +1,14 @@
 import React from "react";
 import classes from "./TableCheckBox.module.css";
 
-export default function TableCheckBox({nameTable, array, arrayItem, arrayCheked, handleChecboxChange}) {
+export default function TableCheckBox({
+  deleteInputCheckbox,
+  nameTable,
+  array,
+  arrayItem,
+  arrayCheked,
+  handleChecboxChange,
+}) {
   return (
     <table className={classes.table}>
       <thead>
@@ -10,26 +17,28 @@ export default function TableCheckBox({nameTable, array, arrayItem, arrayCheked,
         </tr>
       </thead>
 
-        <tbody>
-          <tr>
-            <td>
-              {array?.map((item) => (
-                <div
-                  key={item.id}
-                  className={classes.row}
-                  onClick={() => handleChecboxChange(item.id)}
-                >
+      <tbody>
+        <tr>
+          <td>
+            {array?.map((item) => (
+              <div
+                key={item.id}
+                className={classes.row}
+                onClick={() => handleChecboxChange(item.id)}
+              >
+                {deleteInputCheckbox ? null : (
                   <input
                     type="checkbox"
                     checked={arrayCheked.includes(item.id)}
                   />
-                  {item[arrayItem]}
-                </div>
-              ))}
-            </td>
-          </tr>
-        </tbody>
+                )}
 
+                {item[arrayItem]}
+              </div>
+            ))}
+          </td>
+        </tr>
+      </tbody>
     </table>
   );
 }
