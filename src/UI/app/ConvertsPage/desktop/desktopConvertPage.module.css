@@ -30,6 +30,8 @@
     flex: 1;
     flex-direction: column-reverse;
 
+    align-items: center;
+
     padding: 10px;
 
     background-color: #F0F0F0;
