@@ -4,14 +4,14 @@ import iconHeader from "@image/iconHeader.svg";
 import burger from "@image/burger.svg";
 import Section from "./section/Section";
 import { useNavigate } from "react-router-dom";
-import { useConvertsHook } from '@hooks'
+import { usePostsHook } from '@hooks'
 import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
 
 export default function Chat() {
   const navigate = useNavigate();
 
-  const { allConverts, refetchGetConverts } = useConvertsHook()
+const { allChats, refetchAllChats } = usePostsHook()
 
     const eventNames = useMemo(() => ['convertCreationEvent', 'messageCountEvent'], []); // Мемоизация массива событий
   
@@ -45,9 +45,9 @@ export default function Chat() {
         <Section></Section>
        
         <div>
-          {allConverts?.map((item, index) => (
+          {allChats?.map((item, index) => (
             <div
-            onClick={() => navigate(`/Chat/${item.userIds}`)}
+            onClick={() => navigate(`/Chat/${item.id}`)}
             >
               <React.Fragment key={index} >
                 <DialogContainer elem={item}></DialogContainer>

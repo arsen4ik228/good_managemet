@@ -1,15 +1,15 @@
 import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } from "../store/services/index"
 
 
-export const useConvertsHook = (convertId) => {
+export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
 
     const {
-        data: allConverts = [],
+        data: allConvertsAndContactInfo = [],
         isLoading: isLoadingGetConverts,
         isError: isErrorGetConverts,
         isFetching: isFetchingGetConvert,
         refetch: refetchGetConverts,
-    } = useGetConvertsQuery();
+    } = useGetConvertsQuery({ contactId }, { skip: !contactId });
 
     const {
         currentConvert = {},
@@ -49,7 +49,8 @@ export const useConvertsHook = (convertId) => {
     ] = useSendMessageMutation()
 
     return {
-        allConverts,
+        allConverts: allConvertsAndContactInfo?.allConverts,
+        contactInfo: allConvertsAndContactInfo?.contactInfo,
         isErrorGetConverts,
         isLoadingGetConverts,
         isFetchingGetConvert,

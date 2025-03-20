@@ -20,6 +20,8 @@ export default function Task({ taskData, isArchive }) {
         return `${classes.body} ${typeClassMap[taskData.convertType] || ''}`;
     };
 
+    console.log(taskData)
+
     return (
         <div className={+taskData.unseenMessagesCount !== 0 ? `${classes.wrapper} ${classes.unSeenWrapper}` : `${classes.wrapper}`}>
             <div className={getBeforeClass()}>
@@ -33,7 +35,7 @@ export default function Task({ taskData, isArchive }) {
                 </div>
                 <div
                     className={classes.titleContainer}
-                    onClick={() => navigate(taskData.convertId)}
+                    onClick={() => navigate(taskData.id)}
                 >
                     <div
                         className={`${classes.titleText} ${isArchive ? classes.titleTextArchive : ''}`}
@@ -44,7 +46,7 @@ export default function Task({ taskData, isArchive }) {
                 <div className={classes.dateContainer}>
                     {/* {checkboxStatus ? 'Завершено' : 'Завершить:'} */}
                     <span>
-                        {formattedDate(taskData.dateStart)}
+                        {formattedDate(taskData.createdAt)}
                     </span>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import classes from "./Main.module.css";
-import { useOrganizationHook, useConvertsHook } from "@hooks";
+import { useOrganizationHook, useConvertsHook, usePostsHook } from "@hooks";
 import NavigationBar from "@Custom/NavigationBar/NavigationBar";
 import Header from "@Custom/CustomHeader/Header";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,7 @@ import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@sl
 import { DialogContainer } from "@Custom/DialogContainer/DialogContainer";
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
 import { selectedOrganizationId } from '@helpers/constants'
+import { notEmpty } from '@helpers/helpers'
 
 const MobileMain = () => {
   const dispatch = useDispatch();
@@ -17,8 +18,7 @@ const MobileMain = () => {
 
   const { organizations } = useOrganizationHook();
 
-  const { allConverts, refetchGetConverts } = useConvertsHook()
-  console.log(allConverts)
+  const { allChats, refetchAllChats } = usePostsHook()
 
   const eventNames = useMemo(() => ['convertCreationEvent', 'messageCountEvent'], []); // Мемоизация массива событий
 
@@ -77,21 +77,24 @@ const MobileMain = () => {
   const handleItemClick = (item) => {
     //dispatch(setSelectedItem(item));
 
-    navigate(`/Chat/${item.userIds}`)
+    navigate(`/Chat/${item.id}`)
   }
 
   useEffect(() => {
     if (organizations.length > 0 && !selectedOrg && !selectedOrganizationId)
       selectOrganization(organizations[0]?.id);
-    else if (selectedOrganizationId) 
+    else if (selectedOrganizationId && organizations.length > 0)
       selectOrganization(selectedOrganizationId);
 
   }, [organizations]);
 
   useEffect(() => {
-    refetchGetConverts()
-  }, [socketResponse])
+    if (!notEmpty(socketResponse?.convertCreationEvent)) return
 
+    refetchAllChats()
+  }, [socketResponse?.convertCreationEvent])
+
+  console.log(allChats)
   return (
     <div className={classes.wrapper}>
       <>
@@ -132,7 +135,7 @@ const MobileMain = () => {
 
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
 
-          {allConverts?.map((item, index) => (
+          {allChats?.map((item, index) => (
             <div onClick={() => handleItemClick(item)}>
               <React.Fragment key={index} >
                 <DialogContainer elem={item}></DialogContainer>

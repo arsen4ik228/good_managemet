@@ -28,7 +28,9 @@
 
     display: flex;
     flex: 1;
-    flex-direction: column;
+    flex-direction: column-reverse;
+
+    padding: 10px;
 
     background-color: #F0F0F0;
 

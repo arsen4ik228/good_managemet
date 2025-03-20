@@ -81,7 +81,7 @@ function DesktopApp() {
               <Routes>
                 {/* Маршрут для чата */}
                 <Route
-                  path="chat/:userIds"
+                  path="chat/:contactId"
                   element={
                     <div className="messages">
                       <Panel />
@@ -94,7 +94,7 @@ function DesktopApp() {
                 />
 
                 <Route
-                  path="chat/:userIds/:convertId"
+                  path="chat/:contactId/:convertId"
                   element={
                     <div className="messages">
                       <Panel />

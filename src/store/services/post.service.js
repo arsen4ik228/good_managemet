@@ -97,6 +97,13 @@ export const postApi = apiSlice.injectEndpoints({
       },
     }),
 
+    getAllChats: build.query({
+      query: () => ({
+        url: 'posts/contacts'
+      }),
+
+    }),
+
     getUnderPosts: build.query({
       query: ({postId }) => ({
         url: `posts/${postId}/allUnderPosts`,
@@ -128,4 +135,4 @@ export const postApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetPostsQuery, useGetPostNewQuery, useGetPostsUserQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery} = postApi;
+export const { useGetPostsQuery, useGetAllChatsQuery, useGetPostNewQuery, useGetPostsUserQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery} = postApi;

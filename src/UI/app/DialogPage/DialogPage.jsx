@@ -20,7 +20,16 @@ export const DialogPage = () => {
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
 
-    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook(convertId);
+    const {
+        currentConvert,
+        senderPostId,
+        userInfo,
+        senderPostName,
+        senderPostForSocket,
+        sendMessage,
+        refetchGetConvertId,
+        isLoadingGetConvertId
+    } = useConvertsHook({convertId});
     const {
         seenMessages,
         unSeenMessageExist,
@@ -209,7 +218,7 @@ export const DialogPage = () => {
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
 
-                                attachmentToMessage={item?.attachmentToMessage}
+                                attachmentToMessage={item?.attachmentToMessages}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
@@ -225,7 +234,7 @@ export const DialogPage = () => {
                                         createdMessage={item?.createdAt}
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
-                                        attachmentToMessage={item?.attachmentToMessage}
+                                        attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}
 
                                     >
@@ -242,7 +251,7 @@ export const DialogPage = () => {
                                 userMessage={item?.userMessage}
                                 seenStatuses={item?.seenStatuses}
                                 senderPost={item?.sender}
-                                attachmentToMessage={item?.attachmentToMessage}
+                                attachmentToMessage={item?.attachmentToMessages}
                                 createdMessage={item?.createdAt}
                             >
                                 {item.content}
