@@ -108,6 +108,7 @@ export default function InputTextContainer({
                                 value={contentInput}
                                 onChange={(e) => handleChangeContentTextarea(e)}
                                 autoSize={true}
+                                className={classes.customTextarea}
                             />
                         </div>
                         <div className={classes.buttonSection}>

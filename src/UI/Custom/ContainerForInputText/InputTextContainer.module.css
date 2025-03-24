@@ -5,8 +5,7 @@
     background-color: #FDFDFD;
 }
 
-.body {
-}
+.body {}
 
 .choosePostContainer {
     position: relative;
@@ -18,12 +17,12 @@
 
     >select {
         width: 100%;
-    
+
         padding-left: 26px;
 
         border-bottom: 1px solid #bfbfbf;
         background-color: #FDFDFD;
-        
+
         text-align: center;
 
         text-overflow: ellipsis;
@@ -59,7 +58,9 @@
 
 .inputText {
     flex: 1;
-
+    /* overflow: hidden; */
+    /* border-radius: 15px; */
+    /* border: 1px solid red; */
     padding: 5px;
 
     >textarea {
@@ -74,4 +75,24 @@
 
         resize: none;
     }
+}
+
+
+.inputText > textarea {
+    padding-right: 12px; /* Оставляем место для скролла */
+}
+
+.customTextarea::-webkit-scrollbar {
+    width: 4px; /* Увеличиваем ширину для визуального отступа */
+}
+
+.customTextarea::-webkit-scrollbar-track {
+    margin: 10px 3px; /* Отступ сверху и снизу */
+    background: transparent; /* Прозрачный трек */
+}
+
+.customTextarea::-webkit-scrollbar-thumb {
+    margin: 4px 2px; /* Отступы со всех сторон */
+    background: #d1d1d1;
+    border-radius: 4px;
 }
