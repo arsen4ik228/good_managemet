@@ -9,6 +9,7 @@
     /* overflow: hidden; */
     position: relative;
     max-width: 75%;
+    max-width: 600px;
     max-height: 9300px;
     padding: 10px;
     /* background-color: #e0e0e0; */
@@ -32,6 +33,8 @@
 .userMessageContainer {
     position: relative;
     max-width: 75%;
+    max-width: 600px;
+
     max-height: 9300px;
     padding: 10px;
     background-color: var(--primary-light);

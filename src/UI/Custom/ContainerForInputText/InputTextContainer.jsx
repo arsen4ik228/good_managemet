@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import classes from './InputTextContainer.module.css';
 import sendIcon from '@Custom/icon/send.svg';
 import shareIcon from '@Custom/icon/subbar _ share.svg';
@@ -7,6 +7,7 @@ import attachIcon from '@Custom/icon/subbar _ attach.svg';
 import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
+import TextArea from 'antd/es/input/TextArea';
 
 import { Popconfirm, Flex, Typography } from "antd";
 
@@ -62,14 +63,15 @@ export default function InputTextContainer({
         const value = e.target.value
 
         setContentInput(value)
-        resizeTextarea(idTextarea)
+        // resizeTextarea(idTextarea)
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key !== 'Enter' || typeof sendClick !== 'function' || !sendClick) return
+            if (event.key !== 'Enter' || event.shiftKey || typeof sendClick !== 'function') return;
 
-            sendClick(); 
+            event.preventDefault();
+            sendClick();
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -117,10 +119,12 @@ export default function InputTextContainer({
                             </div>
                         </div>
                         <div className={classes.inputText}>
-                            <textarea
+                            <TextArea
                                 id={idTextarea}
                                 value={contentInput}
                                 onChange={(e) => handleChangeContentTextarea(e)}
+                                autoSize={true}
+                                className={classes.customTextarea}
                             />
                         </div>
                         <div className={classes.buttonSection}>
