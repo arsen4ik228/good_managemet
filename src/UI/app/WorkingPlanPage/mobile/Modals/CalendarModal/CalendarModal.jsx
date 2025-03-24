@@ -1,17 +1,16 @@
-import React from 'react'
-import classes from './CalendarModal.module.css'
-import ModalContainer from '@Custom/ModalContainer/ModalContainer'
+import React from "react";
+import { isMobile } from "react-device-detect"; // Импортируем функцию для определения устройства
+import MobileLayout from "./mobileLayout/MobileLayout";
+import DesktopLayout from "./desktopLayout/DesktopLayout";
 
-export default function CalendarModal({setOpenModal, dateStart, setDateStart, dateDeadline, setDateDeadline, disableDateStart}) {
-    return (
-        <ModalContainer
-            buttonText={'Сохранить'}
-            setOpenModal={setOpenModal}
-        >
-            <div className={classes.Content}>
-                <input className={classes.dateStart} type="date" value={dateStart} disabled={disableDateStart} onChange={(e) => setDateStart(e.target.value)}/>
-                <input className={classes.deadline} type="date" value={dateDeadline} onChange={(e) => setDateDeadline(e.target.value)}/>
-            </div>
-        </ModalContainer>
-    )
+export default function CalendarModal(props) {
+  return (
+    <>
+      {isMobile ? (
+        <MobileLayout {...props}></MobileLayout>
+      ) : (
+        <DesktopLayout {...props}></DesktopLayout>
+      )}
+    </>
+  );
 }

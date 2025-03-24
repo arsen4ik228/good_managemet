@@ -8,6 +8,15 @@ import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 
+import { Popconfirm, Flex, Typography } from "antd";
+
+import { DatePicker, ConfigProvider } from "antd";
+import ruRU from "antd/locale/ru_RU";
+import dayjs from "dayjs";
+import "dayjs/locale/ru";
+dayjs.locale("ru"); // Устанавливаем русский язык для dayjs
+
+
 export default function InputTextContainer({
     userPosts,
     selectedPost,
@@ -96,7 +105,14 @@ export default function InputTextContainer({
                             </div>
                             <div>
                                 {!offSetDate && (
-                                    <img src={calenderIcon} alt="calenderIcon" onClick={() => setOpenCalendarModal(true)} />
+                                    <CalendarModal  
+                                    openModal={openCalendarModal}
+                                    setOpenModal={setOpenCalendarModal}
+                                    dateStart={startDate}
+                                    setDateStart={setStartDate}
+                                    dateDeadline={deadlineDate}
+                                    setDateDeadline={setDeadlineDate}
+                                    disableDateStart={disableDateStart}/>
                                 )}
                             </div>
                         </div>
@@ -122,8 +138,9 @@ export default function InputTextContainer({
                 </div>
             </div>
 
-            {openCalendarModal && (
+            {/* {openCalendarModal && (
                 <CalendarModal
+                    openModal={openCalendarModal}
                     setOpenModal={setOpenCalendarModal}
                     dateStart={startDate}
                     setDateStart={setStartDate}
@@ -131,7 +148,7 @@ export default function InputTextContainer({
                     setDateDeadline={setDeadlineDate}
                     disableDateStart={disableDateStart}
                 />
-            )}
+            )} */}
 
             {openFilesModal && (
                 <FilesModal
