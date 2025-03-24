@@ -52,6 +52,10 @@ const DesktopDoalogPage = React.lazy(() =>
   import("@app/DialogPage/desktop/DesktopDoalogPage.jsx")
 );
 
+const CardProject = React.lazy(() =>
+  import("@app/CardProject/CardProject.jsx")
+);
+
 function DesktopApp() {
   return (
     <div>
@@ -143,6 +147,8 @@ function DesktopApp() {
                       <div className="content">
                         <Chat />
                         <Routes>
+                          <Route path="card" element={<CardProject />} />
+
                           <Route path="start" element={<Pomoshnik />} />
                           <Route path="goal" element={<Goal />} />
                           <Route path="policy" element={<Policy />} />
