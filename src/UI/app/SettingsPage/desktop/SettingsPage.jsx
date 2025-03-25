@@ -187,7 +187,7 @@ export default function SettingsPage() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"создание пользователя"}>
+      <Headers name={"редактирование пользователя"}>
         <BottomHeaders></BottomHeaders>
       </Headers>
 
