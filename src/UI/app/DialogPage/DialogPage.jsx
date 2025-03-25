@@ -24,12 +24,14 @@ export const DialogPage = () => {
         currentConvert,
         senderPostId,
         userInfo,
+        organizationId,
         senderPostName,
         senderPostForSocket,
         sendMessage,
         refetchGetConvertId,
         isLoadingGetConvertId
     } = useConvertsHook({convertId});
+
     const {
         seenMessages,
         unSeenMessageExist,
@@ -268,6 +270,7 @@ export const DialogPage = () => {
                         senderPostName={senderPostName}
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
+                        organizationId={organizationId}
                     />
                 </footer>
             </div>

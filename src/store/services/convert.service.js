@@ -79,7 +79,7 @@ export const convertApi = apiSlice.injectEndpoints({
             return {
               id: senderPost.post.id,
               postName: senderPost.post.postName,
-              senderPostForSocket
+              senderPostForSocket,
             };
           } else {
             return {
@@ -90,16 +90,6 @@ export const convertApi = apiSlice.injectEndpoints({
         };
 
         const extractUserInfo = (watcherIds, convertToPosts, userId) => {
-          // const userIsWatcher = watcherIds.includes(userId)
-
-          // if (userIsWatcher) {
-          //   return {
-          //     postName: userPost.post.postName,
-          //     userName: userPost.post.user.firstName + ' ' + userPost.post.user.lastName,
-          //     avatar: userPost.post.user.avatar_url
-          //   }
-          // }
-
 
           const userPost = convertToPosts.find(item => item.post.user.id !== userId);
           console.log(userPost)
@@ -107,7 +97,7 @@ export const convertApi = apiSlice.injectEndpoints({
             return {
               postName: userPost.post.postName,
               userName: userPost.post.user.firstName + ' ' + userPost.post.user.lastName,
-              avatar: userPost.post.user.avatar_url
+              avatar: userPost.post.user.avatar_url,
             }
           }
 
@@ -122,7 +112,8 @@ export const convertApi = apiSlice.injectEndpoints({
           userInfo,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
-          senderPostForSocket
+          senderPostForSocket,
+          organizationId: response?.host?.user?.organization?.id
         };
       },
 
