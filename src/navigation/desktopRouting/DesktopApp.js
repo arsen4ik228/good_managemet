@@ -56,6 +56,10 @@ const CardProject = React.lazy(() =>
   import("@app/CardProject/CardProject.jsx")
 );
 
+const SettingsPage = React.lazy(() =>
+  import("@app/SettingsPage/desktop/SettingsPage.jsx")
+);
+
 function DesktopApp() {
   return (
     <div>
@@ -83,6 +87,20 @@ function DesktopApp() {
               }
             >
               <Routes>
+
+              <Route
+                  path="account"
+                  element={
+                    <div className="messages">
+                      <Panel />
+                      <div className="content">
+                        <Chat />
+                        <SettingsPage />
+                      </div>
+                    </div>
+                  }
+                />
+
                 {/* Маршрут для чата */}
                 <Route
                   path="chat/:contactId"
@@ -163,7 +181,7 @@ function DesktopApp() {
                           <Route path="projectNew" element={<ProjectNew />} />
                           <Route path="program" element={<Program />} />
                           <Route path="programNew" element={<ProgramNew />} />
-                          <Route path="post" element={<Post />} />
+                          <Route path="post/:postId?" element={<Post />} />
                           <Route path="postNew" element={<PostNew />} />
                           <Route path="workingPlan" element={<WorkingPlan />} />
                           <Route
