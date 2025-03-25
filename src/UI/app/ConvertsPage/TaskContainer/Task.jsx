@@ -25,9 +25,9 @@ export default function Task({ taskData, isArchive }) {
 
     return (
         <div
-            className={+taskData.unseenMessagesCount !== 0
-                ? `${classes.wrapper} ${classes.unSeenWrapper}`
-                : `${classes.wrapper}`}
+            className={+taskData.unseenMessagesCount !== 0 ?
+                `${classes.wrapper} ${classes.unSeenWrapper}` :
+                `${classes.wrapper}`}
             style={{ width: !isMobile ? '700px' : 'none' }}
         >
             <div className={getBeforeClass()}>
