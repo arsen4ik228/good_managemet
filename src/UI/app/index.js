@@ -24,6 +24,7 @@ export { default as MobileControlPanel } from './ControlPanel/mobile/ControlPane
 export { default as AuthorizationPage } from './Authorization/Main'
 export { default as User } from './UserPage/mobile/User'
 export { DialogPage } from './DialogPage/DialogPage.jsx'
+export { WatcherDialogPage} from './DialogPage/WatcherDialogPage/WatcherDialogPage.jsx'
 export { ConvertsPage } from './ConvertsPage//ConvertsPage.jsx'
 export { default as CompanySchema } from './CompanySchema/mobile/CompanySchema'
 export { default as SchemeСompanies } from './CompanySchema/mobile/schemeСompanies/SchemeСompanies'

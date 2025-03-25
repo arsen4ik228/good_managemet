@@ -31,7 +31,7 @@ import { Message } from '../../UI/Custom/Message/Message.jsx';
 import { ConvertsPage } from '@app';
 import { CompanySchema } from '@app'
 import { SchemeСompanies } from '@app'
-import { SettingsPage } from '@app'
+import { SettingsPage, WatcherDialogPage } from '@app'
 import ErrorPage from '@app/ErrorPage/ErrorPage.jsx'
 
 
@@ -48,6 +48,8 @@ function MobileApp() {
 
                             <Route path="Chat/:contactId" element={<ConvertsPage />} />
                             <Route path="Chat/:contactId/:convertId" element={<DialogPage />} />
+                            <Route path="Chat/:contactId/watcher/:convertId" element={<WatcherDialogPage />} />
+
 
                             <Route path='account' element={<SettingsPage></SettingsPage>} />
                             <Route path="Main" element={<MobileMain />} />
