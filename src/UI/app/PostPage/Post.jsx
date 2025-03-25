@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import classes from "./Post.module.css";
 import greyPolicy from "@image/greyPolicy.svg";
 import blackStatistic from "@image/blackStatistic.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import WaveLetters from "@Custom/WaveLetters.jsx";
@@ -22,7 +22,7 @@ import { useStatisticsHook } from "../../../hooks/useStatisticsHook";
 
 export default function Post() {
   const navigate = useNavigate();
-
+  const { postId } = useParams();
   const newPost = () => {
     navigate(`/pomoshnik/postNew`);
   };
@@ -83,7 +83,7 @@ export default function Post() {
     isErrorUpdatePostMutation,
     ErrorUpdatePostMutation,
     localIsResponseUpdatePostMutation,
-  } = usePostsHook({postId: selectedPostId});
+  } = usePostsHook({ postId: selectedPostId });
 
   const {
     postStatistics,
@@ -106,8 +106,8 @@ export default function Post() {
   };
 
   useEffect(() => {
-    if (createdId) {
-      setSelectedPostId(createdId);
+    if (createdId || postId) {
+      setSelectedPostId(createdId || postId);
     }
   }, []);
   // Конец
@@ -368,7 +368,7 @@ export default function Post() {
                 array={posts}
                 arrayItem={"postName"}
               >
-                  <option value=""> — </option>
+                <option value=""> — </option>
               </Select>
               <Select
                 name={"Сотрудник"}
@@ -612,12 +612,11 @@ export default function Post() {
                           }
                           textSuccess={"Статистика для поста создана"}
                           textError={
-                            ErrorPostStatisticMutation?.data
-                              ?.errors?.[0]?.errors?.[0]
-                              ? ErrorPostStatisticMutation.data
-                                  .errors[0].errors[0]
-                              : ErrorPostStatisticMutation?.data
-                                  ?.message
+                            ErrorPostStatisticMutation?.data?.errors?.[0]
+                              ?.errors?.[0]
+                              ? ErrorPostStatisticMutation.data.errors[0]
+                                  .errors[0]
+                              : ErrorPostStatisticMutation?.data?.message
                           }
                         ></HandlerMutation>
                       </>

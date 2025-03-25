@@ -20,7 +20,7 @@ export default function DesktopDialogPage() {
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
 
-    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId } = useConvertsHook({convertId});
+    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId, organizationId } = useConvertsHook({convertId});
     const {
         seenMessages,
         unSeenMessageExist,
@@ -258,6 +258,7 @@ export default function DesktopDialogPage() {
                         senderPostName={senderPostName}
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
+                        organizationId={organizationId}
                     />
                 </footer>
             </div>

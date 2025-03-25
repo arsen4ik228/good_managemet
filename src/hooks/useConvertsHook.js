@@ -18,6 +18,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         userInfo = {},
         senderPostForSocket = {},
         senderPostName,
+        organizationId,
         refetch: refetchGetConvertId,
         isLoadingGetConvertId
     } = useGetConvertIdQuery({ convertId }, {
@@ -28,6 +29,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
             senderPostId: data?.senderPostId || null,
             senderPostName: data?.senderPostName || null,
             senderPostForSocket: data?.senderPostForSocket || {},
+            organizationId: data?.organizationId || null,
             isLoadingGetConvertId : isLoading,
             refetch, // Добавляем refetch в результат
         }),
@@ -62,6 +64,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         senderPostId,
         senderPostName,
         senderPostForSocket,
+        organizationId,
         refetchGetConvertId,
         isLoadingGetConvertId,
 

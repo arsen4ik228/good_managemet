@@ -45,6 +45,7 @@ export default function InputTextContainer({
     offSetDate,
     offShareIcon,
     disableDateStart,
+    organizationId,
 }) {
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [openFilesModal, setOpenFilesModal] = useState(false);
@@ -102,7 +103,18 @@ export default function InputTextContainer({
                         <div className={classes.buttonSection}>
                             <div>
                                 {!offAttachIcon && (
-                                    <img src={attachIcon} alt="attachIcon" onClick={() => setOpenFilesModal(true)} />
+                                        <FilesModal
+                                        openModal={openFilesModal}
+                                        setOpenModal={setOpenFilesModal}
+                                        policyId={selectedPolicy}
+                                        setPolicyId={setSelectedPolicy}
+                                        postOrganizationId={selectedPostOrganizationId}
+                                        files={files}
+                                        setFiles={setFiles}
+                                        unpinFiles={unpinFiles}
+                                        setUnpinFiles={setUnpinFiles}
+                                        organizationId={organizationId}
+                                        />
                                 )}
                             </div>
                             <div>
@@ -154,7 +166,7 @@ export default function InputTextContainer({
                 />
             )} */}
 
-            {openFilesModal && (
+            {/* {openFilesModal && (
                 <FilesModal
                     setOpenModal={setOpenFilesModal}
                     policyId={selectedPolicy}
@@ -165,7 +177,7 @@ export default function InputTextContainer({
                     unpinFiles={unpinFiles}
                     setUnpinFiles={setUnpinFiles}
                 />
-            )}
+            )} */}
 
         </>
     );

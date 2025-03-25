@@ -121,14 +121,6 @@ export const policyApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, err, arg) => [{ type: 'Policy', id: arg._id }],
     }),
-
-    // postImage: build.mutation({
-    //   query: ({ userId, formData }) => ({
-    //     url: `${userId}/file-upload/upload`,
-    //     method: "POST",
-    //     body: formData,
-    //   }),
-    // }),
   }),
 });
 
