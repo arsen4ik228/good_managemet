@@ -35,8 +35,8 @@ export const messageApi = apiSlice.injectEndpoints({
         }),
 
         getUnSeenMessages: build.query({
-            query: ({ convertId, pagination }) => ({
-                url: `messages/${convertId}/unseen/?pagination=${pagination}`
+            query: ({ convertId }) => ({
+                url: `messages/${convertId}/unseen`
 
             }),
             transformResponse: response => {
@@ -63,6 +63,65 @@ export const messageApi = apiSlice.injectEndpoints({
 
         }),
 
+        getWatcherSeenMessages: build.query({
+            query: ({ convertId, pagination }) => ({
+                url: `messages/${convertId}/watcher/seen/?pagination=${pagination}`
+
+            }),
+            transformResponse: response => {
+                console.log('getWatcherSeenMessages:  ', response)
+                let unseenWatcherMessageExist = false
+                const sortedWatcherMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                sortedWatcherMessages?.forEach(item => {
+                    item.userMessage = item.sender.user.id === userId;
+
+                    if (!unseenWatcherMessageExist && item.timeSeen === null)
+                        unseenWatcherMessageExist = true
+                    // if (item.timeSeen === null)
+                    //     unSeenMessgesIds.push(item.id)
+                });
+
+                return { sortedWatcherMessages, unseenWatcherMessageExist }
+
+            },
+
+            providesTags: result =>
+                result
+                    ? [{ type: "Convert", id: result.id }, "Convert"]
+                    : ["Convert"],
+
+        }),
+
+        getWatcherUnSeenMessages: build.query({
+            query: ({ convertId }) => ({
+                url: `messages/${convertId}/watcher/unseen`
+
+            }),
+            transformResponse: response => {
+                console.log('getWatcherUnSeenMessages:  ', response)
+
+                const unSeenMessagesIds = []
+                const sortedMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                sortedMessages?.forEach(item => {
+                    item.userMessage = item.sender.user.id === userId;
+
+                    if (item.timeSeen === null)
+                        unSeenMessagesIds.push(item.id)
+                });
+
+                return [...sortedMessages]
+                
+            },
+
+            providesTags: result =>
+                result
+                    ? [{ type: "Convert", id: result.id }, "Convert"]
+                    : ["Convert"],
+
+        }),
+
         sendMessage: build.mutation({
             query: ({ convertId, ...body }) => ({
                 url: `messages/${convertId}/sendMessage`,
@@ -75,4 +134,4 @@ export const messageApi = apiSlice.injectEndpoints({
     }),
 });
 
-export const { useSendMessageMutation, useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery } = messageApi;
+export const { useSendMessageMutation, useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery, useLazyGetWatcherSeenMessagesQuery, useLazyGetWatcherUnSeenMessagesQuery } = messageApi;

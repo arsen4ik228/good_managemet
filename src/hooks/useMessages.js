@@ -1,21 +1,52 @@
 
-import { useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery, useSendMessageMutation } from '@services'; // Импортируем useLazyQuery
+import { useLazyGetSeenMessagesQuery, useLazyGetUnSeenMessagesQuery, useSendMessageMutation, useLazyGetWatcherSeenMessagesQuery, useLazyGetWatcherUnSeenMessagesQuery } from '@services'; // Импортируем useLazyQuery
 import { useEffect } from 'react';
 
 export function useMessages(convertId, pagination) {
-    const [fetchSeeenMessages, { data: seenMessagesResponse, isLoadingSeenMessages, isErrorSeenMessages, isFetchingSeenMessages }] = useLazyGetSeenMessagesQuery();
-    const [fetchUnSeenMessages, { data, isLoadingUnSeenMessages, isErrorUnSeenMessages, isFetchingUnSeenMessages }] = useLazyGetUnSeenMessagesQuery();
-    useEffect(() => {
-        // Выполняем запрос при изменении convertId или pagination
-        fetchSeeenMessages({ convertId, pagination });
-        fetchUnSeenMessages({ convertId, pagination })
-    }, [convertId, pagination]);
+    const [fetchSeeenMessages,
+        { data: seenMessagesResponse,
+            isLoadingSeenMessages,
+            isErrorSeenMessages,
+            isFetchingSeenMessages
+        }] = useLazyGetSeenMessagesQuery();
 
-    //console.log(seenMessagesResponse)
+    const [fetchWatcherSeeenMessages,
+        { data: watcherSeenMessagesResponse,
+            isLoadingWatcherSeenMessages,
+            isErrorWatcherSeenMessages,
+            isFetchingWatcherSeenMessages
+        }] = useLazyGetWatcherSeenMessagesQuery();
+
+    const [fetchUnSeenMessages,
+        { data: unseenMessages,
+            isLoadingUnSeenMessages,
+            isErrorUnSeenMessages,
+            isFetchingUnSeenMessages
+        }] = useLazyGetUnSeenMessagesQuery();
+
+    const [fetchWatcherUnSeenMessages,
+        { data: watcherUnseenMessages,
+            isLoadingWatcherUnSeenMessages,
+            isErrorWatcherUnSeenMessages,
+            isFetchingWatcherUnSeenMessages
+        }] = useLazyGetWatcherUnSeenMessagesQuery();
 
     const [
         sendMessage,
     ] = useSendMessageMutation()
+
+    // useEffect(() => {
+    //     fetchSeeenMessages({ convertId, pagination });
+    //     fetchWatcherSeeenMessages({ convertId, pagination })
+    // }, [pagination]);
+
+    useEffect(() => {
+        fetchSeeenMessages({ convertId, pagination });
+        fetchUnSeenMessages({ convertId })
+        
+        fetchWatcherSeeenMessages({ convertId, pagination })
+        fetchWatcherUnSeenMessages({ convertId })
+    }, [convertId, pagination])
 
 
     return {
@@ -25,11 +56,22 @@ export function useMessages(convertId, pagination) {
         isErrorSeenMessages,
         isFetchingSeenMessages,
 
-        unSeenMessages: data?.unSeenMessages || [],
-        unSeenMessagesIds: data?.unSeenMessagesIds || [],
+        unSeenMessages: unseenMessages?.unSeenMessages || [],
+        unSeenMessagesIds: unseenMessages?.unSeenMessagesIds || [],
         isLoadingUnSeenMessages,
         isErrorUnSeenMessages,
         isFetchingUnSeenMessages,
+
+        watcherSeenMessages: watcherSeenMessagesResponse?.sortedWatcherMessages || [],
+        watcherUnseenMessageExist: watcherSeenMessagesResponse?.unseenWatcherMessageExist || false,
+        isLoadingWatcherSeenMessages,
+        isErrorWatcherSeenMessages,
+        isFetchingWatcherSeenMessages,
+
+        watcherUnseenMessages,
+        isLoadingWatcherUnSeenMessages,
+        isErrorWatcherUnSeenMessages,
+        isFetchingWatcherUnSeenMessages,
 
         sendMessage,
     };
