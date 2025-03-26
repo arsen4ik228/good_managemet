@@ -1,8 +1,14 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import classes from "./InputTextContainer.module.css";
-import sendIcon from "@Custom/icon/send.svg";
-import shareIcon from "@Custom/icon/subbar _ share.svg";
 
+import React, { useState, useEffect } from "react";
+import classes from './InputTextContainer.module.css';
+import sendIcon from '@Custom/icon/send.svg';
+import shareIcon from '@Custom/icon/subbar _ share.svg';
+import calenderIcon from '@Custom/icon/icon _ calendar.svg';
+import attachIcon from '@Custom/icon/subbar _ attach.svg';
+import { notEmpty, resizeTextarea } from '@helpers/helpers';
+import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
+import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
+import TextArea from 'antd/es/input/TextArea';
 import { notEmpty, resizeTextarea } from "@helpers/helpers";
 import CalendarModal from "../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal";
 import FilesModal from "../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal";
@@ -41,18 +47,19 @@ export default function InputTextContainer({
   organizationId,
   setContentInputPolicyId,
 }) {
- 
-  const [openCalendarModal, setOpenCalendarModal] = useState(false);
-  const [openFilesModal, setOpenFilesModal] = useState(false);
 
-  const selectPost = (e) => {
-    const value = e.target.value;
-    if (value) {
-      const [postId, organization] = value.split(" ");
-      setSelectedPost(postId);
-      setSelectedPostOrganizationId(organization);
-    }
-  };
+    const [openCalendarModal, setOpenCalendarModal] = useState(false);
+    const [openFilesModal, setOpenFilesModal] = useState(false);
+
+
+    const selectPost = (e) => {
+        const value = e.target.value;
+        if (value) {
+            const [postId, organization] = value.split(' ');
+            setSelectedPost(postId);
+            setSelectedPostOrganizationId(organization);
+        }
+    };
 
  
   const handleChangeContentTextarea = (e) => {
@@ -61,24 +68,20 @@ export default function InputTextContainer({
     resizeTextarea(idTextarea);
   };
 
-  useLayoutEffect(() => {
-    const handleKeyDown = (event) => {
-      if (
-        event.key !== "Enter" ||
-        typeof sendClick !== "function" ||
-        !sendClick
-      )
-        return;
+     useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key !== 'Enter' || event.shiftKey || typeof sendClick !== 'function') return;
 
-      sendClick();
-    };
+            event.preventDefault();
+            sendClick();
+        };
 
-    window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [sendClick]);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [sendClick]);
 
   return (
     <>
