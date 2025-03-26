@@ -69,7 +69,8 @@ export const convertApi = apiSlice.injectEndpoints({
         console.log('getConvertId', response);
 
         const convertToPosts = response?.convertToPosts
-        const watcherIds = response?.watherIds
+        const watchers = response?.watchersToConvert
+        const host = response?.host
 
         const selectSenderPostId = (convertToPosts, userId) => {
           const senderPost = convertToPosts.find(item => item.post.user.id === userId);
@@ -89,7 +90,7 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         };
 
-        const extractUserInfo = (watcherIds, convertToPosts, userId) => {
+        const extractUserInfo = (convertToPosts, userId) => {
 
           const userPost = convertToPosts.find(item => item.post.user.id !== userId);
           console.log(userPost)
@@ -103,16 +104,32 @@ export const convertApi = apiSlice.injectEndpoints({
 
         }
 
+        const selectWatcherPost = (watchers) => {
+          const userWatcherPost = watchers.find(item => item.post.user.id === userId).post
+
+          const { user, ...rest } = userWatcherPost
+
+          return rest
+        }
+
+        const selectRecipientPost = (convertToPosts, host) => {
+          return (convertToPosts.find(item => item.post.id !== host.id)).post
+        }
+
         const { id: senderPostId, postName: senderPostName, senderPostForSocket } = selectSenderPostId(convertToPosts, userId);
-        const userInfo = extractUserInfo(watcherIds, convertToPosts, userId)
+        const userInfo = extractUserInfo(convertToPosts, userId)
+
+        const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchers) : null
+        const recipientPost = !senderPostId ? selectRecipientPost(convertToPosts, host) : null
 
         return {
           currentConvert: response,
-          messages: [],
           userInfo,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
           senderPostForSocket,
+          watcherPostForSocket,
+          recipientPost,
           organizationId: response?.host?.user?.organization?.id
         };
       },
