@@ -15,8 +15,17 @@ import ModalFolder from "@Custom/modalFolder/ModalFolder";
 import ModalWindow from "@Custom/ModalWindow";
 import { usePolicyHook, useGetReduxOrganization } from "@hooks";
 import { useDirectories } from "./hooks/Directories";
+import { useParams } from "react-router-dom";
 
 export default function Policy() {
+  const {policyId} = useParams();
+
+  useEffect(() => {
+    if(policyId){
+      setSelectedPolicyId(policyId);
+    }
+  }, []);
+
   const selectRef = useRef(null);
 
   const [isOpenSearch, setIsOpenSearch] = useState(false);

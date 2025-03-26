@@ -169,7 +169,7 @@ function DesktopApp() {
 
                           <Route path="start" element={<Pomoshnik />} />
                           <Route path="goal" element={<Goal />} />
-                          <Route path="policy" element={<Policy />} />
+                          <Route path="policy/:policyId?" element={<Policy />} />
                           <Route path="statistic" element={<Statistic />} />
                           <Route path="objective" element={<Objective />} />
                           <Route path="strategy" element={<Strategy />} />
