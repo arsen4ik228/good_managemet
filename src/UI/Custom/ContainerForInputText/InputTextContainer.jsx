@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect } from "react";
 import classes from './InputTextContainer.module.css';
 import sendIcon from '@Custom/icon/send.svg';
 import shareIcon from '@Custom/icon/subbar _ share.svg';
@@ -8,45 +9,45 @@ import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import TextArea from 'antd/es/input/TextArea';
+import { notEmpty, resizeTextarea } from "@helpers/helpers";
+import CalendarModal from "../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal";
+import FilesModal from "../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal";
 
-import { Popconfirm, Flex, Typography } from "antd";
-
-import { DatePicker, ConfigProvider } from "antd";
-import ruRU from "antd/locale/ru_RU";
 import dayjs from "dayjs";
 import "dayjs/locale/ru";
 dayjs.locale("ru"); // Устанавливаем русский язык для dayjs
 
-
 export default function InputTextContainer({
-    userPosts,
-    selectedPost,
-    setSelectedPost,
-    startDate,
-    setStartDate,
-    deadlineDate,
-    setDeadlineDate,
-    contentInput,
-    setContentInput,
-    selectedPolicy,
-    setSelectedPolicy,
-    selectedPostOrganizationId,
-    setSelectedPostOrganizationId,
-    files,
-    setFiles,
-    unpinFiles,
-    setUnpinFiles,
-    idTextarea,
-    sendClick,
-    shareClick,
-    senderPostId,
-    senderPostName,
-    offAttachIcon,
-    offSetDate,
-    offShareIcon,
-    disableDateStart,
-    organizationId,
+  userPosts,
+  selectedPost,
+  setSelectedPost,
+  startDate,
+  setStartDate,
+  deadlineDate,
+  setDeadlineDate,
+  contentInput,
+  setContentInput,
+  selectedPolicy,
+  setSelectedPolicy,
+  selectedPostOrganizationId,
+  setSelectedPostOrganizationId,
+  files,
+  setFiles,
+  unpinFiles,
+  setUnpinFiles,
+  idTextarea,
+  sendClick,
+  shareClick,
+  senderPostId,
+  senderPostName,
+  offAttachIcon,
+  offSetDate,
+  offShareIcon,
+  disableDateStart,
+  organizationId,
+  setContentInputPolicyId,
 }) {
+
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [openFilesModal, setOpenFilesModal] = useState(false);
 
@@ -60,14 +61,14 @@ export default function InputTextContainer({
         }
     };
 
-    const handleChangeContentTextarea = (e) => {
-        const value = e.target.value
+ 
+  const handleChangeContentTextarea = (e) => {
+    const value = e.target.value;
+    setContentInput(value);
+    resizeTextarea(idTextarea);
+  };
 
-        setContentInput(value)
-        // resizeTextarea(idTextarea)
-    }
-
-    useEffect(() => {
+     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key !== 'Enter' || event.shiftKey || typeof sendClick !== 'function') return;
 
@@ -82,79 +83,76 @@ export default function InputTextContainer({
         };
     }, [sendClick]);
 
-    return (
-        <>
-            <div className={classes.wrapper}>
-                <div className={classes.body}>
-                    <div className={classes.choosePostContainer}>
-                        <select
-                            name="choosePost"
-                            onChange={selectPost}
-                        >
-                            {senderPostName && (
-                                <option>{senderPostName}</option>
-                            )}
-                            {userPosts?.map((item, index) => (
-                                <option key={index} value={`${item.id} ${item.organization}`}>{item.postName}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className={classes.inputTextContainer}>
-                        <div className={classes.buttonSection}>
-                            <div>
-                                {!offAttachIcon && (
-                                        <FilesModal
-                                        openModal={openFilesModal}
-                                        setOpenModal={setOpenFilesModal}
-                                        policyId={selectedPolicy}
-                                        setPolicyId={setSelectedPolicy}
-                                        postOrganizationId={selectedPostOrganizationId}
-                                        files={files}
-                                        setFiles={setFiles}
-                                        unpinFiles={unpinFiles}
-                                        setUnpinFiles={setUnpinFiles}
-                                        organizationId={organizationId}
-                                        />
-                                )}
-                            </div>
-                            <div>
-                                {!offSetDate && (
-                                    <CalendarModal  
-                                    openModal={openCalendarModal}
-                                    setOpenModal={setOpenCalendarModal}
-                                    dateStart={startDate}
-                                    setDateStart={setStartDate}
-                                    dateDeadline={deadlineDate}
-                                    setDateDeadline={setDeadlineDate}
-                                    disableDateStart={disableDateStart}/>
-                                )}
-                            </div>
-                        </div>
-                        <div className={classes.inputText}>
-                            <TextArea
-                                id={idTextarea}
-                                value={contentInput}
-                                onChange={(e) => handleChangeContentTextarea(e)}
-                                autoSize={true}
-                                className={classes.customTextarea}
-                            />
-                        </div>
-                        <div className={classes.buttonSection}>
-                            <div>
-
-                                {!offShareIcon && (
-                                    <img src={shareIcon} alt="shareIcon" onClick={shareClick} />
-                                )}
-                            </div>
-                            <div>
-                                <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  return (
+    <>
+      <div className={classes.wrapper}>
+        <div className={classes.body}>
+          <div className={classes.choosePostContainer}>
+            <select name="choosePost" onChange={selectPost}>
+              {senderPostName && <option>{senderPostName}</option>}
+              {userPosts?.map((item, index) => (
+                <option key={index} value={`${item.id} ${item.organization}`}>
+                  {item.postName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={classes.inputTextContainer}>
+            <div className={classes.buttonSection}>
+              <div>
+                {!offAttachIcon && (
+                  <FilesModal
+                    openModal={openFilesModal}
+                    setOpenModal={setOpenFilesModal}
+                    policyId={selectedPolicy}
+                    setPolicyId={setSelectedPolicy}
+                    postOrganizationId={selectedPostOrganizationId}
+                    files={files}
+                    setFiles={setFiles}
+                    unpinFiles={unpinFiles}
+                    setUnpinFiles={setUnpinFiles}
+                    organizationId={organizationId}
+                    setContentInput={setContentInput}
+                    setContentInputPolicyId={setContentInputPolicyId}
+                  />
+                )}
+              </div>
+              <div>
+                {!offSetDate && (
+                  <CalendarModal
+                    openModal={openCalendarModal}
+                    setOpenModal={setOpenCalendarModal}
+                    dateStart={startDate}
+                    setDateStart={setStartDate}
+                    dateDeadline={deadlineDate}
+                    setDateDeadline={setDeadlineDate}
+                    disableDateStart={disableDateStart}
+                  />
+                )}
+              </div>
             </div>
+            <div className={classes.inputText}>
+              <textarea
+                id={idTextarea}
+                value={contentInput}
+                onChange={(e) => handleChangeContentTextarea(e)}
+              />
+            </div>
+            <div className={classes.buttonSection}>
+              <div>
+                {!offShareIcon && (
+                  <img src={shareIcon} alt="shareIcon" onClick={shareClick} />
+                )}
+              </div>
+              <div>
+                <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            {/* {openCalendarModal && (
+      {/* {openCalendarModal && (
                 <CalendarModal
                     openModal={openCalendarModal}
                     setOpenModal={setOpenCalendarModal}
@@ -166,7 +164,7 @@ export default function InputTextContainer({
                 />
             )} */}
 
-            {/* {openFilesModal && (
+      {/* {openFilesModal && (
                 <FilesModal
                     setOpenModal={setOpenFilesModal}
                     policyId={selectedPolicy}
@@ -178,7 +176,6 @@ export default function InputTextContainer({
                     setUnpinFiles={setUnpinFiles}
                 />
             )} */}
-
-        </>
-    );
+    </>
+  );
 }

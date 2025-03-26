@@ -18,6 +18,8 @@ const Input = ({
   isLoadingGetConvertId,
   organizationId,
 }) => {
+  const [contentInputPolicyId, setContentInputPolicyId] = useState();
+
   const [selectedPost, setSelectedPost] = useState();
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -44,6 +46,16 @@ const Input = ({
     deleteDraft("DraftDB", "drafts", idTextArea);
   };
 
+  const transformText = (text) => {
+
+    console.log("sdhfjsd", text.slice(0, contentInputPolicyId.startChar) + contentInputPolicyId.str + text.slice(contentInputPolicyId.endChar));
+
+    if (contentInputPolicyId.str.length === 0) return text;
+
+    return text.slice(0, contentInputPolicyId.startChar) + contentInputPolicyId.str + text.slice(contentInputPolicyId.endChar);
+    
+  };
+
   const send = async () => {
     if (contentInput.trim() === "") return;
 
@@ -55,7 +67,7 @@ const Input = ({
 
     await sendMessage({
       convertId,
-      content: contentInput,
+      content: transformText(contentInput),
       postId: senderPostId,
       ...Data,
     })
@@ -107,6 +119,7 @@ const Input = ({
         senderPostName={senderPostName}
         offSetDate={true}
         organizationId={organizationId}
+        setContentInputPolicyId={setContentInputPolicyId}
       />
     </>
   );

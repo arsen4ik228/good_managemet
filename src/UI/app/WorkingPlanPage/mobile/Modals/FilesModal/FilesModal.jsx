@@ -21,18 +21,20 @@ export default function FilesModal({
   setFiles,
   setUnpinFiles,
   organizationId,
+  setContentInput,
+  setContentInputPolicyId,
 }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [postFiles] = usePostFilesMutation();
   const [deleteFile, setDeleteFile] = useState([]);
   const fileInputRef = useRef(null);
-  console.warn(selectedFiles);
+  // console.warn(selectedFiles);
 
   const { activeDirectives, activeInstructions } = usePolicyHook({
     organizationId
   });
 
-  console.log("organizationId", organizationId);
+  // console.log("organizationId", organizationId);
   // Обработчик изменения input типа file
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files); // Преобразуем FileList в массив
@@ -99,6 +101,8 @@ export default function FilesModal({
           handleRemoveFile={handleRemoveFile}
           deleteFile={deleteFile}
           setDeleteFile={setDeleteFile}
+          setContentInput={setContentInput}
+          setContentInputPolicyId={setContentInputPolicyId}
         ></MobileLayout>
       ) : (
         <DesktopLayout
@@ -116,6 +120,8 @@ export default function FilesModal({
           handleRemoveFile={handleRemoveFile}
           deleteFile={deleteFile}
           setDeleteFile={setDeleteFile}
+          setContentInput={setContentInput}
+          setContentInputPolicyId={setContentInputPolicyId}
         ></DesktopLayout>
       )}
     </>
