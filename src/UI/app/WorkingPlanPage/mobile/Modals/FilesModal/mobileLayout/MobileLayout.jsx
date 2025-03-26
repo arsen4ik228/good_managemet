@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ModalContainer from "@Custom/ModalContainer/ModalContainer";
 import classes from "./MobileLayout.module.css";
+
+import { Typography, Flex, Select, Form } from "antd";
 
 import attachIcon from "@Custom/icon/subbar _ attach.svg";
 
@@ -23,7 +25,15 @@ export default function MobileLayout({
   handleRemoveFile,
   deleteFile,
   setDeleteFile,
+  setContentInput,
+  setContentInputPolicyId,
 }) {
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({ policyId: null });
+  }, []);
+
   return (
     <>
       <img
@@ -38,11 +48,62 @@ export default function MobileLayout({
           clickFunction={handleUpload}
         >
           <div className={classes.content}>
-            <select
+            
+            <Flex vertical gap={4}>
+              <Typography>Прикрепите политику</Typography>
+
+              <Form form={form} style={{ margin: 0 }}>
+                <Form.Item name="policyId">
+                  <Select
+                    allowClear
+                    showSearch
+                    optionFilterProp="label"
+                    filterOption={(input, option) =>
+                      option?.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    options={[
+                      ...(activeDirectives?.map((item) => ({
+                        label: item.policyName,
+                        value: item.id,
+                      })) || []),
+                      ...(activeInstructions?.map((item) => ({
+                        label: item.policyName,
+                        value: item.id,
+                      })) || []),
+                    ]}
+                    onChange={(value, option) => {
+                      form.setFieldsValue({ policyId: value }); // Берем label из объекта option
+
+                      setContentInput((prevState) => {
+                        setContentInputPolicyId({
+                          str: `policyId:${value},policyName:${option?.label},`,
+                          startChar: prevState.length,
+                          endChar: prevState.length + option?.label.length,
+                        });
+                        return prevState + option?.label;
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Form>
+            </Flex>
+
+            {/* <select
               className={classes.attachPolicy}
               name="attachPolicy"
               value={policyId}
-              onChange={(e) => setPolicyId(e.target.value)}
+              onChange={(e) => {
+                setPolicyId(e.target.value);
+
+                setContentInput((prevState) => {
+                  setContentInputPolicyId({
+                    str: `policyId:${e.target.value},policyName:${option?.label},`,
+                    startChar: prevState.length,
+                    endChar: prevState.length + option?.label.length,
+                  });
+                  return prevState + option?.label;
+                });
+              }}
             >
               <option>Выберите политику</option>
               {activeDirectives?.map((item, index) => (
@@ -55,7 +116,7 @@ export default function MobileLayout({
                   {item.policyName}
                 </option>
               ))}
-            </select>
+            </select> */}
 
             {/* Input для выбора файлов */}
             <input

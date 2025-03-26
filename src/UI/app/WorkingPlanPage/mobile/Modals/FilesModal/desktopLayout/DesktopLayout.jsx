@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import classes from "./DesktopLayout.module.css";
 
-import { Popconfirm, Flex, Button, Select, Typography } from "antd";
+import { Popconfirm, Flex, Button, Select, Typography, Form } from "antd";
 
 import attachIcon from "@Custom/icon/subbar _ attach.svg";
 
@@ -23,7 +23,15 @@ export default function DesktopLayout({
   handleRemoveFile,
   deleteFile,
   setDeleteFile,
+  setContentInput,
+  setContentInputPolicyId
 }) {
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({ policyId: null });
+  }, []);
+
   return (
     <Popconfirm
       placement="topLeft"
@@ -32,24 +40,40 @@ export default function DesktopLayout({
           <div className={classes.content}>
             <Flex vertical gap={10}>
               <Typography>Прикрепите политику</Typography>
-              <Select
-                allowClear
-                showSearch
-                optionFilterProp="label"
-                filterOption={(input, option) =>
-                  option?.label.toLowerCase().includes(input.toLowerCase())
-                }
-                options={[
-                  ...(activeDirectives?.map((item) => ({
-                    label: item.policyName,
-                    value: item.id,
-                  })) || []),
-                  ...(activeInstructions?.map((item) => ({
-                    label: item.policyName,
-                    value: item.id,
-                  })) || []),
-                ]}
-              />
+
+              <Form form={form} style={{ margin: 0 }}>
+                <Form.Item name="policyId">
+                  <Select
+                    allowClear
+                    showSearch
+                    optionFilterProp="label"
+                    filterOption={(input, option) =>
+                      option?.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    options={[
+                      ...(activeDirectives?.map((item) => ({
+                        label: item.policyName,
+                        value: item.id,
+                      })) || []),
+                      ...(activeInstructions?.map((item) => ({
+                        label: item.policyName,
+                        value: item.id,
+                      })) || []),
+                    ]}
+                    onChange={(value, option) => {
+                      form.setFieldsValue({ policyId: value }); // Берем label из объекта option
+      
+                      setContentInput((prevState) => {
+                        setContentInputPolicyId({str:`policyId:${value},policyName:${option?.label},`, startChar:prevState.length,  endChar:prevState.length + option?.label.length});
+                        return prevState + option?.label
+                      })
+
+                    }}
+                  
+                  />
+                </Form.Item>
+              </Form>
+
               <input
                 type="file"
                 multiple
@@ -59,36 +83,6 @@ export default function DesktopLayout({
               />
               <Button onClick={handleCustomButtonClick}>Выберите файлы</Button>
             </Flex>
-
-            {/* <select
-              className={classes.attachPolicy}
-              name="attachPolicy"
-              value={policyId}
-              onChange={(e) => setPolicyId(e.target.value)}
-            >
-              <option>Выберите политику</option>
-              {activeDirectives?.map((item, index) => (
-                <option key={index} value={item.id}>
-                  {item.policyName}
-                </option>
-              ))}
-              {activeInstructions?.map((item, index) => (
-                <option key={index} value={item.id}>
-                  {item.policyName}
-                </option>
-              ))}
-            </select> */}
-
-            {/* Input для выбора файлов */}
-            {/* <input
-              type="file"
-              multiple
-              ref={fileInputRef}
-              style={{ display: "none" }} // Скрываем input
-              onChange={handleFileChange}
-            /> */}
-
-            {/* Кастомная кнопка */}
 
             {/* Отображение выбранных файлов */}
             {(notEmpty(selectedFiles) || notEmpty(files)) && (
