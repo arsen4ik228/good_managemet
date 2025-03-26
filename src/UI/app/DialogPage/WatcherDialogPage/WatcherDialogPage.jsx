@@ -17,36 +17,36 @@ export const WatcherDialogPage = () => {
     const [socketMessages, setSocketMessages] = useState([]);
     const unSeenMessagesRef = useRef(null);
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
+    const [lastSeenMessageNumber, setLastSeenMessageNumber] = useState(0)
     const historySeenIds = []
 
     const {
         currentConvert,
-        senderPostId,
+        recipientPost,
         userInfo,
-        senderPostName,
-        senderPostForSocket,
+        watcherPostForSocket,
         isLoadingGetConvertId
     } = useConvertsHook({ convertId });
 
     const {
-        watcherSeenMessagesResponse,
+        watcherSeenMessages,
         watcherUnseenMessages,
         isLoadingWatcherUnSeenMessages,
         isFetchingWatcherSeenMessages,
         watcherUnseenMessageExist,
 
     } = useMessages(convertId, paginationSeenMessages);
-    const seenMessagesRef = useRef(watcherSeenMessagesResponse);
+    const seenMessagesRef = useRef(watcherSeenMessages);
     const unSeenMessageExistRef = useRef(watcherUnseenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
-    // useEmitSocket('messagesSeenWatcher', 
-    //{ 
-    // convertId: convertId, 
-    // messageIds: visibleUnSeenMessageIds, 
-    // post: senderPostForSocket, 
-    // lastSeenMessageNumber: historySeenIds.length 
-    // })
+    useEmitSocket('messagesSeenWatcher',
+        {
+            convertId: convertId,
+            messageIds: visibleUnSeenMessageIds,
+            post: watcherPostForSocket,
+            lastSeenMessageNumber: lastSeenMessageNumber
+        })
 
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
@@ -54,6 +54,21 @@ export const WatcherDialogPage = () => {
         console.log(`Data from ${eventName}:`, data);
     }, []);
     const socketResponse = useSocket(eventNames, handleEventData);
+
+
+    const createTestFunction = () => {
+        let prevValue = 0; 
+
+        return (number, setNewValue) => {
+
+            if (+prevValue < +number) {
+                prevValue = number; 
+                setNewValue(number); 
+            }
+
+        };
+    };
+    const testFunction = createTestFunction();
 
     // Слушатель скрола, пагинация запрашиваемых сообщений 
     const handleScroll = debounce(() => {
@@ -65,7 +80,6 @@ export const WatcherDialogPage = () => {
             setPaginationSeenMessages((prev) => prev + 30);
 
     }, 200);
-
 
     // Монтирование слушателя скрола
     useLayoutEffect(() => {
@@ -83,20 +97,20 @@ export const WatcherDialogPage = () => {
 
     // Компоновка массива архивных сообщений 
     useEffect(() => {
-        if (!notEmpty(watcherSeenMessagesResponse)) {
+        if (!notEmpty(watcherSeenMessages)) {
             seenMessagesRef.current = []
             return
         }
 
         if (!notEmpty(messagesArray)) {
-            seenMessagesRef.current = watcherSeenMessagesResponse;
-            setMessagesArray(watcherSeenMessagesResponse);
+            seenMessagesRef.current = watcherSeenMessages;
+            setMessagesArray(watcherSeenMessages);
         } else {
-            seenMessagesRef.current = watcherSeenMessagesResponse;
-            setMessagesArray(prev => [...prev, ...watcherSeenMessagesResponse]);
+            seenMessagesRef.current = watcherSeenMessages;
+            setMessagesArray(prev => [...prev, ...watcherSeenMessages]);
         }
 
-    }, [watcherSeenMessagesResponse]);
+    }, [watcherSeenMessages]);
 
     // Создание socket сообщений 
     useEffect(() => {
@@ -106,9 +120,10 @@ export const WatcherDialogPage = () => {
         setSocketMessages(prev => [...prev, {
             id: newMessage.id,
             content: newMessage.content,
-            userMessage: newMessage.sender.id === senderPostId,
+            userMessage: newMessage.sender.id === currentConvert?.host.id,
             attachmentToMessage: newMessage.attachmentToMessage,
             timeSeen: null,
+            messageNumber: newMessage.messageNumber,
             createdAt: newMessage.createdAt,
         }]);
     }, [socketResponse?.messageCreationEvent]);
@@ -175,10 +190,12 @@ export const WatcherDialogPage = () => {
 
                 entries.forEach((entry) => {
                     const messageId = entry.target.dataset.messageId;
+                    const messageNumber = entry.target.dataset.messageNumber
                     if (entry.isIntersecting && !historySeenIds.includes(messageId)) {
                         // Добавляем id в массив, если элемент видим и его еще нет в historySeenIds
                         visibleIds.push(messageId);
                         historySeenIds.push(messageId);
+                        testFunction(messageNumber, setLastSeenMessageNumber)
                     }
                 });
 
@@ -202,7 +219,7 @@ export const WatcherDialogPage = () => {
         };
     }, [watcherUnseenMessages, socketMessages]);
 
-    console.warn(watcherUnseenMessages)
+    console.log(recipientPost)
 
     return (
         <>
@@ -219,7 +236,7 @@ export const WatcherDialogPage = () => {
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
-
+                                data-message-number={item.messageNumber}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
@@ -236,6 +253,7 @@ export const WatcherDialogPage = () => {
                                         createdMessage={item?.createdAt}
                                         ref={index === watcherUnseenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
+                                        data-message-number={item.messageNumber}
                                         attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}
 
