@@ -90,10 +90,34 @@ export const useEmitSocket = (eventName, data) => {
         }
 
         const dataNotEmpty = (data) => {
-            return Object.values(data).every(item => item !== null && item !== undefined && item !== '' && (item.length>0 || notEmpty(item)))
+            return Object.values(data).every(item => {
+                // Базовые проверки для всех типов
+                if (item === null || item === undefined || item === '') {
+                    return false;
+                }
+
+                const type = typeof item;
+
+                if (type === 'object') {
+                    if (Array.isArray(item)) {
+                        return item.length > 0
+                    }
+                    else {
+                        return Object.keys(item).length > 0
+                    }
+                }
+
+                if (type === 'string') {
+                    return item.trim().length > 0
+                }
+
+                // Для остальных типов (number, boolean, function и т.д.) считаем валидными
+                return true
+            });
         };
 
         if (!stableEventName || !dataNotEmpty(stableData)) {
+            // console.log(!stableEventName, dataNotEmpty(stableData))
             console.error('Socket: Event name or data is invalid');
             return;
         }
