@@ -1,4 +1,4 @@
-import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } from "../store/services/index"
+import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } from "@services"
 
 
 export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
@@ -18,6 +18,8 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         userInfo = {},
         senderPostForSocket = {},
         senderPostName,
+        watcherPostForSocket,
+        recipientPost,
         organizationId,
         refetch: refetchGetConvertId,
         isLoadingGetConvertId
@@ -29,7 +31,9 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
             senderPostId: data?.senderPostId || null,
             senderPostName: data?.senderPostName || null,
             senderPostForSocket: data?.senderPostForSocket || {},
+            recipientPost: data?.recipientPost || {},
             organizationId: data?.organizationId || null,
+            watcherPostForSocket: data?.watcherPostForSocket,
             isLoadingGetConvertId : isLoading,
             refetch, // Добавляем refetch в результат
         }),
@@ -64,8 +68,10 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         senderPostId,
         senderPostName,
         senderPostForSocket,
+        recipientPost,
         organizationId,
         refetchGetConvertId,
+        watcherPostForSocket,
         isLoadingGetConvertId,
 
         sendMessage,
