@@ -1,0 +1,58 @@
+.wrapper {
+    background-color: var(--primary-light);
+}
+
+.topContainer {
+    display: flex;
+    padding: 0 10px;
+}
+
+.checkboxContainer {
+    margin: auto 0;
+}
+
+.checkboxContainer>input {
+    width: 15px;
+    height: 15px;
+}
+
+.targetContainer {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    height: 50px;
+    padding: 0 10px;
+    font-weight: 600;
+    color: rgb(58, 58, 58);
+    text-overflow: ellipsis;
+
+    >div {
+        cursor: pointer;
+    }
+}
+
+.targetText {
+    overflow: hidden;
+    padding: 1px;
+}
+
+/* .titleTextArchive {
+    color: #00000040;
+    padding: 1px;
+} */
+
+.dateContainer {
+    /* padding: 20px 0; */
+    display: flex;
+    align-items: center;
+}
+
+.dateContainer>span {
+    display: block;
+}
+
+.bottomContainer {
+    padding: 0 10px 10px 10px ;
+    /* border: 1px solid red; */
+}

@@ -21,6 +21,12 @@ export default function Task({ taskData, isArchive }) {
         return `${classes.body} ${typeClassMap[taskData.convertType] || ''}`;
     };
 
+    const handleNavigateClick = (link) => {
+        if (taskData.convertType === 'Копия') return navigate('watcher/' + link)
+
+        navigate(link)
+    }
+
     console.log(taskData)
 
     return (
@@ -41,7 +47,7 @@ export default function Task({ taskData, isArchive }) {
                 </div>
                 <div
                     className={classes.titleContainer}
-                    onClick={() => navigate(taskData.id)}
+                    onClick={() => handleNavigateClick(taskData.id)}
                 >
                     <div
                         className={`${classes.titleText} ${isArchive ? classes.titleTextArchive : ''}`}

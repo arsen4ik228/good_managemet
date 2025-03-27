@@ -10,7 +10,7 @@ export const messageApi = apiSlice.injectEndpoints({
 
             }),
             transformResponse: response => {
-                //const unSeenMessgesIds = []
+                console.log('getSeenMessages', response)
                 let unSeenMessageExist = false
                 const sortedMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -19,8 +19,6 @@ export const messageApi = apiSlice.injectEndpoints({
 
                     if (!unSeenMessageExist && item.timeSeen === null)
                         unSeenMessageExist = true
-                    // if (item.timeSeen === null)
-                    //     unSeenMessgesIds.push(item.id)
                 });
 
                 return { sortedMessages, unSeenMessageExist }
@@ -112,7 +110,7 @@ export const messageApi = apiSlice.injectEndpoints({
                 });
 
                 return [...sortedMessages]
-                
+
             },
 
             providesTags: result =>

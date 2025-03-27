@@ -9,9 +9,7 @@ import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import TextArea from 'antd/es/input/TextArea';
-import { notEmpty, resizeTextarea } from "@helpers/helpers";
-import CalendarModal from "../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal";
-import FilesModal from "../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal";
+
 
 import dayjs from "dayjs";
 import "dayjs/locale/ru";

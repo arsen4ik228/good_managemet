@@ -12,10 +12,12 @@
     max-width: 600px;
     max-height: 9300px;
     padding: 10px;
+    padding-top: 0px;
     /* background-color: #e0e0e0; */
     background-color: #ffffff;
     border-radius: 10px;
     margin: 10px;
+    /* border: 1px solid red; */
 }
 
 .messageContainer::before {
@@ -37,6 +39,7 @@
 
     max-height: 9300px;
     padding: 10px;
+    padding-top: 0px;
     background-color: var(--primary-light);
     border-radius: 10px;
     margin: 10px;
@@ -56,6 +59,14 @@
     /* Размеры треугольника */
     border-color: transparent transparent transparent var(--primary-light);
     /* Цвет треугольника */
+}
+
+.senderName {
+    font-size: 10px;
+    padding-top: 5px;
+    padding-bottom: 3px;
+    color: #005475;
+    font-weight: normal;
 }
 
 .textMessage {
