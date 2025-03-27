@@ -90,16 +90,15 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         };
 
-        const extractUserInfo = (convertToPosts, userId) => {
+        const extractUserInfo = (hostPost) => {
 
-          const userPost = convertToPosts.find(item => item.post.user.id !== userId);
-          console.log(userPost)
-          if (userPost) {
-            return {
-              postName: userPost.post.postName,
-              userName: userPost.post.user.firstName + ' ' + userPost.post.user.lastName,
-              avatar: userPost.post.user.avatar_url,
-            }
+          if (!hostPost) return
+
+          return {
+            id: hostPost.id,
+            postName: hostPost.postName,
+            userName: hostPost.user.firstName + ' ' + hostPost.user.lastName,
+            avatar: hostPost.user.avatar_url,
           }
 
         }
@@ -117,7 +116,7 @@ export const convertApi = apiSlice.injectEndpoints({
         }
 
         const { id: senderPostId, postName: senderPostName, senderPostForSocket } = selectSenderPostId(convertToPosts, userId);
-        const userInfo = extractUserInfo(convertToPosts, userId)
+        const userInfo = extractUserInfo(host)
 
         const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchers) : null
         const recipientPost = !senderPostId ? selectRecipientPost(convertToPosts, host) : null
