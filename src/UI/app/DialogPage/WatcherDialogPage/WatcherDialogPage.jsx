@@ -4,7 +4,6 @@ import Header from "@Custom/CustomHeader/Header";
 import { useConvertsHook, useMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
-import Input from './Input';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
@@ -232,6 +231,7 @@ export default function WatcherDialogPage() {
                 <ConvertTargetContainer
                     targetStatus={currentConvert?.target?.targetStatus}
                     targetText={currentConvert?.target?.content}
+                    date={currentConvert?.target?.createdAt}
                     isWatcher={true}
                 >
                     <div className={classes.recepientPost}>
