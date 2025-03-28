@@ -1,5 +1,6 @@
 import React from 'react'
 import classes from './ConvertTargetContainer.module.css'
+import { formattedDate } from '@helpers/helpers'
 
 export default function ConvertTargetContainer({ children, targetStatus, targetText, date, isWatcher, handleCompleteTargetClick }) {
 
@@ -15,11 +16,11 @@ export default function ConvertTargetContainer({ children, targetStatus, targetT
             <div className={classes.wrapper}>
                 <div className={classes.topContainer}>
                     <div className={classes.checkboxContainer}>
-                        <input 
-                        type="checkbox" 
-                        onClick={() => handleClick()}
-                        checked={targetStatus === 'Завершена'} 
-                        readOnly={isWatcher}
+                        <input
+                            type="checkbox"
+                            onClick={() => handleClick()}
+                            checked={targetStatus === 'Завершена'}
+                            readOnly={isWatcher}
                         />
                     </div>
                     <div className={classes.targetContainer}>
@@ -29,7 +30,7 @@ export default function ConvertTargetContainer({ children, targetStatus, targetT
                     </div>
                     <div className={classes.dateContainer}>
                         <span>
-                           {date} 13.13.13
+                            {formattedDate(date)}
                         </span>
                     </div>
                 </div>

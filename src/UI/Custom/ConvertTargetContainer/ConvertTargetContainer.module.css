@@ -26,15 +26,17 @@
     padding: 0 10px;
     font-weight: 600;
     color: rgb(58, 58, 58);
-    text-overflow: ellipsis;
-
+    
     >div {
         cursor: pointer;
     }
 }
 
 .targetText {
+    text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
+    border: 1px solid red;
     padding: 1px;
 }
 
