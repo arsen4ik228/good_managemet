@@ -8,8 +8,10 @@ import Input from './Input';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
+import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
+import AdaptiveLayoutContainer from './adaptive.container/AdaptiveLayoutContainer';
 
-export const WatcherDialogPage = () => {
+export default function WatcherDialogPage() {
     const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const bodyRef = useRef(null);
@@ -57,13 +59,13 @@ export const WatcherDialogPage = () => {
 
 
     const createTestFunction = () => {
-        let prevValue = 0; 
+        let prevValue = 0;
 
         return (number, setNewValue) => {
 
             if (+prevValue < +number) {
-                prevValue = number; 
-                setNewValue(number); 
+                prevValue = number;
+                setNewValue(number);
             }
 
         };
@@ -125,6 +127,7 @@ export const WatcherDialogPage = () => {
             timeSeen: null,
             messageNumber: newMessage.messageNumber,
             createdAt: newMessage.createdAt,
+            senderPostName: newMessage.sender.postName
         }]);
     }, [socketResponse?.messageCreationEvent]);
 
@@ -219,25 +222,32 @@ export const WatcherDialogPage = () => {
         };
     }, [watcherUnseenMessages, socketMessages]);
 
-    console.log(recipientPost)
+    console.log(socketResponse?.messageCreationEvent)
 
     return (
         <>
-            <div className={classes.wrapper}>
-                <Header
-                    title={userInfo.userName}
-                    avatar={userInfo.avatar}
+            <AdaptiveLayoutContainer
+                userInfo={userInfo}
+            >
+                <ConvertTargetContainer
+                    targetStatus={currentConvert?.target?.targetStatus}
+                    targetText={currentConvert?.target?.content}
+                    isWatcher={true}
                 >
-                    {userInfo.postName}
-                </Header>
+                    <div className={classes.recepientPost}>
+                        <span>получатель:</span> {recipientPost.postName}
+                    </div>
+                </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages?.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage}
+                            <Message
+                                userMessage={item?.sender?.id === currentConvert?.host?.id}
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
                                 data-message-number={item.messageNumber}
                                 attachmentToMessage={item?.attachmentToMessages}
+                                senderPostName={item?.senderPostName}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
@@ -249,14 +259,14 @@ export const WatcherDialogPage = () => {
                             {watcherUnseenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <Message
-                                        userMessage={item?.userMessage}
+                                        userMessage={item?.sender?.id === currentConvert?.host?.id}
                                         createdMessage={item?.createdAt}
                                         ref={index === watcherUnseenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
                                         data-message-number={item.messageNumber}
                                         attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}
-
+                                        senderPostName={item?.sender?.postName}
                                     >
                                         {item.content}
                                     </Message>
@@ -268,11 +278,12 @@ export const WatcherDialogPage = () => {
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
                             <Message key={index}
-                                userMessage={item?.userMessage}
+                                userMessage={item?.sender?.id === currentConvert?.host?.id}
                                 seenStatuses={item?.seenStatuses}
                                 senderPost={item?.sender}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 createdMessage={item?.createdAt}
+                                senderPostName={item?.sender?.postName}
                             >
                                 {item.content}
                             </Message>
@@ -289,7 +300,7 @@ export const WatcherDialogPage = () => {
                         isLoadingGetConvertId={isLoadingGetConvertId}
                     /> */}
                 </footer>
-            </div>
+            </AdaptiveLayoutContainer>
         </>
     );
 };
