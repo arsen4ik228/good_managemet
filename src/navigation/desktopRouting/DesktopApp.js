@@ -60,6 +60,10 @@ const SettingsPage = React.lazy(() =>
   import("@app/SettingsPage/desktop/SettingsPage.jsx")
 );
 
+const WatcherDialogPage = React.lazy(() =>
+  import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
+)
+
 function DesktopApp() {
   return (
     <div>
@@ -88,7 +92,7 @@ function DesktopApp() {
             >
               <Routes>
 
-              <Route
+                <Route
                   path="account"
                   element={
                     <div className="messages">
@@ -123,6 +127,19 @@ function DesktopApp() {
                       <div className="content">
                         <Chat />
                         <DesktopDoalogPage />
+                      </div>
+                    </div>
+                  }
+                />
+
+                <Route
+                  path="chat/:contactId/watcher/:convertId"
+                  element={
+                    <div className="messages">
+                      <Panel />
+                      <div className="content">
+                        <Chat />
+                        <WatcherDialogPage />
                       </div>
                     </div>
                   }
