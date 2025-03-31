@@ -6,11 +6,9 @@ import DesktopLayout from "./desktopLayout/DesktopLayout";
 export default function CalendarModal(props) {
   return (
     <>
-      {isMobile ? (
-        <MobileLayout {...props}></MobileLayout>
-      ) : (
+
         <DesktopLayout {...props}></DesktopLayout>
-      )}
+
     </>
   );
 }

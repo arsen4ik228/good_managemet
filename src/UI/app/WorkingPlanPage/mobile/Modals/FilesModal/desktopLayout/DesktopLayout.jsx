@@ -41,9 +41,10 @@ export default function DesktopLayout({
             <Flex vertical gap={10}>
               <Typography>Прикрепите политику</Typography>
 
-              <Form form={form} style={{ margin: 0 }}>
-                <Form.Item name="policyId">
+              <Form form={form}>
+                <Form.Item name="policyId" style={{ margin: 0}}>
                   <Select
+                    placement="topLeft"
                     allowClear
                     showSearch
                     optionFilterProp="label"
