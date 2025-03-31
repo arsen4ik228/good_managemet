@@ -65,7 +65,7 @@ export default function DesktopLayout({
                       form.setFieldsValue({ policyId: value }); // Берем label из объекта option
       
                       setContentInput((prevState) => {
-                        setContentInputPolicyId({str:`policyId:${value},policyName:${option?.label},`, startChar:prevState.length,  endChar:prevState.length + option?.label.length});
+                        setContentInputPolicyId({str:`policyId:${value},policyName:${option?.label},`, startChar:prevState?.length,  endChar:prevState?.length + option?.label?.length});
                         return prevState + option?.label
                       })
 

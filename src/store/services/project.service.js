@@ -102,7 +102,6 @@ export const projectApi = apiSlice.injectEndpoints({
       invalidatesTags: (result) => result ? [{ type: 'Project', id: "LIST" }] : [],
     }),
 
-
     getProjectNew: build.query({
       query: ({organizationId}) => ({
         url: `/projects/${organizationId}/new`,
