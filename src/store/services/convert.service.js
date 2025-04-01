@@ -1,6 +1,5 @@
 import apiSlice from "./api";
 import { userId } from "@helpers/constants";
-import _ from 'lodash'
 import { notEmpty } from "@helpers/helpers"
 
 export const convertApi = apiSlice.injectEndpoints({
@@ -35,9 +34,27 @@ export const convertApi = apiSlice.injectEndpoints({
           })
         }
 
+        const transformConvertsForContact = (convertsForContact) => {
+
+          const userHaveAgreement = convertsForContact?.some(item => item.convertPath === 'Согласование')
+
+          if (!userHaveAgreement) return convertsForContact
+
+          return convertsForContact?.map(item => {
+            const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
+
+            if (userPostIsLastAddressee) return item
+
+            return {
+              ...item,
+              convertType: 'Согласование'
+            }
+          })
+        }
+
         return {
           contactInfo: transformContactInfo(response?.contact),
-          allConverts: response?.convertsForContact.concat(transformCopiesConvert(response?.copiesForContact))
+          allConverts: transformConvertsForContact(response?.convertsForContact).concat(transformCopiesConvert(response?.copiesForContact))
         }
       },
 
