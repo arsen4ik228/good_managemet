@@ -1,4 +1,4 @@
-import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation } from "@services"
+import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation, useApproveConvertMutation } from "@services"
 
 
 export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
@@ -53,6 +53,10 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
     const [
         sendMessage,
     ] = useSendMessageMutation()
+
+    const [
+        approveConvert
+    ] = useApproveConvertMutation()
 
     return {
         allConverts: allConvertsAndContactInfo?.allConverts,

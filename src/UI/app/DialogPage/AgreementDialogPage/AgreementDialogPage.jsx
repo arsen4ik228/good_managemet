@@ -7,8 +7,10 @@ import { Message } from '@Custom/Message/Message';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
+import Input from '../Input';
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
 import AdaptiveLayoutContainer from '../WatcherDialogPage/adaptive.container/AdaptiveLayoutContainer';
+import ApproveConvert from '../../../Custom/ApproveConvert/ApproveConvert';
 
 export default function AgreementDialogPage() {
       const { convertId } = useParams();
@@ -25,7 +27,6 @@ export default function AgreementDialogPage() {
             currentConvert,
             senderPostId,
             userInfo,
-            organizationId,
             senderPostName,
             senderPostForSocket,
             sendMessage,
@@ -220,6 +221,7 @@ export default function AgreementDialogPage() {
                     {/* <div className={classes.recepientPost}>
                         <span>получатель:</span> {recipientPost.postName}
                     </div> */}
+                    <ApproveConvert></ApproveConvert>
                 </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages?.slice().reverse().map((item, index) => (
@@ -274,14 +276,14 @@ export default function AgreementDialogPage() {
                     ))}
                 </div>
                 <footer className={classes.footer}>
-                    {/* <Input
+                    <Input
                         convertId={currentConvert?.id}
                         sendMessage={sendMessage}
                         senderPostId={senderPostId}
                         senderPostName={senderPostName}
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
-                    /> */}
+                    />
                 </footer>
             </AdaptiveLayoutContainer>
         </>
