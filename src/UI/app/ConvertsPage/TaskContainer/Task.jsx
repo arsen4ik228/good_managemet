@@ -13,7 +13,7 @@ export default function Task({ taskData, isArchive }) {
     const getBeforeClass = () => {
         const typeClassMap = {
             'Приказ': classes.bodyType1,
-            'Заявка': classes.bodyType2,
+            'Согласование': classes.bodyType2,
             'Копия': classes.bodyType3,
         };
 
@@ -23,6 +23,7 @@ export default function Task({ taskData, isArchive }) {
 
     const handleNavigateClick = (link) => {
         if (taskData.convertType === 'Копия') return navigate('watcher/' + link)
+        if (taskData.convertType === 'Согласование') return navigate('agreement/' + link)
 
         navigate(link)
     }

@@ -87,8 +87,9 @@
 }
 
 .bodyType2::before {
-    content: 'Заявка';
+    content: 'Согласование';
     color: #fadb14;
+    color: #13c2c2
 }
 
 .bodyType3::before {

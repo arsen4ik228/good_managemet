@@ -46,40 +46,40 @@ export default function InputTextContainer({
   setContentInputPolicyId,
 }) {
 
-    const [openCalendarModal, setOpenCalendarModal] = useState(false);
-    const [openFilesModal, setOpenFilesModal] = useState(false);
+  const [openCalendarModal, setOpenCalendarModal] = useState(false);
+  const [openFilesModal, setOpenFilesModal] = useState(false);
 
 
-    const selectPost = (e) => {
-        const value = e.target.value;
-        if (value) {
-            const [postId, organization] = value.split(' ');
-            setSelectedPost(postId);
-            setSelectedPostOrganizationId(organization);
-        }
-    };
+  const selectPost = (e) => {
+    const value = e.target.value;
+    if (value) {
+      const [postId, organization] = value.split(' ');
+      setSelectedPost(postId);
+      setSelectedPostOrganizationId(organization);
+    }
+  };
 
- 
+
   const handleChangeContentTextarea = (e) => {
     const value = e.target.value;
     setContentInput(value);
     resizeTextarea(idTextarea);
   };
 
-     useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.key !== 'Enter' || event.shiftKey || typeof sendClick !== 'function') return;
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Enter' || event.shiftKey || typeof sendClick !== 'function') return;
 
-            event.preventDefault();
-            sendClick();
-        };
+      event.preventDefault();
+      sendClick();
+    };
 
-        window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [sendClick]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [sendClick]);
 
   return (
     <>
@@ -87,12 +87,15 @@ export default function InputTextContainer({
         <div className={classes.body}>
           <div className={classes.choosePostContainer}>
             <select name="choosePost" onChange={selectPost}>
-              {senderPostName && <option>{senderPostName}</option>}
-              {userPosts?.map((item, index) => (
-                <option key={index} value={`${item.id} ${item.organization}`}>
-                  {item.postName}
-                </option>
-              ))}
+              {senderPostName ? (
+                <option>{senderPostName}</option>
+              ) : (
+                userPosts?.map((item, index) => (
+                  <option key={index} value={`${item.id} ${item.organization}`}>
+                    {item.postName}
+                  </option>
+                ))
+              )}
             </select>
           </div>
           <div className={classes.inputTextContainer}>
