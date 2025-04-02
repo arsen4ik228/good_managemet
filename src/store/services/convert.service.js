@@ -172,14 +172,26 @@ export const convertApi = apiSlice.injectEndpoints({
       query: (convertId) => ({
         url: `converts/${convertId}/approve`,
         method: "PATCH",
-        
+        body: {
+          id: convertId
+        }
+      }),
+      invalidatesTags: ["Convert"],
+    }),
+
+    finishConvert: build.mutation({
+      query: (convertId) => ({
+        url: `converts/${convertId}/finish`,
+        method: "PATCH",
+        body: {
+          id: convertId
+        }
       }),
       invalidatesTags: ["Convert"],
     }),
 
 
-
   }),
 });
 
-export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useApproveConvertMutation } = convertApi;
+export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useApproveConvertMutation, useFinishConvertMutation } = convertApi;
