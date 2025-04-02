@@ -205,7 +205,7 @@ export default function AgreementDialogPage() {
         };
     }, [unSeenMessages, socketMessages]);
 
-    //console.warn(messagesArray)
+    console.warn(convertStatusChangeFunction)
 
 
     return (

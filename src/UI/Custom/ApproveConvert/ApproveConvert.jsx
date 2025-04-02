@@ -11,9 +11,9 @@ export default function ApproveConvert({ setRequestFunction }) {
         setActiveButton(status)
 
         if (status === 'approve')
-            setRequestFunction(approveConvert)
+            setRequestFunction(() => approveConvert)
         else
-        setRequestFunction(finishConvert)
+            setRequestFunction(() => finishConvert)
     }
 
     return (

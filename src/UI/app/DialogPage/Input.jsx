@@ -56,39 +56,41 @@ const Input = ({
 
   const send = async () => {
     if (contentInput.trim() === "" && files.length === 0) return;
-
+  
     // Удаляем черновик
     deleteDraft("DraftDB", "drafts", idTextArea);
-
+  
     try {
-      // Если есть функция изменения статуса, выполняем её
+      // 1. Сначала пробуем изменить статус
       if (typeof convertStatusChangeFunction === 'function') {
-        await convertStatusChangeFunction(); // Ждём завершения
+        await convertStatusChangeFunction(convertId); // Если ошибка - выполнение прервётся здесь
       }
-
-      // Подготавливаем данные для отправки
+  
+      // 2. Только если изменение статуса успешно - отправляем сообщение
       const Data = {};
       if (files && files.length > 0) {
         Data.attachmentIds = files.map((item) => item.id);
       }
-
-      // Отправляем сообщение
+  
       await sendMessage({
         convertId,
-        content: convertStatusChangeFunction ? `Приказ согласован : ${transformText(contentInput)}` : transformText(contentInput),
+        content: convertStatusChangeFunction 
+          ? `Приказ согласован: ${transformText(contentInput)}` 
+          : transformText(contentInput),
         postId: senderPostId,
         ...Data,
       }).unwrap();
-
-      // Сбрасываем состояние после успешной отправки
+  
+      // 3. Сброс состояния
       reset();
-
+  
     } catch (error) {
       console.error("Ошибка:", error);
-      // Дополнительная обработка ошибки при необходимости
       if (error.response) {
-        console.error("Данные ошибки:", error.response.data);
+        console.error("Детали ошибки:", error.response.data);
       }
+      // Можно добавить уведомление пользователю:
+      // showNotification(error.message || "Ошибка при согласовании/отправке");
     }
   };
 
