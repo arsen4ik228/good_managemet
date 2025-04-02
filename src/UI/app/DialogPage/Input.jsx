@@ -16,7 +16,7 @@ const Input = ({
   isLoadingGetConvertId,
   organizationId,
 }) => {
-  const [contentInputPolicyId, setContentInputPolicyId] = useState();
+  const [contentInputPolicyId, setContentInputPolicyId] = useState("");
 
   const [selectedPost, setSelectedPost] = useState();
   const [startDate, setStartDate] = useState(
@@ -41,15 +41,16 @@ const Input = ({
     setContentInput("");
     setSelectedPolicy(false);
     deleteDraft("DraftDB", "drafts", idTextArea);
+    setContentInputPolicyId("");
   };
 
   const transformText = (text) => {
 
-    console.log("sdhfjsd", text.slice(0, contentInputPolicyId.startChar) + contentInputPolicyId.str + text.slice(contentInputPolicyId.endChar));
+    if (!contentInputPolicyId) return text;
 
-    if (contentInputPolicyId.str.length === 0) return text;
 
-    return text.slice(0, contentInputPolicyId.startChar) + contentInputPolicyId.str + text.slice(contentInputPolicyId.endChar);
+    return text?.slice(0, contentInputPolicyId?.startChar) + contentInputPolicyId?.str + text.slice(contentInputPolicyId?.endChar);
+    
 
   };
 

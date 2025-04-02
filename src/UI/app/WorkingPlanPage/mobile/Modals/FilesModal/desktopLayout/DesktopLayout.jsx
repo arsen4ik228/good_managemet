@@ -41,9 +41,10 @@ export default function DesktopLayout({
             <Flex vertical gap={10}>
               <Typography>Прикрепите политику</Typography>
 
-              <Form form={form} style={{ margin: 0 }}>
-                <Form.Item name="policyId">
+              <Form form={form}>
+                <Form.Item name="policyId" style={{ margin: 0}}>
                   <Select
+                    placement="topLeft"
                     allowClear
                     showSearch
                     optionFilterProp="label"
@@ -64,7 +65,7 @@ export default function DesktopLayout({
                       form.setFieldsValue({ policyId: value }); // Берем label из объекта option
       
                       setContentInput((prevState) => {
-                        setContentInputPolicyId({str:`policyId:${value},policyName:${option?.label},`, startChar:prevState.length,  endChar:prevState.length + option?.label.length});
+                        setContentInputPolicyId({str:`policyId:${value},policyName:${option?.label},`, startChar:prevState?.length,  endChar:prevState?.length + option?.label?.length});
                         return prevState + option?.label
                       })
 
