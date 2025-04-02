@@ -1,26 +1,31 @@
 .wrapper {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0.5rem;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    /* padding: 0.5rem; */
+    justify-content: space-between;
     box-sizing: border-box;
 }
 
 .content {
-    width: 100%;
+    /* width: 100%; */
     display: flex;
     justify-content: center;
-    gap: 1.5rem; /* Больший отступ между текстовыми кнопками */
+    gap: 1.5rem;
+    /* Больший отступ между текстовыми кнопками */
 }
 
 .button {
+    height: 34px;
     padding: 0.4rem 0;
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #1976d2; /* Синий цвет как у Material-UI текстовых кнопок */
+    color: #1976d2;
+    /* Синий цвет как у Material-UI текстовых кнопок */
     background: none;
     border: none;
     position: relative;
@@ -43,28 +48,29 @@
     width: 100%;
 }
 
-/* Стиль активной кнопки */
-.button.active {
-    color: #1565c0; /* Более тёмный синий */
+/* Добавляем в CSS */
+.buttonActive {
     font-weight: 600;
+    color: #1565c0;
 }
 
-.button.active::after {
+.buttonActive::after {
     width: 100%;
     background-color: #1565c0;
 }
 
-/* Эффект нажатия */
-.button:active {
+ .button:active {
     transform: scale(0.96);
 }
 
 /* Заголовок */
-.wrapper > div:first-child {
-    text-align: center;
+.wrapper>div:first-child {
+    /* text-align: center; */
     font-size: 1rem;
     color: #424242;
-    margin-bottom: 0.5rem;
+    padding: 0.6rem 0;
+    font-weight: 500;
+    /* margin-bottom: 0.5rem; */
 }
 
 /* Адаптация для мобильных */
@@ -72,8 +78,13 @@
     .content {
         gap: 1rem;
     }
-    
+
     .button {
+        font-size: 0.9rem !important;
+    }
+
+    .wrapper>div:first-child {
         font-size: 0.9rem;
+
     }
 }

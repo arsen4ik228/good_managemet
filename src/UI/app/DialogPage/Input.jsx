@@ -1,9 +1,6 @@
 import React, {
   useState,
   useEffect,
-  useMemo,
-  useCallback,
-  useContext,
 } from "react";
 import InputTextContainer from "@Custom/ContainerForInputText/InputTextContainer.jsx";
 import { usePostsHook } from "@hooks";
@@ -12,6 +9,7 @@ import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
 const Input = ({
   convertId,
   sendMessage,
+  convertStatusChangeFunction,
   senderPostId,
   senderPostName,
   refetchMessages,
@@ -29,8 +27,7 @@ const Input = ({
   );
   const [contentInput, setContentInput] = useState("");
   const [selectedPolicy, setSelectedPolicy] = useState(false);
-  const [selectedPostOrganizationId, setSelectedPostOrganizationId] =
-    useState();
+  const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState();
   const [files, setFiles] = useState();
   const [unpinFiles, setUnpinFiles] = useState([]);
 
@@ -51,30 +48,48 @@ const Input = ({
 
     if (!contentInputPolicyId) return text;
 
+
     return text?.slice(0, contentInputPolicyId?.startChar) + contentInputPolicyId?.str + text.slice(contentInputPolicyId?.endChar);
     
+
   };
 
   const send = async () => {
-    if (contentInput.trim() === "") return;
+    if (contentInput.trim() === "" && files.length === 0) return;
 
+    // Удаляем черновик
     deleteDraft("DraftDB", "drafts", idTextArea);
 
-    const Data = {};
+    try {
+      // Если есть функция изменения статуса, выполняем её
+      if (typeof convertStatusChangeFunction === 'function') {
+        await convertStatusChangeFunction(); // Ждём завершения
+      }
 
-    if (files) Data.attachmentIds = files.map((item) => item.id);
+      // Подготавливаем данные для отправки
+      const Data = {};
+      if (files && files.length > 0) {
+        Data.attachmentIds = files.map((item) => item.id);
+      }
 
-    await sendMessage({
-      convertId,
-      content: transformText(contentInput),
-      postId: senderPostId,
-      ...Data,
-    })
-      .unwrap()
-      .then(() => reset())
-      .catch((error) => {
-        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
-      });
+      // Отправляем сообщение
+      await sendMessage({
+        convertId,
+        content: convertStatusChangeFunction ? `Приказ согласован : ${transformText(contentInput)}` : transformText(contentInput),
+        postId: senderPostId,
+        ...Data,
+      }).unwrap();
+
+      // Сбрасываем состояние после успешной отправки
+      reset();
+
+    } catch (error) {
+      console.error("Ошибка:", error);
+      // Дополнительная обработка ошибки при необходимости
+      if (error.response) {
+        console.error("Данные ошибки:", error.response.data);
+      }
+    }
   };
 
   useEffect(() => {

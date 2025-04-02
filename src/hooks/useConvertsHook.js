@@ -1,4 +1,4 @@
-import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation, useApproveConvertMutation } from "@services"
+import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation,useFinishConvertMutation, useApproveConvertMutation } from "@services"
 
 
 export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
@@ -58,6 +58,10 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         approveConvert
     ] = useApproveConvertMutation()
 
+    const [
+        finishConvert
+    ] = useFinishConvertMutation()
+
     return {
         allConverts: allConvertsAndContactInfo?.allConverts,
         contactInfo: allConvertsAndContactInfo?.contactInfo,
@@ -85,5 +89,8 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         isSuccessPostPoliciesMutation,
         isErrorPostPoliciesMutation,
         ErrorPostPoliciesMutation,
+
+        approveConvert,
+        finishConvert
     }
 }
