@@ -84,27 +84,6 @@ export default function FilesModal({
 
   return (
     <>
-      {isMobile ? (
-        <MobileLayout
-         openModal={openModal}
-          setOpenModal={setOpenModal}
-          policyId={policyId}
-          setPolicyId={setPolicyId}
-          files={files}
-          handleUpload={handleUpload}
-          activeDirectives={activeDirectives}
-          activeInstructions={activeInstructions}
-          fileInputRef={fileInputRef}
-          handleFileChange={handleFileChange}
-          handleCustomButtonClick={handleCustomButtonClick}
-          selectedFiles={selectedFiles}
-          handleRemoveFile={handleRemoveFile}
-          deleteFile={deleteFile}
-          setDeleteFile={setDeleteFile}
-          setContentInput={setContentInput}
-          setContentInputPolicyId={setContentInputPolicyId}
-        ></MobileLayout>
-      ) : (
         <DesktopLayout
           setOpenModal={setOpenModal}
           policyId={policyId}
@@ -123,7 +102,7 @@ export default function FilesModal({
           setContentInput={setContentInput}
           setContentInputPolicyId={setContentInputPolicyId}
         ></DesktopLayout>
-      )}
+ 
     </>
   );
 }

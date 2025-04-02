@@ -1,6 +1,6 @@
 .wrapper {
     height: 100vh;
-    width: 100%;
+    width: 100vw;
     background-color: #005475;
     overflow: hidden;
     font-family: 'Montserrat';
@@ -8,7 +8,8 @@
 
 .messages {
     height: 100vh;
-    width: 100%;
+    width: 100vw;
+
     display: grid;
     grid-template-columns: 50px 1fr;
     grid-template-rows: 0px 1fr;
@@ -19,8 +20,9 @@
 }
 
 .content{
-    width: 100%;
-    max-width: 100%;
+    width: calc(100vw - 50px);
+    max-width: calc(100vw - 50px);
+
     grid-area: content;
     background: url('@image/background.png');
     display: flex;
@@ -40,6 +42,12 @@
     .messages {
         grid-template-columns: 40px 1fr;
     }
+
+    .content{
+        width: calc(100vw - 40px);
+        max-width: calc(100vw - 40px);
+    }
+
 }
 
 /* index.css */
