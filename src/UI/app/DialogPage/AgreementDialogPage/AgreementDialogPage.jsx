@@ -21,7 +21,7 @@ export default function AgreementDialogPage() {
     const [socketMessages, setSocketMessages] = useState([]);
     const unSeenMessagesRef = useRef(null);
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
-    const [convertStatusChangeFunction, setConvertStatusChangeFunction] = useState()
+    const [convertStatusChange, setConvertStatusChange] = useState()
     const historySeenIds = []
 
     const {
@@ -31,7 +31,10 @@ export default function AgreementDialogPage() {
         senderPostName,
         senderPostForSocket,
         sendMessage,
+        recipientPost,
         refetchGetConvertId,
+        approveConvert, 
+        finishConvert,
         isLoadingGetConvertId
     } = useConvertsHook({ convertId });
 
@@ -51,7 +54,7 @@ export default function AgreementDialogPage() {
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
-    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
+    // useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
 
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
@@ -205,7 +208,7 @@ export default function AgreementDialogPage() {
         };
     }, [unSeenMessages, socketMessages]);
 
-    console.warn(convertStatusChangeFunction)
+    // console.warn(recipientPost)
 
 
     return (
@@ -223,14 +226,14 @@ export default function AgreementDialogPage() {
                         <span>получатель:</span> {recipientPost.postName}
                     </div> */}
                     <ApproveConvert
-                        setRequestFunction={setConvertStatusChangeFunction}
+                        setRequestFunction={setConvertStatusChange}
                     ></ApproveConvert>
                 </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages?.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
                             <Message
-                                // userMessage={item?.sender?.id === currentConvert?.host?.id}
+                                userMessage={item?.sender?.id === senderPostId}
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
                                 data-message-number={item.messageNumber}
@@ -247,7 +250,7 @@ export default function AgreementDialogPage() {
                             {unSeenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <Message
-                                        // userMessage={item?.sender?.id === currentConvert?.host?.id}
+                                        userMessage={item?.sender?.id === senderPostId}
                                         createdMessage={item?.createdAt}
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
@@ -266,7 +269,7 @@ export default function AgreementDialogPage() {
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
                             <Message key={index}
-                                // userMessage={item?.sender?.id === currentConvert?.host?.id}
+                                userMessage={item?.sender?.id === senderPostId}
                                 seenStatuses={item?.seenStatuses}
                                 senderPost={item?.sender}
                                 attachmentToMessage={item?.attachmentToMessages}
@@ -282,9 +285,11 @@ export default function AgreementDialogPage() {
                     <Input
                         convertId={currentConvert?.id}
                         sendMessage={sendMessage}
-                        convertStatusChangeFunction={convertStatusChangeFunction}
+                        convertStatusChange={convertStatusChange}
                         senderPostId={senderPostId}
                         senderPostName={senderPostName}
+                        approveConvert={approveConvert}
+                        finishConvert={finishConvert}
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
                     />

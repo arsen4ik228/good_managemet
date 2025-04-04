@@ -9,10 +9,12 @@ import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
 const Input = ({
   convertId,
   sendMessage,
-  convertStatusChangeFunction,
+  convertStatusChange,
   senderPostId,
   senderPostName,
   refetchMessages,
+  approveConvert,
+  finishConvert,
   isLoadingGetConvertId,
   organizationId,
 }) => {
@@ -50,7 +52,7 @@ const Input = ({
 
 
     return text?.slice(0, contentInputPolicyId?.startChar) + contentInputPolicyId?.str + text.slice(contentInputPolicyId?.endChar);
-    
+
 
   };
 
@@ -61,12 +63,21 @@ const Input = ({
     deleteDraft("DraftDB", "drafts", idTextArea);
   
     try {
-      // 1. Сначала пробуем изменить статус
-      if (typeof convertStatusChangeFunction === 'function') {
-        await convertStatusChangeFunction(convertId); // Если ошибка - выполнение прервётся здесь
+      // 1. Если есть convertStatusChange, выполняем approveConvert/finishConvert
+      if (convertStatusChange) {
+        try {
+          if (convertStatusChange === 'approve') {
+            await approveConvert(convertId);
+          } else {
+            await finishConvert(convertId);
+          }
+        } catch (error) {
+          console.error("Ошибка в approveConvert/finishConvert:", error);
+          return; // Прерываем выполнение, если была ошибка
+        }
       }
   
-      // 2. Только если изменение статуса успешно - отправляем сообщение
+      // 2. Отправка сообщения (выполняется только если предыдущий блок успешен)
       const Data = {};
       if (files && files.length > 0) {
         Data.attachmentIds = files.map((item) => item.id);
@@ -74,9 +85,9 @@ const Input = ({
   
       await sendMessage({
         convertId,
-        content: convertStatusChangeFunction 
-          ? `Приказ согласован: ${transformText(contentInput)}` 
-          : transformText(contentInput),
+        content: convertStatusChange === 'approve'
+          ? `Приказ согласован: ${transformText(contentInput)}`
+          : `Приказ отменён: ${transformText(contentInput)}`,
         postId: senderPostId,
         ...Data,
       }).unwrap();
@@ -85,12 +96,10 @@ const Input = ({
       reset();
   
     } catch (error) {
-      console.error("Ошибка:", error);
+      console.error("Ошибка в sendMessage:", error);
       if (error.response) {
         console.error("Детали ошибки:", error.response.data);
       }
-      // Можно добавить уведомление пользователю:
-      // showNotification(error.message || "Ошибка при согласовании/отправке");
     }
   };
 

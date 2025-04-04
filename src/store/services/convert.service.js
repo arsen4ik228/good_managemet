@@ -58,11 +58,6 @@ export const convertApi = apiSlice.injectEndpoints({
         }
       },
 
-      // providesTags: result =>
-      //   result
-      //     ? [{ type: "Convert", id: result.id }, "Convert"]
-      //     : ["Convert"],
-
       providesTags: (result) =>
         result
           ? [
@@ -136,7 +131,7 @@ export const convertApi = apiSlice.injectEndpoints({
         const userInfo = extractUserInfo(host)
 
         const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchers) : null
-        const recipientPost = !senderPostId ? selectRecipientPost(convertToPosts, host) : null
+        const recipientPost = selectRecipientPost(convertToPosts, host) 
 
         return {
           currentConvert: response,
