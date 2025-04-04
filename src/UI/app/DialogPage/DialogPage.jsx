@@ -8,6 +8,10 @@ import Input from './Input';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
+import AdaptiveLayoutContainer from './WatcherDialogPage/adaptive.container/AdaptiveLayoutContainer';
+import AddedWatcherContainer from '../../Custom/AddedWatcherContainer/AddedWatcherContainer';
+import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
+
 
 export const DialogPage = () => {
     const { convertId } = useParams();
@@ -30,7 +34,7 @@ export const DialogPage = () => {
         sendMessage,
         refetchGetConvertId,
         isLoadingGetConvertId
-    } = useConvertsHook({convertId});
+    } = useConvertsHook({ convertId });
 
     const {
         seenMessages,
@@ -206,13 +210,20 @@ export const DialogPage = () => {
 
     return (
         <>
-            <div className={classes.wrapper}>
-                <Header
-                    title={userInfo.userName}
-                    avatar={userInfo.avatar}
+            <AdaptiveLayoutContainer
+                userInfo={userInfo}
+            >
+                <ConvertTargetContainer
+                    targetStatus={currentConvert?.target?.targetStatus}
+                    targetText={currentConvert?.target?.content}
+                    date={currentConvert?.target?.createdAt}
+                    isWatcher={false}
                 >
-                    {userInfo.postName}
-                </Header>
+
+                    <AddedWatcherContainer
+
+                    ></AddedWatcherContainer>
+                </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
@@ -273,7 +284,7 @@ export const DialogPage = () => {
                         organizationId={organizationId}
                     />
                 </footer>
-            </div>
+            </AdaptiveLayoutContainer>
         </>
     );
 };
