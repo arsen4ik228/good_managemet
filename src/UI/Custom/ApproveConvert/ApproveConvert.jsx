@@ -5,15 +5,11 @@ import { useConvertsHook } from '@hooks';
 export default function ApproveConvert({ setRequestFunction }) {
     const [activeButton, setActiveButton] = useState(null);
 
-    const { approveConvert, finishConvert } = useConvertsHook()
 
     const handleClick = (status) => {
         setActiveButton(status)
 
-        if (status === 'approve')
-            setRequestFunction(() => approveConvert)
-        else
-            setRequestFunction(() => finishConvert)
+        setRequestFunction(status === 'approve' ? 'approve' : 'cancel')
     }
 
     return (

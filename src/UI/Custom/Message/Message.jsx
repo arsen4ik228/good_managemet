@@ -25,17 +25,37 @@ const transformText = (text) => {
     );
 };
 
+const getVisaStyle = (text) => {
+    if (text.startsWith("Приказ согласован: ")) {
+        return {
+            backgroundColor: "#b7eb8f",
+        };
+    } else if (text.startsWith("Приказ отменён: ")) {
+        return {
+            backgroundColor: "#ffa39e",
+        };
+    } else {
+        return {}; // возвращаем пустой объект, если текст не подходит
+    }
+};
+
 
 export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
+
 
     return (
         <div
             ref={ref}
             className={classes.wrapper}
-            style={{ justifyContent: userMessage ? 'flex-end' : 'flex-start' }}
+            style={{
+                justifyContent: userMessage ? 'flex-end' : 'flex-start',
+            }}
             {...props} // Передаем все пропсы, включая data-message-id
         >
-            <div className={userMessage ? classes.userMessageContainer : classes.messageContainer}>
+            <div
+                className={userMessage ? classes.userMessageContainer : classes.messageContainer}
+                style={{ ...getVisaStyle(children) }}
+            >
                 {
                     attachmentToMessage?.length > 0
                         ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
@@ -46,16 +66,6 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPost
                 </div>
                 <div className={classes.contentMessage}>
                     <div className={classes.textMessage}>
-                        {/* <a href="#/pomoshnik/policy/ id выбранной политики">имя</a>
-                        {children}    */}
-
-                        {/* {policyId && (
-                         <a href={`#/pomoshnik/policy/${policyId}`}>
-                            {linkPart}
-                         </a>
-                         )}
-                         {textPart} */}
-
                         {transformText(children)}
                     </div>
                     <div className={classes.time}>

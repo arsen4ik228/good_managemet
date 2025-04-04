@@ -120,6 +120,30 @@ function MobileObjective(props) {
           <Header title={"Краткосрочная цель"}>Личный Помощник</Header>
         </>
 
+
+
+        <div className={classes.body}>
+          <>
+            {selectedStrategyId.length > 0 && (
+              <>
+                {CONTENT_TYPE[activeIndexofType].array?.map((item, index) => (
+                  <div
+                    key={index}
+                    className={classes.textareaContainer}
+                    onClick={() => setIndex(index)}
+                  >
+                    <CustomtextArea
+                      content={item}
+                      setContent={setContent}
+                      disabled={isArchive}
+                    ></CustomtextArea>
+                  </div>
+                ))}
+              </>
+            )}
+          </>
+        </div>
+
         <div className={classes.inputRow1}>
           <div className={classes.first}>
             <select
@@ -164,28 +188,6 @@ function MobileObjective(props) {
               <option value={2}> Причина</option>
             </select>
           </div>
-        </div>
-
-        <div className={classes.body}>
-          <>
-            {selectedStrategyId.length > 0 && (
-              <>
-                {CONTENT_TYPE[activeIndexofType].array?.map((item, index) => (
-                  <div
-                    key={index}
-                    className={classes.textareaContainer}
-                    onClick={() => setIndex(index)}
-                  >
-                    <CustomtextArea
-                      content={item}
-                      setContent={setContent}
-                      disabled={isArchive}
-                    ></CustomtextArea>
-                  </div>
-                ))}
-              </>
-            )}
-          </>
         </div>
 
         {!isArchive && (
