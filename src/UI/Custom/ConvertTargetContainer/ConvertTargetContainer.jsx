@@ -34,9 +34,11 @@ export default function ConvertTargetContainer({ children, targetStatus, targetT
                         </span>
                     </div>
                 </div>
-                <div className={classes.bottomContainer}>
-                    {children}
-                </div>
+                {children && (
+                    <div className={classes.bottomContainer}>
+                        {children}
+                    </div>
+                )}
             </div>
         </>
     )
