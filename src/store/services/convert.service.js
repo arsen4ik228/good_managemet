@@ -136,6 +136,7 @@ export const convertApi = apiSlice.injectEndpoints({
         return {
           currentConvert: response,
           userInfo,
+          userIsHost: host.id === userId,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
           senderPostForSocket,
@@ -156,6 +157,17 @@ export const convertApi = apiSlice.injectEndpoints({
       query: ({ ...body }) => ({
         url: `converts/new`,
         method: "POST",
+        body: {
+          ...body,
+        },
+      }),
+      invalidatesTags: ["Convert"],
+    }),
+
+    updateConvert: build.mutation({
+      query: (body) => ({
+        url: `converts/${body._id}/update`,
+        method: "PATCH",
         body: {
           ...body,
         },
@@ -189,4 +201,4 @@ export const convertApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useApproveConvertMutation, useFinishConvertMutation } = convertApi;
+export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useApproveConvertMutation, useFinishConvertMutation, useUpdateConvertMutation } = convertApi;

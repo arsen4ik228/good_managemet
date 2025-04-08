@@ -43,5 +43,6 @@
 }
 
 .content{
-    max-height: 55%;
+    max-height: calc(100svh - 150px);
+    overflow: auto;
 }

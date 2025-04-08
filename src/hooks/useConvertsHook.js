@@ -1,4 +1,4 @@
-import { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useSendMessageMutation,useFinishConvertMutation, useApproveConvertMutation } from "@services"
+import { useGetConvertsQuery, usePostConvertMutation, useUpdateConvertMutation, useGetConvertIdQuery, useSendMessageMutation,useFinishConvertMutation, useApproveConvertMutation } from "@services"
 
 
 export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
@@ -13,7 +13,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
 
     const {
         currentConvert = {},
-        messages = [],
+        userIsHost,
         senderPostId,
         userInfo = {},
         senderPostForSocket = {},
@@ -26,7 +26,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
     } = useGetConvertIdQuery({ convertId }, {
         selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
             currentConvert: data?.currentConvert || {},
-            messages: data?.messages || [],
+            userIsHost:data?.userIsHost || false,
             userInfo: data?.userInfo || {},
             senderPostId: data?.senderPostId || null,
             senderPostName: data?.senderPostName || null,
@@ -51,6 +51,16 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
     ] = usePostConvertMutation()
 
     const [
+        updateConvert,
+        {
+            isLoading: isLoadingUpdateConvertMutation,
+            isSuccess: isSuccessUpdateConvertMutation,
+            isError: isErrorUpdateConvertMutation,
+            error: ErrorUpdateConvertMutation,
+        }
+    ] = useUpdateConvertMutation()
+
+    const [
         sendMessage,
     ] = useSendMessageMutation()
 
@@ -71,7 +81,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         refetchGetConverts,
 
         currentConvert,
-        messages,
+        userIsHost,
         userInfo,
         senderPostId,
         senderPostName,
@@ -85,10 +95,8 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         sendMessage,
 
         postConvert,
-        isLoadingPostPoliciesMutation,
-        isSuccessPostPoliciesMutation,
-        isErrorPostPoliciesMutation,
-        ErrorPostPoliciesMutation,
+
+        updateConvert,
 
         approveConvert,
         finishConvert

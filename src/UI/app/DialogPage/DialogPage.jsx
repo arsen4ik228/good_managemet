@@ -27,6 +27,7 @@ export const DialogPage = () => {
     const {
         currentConvert,
         senderPostId,
+        userIsHost,
         userInfo,
         organizationId,
         senderPostName,
@@ -219,10 +220,12 @@ export const DialogPage = () => {
                     date={currentConvert?.target?.createdAt}
                     isWatcher={false}
                 >
-
-                    <AddedWatcherContainer
-
-                    ></AddedWatcherContainer>
+                    {userIsHost && (
+                        <AddedWatcherContainer
+                            convertId={currentConvert?.id}
+                            watchersToConvert={currentConvert?.watchersToConvert}
+                        ></AddedWatcherContainer>
+                    )}
                 </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages.slice().reverse().map((item, index) => (

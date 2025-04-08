@@ -25,20 +25,15 @@ const transformText = (text) => {
     );
 };
 
-const getVisaStyle = (text) => {
-    if (text.startsWith("Приказ согласован: ")) {
-        return {
-            backgroundColor: "#b7eb8f",
-        };
-    } else if (text.startsWith("Приказ отменён: ")) {
-        return {
-            backgroundColor: "#ffa39e",
-        };
-    } else {
-        return {}; // возвращаем пустой объект, если текст не подходит
+const getVisaClassName = (text) => {
+    if (text?.startsWith("Приказ согласован: ")) {
+      return classes.visaApproved;  // Класс для согласованных
     }
-};
-
+    if (text?.startsWith("Приказ отменён: ")) {
+      return classes.visaRejected;  // Класс для отменённых
+    }
+    return null;  // Если текст не подошёл — вернём null
+  };
 
 export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
 
@@ -53,8 +48,10 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPost
             {...props} // Передаем все пропсы, включая data-message-id
         >
             <div
-                className={userMessage ? classes.userMessageContainer : classes.messageContainer}
-                style={{ ...getVisaStyle(children) }}
+                className={
+                    getVisaClassName(children) ||
+                    (userMessage ? classes.userMessageContainer : classes.messageContainer)
+                }
             >
                 {
                     attachmentToMessage?.length > 0
@@ -78,6 +75,6 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPost
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 });
