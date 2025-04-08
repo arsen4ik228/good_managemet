@@ -1,0 +1,19 @@
+.contentContainer {
+
+    padding: 5px;
+}
+
+.postContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 5px 0;
+}
+
+.postName {
+    font-size: 1.1rem;
+
+}
+
+.checkboxContainer {}
