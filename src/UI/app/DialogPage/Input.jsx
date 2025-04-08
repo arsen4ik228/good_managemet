@@ -46,22 +46,30 @@ const Input = ({
     setContentInputPolicyId("");
   };
 
-  const transformText = (text) => {
 
-    if (!contentInputPolicyId) return text;
-
-
-    return text?.slice(0, contentInputPolicyId?.startChar) + contentInputPolicyId?.str + text.slice(contentInputPolicyId?.endChar);
-
-
+  const transformText = (text, convertStatus) => {
+    const statusMessages = {
+      approve: 'Приказ согласован: ',
+      cancel: 'Приказ отменён: '
+    };
+    
+    const convertStatusMessage = convertStatus 
+      ? statusMessages[convertStatus]
+      : '';
+  
+    if (!contentInputPolicyId) return convertStatusMessage + text;
+  
+    const { startChar, str, endChar } = contentInputPolicyId;
+    return convertStatusMessage + text?.slice(0, startChar) + str + text?.slice(endChar);
+    //    return convertStatusMessage + text?.slice(0, contentInputPolicyId?.startChar) + contentInputPolicyId?.str + text.slice(contentInputPolicyId?.endChar);
   };
 
   const send = async () => {
     if (contentInput.trim() === "" && files.length === 0) return;
-  
+
     // Удаляем черновик
     deleteDraft("DraftDB", "drafts", idTextArea);
-  
+
     try {
       // 1. Если есть convertStatusChange, выполняем approveConvert/finishConvert
       if (convertStatusChange) {
@@ -76,25 +84,26 @@ const Input = ({
           return; // Прерываем выполнение, если была ошибка
         }
       }
-  
+
       // 2. Отправка сообщения (выполняется только если предыдущий блок успешен)
       const Data = {};
       if (files && files.length > 0) {
         Data.attachmentIds = files.map((item) => item.id);
       }
-  
+
       await sendMessage({
         convertId,
-        content: convertStatusChange === 'approve'
-          ? `Приказ согласован: ${transformText(contentInput)}`
-          : `Приказ отменён: ${transformText(contentInput)}`,
+        content: transformText(contentInput, convertStatusChange),
+        //  convertStatusChange === 'approve'
+        //   ? `Приказ согласован: ${transformText(contentInput)}`
+        //   : `Приказ отменён: ${transformText(contentInput)}`,
         postId: senderPostId,
         ...Data,
       }).unwrap();
-  
+
       // 3. Сброс состояния
       reset();
-  
+
     } catch (error) {
       console.error("Ошибка в sendMessage:", error);
       if (error.response) {
