@@ -30,7 +30,7 @@ export default function Pomoshnik() {
     navigate(`/pomoshnik/statistic`);
   };
   const project = () => {
-    navigate(`/pomoshnik/startProject`);
+    navigate(`/pomoshnik/projectWithProgramm`);
   };
   const workingPlan =() => {
     navigate(`/pomoshnik/workingPlan`)
