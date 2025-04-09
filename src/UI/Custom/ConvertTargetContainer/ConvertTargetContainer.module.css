@@ -36,8 +36,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    /* border: 1px solid red; */
     padding: 1px;
+    /* Делаем первую букву заглавной */
+    text-transform: lowercase; /* Сначала преобразуем весь текст в нижний регистр */
+}
+
+.targetText::first-letter {
+    text-transform: uppercase; /* Затем первую букву делаем заглавной */
 }
 
 /* .titleTextArchive {
@@ -56,6 +61,6 @@
 }
 
 .bottomContainer {
-    padding: 0 10px 10px 10px ;
+    padding: 0 10px 5px 10px ;
     /* border: 1px solid red; */
 }
