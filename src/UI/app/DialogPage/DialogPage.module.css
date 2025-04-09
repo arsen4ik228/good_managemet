@@ -10,7 +10,7 @@
     flex-direction: column-reverse;
     overflow: auto;
     flex: 1;
-    
+    width: 100%;
     background-color: #F5F5F5;
     /* background-image: url('../../image/chat-background.svg'); */
 }
@@ -27,5 +27,5 @@
 }
 
 .footer{
-
+    width: 100%;
 }

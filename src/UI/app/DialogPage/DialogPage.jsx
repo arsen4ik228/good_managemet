@@ -13,7 +13,7 @@ import AddedWatcherContainer from '../../Custom/AddedWatcherContainer/AddedWatch
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
 
 
-export const DialogPage = () => {
+export default function DialogPage() {
     const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
@@ -101,8 +101,6 @@ export const DialogPage = () => {
             setMessagesArray(prev => [...prev, ...seenMessages]);
         }
     }, [seenMessages]);
-
-
 
     // Создание socket сообщений 
     useEffect(() => {

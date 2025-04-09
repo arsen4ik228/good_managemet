@@ -51,11 +51,12 @@ const DesktopConvertsPage = React.lazy(() =>
 const DesktopDoalogPage = React.lazy(() =>
   import("@app/DialogPage/desktop/DesktopDoalogPage.jsx")
 );
-
+const DialogPage = React.lazy(() =>
+  import("@app/DialogPage/DialogPage.jsx")
+);
 const CardProject = React.lazy(() =>
   import("@app/CardProject/CardProject.jsx")
 );
-
 const SettingsPage = React.lazy(() =>
   import("@app/SettingsPage/desktop/SettingsPage.jsx")
 );
@@ -126,7 +127,7 @@ function DesktopApp() {
                       <Panel />
                       <div className="content">
                         <Chat />
-                        <DesktopDoalogPage />
+                        <DialogPage />
                       </div>
                     </div>
                   }
