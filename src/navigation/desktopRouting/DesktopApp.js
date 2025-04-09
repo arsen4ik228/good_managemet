@@ -22,8 +22,8 @@ const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
 const StartProject = React.lazy(() =>
   import("@app/ProjectPage/Start/Update/StartContent")
 );
-const Project = React.lazy(() =>
-  import("@app/ProjectPage/Project/Update/Project")
+const ProjectWithProgramm = React.lazy(() =>
+  import("@app/Project/Main")
 );
 const ProjectNew = React.lazy(() =>
   import("@app/ProjectPage/Project/Create/ProjectNew")
@@ -194,10 +194,8 @@ function DesktopApp() {
                             path="startProject"
                             element={<StartProject />}
                           />
-                          <Route path="project" element={<Project />} />
-                          <Route path="projectNew" element={<ProjectNew />} />
-                          <Route path="program" element={<Program />} />
-                          <Route path="programNew" element={<ProgramNew />} />
+                          <Route path="projectWithProgramm" element={<ProjectWithProgramm />} />
+
                           <Route path="post/:postId?" element={<Post />} />
                           <Route path="postNew" element={<PostNew />} />
                           <Route path="workingPlan" element={<WorkingPlan />} />
