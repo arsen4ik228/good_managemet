@@ -72,7 +72,6 @@ export const DialogPage = () => {
             setPaginationSeenMessages((prev) => prev + 30);
     }, 200);
 
-
     // Монтирование слушателя скрола
     useLayoutEffect(() => {
         const bodyElement = bodyRef.current;
@@ -101,8 +100,9 @@ export const DialogPage = () => {
             seenMessagesRef.current = seenMessages;
             setMessagesArray(prev => [...prev, ...seenMessages]);
         }
-
     }, [seenMessages]);
+
+
 
     // Создание socket сообщений 
     useEffect(() => {
@@ -113,7 +113,7 @@ export const DialogPage = () => {
             id: newMessage.id,
             content: newMessage.content,
             userMessage: newMessage.sender.id === senderPostId,
-            attachmentToMessage: newMessage.attachmentToMessage,
+            attachmentToMessages: newMessage.attachmentToMessages,
             timeSeen: null,
             createdAt: newMessage.createdAt,
         }]);
@@ -207,7 +207,7 @@ export const DialogPage = () => {
         };
     }, [unSeenMessages, socketMessages]);
 
-    console.warn(senderPostForSocket, senderPostId)
+    // console.warn(socketMessages)
 
     return (
         <>
