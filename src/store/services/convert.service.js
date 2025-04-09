@@ -83,7 +83,7 @@ export const convertApi = apiSlice.injectEndpoints({
         const {
           convert: {
             convertToPosts,
-            watchers: watchersToConvert,
+            watchersToConvert,
             host: hostPost,
             pathOfPosts = []
           } = {},
@@ -140,7 +140,7 @@ export const convertApi = apiSlice.injectEndpoints({
         };
 
         const selectWatcherPost = (watchers) => {
-          const userWatcherPost = watchers.find(item => item.post.user.id === userId).post
+          const userWatcherPost = watchers?.find(item => item.post.user.id === userId).post
 
           const { user, ...rest } = userWatcherPost
 
