@@ -1,5 +1,11 @@
 export const formattedDate = (date) => {
-  return date?.slice(0, 10).split('-').reverse().join('.')
+  if (!date) return ''; 
+  
+  return date.slice(0, 10)
+    .split('-')
+    .reverse()
+    .map((part, index) => index === 2 ? part.slice(-2) : part) 
+    .join('.');
 }
 
 export const resizeTextarea = (id) => {
