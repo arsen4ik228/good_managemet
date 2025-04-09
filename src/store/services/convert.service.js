@@ -80,9 +80,46 @@ export const convertApi = apiSlice.injectEndpoints({
       transformResponse: response => {
         console.log('getConvertId', response);
 
-        const convertToPosts = response?.convertToPosts
-        const watchers = response?.watchersToConvert
-        const host = response?.host
+        const {
+          convert: {
+            convertToPosts,
+            watchers: watchersToConvert,
+            host: hostPost,
+            pathOfPosts = []
+          } = {},
+          allPostsInConvert = []
+        } = response || {};
+
+        const lastAddresseePostId = pathOfPosts[pathOfPosts.length - 1];
+
+        const getLastAdresseUserInfo = () => {
+          const lastAdressePost = allPostsInConvert.find(item => item.id === lastAddresseePostId);
+          if (!lastAdressePost) return null;
+
+          const { id, postName, user } = lastAdressePost;
+          return {
+            id,
+            postName,
+            userName: `${user.firstName} ${user.lastName}`,
+            avatar: user.avatar_url,
+          };
+        };
+
+        const extractUserInfo = () => {
+          if (!hostPost || !convertToPosts) return null;
+
+          if (hostPost.user.id !== userId) {
+            const { id, postName, user } = hostPost;
+            return {
+              id,
+              postName,
+              userName: `${user.firstName} ${user.lastName}`,
+              avatar: user.avatar_url,
+            };
+          }
+
+          return getLastAdresseUserInfo();
+        };
 
         const selectSenderPostId = (convertToPosts, userId) => {
           const senderPost = convertToPosts.find(item => item.post.user.id === userId);
@@ -102,19 +139,6 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         };
 
-        const extractUserInfo = (hostPost) => {
-
-          if (!hostPost) return
-
-          return {
-            id: hostPost.id,
-            postName: hostPost.postName,
-            userName: hostPost.user.firstName + ' ' + hostPost.user.lastName,
-            avatar: hostPost.user.avatar_url,
-          }
-
-        }
-
         const selectWatcherPost = (watchers) => {
           const userWatcherPost = watchers.find(item => item.post.user.id === userId).post
 
@@ -128,15 +152,15 @@ export const convertApi = apiSlice.injectEndpoints({
         }
 
         const { id: senderPostId, postName: senderPostName, senderPostForSocket } = selectSenderPostId(convertToPosts, userId);
-        const userInfo = extractUserInfo(host)
+        const userInfo = extractUserInfo(hostPost, convertToPosts)
 
-        const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchers) : null
-        const recipientPost = selectRecipientPost(convertToPosts, host) 
+        const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchersToConvert) : null
+        const recipientPost = selectRecipientPost(convertToPosts, hostPost)
 
         return {
-          currentConvert: response,
+          currentConvert: response?.convert,
           userInfo,
-          userIsHost: host.id === userId,
+          userIsHost: hostPost.user.id === userId,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
           senderPostForSocket,
