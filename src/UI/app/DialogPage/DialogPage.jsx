@@ -207,7 +207,7 @@ export const DialogPage = () => {
         };
     }, [unSeenMessages, socketMessages]);
 
-    // console.warn(senderPostId)
+    console.warn(senderPostForSocket, senderPostId)
 
     return (
         <>
@@ -233,7 +233,6 @@ export const DialogPage = () => {
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
-
                                 attachmentToMessage={item?.attachmentToMessages}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
