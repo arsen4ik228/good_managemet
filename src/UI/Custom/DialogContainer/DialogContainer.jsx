@@ -4,22 +4,21 @@ import avatar from '@Custom/icon/icon _ GM.svg'
 import { baseUrl } from '@helpers/constants'
 import { isMobile } from 'react-device-detect'
 
-export const DialogContainer = ({ elem }) => {
-    console.log(elem)
+export const DialogContainer = ({ postName, userName, avatarUrl, unseenMessagesCount }) => {
     return (
         <>
-            <div className={classes.dialogContainer} style={{'backgroundColor': !isMobile ? 'white' : 'none'}}>
+            <div className={classes.dialogContainer} style={{ 'backgroundColor': !isMobile ? 'white' : 'none' }}>
                 <div className={classes.content}>
                     <div className={classes.avatar}>
-                        <img src={elem?.userAvatar ? `${baseUrl}${elem?.userAvatar}` : avatar} alt="avatar" />
+                        <img src={avatarUrl ? `${baseUrl}${avatarUrl}` : avatar} alt="avatar" />
                     </div>
                     <div className={classes.name}>
-                        <div className={classes.postName}>{elem?.postName.toUpperCase()}</div>
-                        <div className={classes.userName}>{elem?.userFirstName + ' ' + elem?.userLastName}</div>
+                        <div className={classes.postName}>{postName.toUpperCase()}</div>
+                        <div className={classes.userName}>{userName}</div>
                     </div>
                     <div className={classes.bage}>
                         <div>
-                            <span>{elem?.unseenMessagesCount > 99 ? '99' : elem?.unseenMessagesCount}</span>
+                            <span>{unseenMessagesCount}</span>
                         </div>
                     </div>
                 </div>
