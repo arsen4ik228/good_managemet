@@ -19,7 +19,7 @@ export default function WatcherDialogPage() {
     const unSeenMessagesRef = useRef(null);
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const [lastSeenMessageNumber, setLastSeenMessageNumber] = useState(0)
-    const historySeenIds = []
+    const globalHistorySeenIds = []
 
     const {
         currentConvert,
@@ -70,6 +70,24 @@ export default function WatcherDialogPage() {
         };
     };
     const testFunction = createTestFunction();
+
+    const cutOfHistoryIds = (socket, visible, history, initial) => {
+        // Очищаем socket перед заполнением
+        socket.length = 0;
+
+        // Если история пуста, все visible ID - новые
+        if (history.length === 0 || initial) {
+            socket.push(...visible);
+            return;
+        }
+
+        // Фильтруем visible, оставляя только те ID, которых нет в history
+        for (const id of visible) {
+            if (!history.includes(id)) {
+                socket.push(id);
+            }
+        }
+    };
 
     // Слушатель скрола, пагинация запрашиваемых сообщений 
     const handleScroll = debounce(() => {
@@ -184,25 +202,31 @@ export default function WatcherDialogPage() {
         }
     }, [watcherUnseenMessages, isLoadingWatcherUnSeenMessages]);
 
+
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
                 // Создаем временный массив для хранения id видимых элементов
                 const visibleIds = [];
-
+                const historySeenIds = []
+                const messageForSocket = []
+                let isInitial = true
                 entries.forEach((entry) => {
                     const messageId = entry.target.dataset.messageId;
                     const messageNumber = entry.target.dataset.messageNumber
                     if (entry.isIntersecting && !historySeenIds.includes(messageId)) {
                         // Добавляем id в массив, если элемент видим и его еще нет в historySeenIds
                         visibleIds.push(messageId);
+                        cutOfHistoryIds(messageForSocket, visibleIds, historySeenIds, isInitial)
                         historySeenIds.push(messageId);
                         testFunction(messageNumber, setLastSeenMessageNumber)
                     }
                 });
-
+                console.log('observer', historySeenIds)
                 // Обновляем состояние массива visibleUnSeenMessageIds
-                setVisibleUnSeenMessageIds(visibleIds);
+                // setVisibleUnSeenMessageIds(cutOfHistoryIds(visibleIds, historySeenIds));
+                setVisibleUnSeenMessageIds(messageForSocket)
+                isInitial = false
             },
             {
                 root: bodyRef.current, // Область видимости — это контейнер сообщений
@@ -222,6 +246,8 @@ export default function WatcherDialogPage() {
     }, [watcherUnseenMessages, socketMessages]);
 
     console.log(socketResponse?.messageCreationEvent)
+    console.warn(globalHistorySeenIds)
+
 
     return (
         <>
@@ -242,13 +268,13 @@ export default function WatcherDialogPage() {
                     {socketMessages?.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
                             <Message
-                                userMessage={item?.sender?.id === currentConvert?.host?.id}
+                                userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
-                                data-message-number={item.messageNumber}
+                                data-message-id={item.id}
+                                data-message-number={item?.messageNumber}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 senderPostName={item?.senderPostName}
-                                {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
                             </Message>
@@ -262,7 +288,7 @@ export default function WatcherDialogPage() {
                                         userMessage={item?.sender?.id === currentConvert?.host?.id}
                                         createdMessage={item?.createdAt}
                                         ref={index === watcherUnseenMessages.length - 1 ? unSeenMessagesRef : null}
-                                        data-message-id={item.id} // Добавляем data-атрибут
+                                        data-message-id={item?.id} // Добавляем data-атрибут
                                         data-message-number={item.messageNumber}
                                         attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}

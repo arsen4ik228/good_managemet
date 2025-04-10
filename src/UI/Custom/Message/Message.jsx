@@ -27,13 +27,13 @@ const transformText = (text) => {
 
 const getVisaClassName = (text) => {
     if (text?.startsWith("Приказ согласован: ")) {
-      return classes.visaApproved;  // Класс для согласованных
+        return classes.visaApproved;  // Класс для согласованных
     }
     if (text?.startsWith("Приказ отменён: ")) {
-      return classes.visaRejected;  // Класс для отменённых
+        return classes.visaRejected;  // Класс для отменённых
     }
     return null;  // Если текст не подошёл — вернём null
-  };
+};
 
 export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
 

@@ -13,7 +13,7 @@ import AddedWatcherContainer from '../../Custom/AddedWatcherContainer/AddedWatch
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
 
 
-export const DialogPage = () => {
+export default function DialogPage() {
     const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
@@ -72,7 +72,6 @@ export const DialogPage = () => {
             setPaginationSeenMessages((prev) => prev + 30);
     }, 200);
 
-
     // Монтирование слушателя скрола
     useLayoutEffect(() => {
         const bodyElement = bodyRef.current;
@@ -101,7 +100,6 @@ export const DialogPage = () => {
             seenMessagesRef.current = seenMessages;
             setMessagesArray(prev => [...prev, ...seenMessages]);
         }
-
     }, [seenMessages]);
 
     // Создание socket сообщений 
@@ -113,7 +111,7 @@ export const DialogPage = () => {
             id: newMessage.id,
             content: newMessage.content,
             userMessage: newMessage.sender.id === senderPostId,
-            attachmentToMessage: newMessage.attachmentToMessage,
+            attachmentToMessages: newMessage.attachmentToMessages,
             timeSeen: null,
             createdAt: newMessage.createdAt,
         }]);
@@ -207,7 +205,7 @@ export const DialogPage = () => {
         };
     }, [unSeenMessages, socketMessages]);
 
-    console.warn(senderPostForSocket, senderPostId)
+    // console.warn(socketMessages)
 
     return (
         <>
@@ -257,7 +255,7 @@ export const DialogPage = () => {
                                     </Message>
                                 </React.Fragment>
                             ))}
-                            <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+                            <div className={classes.unSeenMessagesInfo}> Новые сообщения </div>
                         </>
                     )}
                     {messagesArray?.map((item, index) => (

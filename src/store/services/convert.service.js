@@ -9,7 +9,8 @@ export const convertApi = apiSlice.injectEndpoints({
       query: ({ contactId }) => ({
         url: `converts/${contactId}/converts`
       }),
-
+      keepUnusedDataFor: 0, // данные удаляются сразу после unmount
+      //cacheTime: 0,
       transformResponse: response => {
         console.log('getConverts', response);
 
@@ -83,7 +84,7 @@ export const convertApi = apiSlice.injectEndpoints({
         const {
           convert: {
             convertToPosts,
-            watchers: watchersToConvert,
+            watchersToConvert,
             host: hostPost,
             pathOfPosts = []
           } = {},
@@ -140,7 +141,7 @@ export const convertApi = apiSlice.injectEndpoints({
         };
 
         const selectWatcherPost = (watchers) => {
-          const userWatcherPost = watchers.find(item => item.post.user.id === userId).post
+          const userWatcherPost = watchers?.find(item => item.post.user.id === userId).post
 
           const { user, ...rest } = userWatcherPost
 

@@ -9,6 +9,8 @@ export const messageApi = apiSlice.injectEndpoints({
                 url: `messages/${convertId}/seen/?pagination=${pagination}`
 
             }),
+            keepUnusedDataFor: 0,
+            cacheTime: 0,
             transformResponse: response => {
                 console.log('getSeenMessages', response)
                 let unSeenMessageExist = false
@@ -66,6 +68,8 @@ export const messageApi = apiSlice.injectEndpoints({
                 url: `messages/${convertId}/watcher/seen/?pagination=${pagination}`
 
             }),
+            keepUnusedDataFor: 0, // данные удаляются сразу после unmount
+            cacheTime: 0,
             transformResponse: response => {
                 console.log('getWatcherSeenMessages:  ', response)
                 let unseenWatcherMessageExist = false
