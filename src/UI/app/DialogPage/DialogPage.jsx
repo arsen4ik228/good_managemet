@@ -255,7 +255,7 @@ export default function DialogPage() {
                                     </Message>
                                 </React.Fragment>
                             ))}
-                            <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+                            <div className={classes.unSeenMessagesInfo}> Новые сообщения </div>
                         </>
                     )}
                     {messagesArray?.map((item, index) => (
