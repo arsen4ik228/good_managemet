@@ -9,7 +9,8 @@ export const convertApi = apiSlice.injectEndpoints({
       query: ({ contactId }) => ({
         url: `converts/${contactId}/converts`
       }),
-
+      keepUnusedDataFor: 0, // данные удаляются сразу после unmount
+      //cacheTime: 0,
       transformResponse: response => {
         console.log('getConverts', response);
 
