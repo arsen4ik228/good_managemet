@@ -1,3 +1,5 @@
+import {userId} from './constants'
+
 export const formattedDate = (date) => {
   if (!date) return ''; 
   
@@ -111,4 +113,18 @@ export function extractHoursMinutes(timestamp) {
   const [hours, minutes] = timePart.split(':');
 
   return hours + ":" + minutes;
+}
+
+export const getPostIdRecipientSocketMessage = (host, recepient) => {
+  if(!notEmpty(host) || !notEmpty(recepient)) return
+
+  const hostUserID = host.user.id
+  const recepientUserId = recepient.user.id
+
+  const userParticipantOfAgreement = userId !== hostUserID && userId !== recepientUserId
+  if(userParticipantOfAgreement || userId === recepientUserId)
+    return host.id
+
+  if(userId === hostUserID)
+    return recepient.id
 }

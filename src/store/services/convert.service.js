@@ -35,34 +35,43 @@ export const convertApi = apiSlice.injectEndpoints({
           })
         }
 
+
         const transformConvertsForContact = (convertsForContact) => {
+          const userHasAgreement = convertsForContact?.some(item => item.convertPath === 'Согласование' || item.convertPath === 'Запрос')
+          if (!userHasAgreement) 
+            return convertsForContact
+          
+          
+                      // const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
 
-          const userHaveAgreement = convertsForContact?.some(item => item.convertPath === 'Согласование')
+            // if (userPostIsLastAddressee) return item
 
-          if (!userHaveAgreement) return convertsForContact
+            // if(item.convertPath === 'Согласование') {
+            //   return {
+            //     ...item,
+            //     convertType: 'Согласование'
+            //   }
+            // }
 
-          return convertsForContact?.map(item => {
-            const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
+          return convertsForContact?.map(item => ({
+            ...item,
+            ...(item.convertPath === 'Согласование' && { convertType: 'Согласование' }),
+            ...(item.convertPath === 'Запрос' && { convertType: 'Запрос' })
+          }));
+        };
 
-            if (userPostIsLastAddressee) return item
-
-            return {
-              ...item,
-              convertType: 'Согласование'
-            }
-          })
-        }
 
         return {
           contactInfo: transformContactInfo(response?.contact),
-          allConverts: transformConvertsForContact(response?.convertsForContact).concat(transformCopiesConvert(response?.copiesForContact))
+          seenConverts: transformConvertsForContact(response?.convertsForContact).concat(transformCopiesConvert(response?.copiesForContact)),
+          // unseenConverts
         }
       },
 
       providesTags: (result) =>
         result
           ? [
-            ...result?.allConverts?.map(({ id }) =>
+            ...result?.seenConverts?.map(({ id }) =>
             ({
               type: 'Convert',
               id,

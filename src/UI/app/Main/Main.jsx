@@ -9,13 +9,13 @@ import { setSelectedOrganizationId, setSelectedOrganizationReportDay } from "@sl
 import { DialogContainer } from "@Custom/DialogContainer/DialogContainer";
 import { useSocket } from "@helpers/SocketContext.js"; // Импортируем useSocket
 import { selectedOrganizationId } from '@helpers/constants'
-import { notEmpty } from '@helpers/helpers'
+import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 
 const MobileMain = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedOrg, setSelectedOrg] = useState();
-  const socketMessagesCount = new Map()
+  const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
 
   const { organizations } = useOrganizationHook();
 
@@ -30,12 +30,6 @@ const MobileMain = () => {
   const socketResponse = useSocket(eventNames, handleEventData);
   // console.log(socketResponse)
 
-  const getSocketMessagesCount = (id) => {
-    if (socketMessagesCount.has(id)) return socketMessagesCount.get(id)
-
-    socketMessagesCount.set(id, 0)
-    return 0
-  }
 
   const selectOrganization = (id, reportDay) => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -102,13 +96,25 @@ const MobileMain = () => {
     refetchAllChats()
   }, [socketResponse?.convertCreationEvent])
 
-  // useEffect(() => {
-  //   if (!notEmpty(socketResponse?.messageCountEvent)) return
+  useEffect(() => {
+    if (!notEmpty(socketResponse?.messageCountEvent)) return
 
-  //   socketMessagesCount.has(socketResponse?.messageCountEvent)
-  // }, [socketResponse?.messageCountEvent])
+    const response = socketResponse.messageCountEvent
+    const recepientId = getPostIdRecipientSocketMessage(response.host, response.lastPostInConvert);
+    const newMap = new Map(socketMessagesCount);
+  
+    if (newMap.has(recepientId.toString())) {
+      newMap.set(recepientId.toString(), newMap.get(recepientId.toString()) + 1);
+    } else {
+      newMap.set(recepientId.toString(), 1);
+    }
+  
+    setSocketMessagesCount(newMap);
+  }, [socketResponse?.messageCountEvent])
 
+ 
   console.log(allChats)
+
   return (
     <div className={classes.wrapper}>
       <>
@@ -149,6 +155,7 @@ const MobileMain = () => {
 
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
 
+
           {allChats?.map((item, index) => (
             <div onClick={() => handleItemClick(item)}>
               <React.Fragment key={index} >
@@ -156,10 +163,10 @@ const MobileMain = () => {
                   postName={item?.postName}
                   userName={item?.userFirstName + ' ' + item?.userLastName}
                   avatarUrl={item?.userAvatar}
-                  unseenMessagesCount={
-                    +item?.unseenMessagesCount +
-                    +item?.watcherUnseenCount +
-                    +getSocketMessagesCount(item?.id)
+                  unseenMessagesCount = {
+                    (+item?.unseenMessagesCount) +
+                    (+item?.watcherUnseenCount) +
+                    (+socketMessagesCount.get(item?.id) || 0)
                   }
                 ></DialogContainer>
               </React.Fragment>
