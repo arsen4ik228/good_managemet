@@ -1,3 +1,4 @@
+import { response } from "express";
 import apiSlice from "./api";
 
 
@@ -66,7 +67,6 @@ export const postApi = apiSlice.injectEndpoints({
       query: ({postId}) => ({
         url: `posts/${postId}/post`,
       }),
-      providesTags: (result, error, arg) => [{ type: 'Post', id: arg.postId }],
       transformResponse: (response) => {
         console.log('getPostId    ',response); // Отладка ответа
         const sortWorkers = response?.workers?.sort((a, b) => {
@@ -95,13 +95,18 @@ export const postApi = apiSlice.injectEndpoints({
           selectedPolicyNameInPost: response?.currentPost?.policy?.policyName || null,
         };
       },
+      providesTags: (result, error, arg) => [{ type: 'Post', id: arg.postId }],
     }),
 
     getAllChats: build.query({
       query: () => ({
         url: 'posts/contacts'
       }),
-
+      transformResponse: (reponse) => {
+        console.warn(response)
+        console.warn((a,b) => a.latestMessageCreatedAt - b.latestMessageCreatedAt)
+        return reponse.sort((a,b) => a.latestMessageCreatedAt - b.latestMessageCreatedAt)
+      },
     }),
 
     getUnderPosts: build.query({

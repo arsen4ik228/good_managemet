@@ -16,6 +16,7 @@ const MobileMain = () => {
   const navigate = useNavigate();
   const [selectedOrg, setSelectedOrg] = useState();
   const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
+  const [copyChats, setCopyChats] = useState()
 
   const { organizations } = useOrganizationHook();
 
@@ -102,18 +103,26 @@ const MobileMain = () => {
     const response = socketResponse.messageCountEvent
     const recepientId = getPostIdRecipientSocketMessage(response.host, response.lastPostInConvert);
     const newMap = new Map(socketMessagesCount);
-  
+
     if (newMap.has(recepientId.toString())) {
       newMap.set(recepientId.toString(), newMap.get(recepientId.toString()) + 1);
-    } else {
+    }
+    else {
       newMap.set(recepientId.toString(), 1);
     }
-  
+
+
+    setCopyChats(getChatsWithTimeOfSocketMessage(copyChats, recepientId))
     setSocketMessagesCount(newMap);
   }, [socketResponse?.messageCountEvent])
 
- 
-  console.log(allChats)
+  useEffect(() => {
+    if (!notEmpty(allChats)) return
+
+    setCopyChats([...allChats])
+  }, [allChats])
+
+  console.log(copyChats)
 
   return (
     <div className={classes.wrapper}>
@@ -155,15 +164,14 @@ const MobileMain = () => {
 
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
 
-
-          {allChats?.map((item, index) => (
+          {copyChats?.sort((a,b) => a.latestMessageCreatedAt - b.latestMessageCreatedAt).map((item, index) => (
             <div onClick={() => handleItemClick(item)}>
               <React.Fragment key={index} >
                 <DialogContainer
                   postName={item?.postName}
                   userName={item?.userFirstName + ' ' + item?.userLastName}
                   avatarUrl={item?.userAvatar}
-                  unseenMessagesCount = {
+                  unseenMessagesCount={
                     (+item?.unseenMessagesCount) +
                     (+item?.watcherUnseenCount) +
                     (+socketMessagesCount.get(item?.id) || 0)
@@ -182,5 +190,14 @@ const MobileMain = () => {
     </div >
   );
 };
+
+
+const getChatsWithTimeOfSocketMessage = (chatsArray, id) => {
+  const copyChats = [...chatsArray]
+  const currentChat = copyChats.find(item => item.id === id)
+  currentChat.latestMessageCreatedAt = new Date()
+
+  return copyChats
+}
 
 export default MobileMain;
