@@ -1,6 +1,6 @@
 import React from "react";
 import classes from "./Main.module.css";
-import { Tabs } from "antd";
+import { Flex, Tabs } from "antd";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 
@@ -9,19 +9,31 @@ const Project = React.lazy(() => import("@app/Project/Project/Project"));
 const Program = React.lazy(() => import("@app/Project/Program/Program"));
 
 export default function Main() {
-  const [activeTab, setActiveTab] = React.useState("1");
+  const [activeTab, setActiveTab] = React.useState("программы");
   const [activeTabTypes, setActiveTabTypes] = React.useState("projects");
+  const [activeTabTypesProgram, setActiveTabTypesProgram] =
+    React.useState("programs");
 
   const items = [
     {
-      key: "1",
+      key: "программы",
       label: "Программы",
-      children: <Program />,
+      children: (
+        <Program
+          activeTabTypesProgram={activeTabTypesProgram}
+          disabledTable={activeTabTypesProgram === "archivesPrograms"}
+        />
+      ),
     },
     {
-      key: "2",
+      key: "проекты",
       label: "Проекты",
-      children: <Project activeTabTypes={activeTabTypes}/>,
+      children: (
+        <Project
+          activeTabTypes={activeTabTypes}
+          disabledTable={activeTabTypes === "archivesProjects"}
+        />
+      ),
     },
   ];
 
@@ -40,12 +52,12 @@ export default function Main() {
       label: "проекты",
     },
     {
-      key: "projectsWithProgram",
-      label: "проекты с программами",
+      key: "archivesProjects",
+      label: "завершенные проекты",
     },
     {
-      key: "archivesProjects",
-      label: "архивные проекты",
+      key: "projectsWithProgram",
+      label: "проекты с программами",
     },
     {
       key: "archivesProjectsWithProgram",
@@ -53,9 +65,25 @@ export default function Main() {
     },
   ];
 
+  const typesProgram = [
+    {
+      key: "programs",
+      label: "программы",
+    },
+    {
+      key: "archivesPrograms",
+      label: "завершенные программы",
+    },
+  ];
+
   const handleTabChangeTypes = (key) => {
     setActiveTabTypes(key);
   };
+
+  const handleTabChangeTypesProgram = (key) => {
+    setActiveTabTypesProgram(key);
+  };
+
   return (
     <div className={classes.dialog}>
       <Headers name={"программы и проекты"}>
@@ -68,17 +96,27 @@ export default function Main() {
             defaultActiveKey="1"
             items={items.map((item) => ({ ...item, children: null }))}
             onChange={handleTabChange}
-            tabBarGutter={0}
+            tabBarGutter={10}
             tabPosition={"left"}
           />
 
-          <Tabs
-            defaultActiveKey="projects"
-            items={types.map((item) => ({ ...item}))}
-            onChange={handleTabChangeTypes}
-            tabBarGutter={50}
-            
-          />
+          <Flex vertical>
+            <Tabs
+              disabled
+              defaultActiveKey="program"
+              items={typesProgram.map((item) => ({ ...item,  disabled: activeTab === "проекты"}))}
+              onChange={handleTabChangeTypesProgram}
+              tabBarGutter={50}
+              tabBarStyle={{ margin: 0, padding: 0 }}
+            />
+            <Tabs
+              defaultActiveKey="projects"
+              items={types.map((item) => ({ ...item, disabled: activeTab === "программы" }))}
+              onChange={handleTabChangeTypes}
+              tabBarGutter={50}
+              tabBarStyle={{ margin: 0, padding: 0 }}
+            />
+          </Flex>
         </div>
         <BottomHeaders />
       </Headers>
