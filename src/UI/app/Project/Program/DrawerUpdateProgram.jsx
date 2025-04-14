@@ -16,7 +16,7 @@ import { useGetDataForCreateProject } from "@hooks/Project/useGetDataForCreatePr
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 
 
-export default function DrawerUpdateProject({currentProject, isLoadingGetProjectId, open, setOpen, disabled }) {
+export default function DrawerUpdateProgram({currentProgram, isLoadingGetProjectId, open, setOpen, disabled }) {
 
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
@@ -47,8 +47,8 @@ export default function DrawerUpdateProject({currentProject, isLoadingGetProject
       setIsSaving(true);
       const response = await form.validateFields();
       await updateProject({
-        projectId: currentProject.id,
-        _id: currentProject.id,
+        projectId: currentProgram.id,
+        _id: currentProgram.id,
         ...response,
       }).unwrap();
       message.success("Данные успешно обновлены!");
@@ -67,21 +67,21 @@ export default function DrawerUpdateProject({currentProject, isLoadingGetProject
 
   const handleReset = () => {
     form.setFieldsValue({
-      projectName: currentProject.projectName ?? null,
-      strategyId: currentProject.strategy?.id ?? null,
+      projectName: currentProgram.projectName ?? null,
+      strategyId: currentProgram.strategy?.id ?? null,
     });
   };
 
   useEffect(() => {
-    if (!currentProject.id) return;
+    if (!currentProgram.id) return;
 
     const initialValues = {
-      projectName: currentProject.projectName ?? null,
-      strategyId: currentProject.strategy?.id ?? null,
+      projectName: currentProgram.projectName ?? null,
+      strategyId: currentProgram.strategy?.id ?? null,
     };
 
     form.setFieldsValue(initialValues);
-  }, [currentProject.id]);
+  }, [currentProgram.id]);
 
   return (
     <>

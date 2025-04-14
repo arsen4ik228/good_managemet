@@ -2,19 +2,29 @@ import React, { useState, useEffect } from "react";
 import { useAllProject } from "@hooks/Project/useAllProject";
 import { useGetSingleProject } from "@hooks/Project/useGetSingleProject";
 import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { Tabs, Button } from "antd";
+import { Tabs, Button, Form, message } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useGetDataForCreateProject } from "@hooks/Project/useGetDataForCreateProject";
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 import CustomTable from "./CustomTable";
 import DrawerUpdateProject from "./DrawerUpdateProject";
 
-export default function Project({ activeTabTypes }) {
+import _ from "lodash";
+
+export default function Project({ activeTabTypes, disabledTable }) {
   const [selectedProjectId, setSelectedProjectId] = useState();
-  const [activeTab, setActiveTab] = useState(null);
-  const [items, setItems] = useState([]);
+
+  const [form] = Form.useForm();
+  const [isSaving, setIsSaving] = useState(false);
   const [tables, setTables] = useState([]);
+  const [targetStateOnProduct, setTargetStateOnProduct] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+
+  const [items, setItems] = useState([]);
+  const [activeTab, setActiveTab] = useState(null);
+
   const [openDrawer, setOpenDrawer] = useState(false);
+
   // Получение данных проектов
   const {
     projects,
@@ -51,14 +61,14 @@ export default function Project({ activeTabTypes }) {
   } = useCreateProject();
 
   // Обновление проекта
-    const {
-      updateProject,
-      isLoadingUpdateProjectMutation,
-      isSuccessUpdateProjectMutation,
-      isErrorUpdateProjectMutation,
-      ErrorUpdateProjectMutation,
-      localIsResponseUpdateProjectMutation,
-    } = useUpdateSingleProject();
+  const {
+    updateProject,
+    isLoadingUpdateProjectMutation,
+    isSuccessUpdateProjectMutation,
+    isErrorUpdateProjectMutation,
+    ErrorUpdateProjectMutation,
+    localIsResponseUpdateProjectMutation,
+  } = useUpdateSingleProject();
 
   // Обработчик изменения вкладки
   const onChangeTab = (key) => {
@@ -71,8 +81,16 @@ export default function Project({ activeTabTypes }) {
     try {
       const createdProject = await createProject({
         organizationId: reduxSelectedOrganizationId,
-        projectName: "Новый проект",
+        projectName: `Новый проект ${items.length}`,
         type: "Проект",
+        content: " ",
+        targetCreateDtos: [
+          {
+            type: "Продукт",
+            orderNumber: 1,
+            content: " ",
+          },
+        ],
       }).unwrap();
 
       setItems((prevItems) => [
@@ -94,21 +112,156 @@ export default function Project({ activeTabTypes }) {
     setSelectedProjectId(null);
   };
 
-  // Обновление проекта 
+  // Обновление проекта
   const updateSingleProject = async () => {
     try {
-      const targetCreateDtos = tables.flatMap((table) => table.elements.filter((element) => element.isCreated === true).map(({isCreated, id,targetState, ...rest}) => rest));
+      setIsSaving(true);
 
-      console.log("targetCreateDtos", targetCreateDtos);
+      const prevStateExpandedRowKeys = [...expandedRowKeys];
+
+      const allKeys = tables.map((table) => `group-${table.tableName}`);
+      setExpandedRowKeys(allKeys);
+
+      // Немного подождать, чтобы DOM успел отрисовать элементы
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await form.validateFields();
+
+      const isProductDraftInBD = targets.some(
+        (target) =>
+          target.type === "Продукт" && target.targetState === "Черновик"
+      );
+
+      const isProductActiveInChangeTables = tables
+        .find((table) => table.tableName === "Продукт")
+        ?.elements?.some((el) => el.targetState === "Активная");
+
+      const changeTypeStateOnAllTarget =
+        isProductDraftInBD && isProductActiveInChangeTables;
+
+      const targetCreateDtos = tables.flatMap((table) =>
+        table.elements
+          .filter((element) => element.isCreated)
+          .map(({ isCreated, id, ...rest }) => {
+            const baseItem = _.omitBy(rest, _.isNull);
+
+            return changeTypeStateOnAllTarget
+              ? { ...baseItem, targetState: "Активная" }
+              : baseItem;
+          })
+      );
+
+      const targetUpdateDtos = tables.flatMap((table) =>
+        table.elements
+          .filter((element) => element.isUpdated === true)
+          .map(
+            ({
+              isUpdated,
+              id,
+              createdAt,
+              updatedAt,
+              targetHolders,
+              isExpired,
+              ...rest
+            }) => {
+              const baseItem = {
+                _id: id,
+                ..._.omitBy(rest, _.isNull),
+              };
+
+              return changeTypeStateOnAllTarget
+                ? { ...baseItem, targetState: "Активная" }
+                : baseItem;
+            }
+          )
+      );
+
       await updateProject({
         projectId: currentProject.id,
         _id: currentProject.id,
-        // targetUpdateDtos: [],
+        targetUpdateDtos,
         targetCreateDtos,
       }).unwrap();
 
+      setExpandedRowKeys(prevStateExpandedRowKeys);
+      message.success("Данные успешно обновлены!");
     } catch (error) {
-      console.error("Ошибка при создании проекта:", error);
+      if (error?.errorFields) {
+        // Собираем id записей с ошибками
+        const errorRecordIds = error.errorFields
+          .map((field) => field.name?.[0])
+          .map((name) => {
+            const parts = name.split("-");
+            return parts.slice(1).join("-");
+          })
+          .filter(Boolean);
+
+        // Находим таблицы (группы), где есть эти записи
+        const tablesWithErrors = tables.filter((table) =>
+          table.elements.some((el) => errorRecordIds.includes(el.id))
+        );
+
+        // Создаем ключи только для таблиц с ошибками
+        const keysToExpand = tablesWithErrors.map(
+          (table) => `group-${table.tableName}`
+        );
+
+        // 4. Убедимся, что state обновляется правильно
+        setExpandedRowKeys((prevKeys) => {
+          // Если ключи уже установлены, не обновляем
+          if (JSON.stringify(prevKeys) === JSON.stringify(keysToExpand)) {
+            return prevKeys;
+          }
+          return keysToExpand;
+        });
+
+        // 5. Добавим дополнительный setTimeout для гарантии обновления DOM
+        setTimeout(() => {
+          if (errorRecordIds.length > 0) {
+            const errorFieldName = error.errorFields[0].name[0];
+            const errorCell = document.querySelector(
+              `[data-row-key="${errorRecordIds[0]}"] [data-field="${errorFieldName}"]`
+            );
+
+            if (errorCell) {
+              // 1. Находим основной контейнер скролла таблицы
+              const tableContainer = document.querySelector(
+                ".ant-table-container"
+              );
+
+              // 2. Получаем позиции элемента и контейнера
+              const cellRect = errorCell.getBoundingClientRect();
+              const containerRect = tableContainer.getBoundingClientRect();
+
+              // 3. Вычисляем необходимую прокрутку с учетом текущего положения
+              const scrollLeft =
+                cellRect.left -
+                containerRect.left +
+                tableContainer.scrollLeft +
+                containerRect.width / 2;
+
+              console.log("scrollLeft", scrollLeft);
+              // 4. Применяем прокрутку
+              tableContainer.scrollTo({
+                left: scrollLeft,
+                behavior: "smooth",
+              });
+
+              // 5. Вертикальная прокрутка (если нужно)
+              errorCell.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }
+          }
+        }, 300);
+
+        message.error("Пожалуйста, заполните все обязательные поля.");
+      } else {
+        message.error("Ошибка при обновлении.");
+        console.error("Ошибка:", error);
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -146,7 +299,21 @@ export default function Project({ activeTabTypes }) {
           tabsItems = [
             ...archivesProjects.map((item) => ({
               key: item.id,
-              label: item.projectName,
+              label: (
+                <>
+                  <Button
+                    size="small"
+                    icon={
+                      <EllipsisOutlined
+                        style={{ transform: "rotate(90deg)" }}
+                      />
+                    }
+                    onClick={() => setOpenDrawer(true)}
+                    style={{ marginRight: "10px" }}
+                  ></Button>
+                  {item.projectName}
+                </>
+              ),
               closable: false,
             })),
           ];
@@ -186,32 +353,13 @@ export default function Project({ activeTabTypes }) {
     archivesProjectsWithProgram,
   ]);
 
-  // Инициализация таблиц при изменении выбранного проекта
-  useEffect(() => {
-    if (selectedProjectId && targets) {
-      const createTableData = (type) => ({
-        tableName: type,
-        elements: targets
-          .filter((item) => item.type === type)
-          .map((item) => ({ ...item })) // Создаем копии объектов
-          .sort((a, b) => a.orderNumber - b.orderNumber),
-      });
-
-      setTables([
-        createTableData("Продукт"),
-        createTableData("Обычная"),
-        createTableData("Организационные мероприятия"),
-        createTableData("Правила"),
-        createTableData("Статистика"),
-      ]);
-    }
-  }, [selectedProjectId, targets]);
-
   return (
     <div style={{ width: "100%" }}>
-      <Button onClick={updateSingleProject}>save</Button>
+      <Button type="primary" onClick={updateSingleProject} loading={isSaving}>
+        save
+      </Button>
       <Tabs
-        type="editable-card"
+        type={activeTabTypes === "projects" ? "editable-card" : "card"}
         activeKey={activeTab}
         items={items}
         onChange={onChangeTab}
@@ -220,20 +368,32 @@ export default function Project({ activeTabTypes }) {
 
       {selectedProjectId && (
         <DrawerUpdateProject
-        currentProject={currentProject}
-          selectedProjectId={selectedProjectId}
+          currentProject={currentProject}
+          isLoadingGetProjectId={isLoadingGetProjectId}
           open={openDrawer}
           setOpen={setOpenDrawer}
+          disabled={
+            activeTabTypes === "archivesProjects" ||
+            activeTabTypes === "archivesProjectsWithProgram"
+              ? true
+              : false
+          }
         />
       )}
 
       <CustomTable
+        expandedRowKeys={expandedRowKeys}
+        setExpandedRowKeys={setExpandedRowKeys}
+        form={form}
         selectedProjectId={selectedProjectId}
+        disabledTable={disabledTable}
         tables={tables}
         setTables={setTables}
         isLoadingGetProjectId={isLoadingGetProjectId}
         isFetchingGetProjectId={isFetchingGetProjectId}
         targets={targets}
+        targetStateOnProduct={targetStateOnProduct}
+        setTargetStateOnProduct={setTargetStateOnProduct}
         posts={posts}
       ></CustomTable>
     </div>

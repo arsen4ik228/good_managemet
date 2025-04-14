@@ -14,36 +14,40 @@ export const projectApi = apiSlice.injectEndpoints({
               if (item.type !== "Проект" || item.programId !== null)
                 return false;
 
+              // if (Array.isArray(item.targets)) {
+              //   const hasProductType = item.targets.some(
+              //     (target) =>
+              //       target.type === "Продукт" &&
+              //       target.targetState === "Активная" &&
+              //       target.isExpired === false
+              //   );
+
               if (Array.isArray(item.targets)) {
                 const hasProductType = item.targets.some(
                   (target) =>
                     target.type === "Продукт" &&
-                    target.targetState === "Активная" &&
-                    target.isExpired === false
+                    (target.targetState === "Активная" ||
+                      target.targetState === "Черновик")
                 );
                 return hasProductType;
               }
-              return true; // Если targets отсутствует или не массив, возвращаем элемент по умолчанию
             }) || [],
 
-          archivesProjects: [],
+          archivesProjects:
+            response?.filter((item) => {
+              if (item.type !== "Проект" || item.programId !== null)
+                return false;
 
-          // archivesProjects:
-          //   response?.filter((item) => {
-          //     if (item.type !== "Проект" || item.programId !== null)
-          //       return false;
-
-          //     if (Array.isArray(item.targets)) {
-          //       const hasProductType = item.targets.some(
-          //         (target) =>
-          //           target.type === "Продукт" &&
-          //           (target.targetState === "Завершена" ||
-          //             target.isExpired === true)
-          //       );
-          //       return hasProductType;
-          //     }
-          //     return true; // Если targets отсутствует или не массив, возвращаем элемент по умолчанию
-          //   }) || [],
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    (target.targetState === "Завершена" ||
+                      target.isExpired === true)
+                );
+                return hasProductType;
+              }
+            }) || [],
 
           projectsWithProgram:
             response?.filter((item) => {
@@ -60,7 +64,6 @@ export const projectApi = apiSlice.injectEndpoints({
                 console.log(hasProductType);
                 return hasProductType;
               }
-              return true; // Если targets отсутствует или не массив, возвращаем элемент по умолчанию
             }) || [],
 
           archivesProjectsWithProgram:
@@ -78,23 +81,21 @@ export const projectApi = apiSlice.injectEndpoints({
                 console.log(hasProductType);
                 return hasProductType;
               }
-              return true; // Если targets отсутствует или не массив, возвращаем элемент по умолчанию
             }) || [],
 
           programs:
             response?.filter((item) => {
               if (item.type !== "Программа") return false;
-
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    target.type === "Продукт" &&
-                    target.targetState === "Активная" &&
-                    target.isExpired === false
-                );
-                return hasProductType;
-              }
-              return true; // Если targets отсутствует или не массив, возвращаем элемент по умолчанию
+              return item;
+              // if (Array.isArray(item.targets)) {
+              //   const hasProductType = item.targets.some(
+              //     (target) =>
+              //       target.type === "Продукт" &&
+              //       target.targetState === "Активная" &&
+              //       target.isExpired === false
+              //   );
+              //   return hasProductType;
+              // }
             }) || [],
 
           archivesPrograms:
@@ -110,7 +111,6 @@ export const projectApi = apiSlice.injectEndpoints({
                 );
                 return hasProductType;
               }
-              return true; // Если targets отсутствует или не массив, возвращаем элемент по умолчанию
             }) || [],
         };
       },
@@ -165,7 +165,7 @@ export const projectApi = apiSlice.injectEndpoints({
     }),
 
     updateProject: build.mutation({
-      query: ({projectId, ...body }) => ({
+      query: ({ projectId, ...body }) => ({
         url: `projects/${projectId}/update`,
         method: "PATCH",
         body,
@@ -173,10 +173,6 @@ export const projectApi = apiSlice.injectEndpoints({
       invalidatesTags: (result, error, { projectId }) =>
         result ? [{ type: "Project1", id: projectId }] : [],
     }),
-
-
-
-
 
     getProgramNew: build.query({
       query: ({ organizationId }) => ({
@@ -193,8 +189,8 @@ export const projectApi = apiSlice.injectEndpoints({
     }),
 
     getProgramId: build.query({
-      query: ({ userId, programId }) => ({
-        url: `${userId}/projects/${programId}/program`,
+      query: ({ programId }) => ({
+        url: `projects/${programId}/program`,
       }),
       transformResponse: (response) => ({
         currentProgram: response?.program || {},
