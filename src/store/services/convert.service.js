@@ -35,23 +35,22 @@ export const convertApi = apiSlice.injectEndpoints({
           })
         }
 
-
         const transformConvertsForContact = (convertsForContact) => {
           const userHasAgreement = convertsForContact?.some(item => item.convertPath === 'Согласование' || item.convertPath === 'Запрос')
-          if (!userHasAgreement) 
+          if (!userHasAgreement)
             return convertsForContact
-          
-          
-                      // const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
 
-            // if (userPostIsLastAddressee) return item
 
-            // if(item.convertPath === 'Согласование') {
-            //   return {
-            //     ...item,
-            //     convertType: 'Согласование'
-            //   }
-            // }
+          // const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
+
+          // if (userPostIsLastAddressee) return item
+
+          // if(item.convertPath === 'Согласование') {
+          //   return {
+          //     ...item,
+          //     convertType: 'Согласование'
+          //   }
+          // }
 
           return convertsForContact?.map(item => ({
             ...item,
@@ -60,11 +59,31 @@ export const convertApi = apiSlice.injectEndpoints({
           }));
         };
 
+        const splitReadAndUnreadMessages = (array1, array2) => {
+          // /unseenMessagesCount
+          const concatArray = array1.concat(array2)
+          console.log(concatArray)
+          const seen = []
+          const unseen = []
 
+          concatArray.forEach((item) => {
+            if (+item.unseenMessagesCount > 0)
+              unseen.push(item)
+            else
+              seen.push(item)
+          })
+          console.log(seen)
+          return { seen, unseen }
+        }
+
+        const transformedConvertsForContact = transformConvertsForContact(response?.convertsForContact)
+        const transformedCopiesConvert = transformCopiesConvert(response?.copiesForContact)
+        const finalArray = splitReadAndUnreadMessages(transformedConvertsForContact, transformedCopiesConvert)
+        console.log(finalArray.seen)
         return {
           contactInfo: transformContactInfo(response?.contact),
-          seenConverts: transformConvertsForContact(response?.convertsForContact).concat(transformCopiesConvert(response?.copiesForContact)),
-          // unseenConverts
+          seenConverts: finalArray.seen,
+          unseenConverts: finalArray.unseen
         }
       },
 
@@ -72,6 +91,68 @@ export const convertApi = apiSlice.injectEndpoints({
         result
           ? [
             ...result?.seenConverts?.map(({ id }) =>
+            ({
+              type: 'Convert',
+              id,
+            }
+            )),
+            'Convert',
+          ]
+          : ['Convert'],
+    }),
+
+    getArchiveConverts: build.query({
+      query: ({ contactId }) => ({
+        url: `converts/${contactId}/converts/archive`
+      }),
+      keepUnusedDataFor: 0, // данные удаляются сразу после unmount
+      //cacheTime: 0,
+      transformResponse: response => {
+        console.log('getArchiveConverts', response);
+
+        const transformCopiesConvert = (copiesArray) => {
+          if (!notEmpty(copiesArray)) return []
+
+          return copiesArray.map(item => {
+            item.convertType = 'Копия'
+            item.unreadMessagesCount = item.watchersToConvert[0].unreadMessagesCount
+            item.lastSeenNumber = item.watchersToConvert[0].lastSeenNumber
+
+            return item
+          })
+        }
+
+        const transformConvertsForContact = (convertsForContact) => {
+          const userHasAgreement = convertsForContact?.some(item => item.convertPath === 'Согласование' || item.convertPath === 'Запрос')
+          if (!userHasAgreement)
+            return convertsForContact
+
+
+          // const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
+
+          // if (userPostIsLastAddressee) return item
+
+          // if(item.convertPath === 'Согласование') {
+          //   return {
+          //     ...item,
+          //     convertType: 'Согласование'
+          //   }
+          // }
+
+          return convertsForContact?.map(item => ({
+            ...item,
+            ...(item.convertPath === 'Согласование' && { convertType: 'Согласование' }),
+            ...(item.convertPath === 'Запрос' && { convertType: 'Запрос' })
+          }));
+        };
+
+        return transformConvertsForContact(response?.archiveConvertsForContact).concat(transformCopiesConvert(response?.archiveCopiesForContact))
+      },
+
+      providesTags: (result) =>
+        result
+          ? [
+            ...result?.map(({ id }) =>
             ({
               type: 'Convert',
               id,
@@ -149,6 +230,10 @@ export const convertApi = apiSlice.injectEndpoints({
           }
         };
 
+        const getPathOfUsers = (postsArray) => {
+          return postsArray.map(item => item.user.id);
+        };
+
         const selectWatcherPost = (watchers) => {
           const userWatcherPost = watchers?.find(item => item.post.user.id === userId).post
 
@@ -176,6 +261,7 @@ export const convertApi = apiSlice.injectEndpoints({
           senderPostForSocket,
           watcherPostForSocket,
           recipientPost,
+          pathOfUsers: getPathOfUsers(allPostsInConvert),
           organizationId: response?.host?.user?.organization?.id
         };
       },
@@ -221,11 +307,11 @@ export const convertApi = apiSlice.injectEndpoints({
     }),
 
     finishConvert: build.mutation({
-      query: (convertId) => ({
-        url: `converts/${convertId}/finish`,
+      query: (body) => ({
+        url: `converts/${body.convertId}/finish`,
         method: "PATCH",
         body: {
-          id: convertId
+          pathOfUsers: body.pathOfUsers
         }
       }),
       invalidatesTags: ["Convert"],
@@ -235,4 +321,11 @@ export const convertApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetConvertsQuery, usePostConvertMutation, useGetConvertIdQuery, useApproveConvertMutation, useFinishConvertMutation, useUpdateConvertMutation } = convertApi;
+export const {
+  useGetConvertsQuery,
+  useGetArchiveConvertsQuery,
+  usePostConvertMutation,
+  useGetConvertIdQuery,
+  useApproveConvertMutation,
+  useFinishConvertMutation,
+  useUpdateConvertMutation } = convertApi;

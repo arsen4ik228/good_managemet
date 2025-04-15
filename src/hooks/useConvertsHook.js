@@ -1,7 +1,7 @@
-import { useGetConvertsQuery, usePostConvertMutation, useUpdateConvertMutation, useGetConvertIdQuery, useSendMessageMutation,useFinishConvertMutation, useApproveConvertMutation } from "@services"
+import { useGetConvertsQuery, useGetArchiveConvertsQuery, usePostConvertMutation, useUpdateConvertMutation, useGetConvertIdQuery, useSendMessageMutation, useFinishConvertMutation, useApproveConvertMutation } from "@services"
 
 
-export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
+export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => {
 
     const {
         data: allConvertsAndContactInfo = [],
@@ -12,6 +12,13 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
     } = useGetConvertsQuery({ contactId }, { skip: !contactId });
 
     const {
+        data: archiveConvaerts,
+        isLoading: isLoadingGetArchiveConverts,
+        isError: isErrorGetArchiveConverts,
+        isFetching: isFetchingGetArchiveConvert,
+    } = useGetArchiveConvertsQuery({ contactId }, { skip: !contactId });
+
+    const {
         currentConvert = {},
         userIsHost,
         senderPostId,
@@ -20,21 +27,23 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         senderPostName,
         watcherPostForSocket,
         recipientPost,
+        pathOfUsers = [],
         organizationId,
         refetch: refetchGetConvertId,
         isLoadingGetConvertId
     } = useGetConvertIdQuery({ convertId }, {
         selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
             currentConvert: data?.currentConvert || {},
-            userIsHost:data?.userIsHost || false,
+            userIsHost: data?.userIsHost || false,
             userInfo: data?.userInfo || {},
             senderPostId: data?.senderPostId || null,
             senderPostName: data?.senderPostName || null,
             senderPostForSocket: data?.senderPostForSocket || {},
             recipientPost: data?.recipientPost || {},
+            pathOfUsers: data?.pathOfUsers || [],
             organizationId: data?.organizationId || null,
             watcherPostForSocket: data?.watcherPostForSocket,
-            isLoadingGetConvertId : isLoading,
+            isLoadingGetConvertId: isLoading,
             refetch, // Добавляем refetch в результат
         }),
         skip: !convertId
@@ -73,12 +82,18 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
     ] = useFinishConvertMutation()
 
     return {
-        allConverts: allConvertsAndContactInfo?.allConverts,
+        seenConverts: allConvertsAndContactInfo?.seenConverts,
+        unseenConverts: allConvertsAndContactInfo?.unseenConverts,
         contactInfo: allConvertsAndContactInfo?.contactInfo,
         isErrorGetConverts,
         isLoadingGetConverts,
         isFetchingGetConvert,
         refetchGetConverts,
+
+        archiveConvaerts,
+        isLoadingGetArchiveConverts,
+        isErrorGetArchiveConverts,
+        isFetchingGetArchiveConvert,
 
         currentConvert,
         userIsHost,
@@ -88,6 +103,7 @@ export const useConvertsHook = ({convertId = null, contactId = null } = {}) => {
         senderPostForSocket,
         recipientPost,
         organizationId,
+        pathOfUsers,
         refetchGetConvertId,
         watcherPostForSocket,
         isLoadingGetConvertId,
