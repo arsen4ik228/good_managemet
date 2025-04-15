@@ -60,9 +60,14 @@ const CardProject = React.lazy(() =>
 const SettingsPage = React.lazy(() =>
   import("@app/SettingsPage/desktop/SettingsPage.jsx")
 );
-
 const WatcherDialogPage = React.lazy(() =>
   import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
+)
+const ArchiveDialog = React.lazy(() => 
+import("@app/DialogPage/ArchiveDialog/ArchiveDialog.jsx")
+)
+const AgreementDialogPage = React.lazy(() => 
+import("@app/DialogPage/AgreementDialogPage/AgreementDialogPage.jsx")
 )
 
 function DesktopApp() {
@@ -141,6 +146,32 @@ function DesktopApp() {
                       <div className="content">
                         <Chat />
                         <WatcherDialogPage />
+                      </div>
+                    </div>
+                  }
+                />
+
+                <Route
+                  path="chat/:contactId/archive/:convertId"
+                  element={
+                    <div className="messages">
+                      <Panel />
+                      <div className="content">
+                        <Chat />
+                        <ArchiveDialog />
+                      </div>
+                    </div>
+                  }
+                />
+
+                <Route
+                  path="Chat/:contactId/agreement/:convertId"
+                  element={
+                    <div className="messages">
+                      <Panel />
+                      <div className="content">
+                        <Chat />
+                        <AgreementDialogPage />
                       </div>
                     </div>
                   }
