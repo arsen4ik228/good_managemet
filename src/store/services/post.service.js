@@ -1,4 +1,3 @@
-import { response } from "express";
 import apiSlice from "./api";
 
 
@@ -102,10 +101,8 @@ export const postApi = apiSlice.injectEndpoints({
       query: () => ({
         url: 'posts/contacts'
       }),
-      transformResponse: (reponse) => {
-        console.warn(response)
-        console.warn((a,b) => a.latestMessageCreatedAt - b.latestMessageCreatedAt)
-        return reponse.sort((a,b) => a.latestMessageCreatedAt - b.latestMessageCreatedAt)
+      transformResponse: (response) => {
+        return response.sort((a,b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
       },
     }),
 
