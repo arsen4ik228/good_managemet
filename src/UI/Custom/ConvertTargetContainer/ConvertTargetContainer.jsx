@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import classes from './ConvertTargetContainer.module.css'
 import { formattedDate } from '@helpers/helpers'
+import FinalConvertModal from '../FinalConvertModal/FinalConvertModal'
 
-export default function ConvertTargetContainer({ children, targetStatus, targetText, date, isWatcher, handleCompleteTargetClick }) {
+export default function ConvertTargetContainer({ children, targetStatus, targetText, date, isHost, convertId, pathOfUsers }) {
+    const [openFinishModal, setOpenFinishModal] = useState(false)
 
     const handleClick = () => {
-        if (isWatcher) return;
+        if (!isHost) return;
 
-        console.log('handleClick')
-        handleCompleteTargetClick()
+        setOpenFinishModal(true)
     }
 
     return (
@@ -20,7 +21,7 @@ export default function ConvertTargetContainer({ children, targetStatus, targetT
                             type="checkbox"
                             onClick={() => handleClick()}
                             checked={targetStatus === 'Завершена'}
-                            readOnly={isWatcher}
+                            readOnly={!isHost}
                         />
                     </div>
                     <div className={classes.targetContainer}>
@@ -40,6 +41,14 @@ export default function ConvertTargetContainer({ children, targetStatus, targetT
                     </div>
                 )}
             </div>
+
+            {openFinishModal && (
+                <FinalConvertModal
+                setOpenModal={setOpenFinishModal}
+                convertId={convertId}
+                pathOfUsers={pathOfUsers}
+                ></FinalConvertModal>
+            )}
         </>
     )
 }

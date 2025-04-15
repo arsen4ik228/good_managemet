@@ -31,5 +31,6 @@ export { default as CompanySchema } from './CompanySchema/mobile/CompanySchema'
 export { default as SchemeСompanies } from './CompanySchema/mobile/schemeСompanies/SchemeСompanies'
 export { default as PostSchema } from './CompanySchema/mobile/postSchema/PostSchema'
 export { default as SettingsPage } from './SettingsPage/mobile/SettingsPage.jsx'
+export {default as ArchiveDialog} from './DialogPage/ArchiveDialog/ArchiveDialog.jsx'
 
 

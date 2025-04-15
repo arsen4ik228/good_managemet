@@ -6,19 +6,19 @@
 }
 
 .body{
-    position: relative;
     display: flex;
     flex-direction: column-reverse;
     overflow: auto;
     flex: 1;
-    padding: 10px;
-    
-    background-color: #F0F0F0;
+    width: 100%;
+    background-color: #F5F5F5;
+    /* background-image: url('../../image/chat-background.svg'); */
+    padding-bottom: 30px;
 }
 
 .unSeenMessagesInfo {
     /* width: 100%; */
-    margin: 0 auto 5px auto;
+    margin: 0 auto;
     padding: 5px 10px;
     background-color: white;
     font-size: 14px;
@@ -41,24 +41,6 @@
     transform: translateY(-1px);
 }
 
-.archiveButton {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translate(-50%, 0);
-
-    width: 99%;
-
-    display: flex;
-    justify-content: center;
-
-    padding: 10px 0;
-
-    background-color: #F0F0F0;
-
-    font-style: italic;
-    text-decoration: underline;
-    color: #000000A6;
-
-    z-index: 10;
+.footer{
+    width: 100%;
 }

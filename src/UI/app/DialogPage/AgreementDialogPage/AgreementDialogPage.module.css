@@ -1,11 +1,11 @@
-.wrapper{
+.wrapper {
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
 }
 
-.body{
+.body {
     display: flex;
     flex-direction: column-reverse;
     overflow: auto;
@@ -23,13 +23,13 @@
     background-color: white;
     font-size: 14px;
     text-align: center;
-    
+
     /* Эффект "парящего" блока */
     position: relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     transition: all 0.3s ease;
-    
+
     /* Дополнительные улучшения */
     z-index: 1;
     /* margin: 5px 0; */
@@ -41,17 +41,17 @@
     transform: translateY(-1px);
 }
 
-.recepientPost{
+.recepientPost {
     font-size: 14px;
     font-weight: normal;
     font-style: italic;
     color: #005475;
 }
 
-.recepientPost > span {
+.recepientPost>span {
     font-size: 14px !important;
 }
 
-.footer{
-
+.footer {
+    width: 100%;
 }

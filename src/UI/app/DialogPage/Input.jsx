@@ -5,6 +5,7 @@ import React, {
 import InputTextContainer from "@Custom/ContainerForInputText/InputTextContainer.jsx";
 import { usePostsHook } from "@hooks";
 import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
+import { useNavigate } from "react-router-dom";
 
 const Input = ({
   convertId,
@@ -19,6 +20,7 @@ const Input = ({
   organizationId,
 }) => {
   const [contentInputPolicyId, setContentInputPolicyId] = useState("");
+  const navigate = useNavigate()
 
   const [selectedPost, setSelectedPost] = useState();
   const [startDate, setStartDate] = useState(
@@ -52,13 +54,13 @@ const Input = ({
       approve: 'Приказ согласован: ',
       cancel: 'Приказ отменён: '
     };
-    
-    const convertStatusMessage = convertStatus 
+
+    const convertStatusMessage = convertStatus
       ? statusMessages[convertStatus]
       : '';
-  
+
     if (!contentInputPolicyId) return convertStatusMessage + text;
-  
+
     const { startChar, str, endChar } = contentInputPolicyId;
     return convertStatusMessage + text?.slice(0, startChar) + str + text?.slice(endChar);
     //    return convertStatusMessage + text?.slice(0, contentInputPolicyId?.startChar) + contentInputPolicyId?.str + text.slice(contentInputPolicyId?.endChar);
@@ -66,12 +68,26 @@ const Input = ({
 
   const send = async () => {
     if (contentInput.trim() === "" && files.length === 0) return;
-
+  
     // Удаляем черновик
     deleteDraft("DraftDB", "drafts", idTextArea);
-
+  
     try {
-      // 1. Если есть convertStatusChange, выполняем approveConvert/finishConvert
+      // Подготовка данных для отправки
+      const Data = {};
+      if (files && files.length > 0) {
+        Data.attachmentIds = files.map((item) => item.id);
+      }
+  
+      // Отправка сообщения
+      await sendMessage({
+        convertId,
+        content: transformText(contentInput, convertStatusChange),
+        postId: senderPostId,
+        ...Data,
+      }).unwrap();
+  
+      // Если есть convertStatusChange, выполняем дополнительное действие
       if (convertStatusChange) {
         try {
           if (convertStatusChange === 'approve') {
@@ -79,36 +95,27 @@ const Input = ({
           } else {
             await finishConvert(convertId);
           }
+         
         } catch (error) {
           console.error("Ошибка в approveConvert/finishConvert:", error);
-          return; // Прерываем выполнение, если была ошибка
+          throw error; // Пробрасываем ошибку дальше
         }
       }
-
-      // 2. Отправка сообщения (выполняется только если предыдущий блок успешен)
-      const Data = {};
-      if (files && files.length > 0) {
-        Data.attachmentIds = files.map((item) => item.id);
-      }
-
-      await sendMessage({
-        convertId,
-        content: transformText(contentInput, convertStatusChange),
-        //  convertStatusChange === 'approve'
-        //   ? `Приказ согласован: ${transformText(contentInput)}`
-        //   : `Приказ отменён: ${transformText(contentInput)}`,
-        postId: senderPostId,
-        ...Data,
-      }).unwrap();
-
-      // 3. Сброс состояния
+  
+      // Сброс состояния
       reset();
-
+  
+      // Если нужно вернуться назад после approve
+      if (convertStatusChange === 'approve') {
+        navigate(-1);
+      }
+  
     } catch (error) {
       console.error("Ошибка в sendMessage:", error);
       if (error.response) {
         console.error("Детали ошибки:", error.response.data);
       }
+      // Можно добавить обработку ошибки (например, показать уведомление)
     }
   };
 

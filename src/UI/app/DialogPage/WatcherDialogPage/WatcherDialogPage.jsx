@@ -8,7 +8,7 @@ import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
-import AdaptiveLayoutContainer from './adaptive.container/AdaptiveLayoutContainer';
+import AdaptiveLayoutContainer from '../adaptive.container/AdaptiveLayoutContainer';
 
 export default function WatcherDialogPage() {
     const { convertId } = useParams();

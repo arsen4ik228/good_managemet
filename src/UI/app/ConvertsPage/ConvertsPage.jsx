@@ -11,7 +11,9 @@ export const ConvertsPage = () => {
 
   const { contactId } = useParams()
 
-  const { contactInfo, allConverts } = useConvertsHook({ contactId: contactId })
+  const [isViewArchive, setIsViewArchive] = useState(false)
+
+  const { contactInfo, seenConverts, unseenConverts, archiveConvaerts } = useConvertsHook({ contactId: contactId })
 
   return (
     <>
@@ -23,14 +25,37 @@ export const ConvertsPage = () => {
           {contactInfo?.postName}
         </Header>
         <div className={classes.body}>
-          {allConverts?.map((item, index) => (
-            <React.Fragment key={index}>
-              <Task taskData={item}></Task>
-            </React.Fragment>
-          ))}
+          <div className={classes.archiveButton} onClick={() => setIsViewArchive(!isViewArchive)}>
+            {isViewArchive ? 'Скрыть ' : 'Показать'} завершенные задачи
+          </div>
+          {isViewArchive ? (
+            <>
+              {archiveConvaerts?.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Task taskData={item} isArchive={true}></Task>
+                </React.Fragment>
+              ))}
+            </>
+          ) : (
+            <>
+              {unseenConverts?.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Task taskData={item}></Task>
+                </React.Fragment>
+              ))}
+              {unseenConverts?.length > 0 && (
+                <div className={classes.unSeenMessagesInfo}> Новые сообщения </div>
+              )}
+              {seenConverts?.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Task taskData={item}></Task>
+                </React.Fragment>
+              ))}
+            </>
+          )}
         </div>
 
-        <Input></Input>
+        <Input reciverPostId={contactInfo?.postId}></Input>
       </div>
 
     </>
