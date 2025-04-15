@@ -17,15 +17,12 @@
     /* Минимальная ширина */
 }
 
-.unSeenWrapper::after {
+/* .unSeenWrapper::after {
     position: absolute;
     content: 'Новые сообщения';
     top: 50%;
-    /* Центрирование по вертикали */
     left: 50%;
-    /* Центрирование по горизонтали */
     transform: translate(-50%, -50%);
-    /* Точное выравнивание */
     padding: 5px 40px;
     white-space: nowrap;
     border-radius: 5px;
@@ -35,29 +32,23 @@
     color: #000000A6;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     z-index: 1;
-    /* Убедитесь, что псевдоэлемент поверх других элементов */
-}
+} */
 
-.unSeenWrapper::after {
+/* .unSeenWrapper::after {
     position: absolute;
     content: 'Новые сообщения';
     top: -50%;
-    /* Смещаем вниз на 50% от высоты родителя */
     left: -50%;
-    /* Смещаем вправо на 50% от ширины родителя */
     transform: translate(-50%, -50%);
-    /* Сдвигаем обратно на 50% своей ширины и высоты */
     padding: 5px 40px;
-    /* Добавляем отступы для текста */
     white-space: nowrap;
-    /* Запрещаем перенос текста */
     border-radius: 5px;
     background-color: white;
     font-size: 1rem;
     text-align: center;
     color: #000000A6;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-}
+} */
 
 .body {
     position: relative;

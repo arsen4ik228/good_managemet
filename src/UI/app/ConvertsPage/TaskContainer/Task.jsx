@@ -22,6 +22,7 @@ export default function Task({ taskData, isArchive }) {
     };
 
     const handleNavigateClick = (link) => {
+        if ((!taskData.convertStatus || isArchive) && taskData.convertType !== 'Копия') return navigate('archive/' + link)
         if (taskData.convertType === 'Копия') return navigate('watcher/' + link)
         if (taskData.convertType === 'Согласование') return navigate('agreement/' + link)
 
@@ -41,8 +42,8 @@ export default function Task({ taskData, isArchive }) {
                 <div className={classes.checkboxContainer}>
                     <input
                         type="checkbox"
-                        checked={checkboxStatus}
-                        disabled={isArchive}
+                        checked={!taskData.convertStatus}
+                        // disabled={isArchive}
                         readOnly
                     />
                 </div>
@@ -51,7 +52,7 @@ export default function Task({ taskData, isArchive }) {
                     onClick={() => handleNavigateClick(taskData.id)}
                 >
                     <div
-                        className={`${classes.titleText} ${isArchive ? classes.titleTextArchive : ''}`}
+                        className={`${classes.titleText} ${!taskData.convertStatus ? classes.titleTextArchive : ''}`}
                     >
                         {taskData.convertTheme}
                     </div>

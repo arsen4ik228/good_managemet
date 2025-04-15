@@ -9,7 +9,7 @@ import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 import Input from '../Input';
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
-import AdaptiveLayoutContainer from '../WatcherDialogPage/adaptive.container/AdaptiveLayoutContainer';
+import AdaptiveLayoutContainer from '../adaptive.container/AdaptiveLayoutContainer';
 import ApproveConvert from '../../../Custom/ApproveConvert/ApproveConvert';
 
 export default function AgreementDialogPage() {

@@ -20,7 +20,7 @@
     position: relative;
     max-width: 95%;
     margin: 0 auto 10px auto;
-
+    border: 1px solid white;
     >select {
         display: block;
 
@@ -99,6 +99,8 @@
 
         border: 1px solid #bfbfbf;
         border-radius: 15px;
+
+        resize: none;
     }
 }
 

@@ -11,6 +11,7 @@ import { useSocket } from "@helpers/SocketContext.js"; // Импортируем
 import { selectedOrganizationId } from '@helpers/constants'
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 
+
 const MobileMain = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -82,6 +83,30 @@ const MobileMain = () => {
 
     navigate(`/Chat/${item.id}`)
   }
+  
+  const getChatsWithTimeOfSocketMessage = (chatsArray, id) => {
+    if (!chatsArray) return [];
+  
+    // 1. Приводим ВСЕ даты к типу Date (чтобы сравнивать одинаковые типы)
+    const normalizedChats = chatsArray.map(chat => ({
+      ...chat,
+      latestMessageCreatedAt: new Date(chat.latestMessageCreatedAt)
+    }));
+  
+    // 2. Обновляем дату в нужном чате
+    const updatedChats = normalizedChats.map(chat => 
+      chat.id === id 
+        ? { ...chat, latestMessageCreatedAt: new Date() } 
+        : chat
+    );
+  
+    // 3. Сортируем (теперь все latestMessageCreatedAt — объекты Date)
+    const sortedChats = [...updatedChats].sort((a, b) => 
+      b.latestMessageCreatedAt - a.latestMessageCreatedAt
+    );
+    console.warn(sortedChats)
+    return sortedChats;
+  };
 
   useEffect(() => {
     if (organizations.length > 0 && !selectedOrg && !selectedOrganizationId)
@@ -110,7 +135,6 @@ const MobileMain = () => {
     else {
       newMap.set(recepientId.toString(), 1);
     }
-
 
     setCopyChats(getChatsWithTimeOfSocketMessage(copyChats, recepientId))
     setSocketMessagesCount(newMap);
@@ -164,7 +188,7 @@ const MobileMain = () => {
 
           <button onClick={handleButtonClick} className={classes.btnAddUser}> Добавить пользователя </button>
 
-          {copyChats?.sort((a,b) => a.latestMessageCreatedAt - b.latestMessageCreatedAt).map((item, index) => (
+          {copyChats?.map((item, index) => (
             <div onClick={() => handleItemClick(item)}>
               <React.Fragment key={index} >
                 <DialogContainer
@@ -191,13 +215,5 @@ const MobileMain = () => {
   );
 };
 
-
-const getChatsWithTimeOfSocketMessage = (chatsArray, id) => {
-  const copyChats = [...chatsArray]
-  const currentChat = copyChats.find(item => item.id === id)
-  currentChat.latestMessageCreatedAt = new Date()
-
-  return copyChats
-}
 
 export default MobileMain;

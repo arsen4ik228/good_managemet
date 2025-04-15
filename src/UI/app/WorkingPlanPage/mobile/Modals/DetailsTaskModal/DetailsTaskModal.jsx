@@ -166,7 +166,7 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                 setOpenModal={setOpenModal}
                 clickFunction={clickFunction}
                 disabledButton={isArchive}
-                buttonText={isOrder && 'К диалогу'}
+                buttonText={isOrder ? 'К диалогу' : 'Сохранить'}
                 style={isMobile ? { 'width': '95%' } : {}}                 
             >
                 <div className={classes.content}>

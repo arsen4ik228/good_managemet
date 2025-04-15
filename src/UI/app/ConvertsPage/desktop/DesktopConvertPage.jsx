@@ -12,9 +12,10 @@ import Input from '../Input';
 
 export default function DesktopConvertPage() {
     const { contactId } = useParams()
+  const [isViewArchive, setIsViewArchive] = useState(false)
 
 
-  const { contactInfo, allConverts } = useConvertsHook({ contactId: contactId })
+    const { contactInfo, seenConverts, unseenConverts, archiveConvaerts } = useConvertsHook({ contactId: contactId })
 
 
     return (
@@ -24,15 +25,37 @@ export default function DesktopConvertPage() {
 
             <div className={classes.main}>
                 <div className={classes.body}>
-                    {allConverts?.map((item, index) => (
-                        <React.Fragment key={index}>
-                            <Task taskData={item}></Task>
-                        </React.Fragment>
-                    ))}
-
+                    <div className={classes.archiveButton} onClick={() => setIsViewArchive(!isViewArchive)}>
+                        {isViewArchive ? 'Скрыть ' : 'Показать'} завершенные задачи
+                    </div>
+                    {isViewArchive ? (
+                        <>
+                            {archiveConvaerts?.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <Task taskData={item} isArchive={true}></Task>
+                                </React.Fragment>
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            {unseenConverts?.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <Task taskData={item}></Task>
+                                </React.Fragment>
+                            ))}
+                            {unseenConverts?.length > 0 && (
+                                <div className={classes.unSeenMessagesInfo}> Новые сообщения </div>
+                            )}
+                            {seenConverts?.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <Task taskData={item}></Task>
+                                </React.Fragment>
+                            ))}
+                        </>
+                    )}
                 </div>
             </div>
-            <Input></Input>
+            <Input reciverPostId={contactInfo?.postId}></Input>
 
         </div>
     )

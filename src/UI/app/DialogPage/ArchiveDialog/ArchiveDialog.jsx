@@ -1,19 +1,17 @@
-import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import classes from './DialogPage.module.css';
-import Header from "@Custom/CustomHeader/Header";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import classes from './ArchiveDialog.module.css'
 import { useConvertsHook, useMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
-import Input from './Input';
+// import Input from './Input';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
-import AdaptiveLayoutContainer from './adaptive.container/AdaptiveLayoutContainer';
-import AddedWatcherContainer from '../../Custom/AddedWatcherContainer/AddedWatcherContainer';
+import AdaptiveLayoutContainer from '../adaptive.container/AdaptiveLayoutContainer';
+import AddedWatcherContainer from '@Custom/AddedWatcherContainer/AddedWatcherContainer';
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
 
-
-export default function DialogPage() {
+export default function ArchiveDialog() {
     const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
@@ -31,7 +29,6 @@ export default function DialogPage() {
         userInfo,
         organizationId,
         senderPostName,
-        pathOfUsers,
         senderPostForSocket,
         sendMessage,
         refetchGetConvertId,
@@ -54,7 +51,7 @@ export default function DialogPage() {
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
-    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
+    // useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
 
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
@@ -119,45 +116,45 @@ export default function DialogPage() {
     }, [socketResponse?.messageCreationEvent]);
 
     // Прочтение сообщений(смена статуса)
-    useEffect(() => {
-        // Проверяем, что socketResponse.messagesAreSeen и messageIds существуют
-        if (!socketResponse?.messagesAreSeen || !Array.isArray(socketResponse.messagesAreSeen.messageIds)) {
-            return;
-        }
+    // useEffect(() => {
+    //     // Проверяем, что socketResponse.messagesAreSeen и messageIds существуют
+    //     if (!socketResponse?.messagesAreSeen || !Array.isArray(socketResponse.messagesAreSeen.messageIds)) {
+    //         return;
+    //     }
 
-        // Функция для обновления сообщений
-        const updateMessages = (messages) => {
-            return messages.map(message => {
-                console.log(socketResponse.messagesAreSeen.messageIds)
-                if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-                    console.log('bam')
-                    return {
-                        ...message,
-                        seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
-                    };
-                }
-                return message;
-            });
-        };
+    //     // Функция для обновления сообщений
+    //     const updateMessages = (messages) => {
+    //         return messages.map(message => {
+    //             console.log(socketResponse.messagesAreSeen.messageIds)
+    //             if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
+    //                 console.log('bam')
+    //                 return {
+    //                     ...message,
+    //                     seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
+    //                 };
+    //             }
+    //             return message;
+    //         });
+    //     };
 
-        // Обновляем messagesArray, если есть непрочитанные сообщения
-        if (unSeenMessageExistRef.current) {
-            const updatedMessagesArray = updateMessages(unSeenMessages);
-            const hasUnSeenMessages = updatedMessagesArray.some(message =>
-                socketResponse.messagesAreSeen.messageIds.includes(message.id)
-            );
+    //     // Обновляем messagesArray, если есть непрочитанные сообщения
+    //     if (unSeenMessageExistRef.current) {
+    //         const updatedMessagesArray = updateMessages(unSeenMessages);
+    //         const hasUnSeenMessages = updatedMessagesArray.some(message =>
+    //             socketResponse.messagesAreSeen.messageIds.includes(message.id)
+    //         );
 
-            if (hasUnSeenMessages) {
-                setMessagesArray(updatedMessagesArray);
-            } else {
-                unSeenMessageExistRef.current = false;
-            }
-        }
+    //         if (hasUnSeenMessages) {
+    //             setMessagesArray(updatedMessagesArray);
+    //         } else {
+    //             unSeenMessageExistRef.current = false;
+    //         }
+    //     }
 
-        // Обновляем socketMessages
-        const updatedSocketMessages = updateMessages(socketMessages);
-        setSocketMessages(updatedSocketMessages);
-    }, [socketResponse?.messagesAreSeen, unSeenMessageExist]);
+    //     // Обновляем socketMessages
+    //     const updatedSocketMessages = updateMessages(socketMessages);
+    //     setSocketMessages(updatedSocketMessages);
+    // }, [socketResponse?.messagesAreSeen, unSeenMessageExist]);
 
     // Установка фокуса на не прочитанные сообщения 
     useLayoutEffect(() => {
@@ -214,19 +211,17 @@ export default function DialogPage() {
                 userInfo={userInfo}
             >
                 <ConvertTargetContainer
-                    convertId={currentConvert?.id}
                     targetStatus={currentConvert?.target?.targetStatus}
                     targetText={currentConvert?.target?.content}
                     date={currentConvert?.target?.createdAt}
-                    isHost={userIsHost}
-                    pathOfUsers={pathOfUsers}
+                    isWatcher={false}
                 >
-                    {userIsHost && (
+                    {/* {userIsHost && (
                         <AddedWatcherContainer
                             convertId={currentConvert?.id}
                             watchersToConvert={currentConvert?.watchersToConvert}
                         ></AddedWatcherContainer>
-                    )}
+                    )} */}
                 </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages.slice().reverse().map((item, index) => (
@@ -277,7 +272,7 @@ export default function DialogPage() {
                     {isFetchingSeenMessages && <div>Loading more messages...</div>}
                 </div>
                 <footer className={classes.footer}>
-                    <Input
+                    {/* <Input
                         convertId={currentConvert?.id}
                         sendMessage={sendMessage}
                         senderPostId={senderPostId}
@@ -285,9 +280,9 @@ export default function DialogPage() {
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
                         organizationId={organizationId}
-                    />
+                    /> */}
                 </footer>
             </AdaptiveLayoutContainer>
         </>
     );
-};
+}
