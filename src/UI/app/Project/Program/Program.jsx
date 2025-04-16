@@ -17,13 +17,19 @@ import {
   Select,
   Typography,
   Flex,
+  Tooltip,
 } from "antd";
-import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EllipsisOutlined,
+  PlusOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
 
 export default function Program({ activeTabTypesProgram, disabledTable }) {
   const [selectedProgramId, setSelectedProgramId] = useState();
   const [selectedStrategyId, setSelectedStrategyId] = useState(null);
   const [selectedProjectIds, setSelectedProjectIds] = React.useState([]);
+  const [descriptionProgram, setDescriptionProgram] = useState(null);
 
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
@@ -193,13 +199,14 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
       const selectedProjectIdsValues = selectedProjectIds.map(
         (project) => project.value
       );
-      
+
       await updateProject({
         projectId: currentProgram.id,
         _id: currentProgram.id,
+        content:descriptionProgram,
         targetUpdateDtos,
         targetCreateDtos,
-        projectIds:selectedProjectIdsValues,
+        projectIds: selectedProjectIdsValues,
       }).unwrap();
 
       setExpandedRowKeys(prevStateExpandedRowKeys);
@@ -347,59 +354,75 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
     }
   }, [activeTabTypesProgram, programs, archivesPrograms]);
 
+  useEffect(() => {
+    if (currentProgram?.content) {
+      setDescriptionProgram(currentProgram?.content);
+    }
+  }, [currentProgram]);
+
   return (
     <div style={{ width: "100%" }}>
-      <Button type="primary" onClick={updateSingleProject} loading={isSaving}>
-        save
-      </Button>
-
-      <Tabs
-        type={activeTabTypesProgram === "programs" ? "editable-card" : "card"}
-        activeKey={activeTab}
-        items={items}
-        onChange={onChangeTab}
-        addIcon={
-          <Popconfirm
-            placement="rightBottom"
-            showCancel={false}
-            okButtonProps={{ style: { display: "none" } }}
-            icon={null}
-            description={
-              <>
-                <Flex vertical gap={"small"}>
-                  <Typography>Выберите стратегию</Typography>
-                  <Select
-                    style={{ width: "160px" }}
-                    allowClear
-                    showSearch
-                    optionFilterProp="label"
-                    value={selectedStrategyId}
-                    onChange={(strategy) => setSelectedStrategyId(strategy)}
-                    filterOption={(input, option) =>
-                      option?.label.toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={strategies.map((strategy) => ({
-                      label: "Стратегия" + " " + strategy.strategyNumber,
-                      value: strategy.id,
-                    }))}
-                  />
-                </Flex>
-                <Button
-                  style={{ marginTop: "10px", marginLeft:"55px" }}
-                  size="small"
-                  type="primary"
-                  onClick={addProgram}
-                  disabled={!selectedStrategyId}
-                >
-                  сохранить
-                </Button>
-              </>
-            }
-          >
-            <Button size="small" type="text" icon={<PlusOutlined />} />
-          </Popconfirm>
-        }
-      />
+      <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+        <Tabs
+          style={{ width: "calc(100% - 40px)" }}
+          type={activeTabTypesProgram === "programs" ? "editable-card" : "card"}
+          activeKey={activeTab}
+          items={items}
+          onChange={onChangeTab}
+          addIcon={
+            <Popconfirm
+              placement="rightBottom"
+              showCancel={false}
+              okButtonProps={{ style: { display: "none" } }}
+              icon={null}
+              description={
+                <>
+                  <Flex vertical gap={"small"}>
+                    <Typography>Выберите стратегию</Typography>
+                    <Select
+                      style={{ width: "160px" }}
+                      allowClear
+                      showSearch
+                      optionFilterProp="label"
+                      value={selectedStrategyId}
+                      onChange={(strategy) => setSelectedStrategyId(strategy)}
+                      filterOption={(input, option) =>
+                        option?.label
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={strategies.map((strategy) => ({
+                        label: "Стратегия" + " " + strategy.strategyNumber,
+                        value: strategy.id,
+                      }))}
+                    />
+                  </Flex>
+                  <Button
+                    style={{ marginTop: "10px", marginLeft: "55px" }}
+                    size="small"
+                    type="primary"
+                    onClick={addProgram}
+                    disabled={!selectedStrategyId}
+                  >
+                    сохранить
+                  </Button>
+                </>
+              }
+            >
+              <Button size="small" type="text" icon={<PlusOutlined />} />
+            </Popconfirm>
+          }
+        />
+        <Tooltip placement="bottom" title={"сохранить"}>
+          <Button
+            type="primary"
+            style={{ width: "40px" }}
+            icon={<SaveOutlined />}
+            onClick={updateSingleProject}
+            loading={isSaving}
+          />
+        </Tooltip>
+      </Flex>
 
       {selectedProgramId && (
         <DrawerUpdateProgram
@@ -407,11 +430,7 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
           isLoadingGetProgramId={isLoadingGetProgramId}
           open={openDrawer}
           setOpen={setOpenDrawer}
-          disabled={
-            activeTabTypesProgram === "archivesPrograms"
-              ? true
-              : false
-          }
+          disabled={activeTabTypesProgram === "archivesPrograms" ? true : false}
         />
       )}
 
@@ -433,6 +452,8 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
         projects={projects}
         selectedProjectIds={selectedProjectIds}
         setSelectedProjectIds={setSelectedProjectIds}
+        setDescriptionProgram={setDescriptionProgram}
+        descriptionProgram={descriptionProgram}
       ></CustomTableProgram>
     </div>
   );

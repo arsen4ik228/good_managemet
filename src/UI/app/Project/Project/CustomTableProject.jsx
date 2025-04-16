@@ -123,9 +123,7 @@ const EditableCell = ({
       );
 
     default:
-      return (
-        <></>
-      );
+      return <></>;
   }
 };
 
@@ -157,6 +155,8 @@ export default function CustomTableProject({
   isFetchingGetProjectId,
   targets,
   posts,
+  setDescriptionProduct,
+  descriptionProduct,
 }) {
   const { styles } = useStyle();
 
@@ -352,7 +352,11 @@ export default function CustomTableProject({
             <EditableCell
               type="targetState"
               value={text}
-              options={targetStateOnProduct ? statusesTargetsWithoutDraft : statusesTargets}
+              options={
+                targetStateOnProduct
+                  ? statusesTargetsWithoutDraft
+                  : statusesTargets
+              }
               name={`targetState-${record.id}`}
               required={targetStateOnProduct}
               onChange={(newValue) => {
@@ -421,6 +425,21 @@ export default function CustomTableProject({
     },
   ];
 
+  // Колонки для таблицы "Описание" (только одна колонка с текстовым полем)
+  const descriptionColumns = [
+    {
+      title: "Описание проекта",
+      dataIndex: "content",
+      align: "center",
+      render: (text, record) => (
+        <Input.TextArea
+          value={descriptionProduct}
+          onChange={(e) => setDescriptionProduct(e.target.value)}
+        />
+      ),
+    },
+  ];
+
   // 1. Настройка expandable для группировки
   const expandableConfig = {
     expandRowByClick: true,
@@ -436,9 +455,13 @@ export default function CustomTableProject({
         const groupItems =
           tables.find((t) => t.tableName === record.groupName)?.elements || [];
 
+        // Для группы "Описание" используем специальные колонки
+        const columnsToUse =
+          record.groupName === "Описание" ? descriptionColumns : columns;
+
         return (
           <Table
-            columns={columns}
+            columns={columnsToUse}
             dataSource={groupItems}
             rowKey="id"
             pagination={false}
@@ -495,7 +518,8 @@ export default function CustomTableProject({
                 width: "100%",
               }}
             >
-              {record.groupName !== "Продукт" ? (
+              {record.groupName !== "Продукт" &&
+              record.groupName !== "Описание" ? (
                 <Button
                   style={{
                     marginRight: "auto",
@@ -552,6 +576,14 @@ export default function CustomTableProject({
       });
 
       setTables([
+        {
+          tableName: "Описание",
+          elements: [
+            {
+              content: null,
+            },
+          ],
+        },
         createTableData("Продукт"),
         createTableData("Задача"),
         createTableData("Организационные мероприятия"),

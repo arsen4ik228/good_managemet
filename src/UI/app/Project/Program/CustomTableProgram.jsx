@@ -216,6 +216,8 @@ export default function CustomTableProgram({
   projects,
   selectedProjectIds,
   setSelectedProjectIds,
+  setDescriptionProgram,
+  descriptionProgram,
 }) {
   const { styles } = useStyle();
 
@@ -633,6 +635,21 @@ export default function CustomTableProgram({
     },
   ];
 
+  // Колонки для таблицы "Описание" (только одна колонка с текстовым полем)
+  const descriptionColumns = [
+    {
+      title: "Описание проекта",
+      dataIndex: "content",
+      align: "center",
+      render: (text, record) => (
+        <Input.TextArea
+          value={descriptionProgram}
+          onChange={(e) => setDescriptionProgram(e.target.value)}
+        />
+      ),
+    },
+  ];
+
   // 1. Настройка expandable для группировки
   const expandableConfig = {
     expandRowByClick: true,
@@ -646,41 +663,72 @@ export default function CustomTableProgram({
     expandedRowRender: (record) => {
       if (record.__isGroup) {
         const groupItems =
-          tables.find(
-            (t) => t.tableName === record.groupName && t.tableName !== "Проекты"
-          )?.elements || [];
+          tables.find((t) => t.tableName === record.groupName)?.elements || [];
 
-        const groupItemsProject =
-          tables.find(
-            (t) => t.tableName === record.groupName && t.tableName === "Проекты"
-          )?.elements || [];
+        // Определяем какие колонки использовать в зависимости от группы
+        let columnsToUse = columns; // По умолчанию обычные колонки
+
+        if (record.groupName === "Описание") {
+          columnsToUse = descriptionColumns; // Специальные колонки для описания
+        } else if (record.groupName === "Проекты") {
+          columnsToUse = columnsProjects; // Специальные колонки для проектов
+        }
 
         return (
-          <>
-            {record.groupName === "Проекты" ? (
-              <Table
-                columns={columnsProjects}
-                dataSource={groupItemsProject}
-                rowKey="id"
-                pagination={false}
-                showHeader={true}
-                bordered={false}
-              />
-            ) : (
-              <Table
-                columns={columns}
-                dataSource={groupItems}
-                rowKey="id"
-                pagination={false}
-                showHeader={true}
-                bordered={false}
-              />
-            )}
-          </>
+          <Table
+            columns={columnsToUse}
+            dataSource={groupItems}
+            rowKey="id"
+            pagination={false}
+            showHeader={true}
+            bordered={false}
+          />
         );
       }
       return null;
     },
+    // expandedRowRender: (record) => {
+    //   if (record.__isGroup) {
+    //     const groupItems =
+    //       tables.find(
+    //         (t) => t.tableName === record.groupName && t.tableName !== "Проекты"
+    //       )?.elements || [];
+
+    //     const groupItemsProject =
+    //       tables.find(
+    //         (t) => t.tableName === record.groupName && t.tableName === "Проекты"
+    //       )?.elements || [];
+
+    //     // Для группы "Описание" используем специальные колонки
+    //     const columnsToUse =
+    //       record.groupName === "Описание" ? descriptionColumns : columns;
+
+    //     return (
+    //       <>
+    //         {record.groupName === "Проекты" ? (
+    //           <Table
+    //             columns={columnsProjects}
+    //             dataSource={groupItemsProject}
+    //             rowKey="id"
+    //             pagination={false}
+    //             showHeader={true}
+    //             bordered={false}
+    //           />
+    //         ) : (
+    //           <Table
+    //             columns={columns}
+    //             dataSource={groupItems}
+    //             rowKey="id"
+    //             pagination={false}
+    //             showHeader={true}
+    //             bordered={false}
+    //           />
+    //         )}
+    //       </>
+    //     );
+    //   }
+    //   return null;
+    // },
     rowExpandable: (record) => record.__isGroup,
   };
 
@@ -909,6 +957,14 @@ export default function CustomTableProgram({
       });
 
       setTables([
+        {
+          tableName: "Описание",
+          elements: [
+            {
+              content: null,
+            },
+          ],
+        },
         createTableData("Продукт"),
         createTableProjects("Проекты"),
         createTableData("Организационные мероприятия"),
@@ -950,7 +1006,6 @@ export default function CustomTableProgram({
     }
   }, [tables]);
 
-  console.log("tables", tables);
   return (
     <Form form={form} disabled={disabledTable}>
       <Table
