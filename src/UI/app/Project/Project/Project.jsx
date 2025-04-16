@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
+
 import { useAllProject } from "@hooks/Project/useAllProject";
 import { useGetSingleProject } from "@hooks/Project/useGetSingleProject";
 import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { Tabs, Button, Form, message } from "antd";
-import { EllipsisOutlined } from "@ant-design/icons";
 import { useGetDataForCreateProject } from "@hooks/Project/useGetDataForCreateProject";
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 import CustomTableProject from "./CustomTableProject";
 import DrawerUpdateProject from "./DrawerUpdateProject";
 
+import { EllipsisOutlined, SaveOutlined } from "@ant-design/icons";
+import { Tabs, Button, Form, message, Flex, Tooltip } from "antd";
 import _ from "lodash";
 
 export default function Project({ activeTabTypes, disabledTable }) {
   const [selectedProjectId, setSelectedProjectId] = useState();
+  const [descriptionProduct, setDescriptionProduct] = useState(null);
 
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
@@ -178,6 +180,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
       await updateProject({
         projectId: currentProject.id,
         _id: currentProject.id,
+        content:descriptionProduct,
         targetUpdateDtos,
         targetCreateDtos,
       }).unwrap();
@@ -381,18 +384,35 @@ export default function Project({ activeTabTypes, disabledTable }) {
     archivesProjectsWithProgram,
   ]);
 
+  useEffect(() => {
+    if(currentProject?.content){
+      console.log(currentProject?.content);
+      setDescriptionProduct(currentProject?.content);
+    }
+  }, [currentProject]);
+  
   return (
     <div style={{ width: "100%" }}>
-      <Button type="primary" onClick={updateSingleProject} loading={isSaving}>
-        save
-      </Button>
-      <Tabs
-        type={activeTabTypes === "projects" ? "editable-card" : "card"}
-        activeKey={activeTab}
-        items={items}
-        onChange={onChangeTab}
-        onEdit={addProject}
-      />
+      <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+        <Tabs
+          style={{ width: "calc(100% - 40px)" }}
+          type={activeTabTypes === "projects" ? "editable-card" : "card"}
+          activeKey={activeTab}
+          items={items}
+          onChange={onChangeTab}
+          onEdit={addProject}
+        />
+
+        <Tooltip placement="bottom" title={"сохранить"}>
+          <Button
+            type="primary"
+            style={{ width: "40px" }}
+            icon={<SaveOutlined />}
+            onClick={updateSingleProject}
+            loading={isSaving}
+          />
+        </Tooltip>
+      </Flex>
 
       {selectedProjectId && (
         <DrawerUpdateProject
@@ -406,7 +426,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
               ? true
               : false
           }
-          programId = {currentProject.programId}
+          programId={currentProject.programId}
         />
       )}
 
@@ -424,6 +444,8 @@ export default function Project({ activeTabTypes, disabledTable }) {
         targetStateOnProduct={targetStateOnProduct}
         setTargetStateOnProduct={setTargetStateOnProduct}
         posts={posts}
+        setDescriptionProduct={setDescriptionProduct}
+        descriptionProduct={descriptionProduct}
       ></CustomTableProject>
     </div>
   );

@@ -100,7 +100,7 @@ export default function Main() {
             tabPosition={"left"}
           />
 
-          <Flex vertical>
+          <Flex vertical style={{ width: "100%", overflowX: "auto", overflowY: "hidden"}}>
             <Tabs
               disabled
               defaultActiveKey="program"
