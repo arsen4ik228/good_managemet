@@ -10,6 +10,9 @@ import {
   Avatar,
   Button,
   Form,
+  Popconfirm,
+  Flex,
+  Typography,
 } from "antd";
 import { UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
@@ -39,14 +42,7 @@ const useStyle = createStyles(({ css, token }) => {
   };
 });
 
-const EditableCell = ({
-  value,
-  onChange,
-  type = "input",
-  options,
-  name,
-  required,
-}) => {
+const EditableCell = ({ value, onChange, type, options, name, required }) => {
   const rules = required
     ? [{ required: true, message: "Заполните поле" }]
     : undefined;
@@ -123,12 +119,71 @@ const EditableCell = ({
       );
 
     default:
-      return (
-        <></>
-      );
+      return <></>;
   }
 };
 
+const EditableCellProject = ({ type, value, options }) => {
+  switch (type) {
+    case "projectName":
+      return (
+        <Input disabled allowClear value={value} style={{ width: "100%" }} />
+      );
+
+    case "holderPostId":
+      return (
+        <Select
+          disabled
+          style={{ width: "100%" }}
+          allowClear
+          showSearch
+          optionFilterProp="searchLabel"
+          filterOption={(input, option) =>
+            option?.searchLabel.toLowerCase().includes(input.toLowerCase())
+          }
+          options={options}
+          value={value}
+        />
+      );
+
+    case "deadline":
+      return (
+        <ConfigProvider locale={ruRU}>
+          <DatePicker
+            disabled
+            format="DD.MM.YYYY"
+            value={value ? dayjs(value) : null}
+            style={{ width: "100%" }}
+          />
+        </ConfigProvider>
+      );
+
+    case "targetState":
+      return (
+        <Select
+          disabled
+          style={{ width: "100%" }}
+          options={options}
+          value={value}
+        />
+      );
+
+    case "dateStart":
+      return (
+        <ConfigProvider locale={ruRU}>
+          <DatePicker
+            disabled
+            format="DD.MM.YYYY"
+            value={value ? dayjs(value) : null}
+            style={{ width: "100%" }}
+          />
+        </ConfigProvider>
+      );
+
+    default:
+      return <></>;
+  }
+};
 const statusesTargets = [
   { label: "Активная", value: "Активная" },
   { label: "Завершена", value: "Завершена" },
@@ -142,21 +197,25 @@ const statusesTargetsWithoutDraft = [
   { label: "Отменена", value: "Отменена" },
 ];
 
-export default function CustomTable({
+export default function CustomTableProgram({
   expandedRowKeys,
   setExpandedRowKeys,
   form,
+  selectedProgramId,
   targetStateOnProduct,
   setTargetStateOnProduct,
 
-  selectedProjectId,
   disabledTable,
   tables,
   setTables,
   isLoadingGetProjectId,
   isFetchingGetProjectId,
   targets,
+  currentProjects,
   posts,
+  projects,
+  selectedProjectIds,
+  setSelectedProjectIds,
 }) {
   const { styles } = useStyle();
 
@@ -174,7 +233,7 @@ export default function CustomTable({
         tables.find((item) => item.tableName === groupName).elements.length + 1,
       content: null,
       holderPostId: null,
-      targetState: null,
+      targetState: targetStateOnProduct ? "Активная" : null,
       dateStart: null,
       deadline: null,
     };
@@ -230,6 +289,67 @@ export default function CustomTable({
         };
       })
     );
+  };
+
+  // добавление к программе проектов
+  const addProjectTables = () => {
+    console.log("addProjectTables");
+
+    // Получаем массив только ID выбранных проектов
+    const selectedProjectIdsValues = selectedProjectIds.map(
+      (project) => project.value
+    );
+
+    // Фильтруем проекты по выбранным ID
+    const selectedProjects = [
+      ...projects.filter((item) => selectedProjectIdsValues.includes(item.id)),
+      ...currentProjects.filter((item) =>
+        selectedProjectIdsValues.includes(item.id)
+      ),
+    ];
+
+    // Создаем элементы для таблицы проектов
+    const projectElements = selectedProjects
+      .map((item) => ({
+        id: item.id,
+        projectNumber: item.projectNumber,
+        projectName: item.projectName,
+        holderPostId: item?.targets?.find((target) => target.type === "Продукт")
+          ?.holderPostId,
+        deadline: item?.targets?.find((target) => target.type === "Продукт")
+          ?.deadline,
+        targetState: item?.targets?.find((target) => target.type === "Продукт")
+          ?.targetState,
+        dateStart: item?.targets?.find((target) => target.type === "Продукт")
+          ?.dateStart,
+      }))
+      .sort((a, b) => a.projectNumber - b.projectNumber);
+
+    // Обновляем таблицу проектов
+    setTables((prevTables) => {
+      // Находим индекс таблицы проектов
+      const projectsTableIndex = prevTables.findIndex(
+        (table) => table.tableName === "Проекты"
+      );
+
+      // Если таблица проектов уже существует - обновляем ее
+      if (projectsTableIndex >= 0) {
+        return prevTables.map((table, index) =>
+          index === projectsTableIndex
+            ? { ...table, elements: projectElements }
+            : table
+        );
+      }
+
+      // Если таблицы проектов нет - добавляем новую
+      return [
+        ...prevTables,
+        {
+          tableName: "Проекты",
+          elements: projectElements,
+        },
+      ];
+    });
   };
 
   // Колонки таблицы
@@ -352,7 +472,11 @@ export default function CustomTable({
             <EditableCell
               type="targetState"
               value={text}
-              options={targetStateOnProduct ? statusesTargetsWithoutDraft : statusesTargets}
+              options={
+                targetStateOnProduct
+                  ? statusesTargetsWithoutDraft
+                  : statusesTargets
+              }
               name={`targetState-${record.id}`}
               required={targetStateOnProduct}
               onChange={(newValue) => {
@@ -421,6 +545,94 @@ export default function CustomTable({
     },
   ];
 
+  const columnsProjects = [
+    {
+      title: "№",
+      dataIndex: "projectNumber",
+      fixed: "left",
+      align: "center",
+      render: (text, record) => (
+        <>
+          <span>{text}</span>
+          {record?.isCreated ? (
+            <Button
+              style={{ marginLeft: "10px" }}
+              icon={<DeleteOutlined />}
+              onClick={() => handleDeleteRow(record.id, record.type)}
+            />
+          ) : null}
+        </>
+      ),
+    },
+    {
+      title: "Описание",
+      dataIndex: "projectName",
+      align: "center",
+      onCell: (record) => ({
+        style: { width: "50vw" },
+      }),
+      render: (text, record) => (
+        <EditableCellProject type="projectName" value={text} />
+      ),
+    },
+    {
+      title: "Ответственный",
+      dataIndex: "holderPostId",
+      width: 150, // Фиксированная ширина
+      align: "center",
+      render: (text, record) => (
+        <EditableCellProject
+          type="holderPostId"
+          value={text}
+          options={posts?.map((item) => ({
+            searchLabel: item?.postName,
+            label: (
+              <>
+                <Avatar
+                  src={baseUrl + item?.user?.avatar_url}
+                  icon={!item?.user?.avatar_url ? <UserOutlined /> : undefined}
+                />
+                <span>{item?.postName}</span>
+              </>
+            ),
+            value: item?.id,
+          }))}
+        />
+      ),
+    },
+    {
+      title: "Дата конца",
+      dataIndex: "deadline",
+      width: 180, // Фиксированная ширина
+      align: "center",
+      render: (text, record) => (
+        <EditableCellProject type="deadline" value={text} />
+      ),
+    },
+    {
+      title: "Статус",
+      dataIndex: "targetState",
+      width: 100, // Фиксированная ширина
+      align: "center",
+      render: (text, record) => (
+        <EditableCellProject
+          type="targetState"
+          value={text}
+          options={statusesTargets}
+        />
+      ),
+    },
+    {
+      title: "Дата начала",
+      dataIndex: "dateStart",
+      width: 180, // Фиксированная ширина
+      align: "center",
+      render: (text, record) => (
+        <EditableCellProject type="dateStart" value={text} />
+      ),
+    },
+  ];
+
   // 1. Настройка expandable для группировки
   const expandableConfig = {
     expandRowByClick: true,
@@ -434,17 +646,37 @@ export default function CustomTable({
     expandedRowRender: (record) => {
       if (record.__isGroup) {
         const groupItems =
-          tables.find((t) => t.tableName === record.groupName)?.elements || [];
+          tables.find(
+            (t) => t.tableName === record.groupName && t.tableName !== "Проекты"
+          )?.elements || [];
+
+        const groupItemsProject =
+          tables.find(
+            (t) => t.tableName === record.groupName && t.tableName === "Проекты"
+          )?.elements || [];
 
         return (
-          <Table
-            columns={columns}
-            dataSource={groupItems}
-            rowKey="id"
-            pagination={false}
-            showHeader={true}
-            bordered={false}
-          />
+          <>
+            {record.groupName === "Проекты" ? (
+              <Table
+                columns={columnsProjects}
+                dataSource={groupItemsProject}
+                rowKey="id"
+                pagination={false}
+                showHeader={true}
+                bordered={false}
+              />
+            ) : (
+              <Table
+                columns={columns}
+                dataSource={groupItems}
+                rowKey="id"
+                pagination={false}
+                showHeader={true}
+                bordered={false}
+              />
+            )}
+          </>
         );
       }
       return null;
@@ -496,19 +728,115 @@ export default function CustomTable({
               }}
             >
               {record.groupName !== "Продукт" ? (
-                <Button
-                  style={{
-                    marginRight: "auto",
-                  }}
-                  icon={
-                    <img
-                      src={addCircleGrey}
-                      alt="add"
-                      style={{ width: 20, height: 20 }}
+                <>
+                  {record.groupName === "Проекты" ? (
+                    <Popconfirm
+                      placement="rightBottom"
+                      showCancel={false}
+                      okButtonProps={{ style: { display: "none" } }}
+                      icon={null}
+                      description={
+                        <div style={{ width: "250px" }}>
+                          <Flex vertical gap="small">
+                            <Typography>Выберите проекты</Typography>
+                            <Select
+                              style={{ width: "100%" }}
+                              mode="multiple"
+                              placement="topLeft"
+                              showSearch
+                              optionFilterProp="label"
+                              filterOption={(input, option) =>
+                                option?.label
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              options={[
+                                ...projects.map((project) => ({
+                                  label: project.projectName,
+                                  value: project.id,
+                                })),
+                                ...currentProjects.map((project) => ({
+                                  label: project.projectName,
+                                  value: project.id,
+                                  disabled: project?.targets?.find(
+                                    (target) =>
+                                      target.type === "Продукт" &&
+                                      target.targetState === "Завершена"
+                                  ),
+                                })),
+                              ]}
+                              value={selectedProjectIds}
+                              onChange={(selectedValues) => {
+                                const selectedProjects = [
+                                  ...projects.filter((project) =>
+                                    selectedValues.includes(project.id)
+                                  ),
+                                  ...currentProjects.filter((project) =>
+                                    selectedValues.includes(project.id)
+                                  ),
+                                ];
+
+                                const newSelectedItems = selectedProjects.map(
+                                  (project) => ({
+                                    label: project.projectName,
+                                    value: project.id,
+                                  })
+                                );
+
+                                setSelectedProjectIds(newSelectedItems);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </Flex>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "flex-end",
+                              marginTop: "10px",
+                            }}
+                          >
+                            <Button
+                              size="small"
+                              type="primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addProjectTables();
+                              }}
+                            >
+                              OK
+                            </Button>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Button
+                        style={{ marginRight: "auto" }}
+                        icon={
+                          <img
+                            src={addCircleGrey}
+                            alt="add"
+                            style={{ width: 20, height: 20 }}
+                          />
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </Popconfirm>
+                  ) : (
+                    <Button
+                      style={{
+                        marginRight: "auto",
+                      }}
+                      icon={
+                        <img
+                          src={addCircleGrey}
+                          alt="add"
+                          style={{ width: 20, height: 20 }}
+                        />
+                      }
+                      onClick={(event) => handleAddRow(event, record.groupName)}
                     />
-                  }
-                  onClick={(event) => handleAddRow(event, record.groupName)}
-                />
+                  )}
+                </>
               ) : (
                 <Button
                   style={{
@@ -542,7 +870,13 @@ export default function CustomTable({
   ];
 
   useEffect(() => {
-    if (selectedProjectId && targets) {
+    if (selectedProgramId && targets && currentProjects) {
+      const selectedProjectIdsValues = currentProjects.map((project) => ({
+        label: project.projectName,
+        value: project.id,
+      }));
+      setSelectedProjectIds(selectedProjectIdsValues);
+
       const createTableData = (type) => ({
         tableName: type,
         elements: targets
@@ -551,31 +885,56 @@ export default function CustomTable({
           .sort((a, b) => a.orderNumber - b.orderNumber),
       });
 
+      const createTableProjects = (type) => ({
+        tableName: type,
+        elements: currentProjects
+          .map((item) => ({
+            id: item.id,
+            projectNumber: item.projectNumber,
+            projectName: item.projectName,
+
+            holderPostId: item?.targets?.find(
+              (target) => target.type === "Продукт"
+            )?.holderPostId,
+            deadline: item?.targets?.find((target) => target.type === "Продукт")
+              ?.deadline,
+            targetState: item?.targets?.find(
+              (target) => target.type === "Продукт"
+            )?.targetState,
+            dateStart: item?.targets?.find(
+              (target) => target.type === "Продукт"
+            )?.dateStart,
+          }))
+          .sort((a, b) => a.projectNumber - b.projectNumber),
+      });
+
       setTables([
         createTableData("Продукт"),
-        createTableData("Задача"),
+        createTableProjects("Проекты"),
         createTableData("Организационные мероприятия"),
         createTableData("Правила"),
         createTableData("Метрика"),
       ]);
     }
-  }, [selectedProjectId, targets]);
+  }, [selectedProgramId, targets, currentProjects]);
 
   useEffect(() => {
     if (tables && tables.length > 0) {
       const formValues = {};
       tables.forEach((table) => {
-        table.elements.forEach((element) => {
-          formValues[`content-${element.id}`] = element.content;
-          formValues[`holderPostId-${element.id}`] = element.holderPostId;
-          formValues[`deadline-${element.id}`] = element.deadline
-            ? dayjs(element.deadline)
-            : null;
-          formValues[`targetState-${element.id}`] = element.targetState;
-          formValues[`dateStart-${element.id}`] = element.dateStart
-            ? dayjs(element.dateStart)
-            : null;
-        });
+        if (table.tableName !== "Проекты") {
+          table.elements.forEach((element) => {
+            formValues[`content-${element.id}`] = element.content;
+            formValues[`holderPostId-${element.id}`] = element.holderPostId;
+            formValues[`deadline-${element.id}`] = element.deadline
+              ? dayjs(element.deadline)
+              : null;
+            formValues[`targetState-${element.id}`] = element.targetState;
+            formValues[`dateStart-${element.id}`] = element.dateStart
+              ? dayjs(element.dateStart)
+              : null;
+          });
+        }
       });
       form.setFieldsValue(formValues);
     }
@@ -591,6 +950,7 @@ export default function CustomTable({
     }
   }, [tables]);
 
+  console.log("tables", tables);
   return (
     <Form form={form} disabled={disabledTable}>
       <Table

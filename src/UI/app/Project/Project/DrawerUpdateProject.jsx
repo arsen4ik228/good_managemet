@@ -8,20 +8,34 @@ import {
   Form,
   Flex,
   Drawer as DrawerAnt,
+  Typography,
 } from "antd";
 import { message } from "antd";
 import { isMobile } from "react-device-detect";
 
 import { useGetDataForCreateProject } from "@hooks/Project/useGetDataForCreateProject";
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
+import { useGetSingleProgram } from "@hooks/Project/useGetSingleProgram";
 
-
-export default function DrawerUpdateProject({currentProject, isLoadingGetProjectId, open, setOpen, disabled }) {
-
+export default function DrawerUpdateProject({
+  currentProject,
+  isLoadingGetProjectId,
+  open,
+  setOpen,
+  disabled,
+  programId,
+}) {
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
 
   const { strategies, isLoadingGetNew } = useGetDataForCreateProject();
+
+  const {
+    currentProgram,
+    isLoadingGetProgramId,
+    isErrorGetProgramId,
+    isFetchingGetProgramId,
+  } = useGetSingleProgram({ selectedProgramId: programId });
 
   const {
     updateProject,
@@ -91,8 +105,11 @@ export default function DrawerUpdateProject({currentProject, isLoadingGetProject
         title={<div style={{ whiteSpace: "nowrap" }}>Обновление проекта</div>}
         placement="right"
         open={open}
-        loading={(isLoadingGetProjectId || isLoadingGetNew)}
-        onClose={() => {setOpen(false); handleReset();}}
+        loading={isLoadingGetProjectId || isLoadingGetNew}
+        onClose={() => {
+          setOpen(false);
+          handleReset();
+        }}
         width={isMobile ? 300 : 350}
       >
         <Flex vertical={true} style={{ height: "100%" }}>
@@ -103,7 +120,7 @@ export default function DrawerUpdateProject({currentProject, isLoadingGetProject
             layout="vertical"
             style={{ flexGrow: 1 }}
           >
-            {/* Название организации */}
+            {/* Название проекта */}
             <Form.Item
               label="Название проекта"
               name="projectName"
@@ -114,28 +131,56 @@ export default function DrawerUpdateProject({currentProject, isLoadingGetProject
               <Input />
             </Form.Item>
 
-            {/* Отчетный день*/}
-            <Form.Item label="Стратегия" name="strategyId">
-              <Select
-                allowClear
-                showSearch
-                optionFilterProp="label"
-                filterOption={(input, option) =>
-                  option?.label.toLowerCase().includes(input.toLowerCase())
-                }
-                options={strategies.map((strategy) => ({
-                  label: "Стратегия" + " " + strategy.strategyNumber,
-                  value: strategy.id,
-                }))}
-              />
-            </Form.Item>
+            {/* Программа у проекта */}
+            {programId ? (
+              <Form.Item label="Программа у проекта">
+                <Input disabled value={currentProgram?.projectName} />
+              </Form.Item>
+            ) : null}
+
+            {/* Стратегия */}
+
+            {programId ? (
+              <Form.Item label="Стратегия">
+                <Select
+                  disabled
+                  value={currentProgram?.strategy?.id}
+                  options={strategies.map((strategy) => ({
+                    label: "Стратегия" + " " + strategy.strategyNumber,
+                    value: strategy.id,
+                  }))}
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item label="Стратегия" name="strategyId">
+                <Select
+                  allowClear
+                  showSearch
+                  optionFilterProp="label"
+                  filterOption={(input, option) =>
+                    option?.label.toLowerCase().includes(input.toLowerCase())
+                  }
+                  options={strategies.map((strategy) => ({
+                    label: "Стратегия" + " " + strategy.strategyNumber,
+                    value: strategy.id,
+                  }))}
+                />
+              </Form.Item>
+            )}
           </Form>
 
           <Space style={{ marginTop: "auto" }}>
-            <Button type="primary" onClick={handleSave} loading={isSaving}  disabled={disabled}>
+            <Button
+              type="primary"
+              onClick={handleSave}
+              loading={isSaving}
+              disabled={disabled}
+            >
               Сохранить
             </Button>
-            <Button onClick={handleReset}  disabled={disabled}>Сбросить</Button>
+            <Button onClick={handleReset} disabled={disabled}>
+              Сбросить
+            </Button>
           </Space>
         </Flex>
       </DrawerAnt>

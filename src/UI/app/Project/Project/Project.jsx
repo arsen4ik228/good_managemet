@@ -6,7 +6,7 @@ import { Tabs, Button, Form, message } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useGetDataForCreateProject } from "@hooks/Project/useGetDataForCreateProject";
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
-import CustomTable from "./CustomTable";
+import CustomTableProject from "./CustomTableProject";
 import DrawerUpdateProject from "./DrawerUpdateProject";
 
 import _ from "lodash";
@@ -323,7 +323,21 @@ export default function Project({ activeTabTypes, disabledTable }) {
           tabsItems = [
             ...projectsWithProgram.map((item) => ({
               key: item.id,
-              label: item.projectName,
+              label: (
+                <>
+                  <Button
+                    size="small"
+                    icon={
+                      <EllipsisOutlined
+                        style={{ transform: "rotate(90deg)" }}
+                      />
+                    }
+                    onClick={() => setOpenDrawer(true)}
+                    style={{ marginRight: "10px" }}
+                  ></Button>
+                  {item.projectName}
+                </>
+              ),
               closable: false,
             })),
           ];
@@ -333,7 +347,21 @@ export default function Project({ activeTabTypes, disabledTable }) {
           tabsItems = [
             ...archivesProjectsWithProgram.map((item) => ({
               key: item.id,
-              label: item.projectName,
+              label: (
+                <>
+                  <Button
+                    size="small"
+                    icon={
+                      <EllipsisOutlined
+                        style={{ transform: "rotate(90deg)" }}
+                      />
+                    }
+                    onClick={() => setOpenDrawer(true)}
+                    style={{ marginRight: "10px" }}
+                  ></Button>
+                  {item.projectName}
+                </>
+              ),
               closable: false,
             })),
           ];
@@ -378,10 +406,11 @@ export default function Project({ activeTabTypes, disabledTable }) {
               ? true
               : false
           }
+          programId = {currentProject.programId}
         />
       )}
 
-      <CustomTable
+      <CustomTableProject
         expandedRowKeys={expandedRowKeys}
         setExpandedRowKeys={setExpandedRowKeys}
         form={form}
@@ -395,7 +424,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
         targetStateOnProduct={targetStateOnProduct}
         setTargetStateOnProduct={setTargetStateOnProduct}
         posts={posts}
-      ></CustomTable>
+      ></CustomTableProject>
     </div>
   );
 }
