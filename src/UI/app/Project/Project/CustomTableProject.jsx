@@ -633,7 +633,7 @@ export default function CustomTableProject({
         dataSource={dataWithGroups}
         rowKey="key"
         pagination={false}
-        scroll={{ x: "max-content", y: "67vh" }}
+        scroll={{ x: "max-content", y: "calc(100vh - 320px)" }}
         style={{ width: "100%"}}
         expandable={expandableConfig}
       />

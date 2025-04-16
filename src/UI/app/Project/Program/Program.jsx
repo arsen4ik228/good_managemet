@@ -370,6 +370,7 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
           items={items}
           onChange={onChangeTab}
           addIcon={
+            <Tooltip placement="bottom" title={"создать программу"}>
             <Popconfirm
               placement="rightBottom"
               showCancel={false}
@@ -411,6 +412,7 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
             >
               <Button size="small" type="text" icon={<PlusOutlined />} />
             </Popconfirm>
+            </Tooltip>
           }
         />
         <Tooltip placement="bottom" title={"сохранить"}>
