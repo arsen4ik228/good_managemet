@@ -775,7 +775,8 @@ export default function CustomTableProgram({
                 width: "100%",
               }}
             >
-              {record.groupName !== "Продукт" ? (
+              {record.groupName !== "Продукт" &&
+              record.groupName !== "Описание" ? (
                 <>
                   {record.groupName === "Проекты" ? (
                     <Popconfirm
@@ -1016,8 +1017,8 @@ export default function CustomTableProgram({
         dataSource={dataWithGroups}
         rowKey="key"
         pagination={false}
-        scroll={{ x: "max-content", y: "67vh" }}
-        style={{ width: "100%" }}
+        scroll={{ x: "max-content", y: "calc(100vh - 320px)" }}
+        style={{ width: "100%"}}
         expandable={expandableConfig}
       />
     </Form>
