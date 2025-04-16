@@ -634,7 +634,7 @@ export default function CustomTableProject({
         rowKey="key"
         pagination={false}
         scroll={{ x: "max-content", y: "67vh" }}
-        style={{ width: "100%" }}
+        style={{ width: "100%"}}
         expandable={expandableConfig}
       />
     </Form>
