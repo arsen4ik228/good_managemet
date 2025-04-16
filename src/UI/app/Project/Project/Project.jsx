@@ -8,7 +8,7 @@ import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 import CustomTableProject from "./CustomTableProject";
 import DrawerUpdateProject from "./DrawerUpdateProject";
 
-import { EllipsisOutlined, SaveOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
 import { Tabs, Button, Form, message, Flex, Tooltip } from "antd";
 import _ from "lodash";
 
@@ -180,7 +180,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
       await updateProject({
         projectId: currentProject.id,
         _id: currentProject.id,
-        content:descriptionProduct,
+        content: descriptionProduct,
         targetUpdateDtos,
         targetCreateDtos,
       }).unwrap();
@@ -385,12 +385,12 @@ export default function Project({ activeTabTypes, disabledTable }) {
   ]);
 
   useEffect(() => {
-    if(currentProject?.content){
+    if (currentProject?.content) {
       console.log(currentProject?.content);
       setDescriptionProduct(currentProject?.content);
     }
   }, [currentProject]);
-  
+
   return (
     <div style={{ width: "100%" }}>
       <Flex justify="space-between" align="center" style={{ width: "100%" }}>
@@ -400,7 +400,17 @@ export default function Project({ activeTabTypes, disabledTable }) {
           activeKey={activeTab}
           items={items}
           onChange={onChangeTab}
-          onEdit={addProject}
+          // onEdit={addProject}
+          addIcon={
+            <Tooltip placement="bottom" title={"создать проект"}>
+              <Button
+                onClick={addProject}
+                size="small"
+                type="text"
+                icon={<PlusOutlined />}
+              />
+            </Tooltip>
+          }
         />
 
         <Tooltip placement="bottom" title={"сохранить"}>
