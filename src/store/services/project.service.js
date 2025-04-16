@@ -26,8 +26,8 @@ export const projectApi = apiSlice.injectEndpoints({
                 const hasProductType = item.targets.some(
                   (target) =>
                     target.type === "Продукт" &&
-                    (target.targetState === "Активная" ||
-                      target.targetState === "Черновик")
+                  (target.targetState === "Активная" ||
+                    target.targetState === "Черновик")
                 );
                 return hasProductType;
               }
@@ -58,8 +58,8 @@ export const projectApi = apiSlice.injectEndpoints({
                 const hasProductType = item.targets.some(
                   (target) =>
                     target.type === "Продукт" &&
-                    target.targetState === "Активная" &&
-                    target.isExpired === false
+                  (target.targetState === "Активная" ||
+                    target.targetState === "Черновик")
                 );
                 console.log(hasProductType);
                 return hasProductType;
@@ -86,16 +86,16 @@ export const projectApi = apiSlice.injectEndpoints({
           programs:
             response?.filter((item) => {
               if (item.type !== "Программа") return false;
-              return item;
-              // if (Array.isArray(item.targets)) {
-              //   const hasProductType = item.targets.some(
-              //     (target) =>
-              //       target.type === "Продукт" &&
-              //       target.targetState === "Активная" &&
-              //       target.isExpired === false
-              //   );
-              //   return hasProductType;
-              // }
+      ;
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    target.targetState === "Активная" || target.targetState === "Черновик" ||
+                    target.isExpired === false
+                );
+                return hasProductType;
+              }
             }) || [],
 
           archivesPrograms:
@@ -115,7 +115,15 @@ export const projectApi = apiSlice.injectEndpoints({
         };
       },
       providesTags: (result) =>
-        result ? [{ type: "Project", id: "LIST" }] : [],
+        Array.isArray(result)
+          ? [
+              ...result?.map(({ id }) => ({
+                type: 'Project',
+                id,
+              })),
+              'Project',
+            ]
+          : ['Project'],
     }),
 
     getProjectId: build.query({
@@ -133,8 +141,7 @@ export const projectApi = apiSlice.injectEndpoints({
           strategies: response?.strategies || [],
         };
       },
-      providesTags: (result, error, { projectId }) =>
-        result ? [{ type: "Project1", id: projectId }] : [],
+      providesTags: (result, error, arg) => [{ type: 'Project', id: arg.projectId }],
     }),
 
     postProject: build.mutation({
@@ -146,8 +153,7 @@ export const projectApi = apiSlice.injectEndpoints({
       transformResponse: (response) => ({
         id: response.id,
       }),
-      invalidatesTags: (result) =>
-        result ? [{ type: "Project", id: "LIST" }] : [],
+      invalidatesTags: ["Project"],
     }),
 
     getProjectNew: build.query({
@@ -162,6 +168,7 @@ export const projectApi = apiSlice.injectEndpoints({
           programs: response?.programs || [],
         };
       },
+      providesTags: ['Project'],
     }),
 
     updateProject: build.mutation({
@@ -170,8 +177,7 @@ export const projectApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { projectId }) =>
-        result ? [{ type: "Project1", id: projectId }] : [],
+      invalidatesTags: (result, err, arg) => [{ type: 'Project', id: arg._projectId }],
     }),
 
     getProgramNew: build.query({
@@ -186,6 +192,7 @@ export const projectApi = apiSlice.injectEndpoints({
           projects: response?.projects || [],
         };
       },
+      providesTags: ['Project'],
     }),
 
     getProgramId: build.query({
@@ -197,8 +204,7 @@ export const projectApi = apiSlice.injectEndpoints({
         currentProjects: response?.projects || [],
         targets: response?.program?.targets || [],
       }),
-      providesTags: (result, error, { programId }) =>
-        result ? [{ type: "Project1", id: programId }] : [],
+      providesTags: (result, error, arg) => [{ type: 'Project', id: arg.programId }],
     }),
   }),
 });

@@ -3,7 +3,7 @@ import { useAllProject } from "@hooks/Project/useAllProject";
 import { useGetSingleProgram } from "@hooks/Project/useGetSingleProgram";
 import { useCreateProject } from "@hooks/Project/useCreateProject";
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
-import CustomTable from "./CustomTable";
+import CustomTableProgram from "./CustomTableProgram";
 import DrawerUpdateProgram from "./DrawerUpdateProgram";
 import { useGetDataForCreateProgram } from "@hooks/Project/useGetDataForCreateProgram";
 
@@ -23,6 +23,7 @@ import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 export default function Program({ activeTabTypesProgram, disabledTable }) {
   const [selectedProgramId, setSelectedProgramId] = useState();
   const [selectedStrategyId, setSelectedStrategyId] = useState(null);
+  const [selectedProjectIds, setSelectedProjectIds] = React.useState([]);
 
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
@@ -189,11 +190,16 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
           )
       );
 
+      const selectedProjectIdsValues = selectedProjectIds.map(
+        (project) => project.value
+      );
+      
       await updateProject({
         projectId: currentProgram.id,
         _id: currentProgram.id,
         targetUpdateDtos,
         targetCreateDtos,
+        projectIds:selectedProjectIdsValues,
       }).unwrap();
 
       setExpandedRowKeys(prevStateExpandedRowKeys);
@@ -346,8 +352,9 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
       <Button type="primary" onClick={updateSingleProject} loading={isSaving}>
         save
       </Button>
+
       <Tabs
-        type={activeTabTypesProgram === "program" ? "editable-card" : "card"}
+        type={activeTabTypesProgram === "programs" ? "editable-card" : "card"}
         activeKey={activeTab}
         items={items}
         onChange={onChangeTab}
@@ -401,14 +408,14 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
           open={openDrawer}
           setOpen={setOpenDrawer}
           disabled={
-            activeTabTypesProgram === "archivesProjectsWithProgram"
+            activeTabTypesProgram === "archivesPrograms"
               ? true
               : false
           }
         />
       )}
 
-      <CustomTable
+      <CustomTableProgram
         expandedRowKeys={expandedRowKeys}
         setExpandedRowKeys={setExpandedRowKeys}
         form={form}
@@ -418,11 +425,15 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
         setTables={setTables}
         isLoadingGetProgramId={isLoadingGetProgramId}
         isFetchingGetProgramId={isFetchingGetProgramId}
+        currentProjects={currentProjects}
         targets={targets}
         targetStateOnProduct={targetStateOnProduct}
         setTargetStateOnProduct={setTargetStateOnProduct}
         posts={posts}
-      ></CustomTable>
+        projects={projects}
+        selectedProjectIds={selectedProjectIds}
+        setSelectedProjectIds={setSelectedProjectIds}
+      ></CustomTableProgram>
     </div>
   );
 }

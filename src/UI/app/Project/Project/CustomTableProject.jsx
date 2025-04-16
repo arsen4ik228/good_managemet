@@ -142,7 +142,7 @@ const statusesTargetsWithoutDraft = [
   { label: "Отменена", value: "Отменена" },
 ];
 
-export default function CustomTable({
+export default function CustomTableProject({
   expandedRowKeys,
   setExpandedRowKeys,
   form,
@@ -174,7 +174,7 @@ export default function CustomTable({
         tables.find((item) => item.tableName === groupName).elements.length + 1,
       content: null,
       holderPostId: null,
-      targetState: null,
+      targetState: targetStateOnProduct ? "Активная" : null,
       dateStart: null,
       deadline: null,
     };

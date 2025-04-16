@@ -31,7 +31,7 @@ export default function Main() {
       children: (
         <Project
           activeTabTypes={activeTabTypes}
-          disabledTable={activeTabTypes === "archivesProjects"}
+          disabledTable={activeTabTypes === "archivesProjects" || activeTabTypes === "archivesProjectsWithProgram"}
         />
       ),
     },
@@ -61,7 +61,7 @@ export default function Main() {
     },
     {
       key: "archivesProjectsWithProgram",
-      label: "архивные проекты с программами",
+      label: "завершенные проекты с программами",
     },
   ];
 
