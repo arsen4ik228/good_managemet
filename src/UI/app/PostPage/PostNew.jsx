@@ -19,6 +19,7 @@ import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
 import { usePostsHook } from "@hooks";
 import ButtonAttach from "@Custom/buttonAttach/ButtonAttach";
+import RoleContainer from "./RoleContainer";
 
 export default function PostNew() {
   const navigate = useNavigate();
@@ -41,12 +42,15 @@ export default function PostNew() {
   const [openModalPolicy, setOpenModalPolicy] = useState(false);
   const [openModalStatistic, setOpenModalStatistic] = useState(false);
 
+  const [userRole, setUserRole] = useState()
+
   const {
     reduxSelectedOrganizationId,
 
     staff,
     policies,
     parentPosts,
+    roles,
     maxDivisionNumber,
     isLoadingGetNew,
     isErrorGetNew,
@@ -77,10 +81,17 @@ export default function PostNew() {
     if (parentId !== "null") {
       Data.parentId = parentId;
     }
-  
+
     if (worker !== "null") {
       Data.responsibleUserId = worker;
     }
+
+    if (userRole) {
+      Data.roleId = userRole
+    }
+    else
+      Data.roleId = roles.find(item => item.roleName === 'Сотрудник').id
+
 
     await postPosts({
       postName: postName,
@@ -116,7 +127,7 @@ export default function PostNew() {
     setDivisionNameDB(`Подразделение №${maxDivisionNumber}`);
   }, [maxDivisionNumber]);
 
-  console.log(`worker = ${worker}`)
+  console.log(`worker = ${userRole}`)
   return (
     <div className={classes.dialog}>
       <Headers name={"создание поста"} back={back}>
@@ -197,6 +208,8 @@ export default function PostNew() {
                   onClick={() => setOpenModalStatistic(true)}
                   btnName={" Выбрать или создать статистику для поста"}
                 ></ButtonAttach>
+
+                <RoleContainer rolesArray={roles} role={userRole} setRole={setUserRole}></RoleContainer>
 
                 {openModalStatistic && (
                   <ModalWindow
