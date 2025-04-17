@@ -4,6 +4,7 @@ import Headers from "@Custom/Headers/Headers";
 import Task from '@app/WorkingPlanPage/mobile/TaskContainer/Task';
 import InputTextContainer from '@Custom/ContainerForInputText/InputTextContainer';
 import { useTargetsHook } from '@hooks';
+import Input from './mobile/Input';
 
 export default function MainWorkingPlan() {
 
@@ -107,10 +108,10 @@ export default function MainWorkingPlan() {
 
                 </div>
             </div>
-            <InputTextContainer
+            <Input
                 userPosts={userPosts}
             >
-            </InputTextContainer>
+            </Input>
         </div>
     )
 }
