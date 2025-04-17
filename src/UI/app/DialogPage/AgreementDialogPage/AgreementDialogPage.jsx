@@ -54,7 +54,7 @@ export default function AgreementDialogPage() {
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
-    // useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
+    useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
 
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);

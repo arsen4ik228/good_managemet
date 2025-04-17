@@ -92,6 +92,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
   const {
     staff = [],
     policies = [],
+    roles = [],
     parentPosts = [],
     maxDivisionNumber = undefined,
     isLoadingGetNew,
@@ -103,6 +104,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
         staff: data?.workers || [],
         policies: data?.policies || [],
         parentPosts: data?.posts || [],
+        roles: data?.roles || [],
         maxDivisionNumber: data?.maxDivisionNumber + 1 || undefined,
         isLoadingGetNew: isLoading,
         isErrorGetNew: isError,
@@ -177,6 +179,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     staff,
     policies,
     parentPosts,
+    roles,
     maxDivisionNumber,
     isLoadingGetNew,
     isErrorGetNew,

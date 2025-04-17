@@ -19,6 +19,7 @@ import { useModalCheckBoxStatistic } from "@hooks/useModalCheckBoxStatistic";
 import { ModalSelectedStatistic } from "@Custom/modalSelectedStatistic/ModalSelectedStatistic";
 import { usePostsHook } from "@hooks";
 import { useStatisticsHook } from "../../../hooks/useStatisticsHook";
+import RoleContainer from "./RoleContainer";
 
 export default function Post() {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ export default function Post() {
   const [disabledDivisionName, setDisabledDivisionName] = useState(false);
   const [parentPostId, setParentPostId] = useState("");
   const [worker, setWorker] = useState(null);
+  const [userRole, setUserRole] = useState()
 
   const [product, setProduct] = useState(null);
   const [isProductChanges, setIsProductChanges] = useState(false);
@@ -76,6 +78,8 @@ export default function Post() {
     selectedPolicyIDInPost,
     selectedPolicyNameInPost,
     refetchPostIdQuery,
+
+    roles,
 
     updatePost,
     isLoadingUpdatePostMutation,
@@ -166,6 +170,8 @@ export default function Post() {
       setSelectedPolicyID(selectedPolicyIDInPost);
       setSelectedPolicyName(selectedPolicyNameInPost);
     }
+
+    setUserRole(currentPost.roleId)
   }, [currentPost.id]);
 
   const saveUpdatePost = async () => {
@@ -212,6 +218,7 @@ export default function Post() {
     if (Object.keys(updatedData).length > 0) {
       await updatePost({
         _id: selectedPostId,
+        roleId: userRole,
         ...updatedData, // отправляем только измененные поля
       })
         .unwrap()
@@ -483,6 +490,9 @@ export default function Post() {
                             </div>
                           )}
                         </div>
+
+                        <RoleContainer rolesArray={roles} role={userRole} setRole={setUserRole}></RoleContainer>
+                        
 
                         {openModalPolicy && (
                           <ModalSelectRadio

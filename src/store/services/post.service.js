@@ -42,6 +42,7 @@ export const postApi = apiSlice.injectEndpoints({
           workers: response?.workers || [],
           policies: response?.policies || [],
           posts: response?.posts || [],
+          roles: response?.roles || [],
           organizations: response?.organizations || [],
           maxDivisionNumber: response?.maxDivisionNumber || null
         };
