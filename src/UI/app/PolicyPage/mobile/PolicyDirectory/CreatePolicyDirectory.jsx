@@ -64,8 +64,8 @@ export default function CreatePolicyDirectory() {
     })
       .unwrap()
       .then((result) => {
-setTimeout(() => {navigate(`/pomoshnik/Policy/EditDirectory/${result?.id}`);}, 2000)
-        
+        setTimeout(() => { navigate(`/pomoshnik/Policy/EditDirectory/${result?.id}`); }, 1000)
+
       })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
@@ -101,7 +101,7 @@ setTimeout(() => {navigate(`/pomoshnik/Policy/EditDirectory/${result?.id}`);}, 2
               <div className={classes.left}>
                 <div
                   className={classes.title}
-                  // onClick={() => setOpenDirectives(!openDirectives)}
+                // onClick={() => setOpenDirectives(!openDirectives)}
                 >
                   <div>
                     <span>Директивы</span>

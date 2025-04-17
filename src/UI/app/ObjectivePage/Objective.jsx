@@ -225,7 +225,7 @@ export default function Objective() {
             ) : (
               <>
                 <WaveLetters
-                  letters={"Выберите краткосрочную цель"}
+                  letters={"Выберите стратегию"}
                 ></WaveLetters>
               </>
             )}

@@ -90,6 +90,9 @@ h6 {
     font-weight: inherit;
 }
 
+textarea {
+    resize: none;
+}
 /*--------------------*/
 
 

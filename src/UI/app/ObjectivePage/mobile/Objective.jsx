@@ -198,32 +198,33 @@ function MobileObjective(props) {
             сохранить
           </ButtonContainer>
         )}
+
+        <HandlerQeury
+          Loading={isLoadingGetObjectiveId}
+          Error={isErrorGetObjectiveId}
+        />
+
+        <HandlerQeury Loading={isLoadingStrateg} Error={isErrorStrateg} />
+
+        <HandlerMutation
+          Loading={isLoadingUpdateObjectiveMutation}
+          Error={
+            isErrorUpdateObjectiveMutation &&
+            localIsResponseUpdateObjectiveMutation
+          }
+          Success={
+            isSuccessUpdateObjectiveMutation &&
+            localIsResponseUpdateObjectiveMutation
+          }
+          textSuccess={"Краткосрочная цель обновлена"}
+          textError={
+            errorUpdateObjectiveMutation?.data?.errors?.[0]?.errors?.[0]
+              ? errorUpdateObjectiveMutation.data.errors[0].errors[0]
+              : errorUpdateObjectiveMutation?.data?.message
+          } />
       </div>
 
-      <HandlerQeury
-        Loading={isLoadingGetObjectiveId}
-        Error={isErrorGetObjectiveId}
-      />
 
-      <HandlerQeury Loading={isLoadingStrateg} Error={isErrorStrateg} />
-
-      <HandlerMutation
-        Loading={isLoadingUpdateObjectiveMutation}
-        Error={
-          isErrorUpdateObjectiveMutation &&
-          localIsResponseUpdateObjectiveMutation
-        }
-        Success={
-          isSuccessUpdateObjectiveMutation &&
-          localIsResponseUpdateObjectiveMutation
-        }
-        textSuccess={"Краткосрочная цель обновлена"}
-        textError={
-          errorUpdateObjectiveMutation?.data?.errors?.[0]?.errors?.[0]
-            ? errorUpdateObjectiveMutation.data.errors[0].errors[0]
-            : errorUpdateObjectiveMutation?.data?.message
-        }
-      />
     </>
   );
 }

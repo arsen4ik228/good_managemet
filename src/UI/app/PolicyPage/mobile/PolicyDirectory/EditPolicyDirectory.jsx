@@ -91,7 +91,7 @@ export default function EditPolicyDirectories() {
       .then(() => {
         setTimeout(() => {
           navigate(-1);
-        }, 1000);
+        }, 500);
       })
 
       .catch((error) => {
