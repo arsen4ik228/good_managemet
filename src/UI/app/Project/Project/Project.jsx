@@ -8,7 +8,11 @@ import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 import CustomTableProject from "./CustomTableProject";
 import DrawerUpdateProject from "./DrawerUpdateProject";
 
-import { EllipsisOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EllipsisOutlined,
+  SaveOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { Tabs, Button, Form, message, Flex, Tooltip } from "antd";
 import _ from "lodash";
 
@@ -152,30 +156,80 @@ export default function Project({ activeTabTypes, disabledTable }) {
           })
       );
 
-      const targetUpdateDtos = tables.flatMap((table) =>
-        table.elements
-          .filter((element) => element.isUpdated === true)
-          .map(
-            ({
-              isUpdated,
-              id,
-              createdAt,
-              updatedAt,
-              targetHolders,
-              isExpired,
-              ...rest
-            }) => {
-              const baseItem = {
-                _id: id,
-                ..._.omitBy(rest, _.isNull),
-              };
+      // const targetUpdateDtos = tables.flatMap((table) =>
+      //   table.elements
+      //     .filter((element) => element.isUpdated === true)
+      //     .map(
+      //       ({
+      //         isUpdated,
+      //         id,
+      //         createdAt,
+      //         updatedAt,
+      //         targetHolders,
+      //         isExpired,
+      //         ...rest
+      //       }) => {
+      //         const baseItem = {
+      //           _id: id,
+      //           ..._.omitBy(rest, _.isNull),
+      //         };
 
-              return changeTypeStateOnAllTarget
-                ? { ...baseItem, targetState: "Активная" }
-                : baseItem;
-            }
-          )
-      );
+      //         return changeTypeStateOnAllTarget
+      //           ? { ...baseItem, targetState: "Активная" }
+      //           : baseItem;
+      //       }
+      //     )
+      // );
+
+      const targetUpdateDtos = [];
+
+      if (changeTypeStateOnAllTarget) {
+        targetUpdateDtos = tables.flatMap((table) =>
+          table.elements
+            .filter((element) => element.isCreated !== true)
+            .map(
+              ({
+                isUpdated,
+                id,
+                createdAt,
+                updatedAt,
+                targetHolders,
+                isExpired,
+                ...rest
+              }) => {
+                const baseItem = {
+                  _id: id,
+                  ..._.omitBy(rest, _.isNull),
+                };
+
+                return { ...baseItem, targetState: "Активная" };
+              }
+            )
+        );
+      } else {
+        targetUpdateDtos = tables.flatMap((table) =>
+          table.elements
+            .filter((element) => element.isUpdated === true)
+            .map(
+              ({
+                isUpdated,
+                id,
+                createdAt,
+                updatedAt,
+                targetHolders,
+                isExpired,
+                ...rest
+              }) => {
+                const baseItem = {
+                  _id: id,
+                  ..._.omitBy(rest, _.isNull),
+                };
+
+                return baseItem;
+              }
+            )
+        );
+      }
 
       await updateProject({
         projectId: currentProject.id,
@@ -451,7 +505,10 @@ export default function Project({ activeTabTypes, disabledTable }) {
         isLoadingGetProjectId={isLoadingGetProjectId}
         isFetchingGetProjectId={isFetchingGetProjectId}
         targets={targets}
-        targetStateOnProduct={targets.find(target => target.type === "Продукт" && target.targetState === "Активная")}
+        targetStateOnProduct={targets.find(
+          (target) =>
+            target.type === "Продукт" && target.targetState === "Активная"
+        )}
         posts={posts}
         setDescriptionProduct={setDescriptionProduct}
         descriptionProduct={descriptionProduct}
