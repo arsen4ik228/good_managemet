@@ -11,6 +11,7 @@ import AlertSavePost from "@Custom/AlertSavePost/AlertSavePost.jsx";
 import { ButtonContainer } from "@Custom/CustomButtomContainer/ButtonContainer.jsx";
 import { usePostsHook, useGetReduxOrganization } from "@hooks";
 import { useSelector } from "react-redux";
+import RoleContainer from "../RoleContainer";
 
 const Posts = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const Posts = () => {
   const [worker, setWorker] = useState(createdUserId);
   const [parentId, setParentId] = useState("");
   const [currentPolicyName, setCurrentPolicyName] = useState(null);
+  const [userRole, setUserRole] = useState()
 
   const [modalPolicyOpen, setModalPolicyOpen] = useState(false);
   const [modalStatisticsOpen, setModalStatisticsOpen] = useState(false);
@@ -37,6 +39,8 @@ const Posts = () => {
     maxDivisionNumber,
     isLoadingGetNew,
     isErrorGetNew,
+
+    roles,
 
     postPosts,
     isLoadingPostMutation,
@@ -67,6 +71,13 @@ const Posts = () => {
     if (policy !== null) {
       Data.addPolicyId = policy;
     }
+
+    if (userRole) {
+      Data.roleId = userRole
+    }
+    else
+      Data.roleId = roles.find(item => item.roleName === 'Сотрудник').id
+
     await postPosts({
       postName: postName,
       divisionName: divisionName,
@@ -226,6 +237,10 @@ const Posts = () => {
                         </span>
                       </div>
                     </div>
+
+                        
+                    <RoleContainer rolesArray={roles} role={userRole} setRole={setUserRole}></RoleContainer>
+
                     <HandlerMutation
                       Loading={isLoadingPostMutation}
                       Error={
