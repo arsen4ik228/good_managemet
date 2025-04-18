@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { baseUrl } from "@helpers/constants";
 import addCircleGrey from "@image/addCircleGrey.svg";
 import {
@@ -22,7 +22,61 @@ import ruRU from "antd/locale/ru_RU";
 import dayjs from "dayjs";
 import "dayjs/locale/ru";
 
+import { HolderOutlined } from "@ant-design/icons";
+import { DndContext } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 dayjs.locale("ru"); // Устанавливаем русский язык для dayjs
+
+const RowContext = React.createContext({});
+const DragHandle = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  return (
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{ cursor: "move" }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
+  );
+};
+
+const Row = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props["data-row-key"] });
+  const style = Object.assign(
+    Object.assign(Object.assign({}, props.style), {
+      transform: CSS.Translate.toString(transform),
+      transition,
+    }),
+    isDragging ? { position: "relative", zIndex: 9999 } : {}
+  );
+  const contextValue = useMemo(
+    () => ({ setActivatorNodeRef, listeners }),
+    [setActivatorNodeRef, listeners]
+  );
+  return (
+    <RowContext.Provider value={contextValue}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowContext.Provider>
+  );
+};
 
 const useStyle = createStyles(({ css, token }) => {
   const { antCls } = token;
@@ -221,6 +275,31 @@ export default function CustomTableProgram({
 }) {
   const { styles } = useStyle();
 
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return;
+
+    setTables((prevTables) => {
+      return prevTables.map((table) => {
+        const isTargetGroup = table.elements.some((el) => el.id === active.id);
+        if (!isTargetGroup) return table;
+
+        const activeIndex = table.elements.findIndex(
+          (el) => el.id === active.id
+        );
+        const overIndex = table.elements.findIndex((el) => el.id === over.id);
+
+        if (activeIndex === -1 || overIndex === -1) return table;
+
+        return {
+          ...table,
+          elements: arrayMove(table.elements, activeIndex, overIndex).map(
+            (el, index) => ({ ...el, orderNumber: index + 1, isUpdated: true })
+          ),
+        };
+      });
+    });
+  };
+
   // Добавление новой строки в таблицу
   const handleAddRow = (event, groupName) => {
     event.stopPropagation();
@@ -356,6 +435,14 @@ export default function CustomTableProgram({
 
   // Колонки таблицы
   const columns = [
+    {
+      key: "sort",
+      align: "center",
+      width: 20,
+      render: (text, record) => (
+        <>{record.type === "Продукт" ? null : <DragHandle />}</>
+      ),
+    },
     {
       title: "№",
       dataIndex: "orderNumber",
@@ -675,14 +762,25 @@ export default function CustomTableProgram({
         }
 
         return (
-          <Table
-            columns={columnsToUse}
-            dataSource={groupItems}
-            rowKey="id"
-            pagination={false}
-            showHeader={true}
-            bordered={false}
-          />
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              items={groupItems?.map((i) => i.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Table
+               components={{ body: { row: Row } }}
+                columns={columnsToUse}
+                dataSource={groupItems}
+                rowKey="id"
+                pagination={false}
+                showHeader={true}
+                bordered={false}
+              />
+            </SortableContext>
+          </DndContext>
         );
       }
       return null;
@@ -1018,7 +1116,7 @@ export default function CustomTableProgram({
         rowKey="key"
         pagination={false}
         scroll={{ x: "max-content", y: "calc(100vh - 320px)" }}
-        style={{ width: "100%"}}
+        style={{ width: "100%" }}
         expandable={expandableConfig}
       />
     </Form>

@@ -451,8 +451,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
         isLoadingGetProjectId={isLoadingGetProjectId}
         isFetchingGetProjectId={isFetchingGetProjectId}
         targets={targets}
-        targetStateOnProduct={targetStateOnProduct}
-        setTargetStateOnProduct={setTargetStateOnProduct}
+        targetStateOnProduct={targets.find(target => target.type === "Продукт" && target.targetState === "Активная")}
         posts={posts}
         setDescriptionProduct={setDescriptionProduct}
         descriptionProduct={descriptionProduct}
