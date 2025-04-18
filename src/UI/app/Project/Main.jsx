@@ -8,6 +8,8 @@ const Project = React.lazy(() => import("@app/Project/Project/Project"));
 
 const Program = React.lazy(() => import("@app/Project/Program/Program"));
 
+
+
 export default function Main() {
   const [activeTab, setActiveTab] = React.useState("программы");
   const [activeTabTypes, setActiveTabTypes] = React.useState("projects");
@@ -111,7 +113,7 @@ export default function Main() {
             />
             <Tabs
               defaultActiveKey="projects"
-              items={types.map((item) => ({ ...item, disabled: activeTab === "программы" }))}
+              items={types.map((item) => ({ ...item, disabled: activeTab === "программы"}))}
               onChange={handleTabChangeTypes}
               tabBarGutter={50}
               tabBarStyle={{ margin: 0, padding: 0 }}

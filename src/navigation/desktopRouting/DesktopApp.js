@@ -25,15 +25,6 @@ const StartProject = React.lazy(() =>
 const ProjectWithProgramm = React.lazy(() =>
   import("@app/Project/Main")
 );
-const ProjectNew = React.lazy(() =>
-  import("@app/ProjectPage/Project/Create/ProjectNew")
-);
-const Program = React.lazy(() =>
-  import("@app/ProjectPage/Program/Update/Program")
-);
-const ProgramNew = React.lazy(() =>
-  import("@app/ProjectPage/Program/Create/ProgramNew")
-);
 const Post = React.lazy(() => import("@app/PostPage/Post"));
 const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
 const WorkingPlan = React.lazy(() =>
