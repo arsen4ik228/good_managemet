@@ -10,6 +10,7 @@ import AttachPolicy from "@Custom/AttachPolicy/AttachPolicy.jsx";
 import { ButtonContainer } from "@Custom/CustomButtomContainer/ButtonContainer.jsx";
 import { notEmpty } from "@helpers/helpers";
 import { usePostsHook } from "@hooks";
+import RoleContainer from "../RoleContainer";
 
 const Posts = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const Posts = () => {
   const [isPurposeChanges, setIsPurposeChanges] = useState(false);
   const [worker, setWorker] = useState(null);
   const [policy, setPolicy] = useState(null);
+  const [userRole, setUserRole] = useState()
 
   const [currentPolicyName, setCurrentPolicyName] = useState(null);
   const [modalPolicyOpen, setModalPolicyOpen] = useState(false);
@@ -44,6 +46,8 @@ const Posts = () => {
     isLoadingGetPostId,
     isErrorGetPostId,
     isFetchingGetPostId,
+    
+    roles,
 
     updatePost,
     isLoadingUpdatePostMutation,
@@ -51,7 +55,7 @@ const Posts = () => {
     isErrorUpdatePostMutation,
     ErrorUpdatePostMutation,
     localIsResponseUpdatePostMutation,
-  } = usePostsHook({postId});
+  } = usePostsHook({ postId });
 
   useEffect(() => {
     if (currentPost && notEmpty(currentPost)) {
@@ -60,6 +64,7 @@ const Posts = () => {
       setWorker(currentPost?.user?.id);
       setParentId(currentPost?.parentId);
       setPolicy(currentPost?.policy?.id);
+      setUserRole(currentPost.roleId)
     }
   }, [currentPost]);
 
@@ -133,6 +138,7 @@ const Posts = () => {
     if (Object.keys(updatedData).length > 0) {
       await updatePost({
         _id: postId,
+        roleId: userRole,
         ...updatedData, // отправляем только измененные поля
       })
         .unwrap()
@@ -337,6 +343,9 @@ const Posts = () => {
                               )}
                             </div>
                           </div>
+
+                          <RoleContainer rolesArray={roles} role={userRole} setRole={setUserRole}></RoleContainer>
+
                           <HandlerMutation
                             Loading={isLoadingUpdatePostMutation}
                             Error={
@@ -352,7 +361,7 @@ const Posts = () => {
                               ErrorUpdatePostMutation?.data?.errors?.[0]
                                 ?.errors?.[0]
                                 ? ErrorUpdatePostMutation.data.errors[0]
-                                    .errors[0]
+                                  .errors[0]
                                 : ErrorUpdatePostMutation?.data?.message
                             }
                           ></HandlerMutation>

@@ -1,12 +1,14 @@
 .wrapper {
     height: 70px;
+    width: 100%;
 
     padding: 5px;
     margin: 10px 0;
 
-
     background-color: white;
     border-radius: 10px;
+    max-width: 700px;
+
 }
 
 .body {
@@ -22,7 +24,7 @@
 
 }
 
-._body{
+._body {
     position: relative;
 
     width: 100%;
@@ -36,7 +38,7 @@
     align-items: center;
 }
 
-._body::before{
+._body::before {
     position: absolute;
     left: 10px;
     top: -12px;
@@ -54,7 +56,7 @@
     font-size: 12px;
     text-transform: uppercase;
     color: #005475;
-    
+
     content: 'Приказ';
 
     /* z-index: 1000; */

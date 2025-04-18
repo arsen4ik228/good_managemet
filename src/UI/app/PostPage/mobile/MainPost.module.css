@@ -66,31 +66,37 @@
 .selectList{
     display: flex;
     flex-direction: column;
-    overflow-x: auto;
-    overflow-y: hidden;
+    /* overflow-x: hidden;
+    overflow-y: hidden; */
+    /* text-overflow: hidden; */
     justify-content: flex-start;
     align-items: flex-start;
     font-size: 1.3em;
     list-style-type: circle;
     color: #000000E0;
 
-
+    /* overflow: hidden;        
+    white-space: nowrap;     */
+    
     li{
         display: flex;
         width: 99%;
         padding: 0.8rem 0.8rem 1px 0.8rem;
         justify-content: flex-start;
         text-transform: uppercase;
-        /* box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px; */
-        /* border-bottom: #bfbfbf 1px solid; */
-        >div {
+        word-break: break-all;
+        
+        /* text-overflow: ellipsis;  */
+        
+        > div {
             padding-left: 5px;
+            /* Если текст находится внутри div, добавьте и ему: */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            width: 100%; /* Или фиксированная ширина */
         }
-        /* background: url('../Custom/icon/icon _ sublist.svg') right 12px no-repeat;
-        background-image: url('../Custom/icon/icon _ sublist.svg');
-        background-repeat: no-repeat;
-        background-position: right 12px; */
-        /* transform: rotate(90deg); */
+
     }
 
     ol{
