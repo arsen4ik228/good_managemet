@@ -42,10 +42,10 @@ export function useMessages(convertId, pagination) {
 
     useEffect(() => {
         fetchSeeenMessages({ convertId, pagination });
-        fetchUnSeenMessages({ convertId })
+        // fetchUnSeenMessages({ convertId })
         
         fetchWatcherSeeenMessages({ convertId, pagination })
-        fetchWatcherUnSeenMessages({ convertId })
+        // fetchWatcherUnSeenMessages({ convertId })
     }, [convertId, pagination])
 
 
@@ -56,11 +56,11 @@ export function useMessages(convertId, pagination) {
         isErrorSeenMessages,
         isFetchingSeenMessages,
 
-        unSeenMessages: unseenMessages?.unSeenMessages || [],
-        unSeenMessagesIds: unseenMessages?.unSeenMessagesIds || [],
-        isLoadingUnSeenMessages,
-        isErrorUnSeenMessages,
-        isFetchingUnSeenMessages,
+        // unSeenMessages: unseenMessages?.unSeenMessages || [],
+        // unSeenMessagesIds: unseenMessages?.unSeenMessagesIds || [],
+        // isLoadingUnSeenMessages,
+        // isErrorUnSeenMessages,
+        // isFetchingUnSeenMessages,
 
         watcherSeenMessages: watcherSeenMessagesResponse?.sortedWatcherMessages || [],
         watcherUnseenMessageExist: watcherSeenMessagesResponse?.unseenWatcherMessageExist || false,
@@ -68,10 +68,10 @@ export function useMessages(convertId, pagination) {
         isErrorWatcherSeenMessages,
         isFetchingWatcherSeenMessages,
 
-        watcherUnseenMessages,
-        isLoadingWatcherUnSeenMessages,
-        isErrorWatcherUnSeenMessages,
-        isFetchingWatcherUnSeenMessages,
+        // watcherUnseenMessages,
+        // isLoadingWatcherUnSeenMessages,
+        // isErrorWatcherUnSeenMessages,
+        // isFetchingWatcherUnSeenMessages,
 
         sendMessage,
     };

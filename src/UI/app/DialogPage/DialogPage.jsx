@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import classes from './DialogPage.module.css';
 import Header from "@Custom/CustomHeader/Header";
-import { useConvertsHook, useMessages } from '@hooks';
+import { useConvertsHook, useMessages, useUnseenMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
 import Input from './Input';
@@ -44,12 +44,14 @@ export default function DialogPage() {
         isLoadingSeenMessages,
         isErrorSeenMessages,
         isFetchingSeenMessages,
+
+    } = useMessages(convertId, paginationSeenMessages);
+    const {
         unSeenMessages,
-        unSeenMessagesIds,
         isLoadingUnSeenMessages,
         isErrorUnSeenMessages,
         isFetchingUnSeenMessages,
-    } = useMessages(convertId, paginationSeenMessages);
+    } = useUnseenMessages(convertId)
     const seenMessagesRef = useRef(seenMessages);
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 

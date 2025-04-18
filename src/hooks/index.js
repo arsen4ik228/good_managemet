@@ -20,6 +20,7 @@ export { useModalSelectCheckBox } from "./useModalSelectCheckBox";
 export { useMutationHandler } from "./useMutationHandler";
 export { useOrganizationHook } from "./useOrganizationHook";
 export { useMessages } from './useMessages'
+export { useUnseenMessages } from './useUnseenMessages'
 
 //Посты
 export { useAllPosts } from "./Post/useAllPosts";
