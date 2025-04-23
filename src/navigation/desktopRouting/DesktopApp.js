@@ -23,7 +23,7 @@ const StartProject = React.lazy(() =>
   import("@app/ProjectPage/Start/Update/StartContent")
 );
 const ProjectWithProgramm = React.lazy(() =>
-  import("@app/Project/Main")
+  import("@app/Project/desktop/Main")
 );
 const Post = React.lazy(() => import("@app/PostPage/Post"));
 const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));

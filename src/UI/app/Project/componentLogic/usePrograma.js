@@ -1,24 +1,35 @@
 import React, { useState, useEffect } from "react";
-
 import { useAllProject } from "@hooks/Project/useAllProject";
-import { useGetSingleProject } from "@hooks/Project/useGetSingleProject";
+import { useGetSingleProgram } from "@hooks/Project/useGetSingleProgram";
 import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { useGetDataForCreateProject } from "@hooks/Project/useGetDataForCreateProject";
 import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
-import CustomTableProject from "./CustomTableProject";
-import DrawerUpdateProject from "./DrawerUpdateProject";
+import CustomTableProgram from "./useCustomTableProgram";
+import DrawerUpdateProgram from "./useDrawerUpdateProgram";
+import { useGetDataForCreateProgram } from "@hooks/Project/useGetDataForCreateProgram";
 
+import _ from "lodash";
+import {
+  Tabs,
+  Button,
+  Form,
+  message,
+  Popconfirm,
+  Select,
+  Typography,
+  Flex,
+  Tooltip,
+} from "antd";
 import {
   EllipsisOutlined,
-  SaveOutlined,
   PlusOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
-import { Tabs, Button, Form, message, Flex, Tooltip } from "antd";
-import _ from "lodash";
 
-export default function Project({ activeTabTypes, disabledTable }) {
-  const [selectedProjectId, setSelectedProjectId] = useState();
-  const [descriptionProduct, setDescriptionProduct] = useState(null);
+export default function usePrograma({ activeTabTypesProgram, styleMessages }) {
+  const [selectedProgramId, setSelectedProgramId] = useState();
+  const [selectedStrategyId, setSelectedStrategyId] = useState(null);
+  const [selectedProjectIds, setSelectedProjectIds] = React.useState([]);
+  const [descriptionProgram, setDescriptionProgram] = useState(null);
 
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
@@ -33,31 +44,33 @@ export default function Project({ activeTabTypes, disabledTable }) {
 
   // Получение данных проектов
   const {
-    projects,
-    archivesProjects,
-    projectsWithProgram,
-    archivesProjectsWithProgram,
+    programs,
+    archivesPrograms,
+
     isErrorGetProject,
     isLoadingGetProject,
   } = useAllProject();
 
   // Получение данных выбранного проекта
   const {
-    currentProject,
+    currentProgram,
+    currentProjects,
     targets,
-    isLoadingGetProjectId,
-    isErrorGetProjectId,
-    isFetchingGetProjectId,
-  } = useGetSingleProject({ selectedProjectId });
 
-  // Данные для создания проекта
+    isLoadingGetProgramId,
+    isErrorGetProgramId,
+    isFetchingGetProgramId,
+  } = useGetSingleProgram({ selectedProgramId });
+
+  // Данные для создания программы
   const {
     posts,
-    programs,
+    strategies,
+    projects,
 
     isLoadingGetNew,
     isErrorGetNew,
-  } = useGetDataForCreateProject();
+  } = useGetDataForCreateProgram();
 
   // Создание нового проекта
   const {
@@ -79,16 +92,17 @@ export default function Project({ activeTabTypes, disabledTable }) {
   // Обработчик изменения вкладки
   const onChangeTab = (key) => {
     setActiveTab(key);
-    setSelectedProjectId(key);
+    setSelectedProgramId(key);
   };
 
   // Создание нового проекта
-  const addProject = async () => {
+  const addProgram = async () => {
     try {
       const createdProject = await createProject({
         organizationId: reduxSelectedOrganizationId,
-        projectName: `Новый проект ${items.length}`,
-        type: "Проект",
+        projectName: `Новая программа ${items.length}`,
+        type: "Программа",
+        strategyId: selectedStrategyId,
         content: " ",
         targetCreateDtos: [
           {
@@ -99,6 +113,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
         ],
       }).unwrap();
 
+      setSelectedStrategyId(null);
       setItems((prevItems) => [
         ...prevItems,
         {
@@ -115,7 +130,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
   const resetUseState = () => {
     setActiveTab(null);
     setTables([]);
-    setSelectedProjectId(null);
+    setSelectedProgramId(null);
   };
 
   // Обновление проекта
@@ -156,37 +171,15 @@ export default function Project({ activeTabTypes, disabledTable }) {
           })
       );
 
-      // const targetUpdateDtos = tables.flatMap((table) =>
-      //   table.elements
-      //     .filter((element) => element.isUpdated === true)
-      //     .map(
-      //       ({
-      //         isUpdated,
-      //         id,
-      //         createdAt,
-      //         updatedAt,
-      //         targetHolders,
-      //         isExpired,
-      //         ...rest
-      //       }) => {
-      //         const baseItem = {
-      //           _id: id,
-      //           ..._.omitBy(rest, _.isNull),
-      //         };
-
-      //         return changeTypeStateOnAllTarget
-      //           ? { ...baseItem, targetState: "Активная" }
-      //           : baseItem;
-      //       }
-      //     )
-      // );
-
-      const targetUpdateDtos = [];
-
+      let targetUpdateDtos = [];
+      
       if (changeTypeStateOnAllTarget) {
-        targetUpdateDtos = tables.flatMap((table) =>
+
+        targetUpdateDtos = tables
+        .filter(table => table.tableName !== "Описание")
+        .flatMap(table => 
           table.elements
-            .filter((element) => element.isCreated !== true)
+            .filter(element => element.isCreated !== true)
             .map(
               ({
                 isUpdated,
@@ -196,19 +189,18 @@ export default function Project({ activeTabTypes, disabledTable }) {
                 targetHolders,
                 isExpired,
                 ...rest
-              }) => {
-                const baseItem = {
-                  _id: id,
-                  ..._.omitBy(rest, _.isNull),
-                };
-
-                return { ...baseItem, targetState: "Активная" };
-              }
+              }) => ({
+                _id: id,
+                ..._.omitBy(rest, _.isNull),
+                targetState: "Активная"
+              })
             )
         );
+
       } else {
         targetUpdateDtos = tables.flatMap((table) =>
           table.elements
+             .filter(table => table.tableName !== "Описание")
             .filter((element) => element.isUpdated === true)
             .map(
               ({
@@ -231,16 +223,24 @@ export default function Project({ activeTabTypes, disabledTable }) {
         );
       }
 
+      const selectedProjectIdsValues = selectedProjectIds.map(
+        (project) => project.value
+      );
+
       await updateProject({
-        projectId: currentProject.id,
-        _id: currentProject.id,
-        content: descriptionProduct,
+        projectId: currentProgram.id,
+        _id: currentProgram.id,
+        content: descriptionProgram,
         targetUpdateDtos,
         targetCreateDtos,
+        projectIds: selectedProjectIdsValues,
       }).unwrap();
 
       setExpandedRowKeys(prevStateExpandedRowKeys);
-      message.success("Данные успешно обновлены!");
+      message.success({
+        content: "Данные успешно обновлены!",
+        style: styleMessages,
+      });
     } catch (error) {
       if (error?.errorFields) {
         // Собираем id записей с ошибками
@@ -312,9 +312,15 @@ export default function Project({ activeTabTypes, disabledTable }) {
           }
         }, 300);
 
-        message.error("Пожалуйста, заполните все обязательные поля.");
+        message.error({
+          content: "Пожалуйста, заполните все обязательные поля.",
+          style: styleMessages,
+        });
       } else {
-        message.error("Ошибка при обновлении.");
+        message.error({
+          content: "Ошибка при обновлении.",
+          style: styleMessages,
+        });
         console.error("Ошибка:", error);
       }
     } finally {
@@ -327,10 +333,10 @@ export default function Project({ activeTabTypes, disabledTable }) {
     if (!isErrorGetProject && !isLoadingGetProject) {
       resetUseState();
       let tabsItems = [];
-      switch (activeTabTypes) {
-        case "projects":
+      switch (activeTabTypesProgram) {
+        case "programs":
           tabsItems = [
-            ...projects.map((item) => ({
+            ...programs.map((item) => ({
               key: item.id,
               label: (
                 <>
@@ -352,57 +358,9 @@ export default function Project({ activeTabTypes, disabledTable }) {
           ];
           break;
 
-        case "archivesProjects":
+        case "archivesPrograms":
           tabsItems = [
-            ...archivesProjects.map((item) => ({
-              key: item.id,
-              label: (
-                <>
-                  <Button
-                    size="small"
-                    icon={
-                      <EllipsisOutlined
-                        style={{ transform: "rotate(90deg)" }}
-                      />
-                    }
-                    onClick={() => setOpenDrawer(true)}
-                    style={{ marginRight: "10px" }}
-                  ></Button>
-                  {item.projectName}
-                </>
-              ),
-              closable: false,
-            })),
-          ];
-          break;
-
-        case "projectsWithProgram":
-          tabsItems = [
-            ...projectsWithProgram.map((item) => ({
-              key: item.id,
-              label: (
-                <>
-                  <Button
-                    size="small"
-                    icon={
-                      <EllipsisOutlined
-                        style={{ transform: "rotate(90deg)" }}
-                      />
-                    }
-                    onClick={() => setOpenDrawer(true)}
-                    style={{ marginRight: "10px" }}
-                  ></Button>
-                  {item.projectName}
-                </>
-              ),
-              closable: false,
-            })),
-          ];
-          break;
-
-        case "archivesProjectsWithProgram":
-          tabsItems = [
-            ...archivesProjectsWithProgram.map((item) => ({
+            ...archivesPrograms.map((item) => ({
               key: item.id,
               label: (
                 <>
@@ -430,89 +388,75 @@ export default function Project({ activeTabTypes, disabledTable }) {
       }
       setItems(tabsItems);
     }
-  }, [
-    activeTabTypes,
-    projects,
-    archivesProjects,
-    projectsWithProgram,
-    archivesProjectsWithProgram,
-  ]);
+  }, [activeTabTypesProgram, programs, archivesPrograms]);
 
   useEffect(() => {
-    if (currentProject?.content) {
-      console.log(currentProject?.content);
-      setDescriptionProduct(currentProject?.content);
+    if (currentProgram?.content) {
+      setDescriptionProgram(currentProgram?.content);
     }
-  }, [currentProject]);
+  }, [currentProgram]);
 
-  return (
-    <div style={{ width: "100%" }}>
-      <Flex justify="space-between" align="center" style={{ width: "100%" }}>
-        <Tabs
-          style={{ width: "calc(100% - 40px)" }}
-          type={activeTabTypes === "projects" ? "editable-card" : "card"}
-          activeKey={activeTab}
-          items={items}
-          onChange={onChangeTab}
-          // onEdit={addProject}
-          addIcon={
-            <Tooltip placement="bottom" title={"создать проект"}>
-              <Button
-                onClick={addProject}
-                size="small"
-                type="text"
-                icon={<PlusOutlined />}
-              />
-            </Tooltip>
-          }
-        />
+  return {
+    selectedProgramId,
+    setSelectedProgramId,
+    selectedStrategyId,
+    setSelectedStrategyId,
+    selectedProjectIds,
+    setSelectedProjectIds,
+    descriptionProgram,
+    setDescriptionProgram,
+    form,
+    isSaving,
+    setIsSaving,
+    tables,
+    setTables,
+    targetStateOnProduct,
+    setTargetStateOnProduct,
+    expandedRowKeys,
+    setExpandedRowKeys,
+    items,
+    setItems,
+    activeTab,
+    setActiveTab,
+    openDrawer,
+    setOpenDrawer,
+    // Получение данных проектов
+    programs,
+    archivesPrograms,
+    isErrorGetProject,
+    isLoadingGetProject,
+    // Получение данных выбранного проекта
 
-        <Tooltip placement="bottom" title={"сохранить"}>
-          <Button
-            type="primary"
-            style={{ width: "40px" }}
-            icon={<SaveOutlined />}
-            onClick={updateSingleProject}
-            loading={isSaving}
-          />
-        </Tooltip>
-      </Flex>
+    currentProgram,
+    currentProjects,
+    targets,
+    isLoadingGetProgramId,
+    isErrorGetProgramId,
+    isFetchingGetProgramId,
+    // Данные для создания программы
+    posts,
+    strategies,
+    projects,
 
-      {selectedProjectId && (
-        <DrawerUpdateProject
-          currentProject={currentProject}
-          isLoadingGetProjectId={isLoadingGetProjectId}
-          open={openDrawer}
-          setOpen={setOpenDrawer}
-          disabled={
-            activeTabTypes === "archivesProjects" ||
-            activeTabTypes === "archivesProjectsWithProgram"
-              ? true
-              : false
-          }
-          programId={currentProject.programId}
-        />
-      )}
+    isLoadingGetNew,
+    isErrorGetNew,
+    // Создание нового проекта
 
-      <CustomTableProject
-        expandedRowKeys={expandedRowKeys}
-        setExpandedRowKeys={setExpandedRowKeys}
-        form={form}
-        selectedProjectId={selectedProjectId}
-        disabledTable={disabledTable}
-        tables={tables}
-        setTables={setTables}
-        isLoadingGetProjectId={isLoadingGetProjectId}
-        isFetchingGetProjectId={isFetchingGetProjectId}
-        targets={targets}
-        targetStateOnProduct={targets.find(
-          (target) =>
-            target.type === "Продукт" && target.targetState === "Активная"
-        )}
-        posts={posts}
-        setDescriptionProduct={setDescriptionProduct}
-        descriptionProduct={descriptionProduct}
-      ></CustomTableProject>
-    </div>
-  );
+    reduxSelectedOrganizationId,
+    createProject,
+    isLoadingProjectMutation,
+    // Обновление проекта
+
+    updateProject,
+    isLoadingUpdateProjectMutation,
+    isSuccessUpdateProjectMutation,
+    isErrorUpdateProjectMutation,
+    ErrorUpdateProjectMutation,
+    localIsResponseUpdateProjectMutation,
+    // методы
+    onChangeTab,
+    addProgram,
+    resetUseState,
+    updateSingleProject,
+  };
 }

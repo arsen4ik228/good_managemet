@@ -19,7 +19,7 @@ const Chat = () => {
 
     const array = [
         { id: '1', icon: post, text: 'Посты', link: 'Post' },
-        { id: '2', icon: listView, text: 'Проекты', link: 'Projects' },
+        { id: '2', icon: listView, text: 'Проекты', link: 'projectWithProgramm' },
         { id: '3', icon: strategy, text: 'Стратегия', link: 'Strategy' },
         { id: '4', icon: star, text: 'Краткосрочная цель', link: 'Objective', },
         { id: '5', icon: stats, text: 'Статистики', link: 'Statistics', },
