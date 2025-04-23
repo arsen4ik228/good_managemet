@@ -12,6 +12,6 @@ export default function AuthorizationPage() {
         <div className={classes.block}></div>
         <Content></Content>
       </div>
-    </div>
+    </div>          
   );
 }
