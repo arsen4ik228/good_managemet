@@ -33,7 +33,41 @@ const ModalStatistic = ({
     }
   }, [typeGraphic]);
 
+  // useEffect(() => {
+  //   const updateDimensions = () => {
+
+  //     if (typeGraphic !== "52" || !typeGraphic) {
+  //       const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  //       const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+  //       const newHeight = windowHeight - 160;
+  //       const newWidth = windowWidth + 40;
+
+  //       console.log(newHeight)
+  //       setWidth(newWidth)
+  //       setHeight(newHeight);
+  //     }
+  //     else {
+  //       const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  //       const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+  //       const newHeight = windowWidth + 25;
+  //       const newWidth = windowHeight - 105;
+
+  //       // console.log(newHeight)
+  //       setWidth(newWidth)
+  //       setHeight(newHeight);
+  //     }
+  //   };
+
+  //   updateDimensions();
+  //   window.addEventListener("resize", updateDimensions);
+
+  //   return () => window.removeEventListener("resize", updateDimensions);
+  // }, [typeGraphic]);
+
   // Для стрелок на графике
+
   const handleArrowLeftClick = () => {
     setCount((prevCount) => prevCount + 1);
   };
@@ -892,13 +926,16 @@ const ModalStatistic = ({
         <div className={classes.block}>
           <span>{name}</span>
 
-          <div className={classes.svg_container}>
-            <svg
-              ref={svgRef}
-              style={{
-                transform: typeGraphic === "52" ? "rotate(90deg)" : "none",
-              }}
-            ></svg>
+          <div
+            className={classes.svg_container}
+            style={{
+              width: typeGraphic === "52" ? "90vh": width,
+              height: typeGraphic === "52" ? width : height,
+              transform: typeGraphic === "52" ? "rotate(90deg)" : "none",
+              transformOrigin: "center center",
+            }}
+          >
+            <svg ref={svgRef}></svg>
           </div>
 
           <div className={classes.arrowSection}>

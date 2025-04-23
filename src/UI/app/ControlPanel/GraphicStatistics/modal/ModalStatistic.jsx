@@ -921,6 +921,8 @@ const ModalStatistic = ({
     updateStatisticsData();
   }, [count]);
 
+
+  
   return (
     <div className={classes.modal}>
       <div className={classes.modalWindow}>
