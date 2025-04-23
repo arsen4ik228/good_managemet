@@ -16,7 +16,6 @@ import {
 } from "antd";
 import { UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
-import { createStyles } from "antd-style";
 
 import ruRU from "antd/locale/ru_RU";
 import dayjs from "dayjs";
@@ -36,6 +35,7 @@ import { CSS } from "@dnd-kit/utilities";
 dayjs.locale("ru"); // Устанавливаем русский язык для dayjs
 
 const RowContext = React.createContext({});
+
 const DragHandle = () => {
   const { setActivatorNodeRef, listeners } = useContext(RowContext);
   return (
@@ -78,25 +78,15 @@ const Row = (props) => {
   );
 };
 
-const useStyle = createStyles(({ css, token }) => {
-  const { antCls } = token;
-  return {
-    customTable: css`
-      ${antCls}-table {
-        ${antCls}-table-container {
-          ${antCls}-table-body,
-          ${antCls}-table-content {
-            scrollbar-width: thin;
-            scrollbar-color: #eaeaea transparent;
-            scrollbar-gutter: stable;
-          }
-        }
-      }
-    `,
-  };
-});
-
-const EditableCell = ({ value, onChange, type, options, name, required }) => {
+const EditableCell = ({
+  value,
+  onChange,
+  type,
+  options,
+  name,
+  required,
+  stylesCell,
+}) => {
   const rules = required
     ? [{ required: true, message: "Заполните поле" }]
     : undefined;
@@ -118,7 +108,7 @@ const EditableCell = ({ value, onChange, type, options, name, required }) => {
       return (
         <Form.Item name={name} rules={rules} style={{ margin: 0 }}>
           <Select
-            style={{ width: "100%" }}
+            {...stylesCell}
             allowClear
             showSearch
             optionFilterProp="searchLabel"
@@ -137,10 +127,10 @@ const EditableCell = ({ value, onChange, type, options, name, required }) => {
         <ConfigProvider locale={ruRU}>
           <Form.Item name={name} rules={rules} style={{ margin: 0 }}>
             <DatePicker
+              {...stylesCell}
               format="DD.MM.YYYY"
               value={value ? dayjs(value) : null}
               onChange={(date) => onChange(date)}
-              style={{ width: "100%" }}
             />
           </Form.Item>
         </ConfigProvider>
@@ -150,7 +140,7 @@ const EditableCell = ({ value, onChange, type, options, name, required }) => {
       return (
         <Form.Item name={name} style={{ margin: 0 }}>
           <Select
-            style={{ width: "100%" }}
+            {...stylesCell}
             options={options}
             value={value}
             onChange={onChange}
@@ -163,10 +153,10 @@ const EditableCell = ({ value, onChange, type, options, name, required }) => {
         <ConfigProvider locale={ruRU}>
           <Form.Item name={name} style={{ margin: 0 }}>
             <DatePicker
+              {...stylesCell}
               format="DD.MM.YYYY"
               value={value ? dayjs(value) : null}
               onChange={(date) => onChange(date)}
-              style={{ width: "100%" }}
             />
           </Form.Item>
         </ConfigProvider>
@@ -188,7 +178,6 @@ const EditableCellProject = ({ type, value, options }) => {
       return (
         <Select
           disabled
-          style={{ width: "100%" }}
           allowClear
           showSearch
           optionFilterProp="searchLabel"
@@ -250,8 +239,7 @@ const statusesTargetsWithoutDraft = [
   { label: "Завершена", value: "Завершена" },
   { label: "Отменена", value: "Отменена" },
 ];
-
-export default function CustomTableProgram({
+export default function useCustomTableProgram({
   expandedRowKeys,
   setExpandedRowKeys,
   form,
@@ -272,9 +260,12 @@ export default function CustomTableProgram({
   setSelectedProjectIds,
   setDescriptionProgram,
   descriptionProgram,
-}) {
-  const { styles } = useStyle();
 
+  stylesColumnProjectPopconfim,
+  stylesColumnProjectSelect,
+  stylesColumnSelect,
+  stylesColumnDate,
+}) {
   const onDragEnd = ({ active, over }) => {
     if (!over || active.id === over.id) return;
 
@@ -496,6 +487,7 @@ export default function CustomTableProgram({
       }),
       render: (text, record) => (
         <EditableCell
+          stylesCell={stylesColumnSelect}
           type="holderPostId"
           value={text}
           name={`holderPostId-${record.id}`}
@@ -533,6 +525,7 @@ export default function CustomTableProgram({
       }),
       render: (text, record) => (
         <EditableCell
+          stylesCell={stylesColumnDate}
           type="deadline"
           value={text}
           name={`deadline-${record.id}`}
@@ -559,6 +552,7 @@ export default function CustomTableProgram({
         <>
           {record.type === "Продукт" ? (
             <EditableCell
+              stylesCell={stylesColumnSelect}
               type="targetState"
               value={text}
               options={
@@ -584,6 +578,7 @@ export default function CustomTableProgram({
             <>
               {targetStateOnProduct ? (
                 <EditableCell
+                  stylesCell={stylesColumnSelect}
                   type="targetState"
                   value={text}
                   options={statusesTargetsWithoutDraft}
@@ -619,6 +614,7 @@ export default function CustomTableProgram({
       }),
       render: (text, record) => (
         <EditableCell
+          stylesCell={stylesColumnDate}
           type="dateStart"
           value={text}
           name={`dateStart-${record.id}`}
@@ -771,7 +767,7 @@ export default function CustomTableProgram({
               strategy={verticalListSortingStrategy}
             >
               <Table
-               components={{ body: { row: Row } }}
+                components={{ body: { row: Row } }}
                 columns={columnsToUse}
                 dataSource={groupItems}
                 rowKey="id"
@@ -785,48 +781,6 @@ export default function CustomTableProgram({
       }
       return null;
     },
-    // expandedRowRender: (record) => {
-    //   if (record.__isGroup) {
-    //     const groupItems =
-    //       tables.find(
-    //         (t) => t.tableName === record.groupName && t.tableName !== "Проекты"
-    //       )?.elements || [];
-
-    //     const groupItemsProject =
-    //       tables.find(
-    //         (t) => t.tableName === record.groupName && t.tableName === "Проекты"
-    //       )?.elements || [];
-
-    //     // Для группы "Описание" используем специальные колонки
-    //     const columnsToUse =
-    //       record.groupName === "Описание" ? descriptionColumns : columns;
-
-    //     return (
-    //       <>
-    //         {record.groupName === "Проекты" ? (
-    //           <Table
-    //             columns={columnsProjects}
-    //             dataSource={groupItemsProject}
-    //             rowKey="id"
-    //             pagination={false}
-    //             showHeader={true}
-    //             bordered={false}
-    //           />
-    //         ) : (
-    //           <Table
-    //             columns={columns}
-    //             dataSource={groupItems}
-    //             rowKey="id"
-    //             pagination={false}
-    //             showHeader={true}
-    //             bordered={false}
-    //           />
-    //         )}
-    //       </>
-    //     );
-    //   }
-    //   return null;
-    // },
     rowExpandable: (record) => record.__isGroup,
   };
 
@@ -878,7 +832,8 @@ export default function CustomTableProgram({
                 <>
                   {record.groupName === "Проекты" ? (
                     <Popconfirm
-                      placement="rightBottom"
+                      {...stylesColumnProjectPopconfim}
+                      // placement="rightBottom"
                       showCancel={false}
                       okButtonProps={{ style: { display: "none" } }}
                       icon={null}
@@ -887,9 +842,10 @@ export default function CustomTableProgram({
                           <Flex vertical gap="small">
                             <Typography>Выберите проекты</Typography>
                             <Select
-                              style={{ width: "100%" }}
+                              {...stylesColumnProjectSelect}
+                              // style={{ width: "100%" }}
                               mode="multiple"
-                              placement="topLeft"
+                              // placement="topLeft"
                               showSearch
                               optionFilterProp="label"
                               filterOption={(input, option) =>
@@ -1105,20 +1061,9 @@ export default function CustomTableProgram({
     }
   }, [tables]);
 
-  return (
-    <Form form={form} disabled={disabledTable}>
-      <Table
-        bordered
-        className={styles.customTable}
-        loading={isLoadingGetProjectId || isFetchingGetProjectId}
-        columns={groupColumns}
-        dataSource={dataWithGroups}
-        rowKey="key"
-        pagination={false}
-        scroll={{ x: "max-content", y: "calc(100vh - 320px)" }}
-        style={{ width: "100%" }}
-        expandable={expandableConfig}
-      />
-    </Form>
-  );
+  return {
+    groupColumns,
+    dataWithGroups,
+    expandableConfig,
+  };
 }

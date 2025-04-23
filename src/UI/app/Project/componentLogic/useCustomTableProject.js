@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { baseUrl } from "@helpers/constants";
 import addCircleGrey from "@image/addCircleGrey.svg";
 import {
@@ -19,25 +19,61 @@ import ruRU from "antd/locale/ru_RU";
 import dayjs from "dayjs";
 import "dayjs/locale/ru";
 
+import { HolderOutlined } from "@ant-design/icons";
+import { DndContext } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 dayjs.locale("ru"); // Устанавливаем русский язык для dayjs
 
-const useStyle = createStyles(({ css, token }) => {
-  const { antCls } = token;
-  return {
-    customTable: css`
-      ${antCls}-table {
-        ${antCls}-table-container {
-          ${antCls}-table-body,
-          ${antCls}-table-content {
-            scrollbar-width: thin;
-            scrollbar-color: #eaeaea transparent;
-            scrollbar-gutter: stable;
-          }
-        }
-      }
-    `,
-  };
-});
+const RowContext = React.createContext({});
+const DragHandle = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  return (
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{ cursor: "move" }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
+  );
+};
+
+const Row = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props["data-row-key"] });
+  const style = Object.assign(
+    Object.assign(Object.assign({}, props.style), {
+      transform: CSS.Translate.toString(transform),
+      transition,
+    }),
+    isDragging ? { position: "relative", zIndex: 9999 } : {}
+  );
+  const contextValue = useMemo(
+    () => ({ setActivatorNodeRef, listeners }),
+    [setActivatorNodeRef, listeners]
+  );
+  return (
+    <RowContext.Provider value={contextValue}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowContext.Provider>
+  );
+};
 
 const EditableCell = ({
   value,
@@ -46,6 +82,7 @@ const EditableCell = ({
   options,
   name,
   required,
+  stylesCell,
 }) => {
   const rules = required
     ? [{ required: true, message: "Заполните поле" }]
@@ -68,7 +105,7 @@ const EditableCell = ({
       return (
         <Form.Item name={name} rules={rules} style={{ margin: 0 }}>
           <Select
-            style={{ width: "100%" }}
+            {...stylesCell}
             allowClear
             showSearch
             optionFilterProp="searchLabel"
@@ -87,10 +124,10 @@ const EditableCell = ({
         <ConfigProvider locale={ruRU}>
           <Form.Item name={name} rules={rules} style={{ margin: 0 }}>
             <DatePicker
+              {...stylesCell}
               format="DD.MM.YYYY"
               value={value ? dayjs(value) : null}
               onChange={(date) => onChange(date)}
-              style={{ width: "100%" }}
             />
           </Form.Item>
         </ConfigProvider>
@@ -100,7 +137,7 @@ const EditableCell = ({
       return (
         <Form.Item name={name} style={{ margin: 0 }}>
           <Select
-            style={{ width: "100%" }}
+            {...stylesCell}
             options={options}
             value={value}
             onChange={onChange}
@@ -113,10 +150,10 @@ const EditableCell = ({
         <ConfigProvider locale={ruRU}>
           <Form.Item name={name} style={{ margin: 0 }}>
             <DatePicker
+              {...stylesCell}
               format="DD.MM.YYYY"
               value={value ? dayjs(value) : null}
               onChange={(date) => onChange(date)}
-              style={{ width: "100%" }}
             />
           </Form.Item>
         </ConfigProvider>
@@ -140,12 +177,11 @@ const statusesTargetsWithoutDraft = [
   { label: "Отменена", value: "Отменена" },
 ];
 
-export default function CustomTableProject({
+export default function useCustomTableProject({
   expandedRowKeys,
   setExpandedRowKeys,
   form,
   targetStateOnProduct,
-  setTargetStateOnProduct,
 
   selectedProjectId,
   disabledTable,
@@ -157,8 +193,34 @@ export default function CustomTableProject({
   posts,
   setDescriptionProduct,
   descriptionProduct,
+
+  stylesColumnSelect,
+  stylesColumnDate,
 }) {
-  const { styles } = useStyle();
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return;
+
+    setTables((prevTables) => {
+      return prevTables.map((table) => {
+        const isTargetGroup = table.elements.some((el) => el.id === active.id);
+        if (!isTargetGroup) return table;
+
+        const activeIndex = table.elements.findIndex(
+          (el) => el.id === active.id
+        );
+        const overIndex = table.elements.findIndex((el) => el.id === over.id);
+
+        if (activeIndex === -1 || overIndex === -1) return table;
+
+        return {
+          ...table,
+          elements: arrayMove(table.elements, activeIndex, overIndex).map(
+            (el, index) => ({ ...el, orderNumber: index + 1, isUpdated: true })
+          ),
+        };
+      });
+    });
+  };
 
   // Добавление новой строки в таблицу
   const handleAddRow = (event, groupName) => {
@@ -235,6 +297,14 @@ export default function CustomTableProject({
   // Колонки таблицы
   const columns = [
     {
+      key: "sort",
+      align: "center",
+      width: 20,
+      render: (text, record) => (
+        <>{record.type === "Продукт" ? null : <DragHandle />}</>
+      ),
+    },
+    {
       title: "№",
       dataIndex: "orderNumber",
       fixed: "left",
@@ -287,6 +357,7 @@ export default function CustomTableProject({
       }),
       render: (text, record) => (
         <EditableCell
+        stylesCell={stylesColumnSelect}
           type="holderPostId"
           value={text}
           name={`holderPostId-${record.id}`}
@@ -324,6 +395,7 @@ export default function CustomTableProject({
       }),
       render: (text, record) => (
         <EditableCell
+        stylesCell={stylesColumnDate}
           type="deadline"
           value={text}
           name={`deadline-${record.id}`}
@@ -350,6 +422,7 @@ export default function CustomTableProject({
         <>
           {record.type === "Продукт" ? (
             <EditableCell
+            stylesCell={stylesColumnSelect}
               type="targetState"
               value={text}
               options={
@@ -375,6 +448,7 @@ export default function CustomTableProject({
             <>
               {targetStateOnProduct ? (
                 <EditableCell
+                stylesCell={stylesColumnSelect}
                   type="targetState"
                   value={text}
                   options={statusesTargetsWithoutDraft}
@@ -410,6 +484,7 @@ export default function CustomTableProject({
       }),
       render: (text, record) => (
         <EditableCell
+        stylesCell={stylesColumnDate}
           type="dateStart"
           value={text}
           name={`dateStart-${record.id}`}
@@ -460,14 +535,25 @@ export default function CustomTableProject({
           record.groupName === "Описание" ? descriptionColumns : columns;
 
         return (
-          <Table
-            columns={columnsToUse}
-            dataSource={groupItems}
-            rowKey="id"
-            pagination={false}
-            showHeader={true}
-            bordered={false}
-          />
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              items={groupItems?.map((i) => i.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Table
+                components={{ body: { row: Row } }}
+                columns={columnsToUse}
+                dataSource={groupItems}
+                rowKey="id"
+                pagination={false}
+                showHeader={true}
+                bordered={false}
+              />
+            </SortableContext>
+          </DndContext>
         );
       }
       return null;
@@ -491,7 +577,7 @@ export default function CustomTableProject({
     {
       title: "Кол-во",
       dataIndex: "elementCount",
-      width: 100,
+      width: 70,
       align: "center",
       render: (_, record) => {
         if (record.__isGroup) {
@@ -515,7 +601,7 @@ export default function CustomTableProject({
               style={{
                 display: "flex",
                 alignItems: "center",
-                width: "100%",
+                width: "75%",
               }}
             >
               {record.groupName !== "Продукт" &&
@@ -552,7 +638,7 @@ export default function CustomTableProject({
                 style={{
                   fontWeight: 600,
                   fontSize: 16,
-                  margin: "0 auto", // Центрирует текст
+                  margin: "0 auto",
                 }}
               >
                 {record.groupName}
@@ -613,30 +699,13 @@ export default function CustomTableProject({
     }
   }, [tables, form]);
 
-  useEffect(() => {
-    const isProductActive = tables
-      ?.find((table) => table.tableName === "Продукт")
-      ?.elements.some((el) => el.targetState === "Активная");
-
-    if (targetStateOnProduct !== isProductActive) {
-      setTargetStateOnProduct(isProductActive);
-    }
-  }, [tables]);
-
-  return (
-    <Form form={form} disabled={disabledTable}>
-      <Table
-        bordered
-        className={styles.customTable}
-        loading={isLoadingGetProjectId || isFetchingGetProjectId}
-        columns={groupColumns}
-        dataSource={dataWithGroups}
-        rowKey="key"
-        pagination={false}
-        scroll={{ x: "max-content", y: "calc(100vh - 320px)" }}
-        style={{ width: "100%"}}
-        expandable={expandableConfig}
-      />
-    </Form>
-  );
+  return {
+    form,
+    disabledTable,
+    isLoadingGetProjectId,
+    isFetchingGetProjectId,
+    groupColumns,
+    dataWithGroups,
+    expandableConfig,
+  };
 }

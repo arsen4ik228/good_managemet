@@ -32,6 +32,7 @@ import { ConvertsPage } from '@app';
 import { CompanySchema } from '@app'
 import { SchemeСompanies } from '@app'
 import { SettingsPage, WatcherDialogPage, AgreementDialogPage, ArchiveDialog } from '@app'
+import { ProjectWithProgramm } from '@app'
 import ErrorPage from '@app/ErrorPage/ErrorPage.jsx'
 
 
@@ -80,16 +81,11 @@ function MobileApp() {
 
                                         <Route path="Objective" element={<MobileObjective />} />
 
-                                        <Route path="Projects" element={<MainProject />} />
-                                        <Route path="Projects/:projectId" element={<Projects />} />
-                                        {/* <Route path="Projects/Target" element={<Target />} /> */}
-                                        <Route path="Projects/new" element={<NewProject />} />
-                                        <Route path="Projects/program/:programId" element={<Programs />} />
-                                        <Route path="Projects/archive/:projectId" element={<ProjectArchive />} />
 
+                                        <Route path="projectWithProgramm" element={<ProjectWithProgramm />} />
+  
                                         <Route path="Statistics" element={<MainStatistics />} />
                                         <Route path="Statistics/:statisticId" element={<Statistics />} />
-                                        {/* <Route path="Statistics/new/:paramPostID?" element={<NewStatistic />} /> */}
 
                                         <Route path='WorkingPlan' element={<MobileMainWorkingPlan />} />
                                         <Route path='user' element={<User />} />

@@ -33,4 +33,8 @@ export { default as PostSchema } from './CompanySchema/mobile/postSchema/PostSch
 export { default as SettingsPage } from './SettingsPage/mobile/SettingsPage.jsx'
 export {default as ArchiveDialog} from './DialogPage/ArchiveDialog/ArchiveDialog.jsx'
 
+export {default as ProjectWithProgramm} from './Project/mobile/Main.jsx'
+
+
+
 
