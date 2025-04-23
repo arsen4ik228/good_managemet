@@ -21,6 +21,48 @@ export default function ModalFolder({
   exit,
   buttonDelete,
 }) {
+  const renderDirectives = () => {
+    const directivesToRender = searchArrayDirectives.length > 0 
+      ? searchArrayDirectives 
+      : arrayDirectives;
+    
+    return directivesToRender?.map((item) => (
+      <div
+        key={item.id}
+        className={classes.row}
+        onClick={() => handleCheckboxChange(item.id, "directives")}
+      >
+        <input 
+          type="checkbox" 
+          checked={item.checked} 
+          onChange={(e) => e.stopPropagation()}
+        />
+        <span>{item.policyName}</span>
+      </div>
+    ));
+  };
+
+  const renderInstructions = () => {
+    const instructionsToRender = searchArrayInstructions.length > 0 
+      ? searchArrayInstructions 
+      : arrayInstructions;
+    
+    return instructionsToRender?.map((item) => (
+      <div
+        key={item.id}
+        className={classes.row}
+        onClick={() => handleCheckboxChange(item.id, "instructions")}
+      >
+        <input 
+          type="checkbox" 
+          checked={item.checked} 
+          onChange={(e) => e.stopPropagation()}
+        />
+        <span>{item.policyName}</span>
+      </div>
+    ));
+  };
+
   return (
     <div className={classes.modal}>
       <div className={classes.modalWindow}>
@@ -47,106 +89,46 @@ export default function ModalFolder({
               name={"Название папки"}
               value={directoryName}
               onChange={setDirectoryName}
-            ></Input>
+            />
 
             <div className={classes.modalTableRowIcon}>
               <ButtonImage
                 name={"сохранить"}
                 icon={Blacksavetmp}
                 onClick={save}
-              ></ButtonImage>
+              />
               {buttonDelete && (
                 <ButtonImage
                   name={"удалить"}
                   icon={deleteGrey}
-                  onClick={() => {
-                    setOpenModalDeleteDirectory(true);
-                  }}
-                ></ButtonImage>
+                  onClick={() => setOpenModalDeleteDirectory(true)}
+                />
               )}
             </div>
           </div>
         </div>
 
-        <table className={classes.table}>
-          <thead>
-            <tr>
-              <th>Директивы</th>
-              <th>Инструкции</th>
-            </tr>
-          </thead>
+        <div className={classes.tablesContainer}>
+          {/* Таблица директив */}
+          <div className={classes.tableWrapper}>
+            <div className={classes.tableHeader}>Директивы</div>
+            <div className={classes.tableContent}>
+              <div className={classes.scrollContent}>
+                {renderDirectives()}
+              </div>
+            </div>
+          </div>
 
-          {searchArrayDirectives.length > 0 ||
-          searchArrayInstructions.length > 0 ? (
-            <tbody>
-              <tr>
-                <td>
-                  {searchArrayDirectives?.map((item) => (
-                    <div
-                      key={item.id}
-                      className={classes.row}
-                      onClick={() =>
-                        handleCheckboxChange(item.id, "directives")
-                      }
-                    >
-                      <input type="checkbox" checked={item.checked} />
-                      {item.policyName}
-                    </div>
-                  ))}
-                </td>
-
-                <td>
-                  {searchArrayInstructions?.map((item) => (
-                    <div
-                      key={item.id}
-                      className={classes.row}
-                      onClick={() =>
-                        handleCheckboxChange(item.id, "instructions")
-                      }
-                    >
-                      <input type="checkbox" checked={item.checked} />
-                      {item.policyName}
-                    </div>
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-          ) : (
-            <tbody>
-              <tr>
-                <td>
-                  {arrayDirectives?.map((item) => (
-                    <div
-                      key={item.id}
-                      className={classes.row}
-                      onClick={() =>
-                        handleCheckboxChange(item.id, "directives")
-                      }
-                    >
-                      <input type="checkbox" checked={item.checked} />
-                      {item.policyName}
-                    </div>
-                  ))}
-                </td>
-
-                <td>
-                  {arrayInstructions?.map((item) => (
-                    <div
-                      key={item.id}
-                      className={classes.row}
-                      onClick={() =>
-                        handleCheckboxChange(item.id, "instructions")
-                      }
-                    >
-                      <input type="checkbox" checked={item.checked} />
-                      {item.policyName}
-                    </div>
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-          )}
-        </table>
+          {/* Таблица инструкций */}
+          <div className={classes.tableWrapper}>
+            <div className={classes.tableHeader}>Инструкции</div>
+            <div className={classes.tableContent}>
+              <div className={classes.scrollContent}>
+                {renderInstructions()}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
