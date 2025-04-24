@@ -6,7 +6,6 @@ import { createStyles } from "antd-style";
 
 import useCustomTableProject from "../../componentLogic/useCustomTableProject";
 
-
 const useStyle = createStyles(({ css, token }) => {
   const { antCls } = token;
   return {
@@ -30,6 +29,8 @@ export default function CustomTableProject({
   setExpandedRowKeys,
   form,
   targetStateOnProduct,
+  setTargetStateOnProduct,
+
   selectedProjectId,
   disabledTable,
   tables,
@@ -58,6 +59,7 @@ export default function CustomTableProject({
       setExpandedRowKeys,
       form,
       targetStateOnProduct,
+      setTargetStateOnProduct,
 
       selectedProjectId,
       disabledTable,

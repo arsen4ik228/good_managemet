@@ -172,8 +172,8 @@ export const projectApi = apiSlice.injectEndpoints({
     }),
 
     updateProject: build.mutation({
-      query: ({ projectId, ...body }) => ({
-        url: `projects/${projectId}/update`,
+      query: ({ projectId,holderProductPostId, ...body }) => ({
+        url: `projects/${projectId}/update/?holderProductPostId=${holderProductPostId}`,
         method: "PATCH",
         body,
       }),
