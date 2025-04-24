@@ -227,8 +227,26 @@ export default function usePrograma({ activeTabTypesProgram, styleMessages }) {
         (project) => project.value
       );
 
+      const holderProductPostId = tables
+      .find((table) => table.tableName === "Продукт")
+      ?.elements?.find((el) => el.targetState === "Активная")?.holderPostId;
+
+    const _holderProductPostId = targets.find(
+      (target) => target.type === "Продукт"
+    )?.holderPostId;
+
+      console.log("holderProductPostId", holderProductPostId);
+
+      console.log( "projectId: ",  currentProgram.id,);
+      console.log( " _id:",  currentProgram.id,);
+      console.log(" content:",  descriptionProgram, );
+      console.log( "targetUpdateDtos, ", targetUpdateDtos,);
+      console.log(  "targetCreateDtos ", targetCreateDtos,);
+      console.log( " projectIds: ", selectedProjectIdsValues,);
+
       await updateProject({
         projectId: currentProgram.id,
+        holderProductPostId: holderProductPostId ?? _holderProductPostId,
         _id: currentProgram.id,
         content: descriptionProgram,
         targetUpdateDtos,

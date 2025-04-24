@@ -14,6 +14,8 @@ export default function useProject({ activeTabTypes, styleMessages }) {
   const [selectedProjectId, setSelectedProjectId] = useState();
   const [descriptionProduct, setDescriptionProduct] = useState(null);
 
+  const [targetStateOnProduct, setTargetStateOnProduct] = useState(null);
+
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
   const [tables, setTables] = useState([]);
@@ -203,8 +205,19 @@ export default function useProject({ activeTabTypes, styleMessages }) {
           );
       }
 
+      const holderProductPostId = tables
+        .find((table) => table.tableName === "Продукт")
+        ?.elements?.find((el) => el.targetState === "Активная")?.holderPostId;
+
+      const _holderProductPostId = targets.find(
+        (target) => target.type === "Продукт"
+      )?.holderPostId;
+
+      console.log("holderProductPostId", holderProductPostId);
+
       await updateProject({
         projectId: currentProject.id,
+        holderProductPostId: holderProductPostId ?? _holderProductPostId,
         _id: currentProject.id,
         content: descriptionProduct,
         targetUpdateDtos,
@@ -426,6 +439,17 @@ export default function useProject({ activeTabTypes, styleMessages }) {
     }
   }, [currentProject]);
 
+  useEffect(() => {
+    if (tables.length > 0) {
+      setTargetStateOnProduct(
+        targets.some(
+          (target) =>
+            target.type === "Продукт" && target.targetState === "Активная"
+        )
+      );
+    }
+  }, [tables]);
+
   return {
     onChangeTab,
     addProject,
@@ -478,5 +502,8 @@ export default function useProject({ activeTabTypes, styleMessages }) {
     isErrorUpdateProjectMutation,
     ErrorUpdateProjectMutation,
     localIsResponseUpdateProjectMutation,
+
+    targetStateOnProduct,
+    setTargetStateOnProduct,
   };
 }

@@ -2,27 +2,6 @@ import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
 
   endpoints: (build) => ({
-    // getStatistics: build.query({
-    //   query: ({ organizationId, statisticData = true }) => ({
-    //     url: `/statistics/${organizationId}/?statisticData=${statisticData}`,
-    //   }),
-    //   transformResponse: (response) => {
-    //     return response.sort((a, b) => a.name.localeCompare(b.name));
-    //   },
-    //   providesTags: (result) =>
-    //     result ? [{ type: "Statistics", id: "LIST" }] : [],
-    // }),
-
-    // postStatistics: build.mutation({
-    //   query: (body) => ({
-    //     url: `statistics/new`,
-    //     method: "POST",
-    //     body,
-    //   }),
-    //   invalidatesTags: (result) =>
-    //     result ? [{ type: "Statistics", id: "LIST" }] : [],
-    // }),
-
     getStatistics: build.query({
       query: ({organizationId ,statisticData = true }) => ({
         url: `statistics/${organizationId}/?statisticData=${statisticData}`,

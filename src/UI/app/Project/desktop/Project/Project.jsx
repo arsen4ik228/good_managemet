@@ -1,23 +1,17 @@
 import React from "react";
 
-
 import CustomTableProject from "./CustomTableProject";
 import DrawerUpdateProject from "./DrawerUpdateProject";
 
-import {
-
-  SaveOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SaveOutlined, PlusOutlined } from "@ant-design/icons";
 import { Tabs, Button, Flex, Tooltip } from "antd";
 import _ from "lodash";
 import useProject from "../../componentLogic/useProject";
 
 export default function Project({ activeTabTypes, disabledTable }) {
- 
   const {
-    onChangeTab, 
-    addProject, 
+    onChangeTab,
+    addProject,
     updateSingleProject,
     selectedProjectId,
     setSelectedProjectId,
@@ -67,8 +61,11 @@ export default function Project({ activeTabTypes, disabledTable }) {
     isErrorUpdateProjectMutation,
     ErrorUpdateProjectMutation,
     localIsResponseUpdateProjectMutation,
+
+    targetStateOnProduct,
+    setTargetStateOnProduct,
   } = useProject({ activeTabTypes });
-  
+
   return (
     <div style={{ width: "100%" }}>
       <Flex justify="space-between" align="center" style={{ width: "100%" }}>
@@ -129,10 +126,13 @@ export default function Project({ activeTabTypes, disabledTable }) {
         isLoadingGetProjectId={isLoadingGetProjectId}
         isFetchingGetProjectId={isFetchingGetProjectId}
         targets={targets}
-        targetStateOnProduct={targets.find(
-          (target) =>
-            target.type === "Продукт" && target.targetState === "Активная"
-        )}
+        // targetStateOnProduct={targets.find(
+        //   (target) =>
+        //     target.type === "Продукт" && target.targetState === "Активная"
+        // )}
+        targetStateOnProduct={targetStateOnProduct}
+        setTargetStateOnProduct={setTargetStateOnProduct}
+        
         posts={posts}
         setDescriptionProduct={setDescriptionProduct}
         descriptionProduct={descriptionProduct}

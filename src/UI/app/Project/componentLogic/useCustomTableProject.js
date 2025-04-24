@@ -182,6 +182,7 @@ export default function useCustomTableProject({
   setExpandedRowKeys,
   form,
   targetStateOnProduct,
+  setTargetStateOnProduct,
 
   selectedProjectId,
   disabledTable,
@@ -266,7 +267,19 @@ export default function useCustomTableProject({
   };
 
   // Обработчик изменений в ячейках таблицы
-  const handleCellChange = (tableIndex, recordId, newValue, property) => {
+  const handleCellChange = (
+    tableIndex,
+    recordId,
+    newValue,
+    property,
+    isTypeProduct
+  ) => {
+
+    if(isTypeProduct && newValue === "Активная"){
+      console.log("ififififfifififififififi");
+      setTargetStateOnProduct(true);
+    }
+
     setTables((prevTables) =>
       prevTables.map((table, idx) => {
         if (idx !== tableIndex) return table;
@@ -357,7 +370,7 @@ export default function useCustomTableProject({
       }),
       render: (text, record) => (
         <EditableCell
-        stylesCell={stylesColumnSelect}
+          stylesCell={stylesColumnSelect}
           type="holderPostId"
           value={text}
           name={`holderPostId-${record.id}`}
@@ -395,7 +408,7 @@ export default function useCustomTableProject({
       }),
       render: (text, record) => (
         <EditableCell
-        stylesCell={stylesColumnDate}
+          stylesCell={stylesColumnDate}
           type="deadline"
           value={text}
           name={`deadline-${record.id}`}
@@ -422,7 +435,7 @@ export default function useCustomTableProject({
         <>
           {record.type === "Продукт" ? (
             <EditableCell
-            stylesCell={stylesColumnSelect}
+              stylesCell={stylesColumnSelect}
               type="targetState"
               value={text}
               options={
@@ -440,7 +453,8 @@ export default function useCustomTableProject({
                   tableIndex,
                   record.id,
                   newValue,
-                  "targetState"
+                  "targetState",
+                  record.type
                 );
               }}
             />
@@ -448,7 +462,7 @@ export default function useCustomTableProject({
             <>
               {targetStateOnProduct ? (
                 <EditableCell
-                stylesCell={stylesColumnSelect}
+                  stylesCell={stylesColumnSelect}
                   type="targetState"
                   value={text}
                   options={statusesTargetsWithoutDraft}
@@ -484,7 +498,7 @@ export default function useCustomTableProject({
       }),
       render: (text, record) => (
         <EditableCell
-        stylesCell={stylesColumnDate}
+          stylesCell={stylesColumnDate}
           type="dateStart"
           value={text}
           name={`dateStart-${record.id}`}
