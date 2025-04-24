@@ -163,7 +163,7 @@ export default function AgreementDialogPage() {
 
     // Установка фокуса на не прочитанные сообщения 
     useLayoutEffect(() => {
-        if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
+        if (!isLoadingUnSeenMessages && unSeenMessages?.length > 0 && unSeenMessagesRef.current) {
             const firstUnSeenMessageElement = unSeenMessagesRef.current;
             const bodyElement = bodyRef.current;
             if (firstUnSeenMessageElement && bodyElement) {
