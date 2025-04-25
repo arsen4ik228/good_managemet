@@ -29,12 +29,19 @@ export default function Section() {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("selectedOrganizationId")) {
-      localStorage.setItem("selectedOrganizationId", organizations[0]?.id);
-      localStorage.setItem("name", organizations[0]?.organizationName);
-      localStorage.setItem("reportDay", organizations[0]?.reportDay);
+    if (!isLoadingOrganization && !isErrorOrganization && organizations?.length > 0) {
+      const defaultOrg = organizations[0];
+      if (!localStorage.getItem("selectedOrganizationId")) {
+        localStorage.setItem("selectedOrganizationId", defaultOrg.id);
+        localStorage.setItem("name", defaultOrg.organizationName);
+        localStorage.setItem("reportDay", defaultOrg.reportDay);
+        
+        // Также обновляем Redux store
+        dispatch(setSelectedOrganizationId(defaultOrg.id));
+        dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
+      }
     }
-  }, []);
+  }, [organizations, isLoadingOrganization, isErrorOrganization, dispatch]);
 
   return (
     <>
