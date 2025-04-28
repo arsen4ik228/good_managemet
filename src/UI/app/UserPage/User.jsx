@@ -91,39 +91,10 @@ export default function User() {
 
   const [postImage] = usePostImageMutation();
 
-  // const handleCreateUserButtonClick = async () => {
-  //   const userData = {
-  //     firstName,
-  //     lastName,
-  //     middleName,
-  //     telephoneNumber,
-  //     organizationId: reduxSelectedOrganizationId,
-  //   };
-
-  //   if (file) {
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-  //     await postImage(formData)
-  //       .unwrap()
-  //       .then((result) => {
-  //         userData.avatar_url = result.filePath;
-  //       })
-  //       .catch((error) => {
-  //         console.error("Ошибка:", JSON.stringify(error, null, 2));
-  //       });
-  //   }
-
-  //   await postUser(userData)
-  //     .unwrap()
-  //     .then((result) => saveUpdatePost(result.id))
-  //     .catch((error) => {
-  //       console.error("Ошибка:", JSON.stringify(error, null, 2));
-  //     });
-  // };
-
   // Для картинки
   
  const dispatch = useDispatch();
+
   const handleCreateUserButtonClick = async () => {
     const userData = {
         firstName,
@@ -141,17 +112,17 @@ export default function User() {
             userData.avatar_url = result.filePath;
         } catch (error) {
             console.error("Ошибка загрузки изображения:", JSON.stringify(error, null, 2));
-            throw error; 
         }
     }
 
     try {
         const result = await postUser(userData).unwrap();
+        reset();
         saveUpdatePost(result.id);
         dispatch(setCreatedUserId(result.id));
     } catch (error) {
-        console.error("Ошибка создания пользователя:", JSON.stringify(error, null, 2));
-        throw error;
+      reset();
+      console.error("Ошибка создания пользователя:", JSON.stringify(error, null, 2));
     }
 };
 
