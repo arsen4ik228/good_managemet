@@ -6,7 +6,7 @@ import { Avatar } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import { useUserHook } from "@hooks";
-import { baseUrl } from "../../../helpers/constants";
+import { baseUrl } from "@helpers/constants";
 
 export default function Panel() {
   const navigate = useNavigate();
@@ -16,6 +16,32 @@ export default function Panel() {
 
   const { userInfo } = useUserHook();
 
+  const handleButtonClickExit = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/auth/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken: localStorage.getItem('accessToken') }),
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+  
+      // Очистка клиентских данных (пример)
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      
+      // Перенаправление на страницу входа
+      window.location.href = '/'; 
+  
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Можно добавить уведомление пользователю
+    }
+  };
+
   return (
     <div className={classes.block}>
       <Avatar
@@ -24,7 +50,7 @@ export default function Panel() {
         onClick={userView}
       />
 
-      <div className={classes.row}>
+      <div className={classes.row} onClick={handleButtonClickExit}>
         <svg
           width="25.000000"
           height="25.000000"

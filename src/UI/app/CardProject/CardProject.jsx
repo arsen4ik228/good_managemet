@@ -27,8 +27,8 @@ export default function CardProject() {
             <div className={classes.avatar}>
               <Avatar size={64} src={img} />
               <div className={classes.textAvatar}>
-                <Typography style={{ fontWeight: "bold"}}>  Президент</Typography>
-                <Typography style={{ fontStyle: "italic" }}>  Илья Белошейкин</Typography>
+                <Typography style={{ fontWeight: "bold"}}>  Президент </Typography>
+                <Typography style={{ fontStyle: "italic" }}>  Илья Белошейкин </Typography>
               </div>
             </div>
 

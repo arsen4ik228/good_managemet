@@ -8,7 +8,9 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import {useGoalHook} from "@hooks";
+import { useGoalHook } from "@hooks";
+
+import { Tour } from "antd";
 
 export default function Goal() {
   const [editorState, setEditorState] = useState([]);
@@ -33,7 +35,7 @@ export default function Goal() {
     isSuccessPostGoalMutation,
     isErrorPostGoalMutation,
     ErrorPostGoalMutation,
-    localIsResponsePostGoalMutation
+    localIsResponsePostGoalMutation,
   } = useGoalHook();
 
   const saveGoal = async () => {
@@ -54,8 +56,7 @@ export default function Goal() {
       content: editorState,
     })
       .unwrap()
-      .then(() => {
-      })
+      .then(() => {})
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
@@ -113,7 +114,7 @@ export default function Goal() {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
-  
+
   return (
     <div className={classes.dialog}>
       <Headers name={"цели"}>
@@ -211,8 +212,12 @@ export default function Goal() {
 
             <HandlerMutation
               Loading={isLoadingUpdateGoalMutation}
-              Error={isErrorUpdateGoalMutation && localIsResponseUpdateGoalMutation}
-              Success={isSuccessUpdateGoalMutation && localIsResponseUpdateGoalMutation}
+              Error={
+                isErrorUpdateGoalMutation && localIsResponseUpdateGoalMutation
+              }
+              Success={
+                isSuccessUpdateGoalMutation && localIsResponseUpdateGoalMutation
+              }
               textSuccess={"Цель обновлена"}
               textError={
                 ErrorUpdateGoalMutation?.data?.errors?.[0]?.errors?.[0]
@@ -224,7 +229,9 @@ export default function Goal() {
             <HandlerMutation
               Loading={isLoadingPostGoalMutation}
               Error={isErrorPostGoalMutation && localIsResponsePostGoalMutation}
-              Success={isSuccessPostGoalMutation && localIsResponsePostGoalMutation}
+              Success={
+                isSuccessPostGoalMutation && localIsResponsePostGoalMutation
+              }
               textSuccess={"Цель создана"}
               textError={
                 ErrorPostGoalMutation?.data?.errors?.[0]?.errors?.[0]
