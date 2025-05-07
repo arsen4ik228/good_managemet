@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./Goal.module.css";
 import drag from "@image/drag.svg";
 import deleteImage from "@image/delete.svg";
@@ -10,7 +10,8 @@ import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import { useGoalHook } from "@hooks";
 
-import { Tour } from "antd";
+import { ConfigProvider, Tour, Button } from "antd";
+import ruRU from "antd/locale/ru_RU";
 
 export default function Goal() {
   const [editorState, setEditorState] = useState([]);
@@ -115,13 +116,50 @@ export default function Goal() {
     };
   }, []);
 
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+  const ref3 = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+    {
+      title: "Изменить порядок",
+      description: "Нажмите и перетащите часть цели",
+      target: () => ref1.current,
+    },
+    {
+      title: "Удалить",
+      description: "Удалите чась цели",
+      target: () => ref2.current,
+    },
+    {
+      title: "Добавить",
+      description: "Добавьте новую часть цели",
+      target: () => ref3.current,
+    },
+  ];
+
   return (
     <div className={classes.dialog}>
-      <Headers name={"цели"}>
-        <BottomHeaders update={saveUpdateGoal}></BottomHeaders>
+
+      <Headers name={"цели"} funcActiveHint = {() => setOpen(true)}>
+        <BottomHeaders update={saveUpdateGoal} refUpdate={refUpdate}></BottomHeaders>
       </Headers>
 
       <div className={classes.main}>
+
+        <ConfigProvider locale={ruRU}>
+          <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+        </ConfigProvider>
+
+
         {isErrorGetGoal ? (
           <>
             <HandlerQeury Error={isErrorGetGoal}></HandlerQeury>
@@ -157,7 +195,7 @@ export default function Goal() {
                               {...provided.dragHandleProps}
                               className={classes.dragHandle}
                             >
-                              <img src={drag} alt="drag" />
+                              <img ref={ref1} src={drag} alt="drag" />
                             </div>
 
                             <TextArea
@@ -171,6 +209,7 @@ export default function Goal() {
                             ></TextArea>
 
                             <img
+                              ref={ref2}
                               src={deleteImage}
                               alt="deleteImage"
                               className={classes.deleteIcon}
@@ -186,7 +225,11 @@ export default function Goal() {
               </Droppable>
             </DragDropContext>
 
-            <button className={classes.add} onClick={() => addEditor()}>
+            <button
+              ref={ref3}
+              className={classes.add}
+              onClick={() => addEditor()}
+            >
               <svg
                 width="19.998047"
                 height="20.000000"

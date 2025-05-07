@@ -3,10 +3,19 @@ import classes from "./TopHeaders.module.css";
 import iconBack from "../../../image/iconBack.svg";
 import iconHeader from "../../../image/iconHeader.svg";
 import { useNavigate } from "react-router-dom";
-import PropTypes from 'prop-types';
-import { baseUrl } from '@helpers/constants'
+import PropTypes from "prop-types";
+import { baseUrl } from "@helpers/constants";
+import hint from "@image/hint.svg";
+import { Tooltip } from 'antd';
 
-export default function TopHeaders({ back, name, speedGoal, sectionName, avatar }) {
+export default function TopHeaders({
+  back,
+  name,
+  speedGoal,
+  sectionName,
+  avatar,
+  funcActiveHint
+}) {
   const navigate = useNavigate();
 
   const handleBack = back || (() => navigate(`/pomoshnik/start`));
@@ -30,7 +39,15 @@ export default function TopHeaders({ back, name, speedGoal, sectionName, avatar 
             <span>{sectionName}</span>
           </div>
         </div>
-        <input type="search" placeholder="Поиск" className={classes.search} />
+
+        <Tooltip placement="bottom" title={"нажмите для подсказки по разделу"}  overlayStyle={{ maxWidth: "200px", textAlign: "center" }}>
+          <img
+            src={hint}
+            alt="подсказка"
+            style={{ width: "25px", height: "25px" }}
+            onClick={() => funcActiveHint()}
+          />
+        </Tooltip>
       </div>
     </>
   );
@@ -41,13 +58,13 @@ TopHeaders.propTypes = {
   name: PropTypes.string,
   speedGoal: PropTypes.string,
   sectionName: PropTypes.string,
-  avatar: PropTypes.string
-}
+  avatar: PropTypes.string,
+};
 
 TopHeaders.defaultProps = {
   back: null,
   name: null,
   speedGoal: null,
-  sectionName: 'Личный помощник',
+  sectionName: "Личный помощник",
   avatar: null,
-}
+};
