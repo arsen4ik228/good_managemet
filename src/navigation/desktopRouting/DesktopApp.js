@@ -19,9 +19,6 @@ const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
 const Statistic = React.lazy(() => import("@app/StatisticsPage/Statistic"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
 const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
-const StartProject = React.lazy(() =>
-  import("@app/ProjectPage/Start/Update/StartContent")
-);
 const ProjectWithProgramm = React.lazy(() =>
   import("@app/Project/desktop/Main")
 );
@@ -213,10 +210,6 @@ function DesktopApp() {
                           <Route path="statistic" element={<Statistic />} />
                           <Route path="objective" element={<Objective />} />
                           <Route path="strategy" element={<Strategy />} />
-                          <Route
-                            path="startProject"
-                            element={<StartProject />}
-                          />
                           <Route path="projectWithProgramm" element={<ProjectWithProgramm />} />
 
                           <Route path="post/:postId?" element={<Post />} />

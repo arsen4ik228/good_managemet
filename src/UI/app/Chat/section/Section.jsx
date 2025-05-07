@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import classes from "./Section.module.css";
 import { useDispatch } from "react-redux";
 import {
   setSelectedOrganizationId,
   setSelectedOrganizationReportDay,
 } from "@slices";
-import { useGetReduxOrganization, useOrganizationHook} from "@hooks";
+import { useGetReduxOrganization, useOrganizationHook } from "@hooks";
 import { useNavigate } from "react-router-dom";
 
 export default function Section() {
@@ -27,6 +27,22 @@ export default function Section() {
   const handleControlPanelButtonClick = () => {
     navigate("/controlPanel");
   };
+
+  useEffect(() => {
+    if (!isLoadingOrganization && !isErrorOrganization && organizations?.length > 0) {
+      const defaultOrg = organizations[0];
+      if (!localStorage.getItem("selectedOrganizationId")) {
+        localStorage.setItem("selectedOrganizationId", defaultOrg.id);
+        localStorage.setItem("name", defaultOrg.organizationName);
+        localStorage.setItem("reportDay", defaultOrg.reportDay);
+        
+        // Также обновляем Redux store
+        dispatch(setSelectedOrganizationId(defaultOrg.id));
+        dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
+      }
+    }
+  }, [organizations, isLoadingOrganization, isErrorOrganization, dispatch]);
+
   return (
     <>
       <div className={classes.section}>
