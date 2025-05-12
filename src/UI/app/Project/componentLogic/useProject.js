@@ -213,13 +213,11 @@ export default function useProject({ activeTabTypes, styleMessages }) {
         (target) => target.type === "Продукт"
       )?.holderPostId;
 
-      const finalHolderProductPostId = holderProductPostId ?? _holderProductPostId;
-
       console.log("holderProductPostId", holderProductPostId);
 
       await updateProject({
         projectId: currentProject.id,
-        ...(finalHolderProductPostId != null && { holderProductPostId: finalHolderProductPostId }), // отправляем только если не null/undefined
+        holderProductPostId: holderProductPostId ?? _holderProductPostId,
         _id: currentProject.id,
         content: descriptionProduct,
         targetUpdateDtos,
