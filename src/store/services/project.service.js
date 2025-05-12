@@ -172,11 +172,17 @@ export const projectApi = apiSlice.injectEndpoints({
     }),
 
     updateProject: build.mutation({
-      query: ({ projectId,holderProductPostId, ...body }) => ({
-        url: `projects/${projectId}/update/?holderProductPostId=${holderProductPostId}`,
-        method: "PATCH",
-        body,
-      }),
+      query: ({ projectId, holderProductPostId, ...body }) => {
+        const queryParams = new URLSearchParams();
+        if (holderProductPostId != null) {  // Добавляем параметр, только если он не null/undefined
+          queryParams.append('holderProductPostId', holderProductPostId);
+        }
+        return {
+          url: `projects/${projectId}/update/?${queryParams.toString()}`,
+          method: "PATCH",
+          body,
+        };
+      },
       invalidatesTags: (result, err, arg) => [{ type: 'Project', id: arg._projectId }],
     }),
 
