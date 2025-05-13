@@ -16,13 +16,15 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
 
   const {
     allPosts = [],
+    postsForWorkingPlan = [],
     isLoadingGetPosts,
     isErrorGetPosts,
   } = useGetPostsQuery(
     { organizationId: reduxSelectedOrganizationId, structure },
     {
       selectFromResult: ({ data, isLoading, isError }) => ({
-        allPosts: data || [],
+        allPosts: data?.originalPosts || [],
+        postsForWorkingPlan: data?.filteredPosts || [],
         isLoadingGetPosts: isLoading,
         isErrorGetPosts: isError,
       }),
@@ -155,6 +157,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     reduxSelectedOrganizationId,
 
     allPosts,
+    postsForWorkingPlan,
     isLoadingGetPosts,
     isErrorGetPosts,
 
