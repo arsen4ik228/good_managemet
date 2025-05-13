@@ -218,7 +218,10 @@ export default function DialogPage() {
                 <ConvertTargetContainer
                     convertId={currentConvert?.id}
                     targetStatus={currentConvert?.target?.targetStatus}
-                    targetText={currentConvert?.target?.content}
+                    targetText={currentConvert?.target ?
+                        currentConvert?.target?.content :
+                        currentConvert.convertTheme
+                    }
                     date={currentConvert?.target?.createdAt}
                     isHost={userIsHost}
                     pathOfUsers={pathOfUsers}

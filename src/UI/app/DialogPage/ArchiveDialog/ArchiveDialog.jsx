@@ -158,7 +158,7 @@ export default function ArchiveDialog() {
 
     // Установка фокуса на не прочитанные сообщения 
     useLayoutEffect(() => {
-        if (!isLoadingUnSeenMessages && unSeenMessages.length > 0 && unSeenMessagesRef.current) {
+        if (!isLoadingUnSeenMessages && unSeenMessages?.length > 0 && unSeenMessagesRef.current) {
             const firstUnSeenMessageElement = unSeenMessagesRef.current;
             const bodyElement = bodyRef.current;
             if (firstUnSeenMessageElement && bodyElement) {
@@ -212,7 +212,10 @@ export default function ArchiveDialog() {
             >
                 <ConvertTargetContainer
                     targetStatus={currentConvert?.target?.targetStatus}
-                    targetText={currentConvert?.target?.content}
+                    targetText={currentConvert?.target ?
+                        currentConvert?.target?.content :
+                        currentConvert.convertTheme
+                    }
                     date={currentConvert?.target?.createdAt}
                     isWatcher={false}
                 >
@@ -224,7 +227,7 @@ export default function ArchiveDialog() {
                     )} */}
                 </ConvertTargetContainer>
                 <div className={classes.body} ref={bodyRef}>
-                    {socketMessages.slice().reverse().map((item, index) => (
+                    {socketMessages?.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
                             <Message userMessage={item?.userMessage}
                                 createdMessage={item?.createdAt}
@@ -236,14 +239,14 @@ export default function ArchiveDialog() {
                             </Message>
                         </React.Fragment>
                     ))}
-                    {unSeenMessages.length > 0 && (
+                    {unSeenMessages?.length > 0 && (
                         <>
                             {unSeenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <Message
                                         userMessage={item?.userMessage}
                                         createdMessage={item?.createdAt}
-                                        ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
+                                        ref={index === unSeenMessages?.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
                                         attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}
