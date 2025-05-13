@@ -94,7 +94,6 @@ const Input = ({ userPosts }) => {
 
         Data.convertTheme = convertTheme
         Data.convertType = "Приказ"
-        Data.convertPath = 'Прямой'
         Data.deadline = deadlineDate
         Data.senderPostId = selectedPost
         Data.reciverPostId = reciverPostId

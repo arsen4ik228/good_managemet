@@ -46,7 +46,6 @@ const Input = ({reciverPostId}) => {
 
         Data.convertTheme = contentInput
         Data.convertType = "Переписка"
-        Data.convertPath = 'Прямой'
         Data.deadline = deadlineDate
         Data.senderPostId = selectedPost
         Data.reciverPostId = reciverPostId
