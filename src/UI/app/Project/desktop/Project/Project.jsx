@@ -91,7 +91,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
         <Tooltip placement="bottom" title={"сохранить"}>
           <Button
             type="primary"
-            style={{ width: "40px" }}
+            style={{ width: "40px", marginBottom:"15px" }}
             icon={<SaveOutlined />}
             onClick={updateSingleProject}
             loading={isSaving}

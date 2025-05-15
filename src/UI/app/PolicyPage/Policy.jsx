@@ -17,11 +17,14 @@ import { usePolicyHook, useGetReduxOrganization } from "@hooks";
 import { useDirectories } from "./hooks/Directories";
 import { useParams } from "react-router-dom";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 export default function Policy() {
-  const {policyId} = useParams();
+  const { policyId } = useParams();
 
   useEffect(() => {
-    if(policyId){
+    if (policyId) {
       setSelectedPolicyId(policyId);
     }
   }, []);
@@ -38,6 +41,49 @@ export default function Policy() {
   const [disabledArchive, setDisabledArchive] = useState(false);
 
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+
+  const refName = useRef(null);
+  const refType = useRef(null);
+  const refStatus = useRef(null);
+  const refCreate = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Название политики",
+      description: "Здесь можно поменять название выбранной политики",
+      target: () => refName.current, // Добавляем проверку
+    },
+    {
+      title: "Выбрать политику",
+      description: "Нажмите и выберите политику",
+      target: () => selectRef.current, // Добавляем проверку
+    },
+    {
+      title: "Тип политики",
+      description: "Нажмите и поменяйте тип",
+      target: () => (selectedPolicyId ? refType.current : null), // Добавляем проверку
+      disabled: !selectedPolicyId,
+    },
+    {
+      title: "Состояние политики",
+      description: "Нажмите и поменяйте состояние",
+      target: () => (selectedPolicyId ? refStatus.current : null), // Добавляем проверку
+      disabled: !selectedPolicyId,
+    },
+    {
+      title: "Создать",
+      description: "Нажмите для создания стратегии",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+  ].filter((step) => !step.disabled); // Фильтруем шаги, у которых disabled=true;
 
   const {
     //useGetPoliciesQuery
@@ -258,10 +304,15 @@ export default function Policy() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"политика"}>
-        <BottomHeaders create={savePostPolicy} update={saveUpdatePolicy}>
-          <div className={classes.item}>
-            <div className={classes.itemName}>
+      <Headers name={"политика"} funcActiveHint={() => setOpen(true)}>
+        <BottomHeaders
+          create={savePostPolicy}
+          update={saveUpdatePolicy}
+          refCreate={refCreate}
+          refUpdate={refUpdate}
+        >
+          <div className={classes.item} ref={refName}>
+            <div className={classes.itemName} >
               <span>
                 Название политики <span style={{ color: "red" }}>*</span>
               </span>
@@ -584,6 +635,7 @@ export default function Policy() {
           {currentPolicy.id && (
             <>
               <Select
+               refSelect={refType}
                 name={"Тип"}
                 value={type}
                 onChange={setType}
@@ -592,6 +644,7 @@ export default function Policy() {
                 disabledPole={disabledArchive}
               ></Select>
               <Select
+                refSelect={refStatus}
                 name={"Состояние"}
                 value={state}
                 onChange={setState}
@@ -603,6 +656,10 @@ export default function Policy() {
           )}
         </BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorPostPoliciesMutation ||
