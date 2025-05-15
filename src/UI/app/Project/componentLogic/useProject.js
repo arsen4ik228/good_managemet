@@ -73,8 +73,8 @@ export default function useProject({ activeTabTypes, styleMessages }) {
 
   // Обработчик изменения вкладки
   const onChangeTab = (key) => {
+    setSelectedProjectId(key); 
     setActiveTab(key);
-    setSelectedProjectId(key);
   };
 
   // Создание нового проекта
@@ -92,16 +92,19 @@ export default function useProject({ activeTabTypes, styleMessages }) {
             content: " ",
           },
         ],
-      }).unwrap();
+      }).unwrap()
+      .then((result) => {
+        onChangeTab(result.id);
+      });
 
-      setItems((prevItems) => [
-        ...prevItems,
-        {
-          key: createdProject.id,
-          label: createdProject.projectName,
-          closable: false,
-        },
-      ]);
+      // setItems((prevItems) => [
+      //   ...prevItems,
+      //   {
+      //     key: createdProject.id,
+      //     label: createdProject.projectName,
+      //     closable: false,
+      //   },
+      // ]);
     } catch (error) {
       console.error("Ошибка при создании проекта:", error);
     }
@@ -223,6 +226,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
         targetUpdateDtos,
         targetCreateDtos,
       }).unwrap();
+      
 
       setExpandedRowKeys(prevStateExpandedRowKeys);
       message.success({
@@ -319,7 +323,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
   // Инициализация вкладок при загрузке проектов
   useEffect(() => {
     if (!isErrorGetProject && !isLoadingGetProject) {
-      resetUseState();
+      // resetUseState();
       let tabsItems = [];
       switch (activeTabTypes) {
         case "projects":

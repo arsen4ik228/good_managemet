@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import classes from "./Objective.module.css";
 import classNames from "classnames";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
@@ -10,6 +10,9 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import { useObjectiveHook, useStrategyHook } from "@hooks";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 export default function Objective() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedStrategyId, setSelectedStrategyId] = useState("");
@@ -19,6 +22,42 @@ export default function Objective() {
   const [rootCauseEditors, setRootCauseEditors] = useState([]);
 
   const [stateStrategy, setStateStrategy] = useState("");
+
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+  const ref3 = useRef(null);
+  const refSelectBorder = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "КРАТКОСРОЧАЯ ЦЕЛЬ",
+      description: "КРАТКОСРОЧАЯ ЦЕЛЬ",
+      target: () => ref1.current,
+    },
+    {
+      title: "СИТУАЦИЯ",
+      description: "СИТУАЦИЯ",
+      target: () => ref2.current,
+    },
+    {
+      title: "ПРИЧИНА",
+      description: "ПРИЧИНА",
+      target: () => ref3.current,
+    },
+    {
+      title: "Выбрать стратегию",
+      description: "Выбрать стратегию для показа краткосрочной цели",
+      target: () => refSelectBorder.current,
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+  ];
 
   const {
     currentObjective,
@@ -109,10 +148,11 @@ export default function Objective() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"Краткосрочная цель"} speedGoal={"speedGoal"}>
+      <Headers name={"Краткосрочная цель"} speedGoal={"speedGoal"}  funcActiveHint = {() => setOpen(true)}>
         <div className={classes.selectHeader}>
-          {["КРАТКОСРОЧАЯ ЦЕЛЬ", "СИТУАЦИЯ", "ПРИЧИНА"].map((text, index) => (
+          {[{name: "КРАТКОСРОЧАЯ ЦЕЛЬ", ref: ref1},{name: "СИТУАЦИЯ", ref: ref2} , {name: "ПРИЧИНА", ref: ref3}].map((obj, index) => (
             <div
+             ref={obj.ref}
               key={index}
               className={classNames(
                 classes.textSelectHeader,
@@ -127,13 +167,14 @@ export default function Objective() {
                     : classes.textSelectHeaderSpan
                 )}
               >
-                {text}
+                {obj.name}
               </span>
             </div>
           ))}
         </div>
-        <BottomHeaders update={saveUpdateObjective}>
+        <BottomHeaders update={saveUpdateObjective} refUpdate={refUpdate}> 
           <SelectBorder
+            refSelectBorder = {refSelectBorder}
             value={selectedStrategyId}
             onChange={changeStrategyId}
             array={activeAndDraftStrategies}
@@ -144,6 +185,10 @@ export default function Objective() {
           ></SelectBorder>
         </BottomHeaders>
       </Headers>
+
+        <ConfigProvider locale={ruRU}>
+          <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+        </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorGetObjectiveId || isErrorStrategies ? (
@@ -224,9 +269,7 @@ export default function Objective() {
               </>
             ) : (
               <>
-                <WaveLetters
-                  letters={"Выберите стратегию"}
-                ></WaveLetters>
+                <WaveLetters letters={"Выберите стратегию"}></WaveLetters>
               </>
             )}
           </>

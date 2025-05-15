@@ -10,9 +10,10 @@ export default function Select({
   arrayItem,
   arrayItemTwo,
   disabledPole,
+  refSelect
 }) {
   return (
-    <div className={classes.item}>
+    <div className={classes.item} ref={refSelect}>
       <div className={classes.itemName}>
         <span>
           {name} <span style={{ color: "red" }}>*</span>

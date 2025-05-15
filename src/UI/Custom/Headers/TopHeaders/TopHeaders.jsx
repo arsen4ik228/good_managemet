@@ -14,11 +14,17 @@ export default function TopHeaders({
   speedGoal,
   sectionName,
   avatar,
-  funcActiveHint
+  funcActiveHint 
 }) {
   const navigate = useNavigate();
 
   const handleBack = back || (() => navigate(`/pomoshnik/start`));
+
+   const handleHintClick = () => {
+    if (funcActiveHint && typeof funcActiveHint === 'function') {
+      funcActiveHint();
+    }
+  };
 
   return (
     <>
@@ -45,7 +51,7 @@ export default function TopHeaders({
             src={hint}
             alt="подсказка"
             style={{ width: "25px", height: "25px" }}
-            onClick={() => funcActiveHint()}
+            onClick={handleHintClick}
           />
         </Tooltip>
       </div>
@@ -59,6 +65,7 @@ TopHeaders.propTypes = {
   speedGoal: PropTypes.string,
   sectionName: PropTypes.string,
   avatar: PropTypes.string,
+  funcActiveHint:PropTypes.func,
 };
 
 TopHeaders.defaultProps = {
@@ -67,4 +74,5 @@ TopHeaders.defaultProps = {
   speedGoal: null,
   sectionName: "Личный помощник",
   avatar: null,
+  funcActiveHint: null,
 };

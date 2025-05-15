@@ -8,11 +8,12 @@ export default function SelectBorder({
   array1,
   arrayItem,
   prefix,
-  styleSelected
+  styleSelected,
+  refSelectBorder
 }) {
 
   return (
-    <div className={classes.item}>
+    <div className={classes.item} ref={refSelectBorder}>
       <select
         name="mySelect"
         value={value}

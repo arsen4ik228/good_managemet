@@ -91,7 +91,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
 
         <Button
           type="primary"
-          style={{ width: "40px" }}
+          style={{ width: "40px", marginBottom:"15px" }}
           icon={<SaveOutlined />}
           onClick={updateSingleProject}
           loading={isSaving}

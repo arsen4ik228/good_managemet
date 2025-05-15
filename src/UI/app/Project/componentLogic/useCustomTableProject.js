@@ -322,6 +322,7 @@ export default function useCustomTableProject({
       dataIndex: "orderNumber",
       fixed: "left",
       align: "center",
+      width: 100,
       render: (text, record) => (
         <>
           <span>{text}</span>

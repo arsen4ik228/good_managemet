@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./Strategy.module.css";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
@@ -9,7 +9,10 @@ import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import Select from "@Custom/Select/Select";
-import {useStrategyHook} from "@hooks";
+import { useStrategyHook } from "@hooks";
+
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
 
 export default function Strategy() {
   const [number, setNumber] = useState("");
@@ -20,6 +23,37 @@ export default function Strategy() {
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalDraft, setOpenModalDraft] = useState(false);
+
+  const refSelect = useRef(null);
+  const refSelectBorder = useRef(null);
+  const refCreate = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Выбрать стратегию",
+      description: "Выбрать стратегию для показа краткосрочной цели",
+      target: () => refSelectBorder.current,
+    },
+    {
+      title: "Состояние стратегии",
+      description: "Нажмите и поменяйте состояние",
+      target: () => (number ? refSelect.current : null), // Добавляем проверку
+      disabled: !number, // Отключаем шаг, если элемент не виден
+    },
+    {
+      title: "Создать",
+      description: "Нажмите для создания стратегии",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+  ].filter(step => !step.disabled); // Фильтруем шаги, у которых disabled=true;
 
   const {
     reduxSelectedOrganizationId,
@@ -46,7 +80,6 @@ export default function Strategy() {
     isLoadingStrategyId,
     isFetchingStrategyId,
     isErrorStrategyId,
-    
 
     // Обновить стратегию
     updateStrategy,
@@ -54,7 +87,7 @@ export default function Strategy() {
     isSuccessUpdateStrategyMutation,
     isErrorUpdateStrategyMutation,
     errorUpdateStrategyMutation,
-    localIsResponseUpdateStrategyMutation
+    localIsResponseUpdateStrategyMutation,
   } = useStrategyHook(number);
 
   const stateMapping = {
@@ -188,9 +221,15 @@ export default function Strategy() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"стратегия"}>
-        <BottomHeaders create={newStrateg} update={save}>
+      <Headers name={"стратегия"} funcActiveHint={() => setOpen(true)}>
+        <BottomHeaders
+          create={newStrateg}
+          update={save}
+          refCreate={refCreate}
+          refUpdate={refUpdate}
+        >
           <SelectBorder
+            refSelectBorder={refSelectBorder}
             value={number}
             onChange={handleNumberOnChange}
             array={activeAndDraftStrategies}
@@ -201,6 +240,7 @@ export default function Strategy() {
           ></SelectBorder>
           {number && (
             <Select
+              refSelect={refSelect}
               name={"Состояние"}
               value={state}
               onChange={setState}
@@ -211,6 +251,10 @@ export default function Strategy() {
           )}
         </BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorStrategies ? (
@@ -243,8 +287,14 @@ export default function Strategy() {
 
                         <HandlerMutation
                           Loading={isLoadingUpdateStrategyMutation}
-                          Error={isErrorUpdateStrategyMutation && localIsResponseUpdateStrategyMutation}
-                          Success= {isSuccessUpdateStrategyMutation && localIsResponseUpdateStrategyMutation}
+                          Error={
+                            isErrorUpdateStrategyMutation &&
+                            localIsResponseUpdateStrategyMutation
+                          }
+                          Success={
+                            isSuccessUpdateStrategyMutation &&
+                            localIsResponseUpdateStrategyMutation
+                          }
                           textSuccess={"Стратегия обновлена"}
                           textError={
                             errorUpdateStrategyMutation?.data?.errors?.[0]
@@ -257,8 +307,14 @@ export default function Strategy() {
 
                         <HandlerMutation
                           Loading={isLoadingPostStrategyMutation}
-                          Error={isErrorPostStrategyMutation && localIsResponsePostStrategyMutation}
-                          Success={ isSuccessPostStrategyMutation && localIsResponsePostStrategyMutation }
+                          Error={
+                            isErrorPostStrategyMutation &&
+                            localIsResponsePostStrategyMutation
+                          }
+                          Success={
+                            isSuccessPostStrategyMutation &&
+                            localIsResponsePostStrategyMutation
+                          }
                           textSuccess={"Стратегия успешно создана."}
                           textError={
                             errorPostStrategyMutation?.data?.errors?.[0]

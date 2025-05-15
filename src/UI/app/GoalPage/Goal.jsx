@@ -16,6 +16,38 @@ import ruRU from "antd/locale/ru_RU";
 export default function Goal() {
   const [editorState, setEditorState] = useState([]);
 
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+  const ref3 = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+    {
+      title: "Изменить порядок",
+      description: "Нажмите и перетащите часть цели",
+      target: () => (editorState.length > 0 ? ref1.current : null),
+      disabled: !editorState.length, 
+    },
+    {
+      title: "Удалить",
+      description: "Удалите чась цели",
+      target: () => (editorState.length > 0 ? ref2.current : null),
+      disabled: !editorState.length, 
+    },
+    {
+      title: "Добавить",
+      description: "Добавьте новую часть цели",
+      target: () => ref3.current,
+    },
+  ].filter(step => !step.disabled);;
+
   const {
     reduxSelectedOrganizationId,
 
@@ -115,36 +147,6 @@ export default function Goal() {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
-
-  const ref1 = useRef(null);
-  const ref2 = useRef(null);
-  const ref3 = useRef(null);
-  const refUpdate = useRef(null);
-
-  const [open, setOpen] = useState(false);
-
-  const steps = [
-    {
-      title: "Сохранить",
-      description: "Нажмите для сохранения",
-      target: () => refUpdate.current,
-    },
-    {
-      title: "Изменить порядок",
-      description: "Нажмите и перетащите часть цели",
-      target: () => ref1.current,
-    },
-    {
-      title: "Удалить",
-      description: "Удалите чась цели",
-      target: () => ref2.current,
-    },
-    {
-      title: "Добавить",
-      description: "Добавьте новую часть цели",
-      target: () => ref3.current,
-    },
-  ];
 
   return (
     <div className={classes.dialog}>
