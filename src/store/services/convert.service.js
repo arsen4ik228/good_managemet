@@ -41,22 +41,17 @@ export const convertApi = apiSlice.injectEndpoints({
             return convertsForContact
 
 
-          // const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
+          return convertsForContact?.map(item => {
+            const userPostIsLastAddressee = item.activePostId === item.pathOfPosts[item.pathOfPosts.length - 1]
 
-          // if (userPostIsLastAddressee) return item
+            if (userPostIsLastAddressee) return item
 
-          // if(item.convertPath === 'Согласование') {
-          //   return {
-          //     ...item,
-          //     convertType: 'Согласование'
-          //   }
-          // }
-
-          return convertsForContact?.map(item => ({
-            ...item,
-            ...(item.convertPath === 'Согласование' && { convertType: 'Согласование' }),
-            ...(item.convertPath === 'Запрос' && { convertType: 'Запрос' })
-          }));
+            return {
+              ...item,
+              ...(item.convertPath === 'Согласование' && { convertType: 'Согласование' }),
+              ...(item.convertPath === 'Запрос' && { convertType: 'Запрос' })
+            }
+          });
         };
 
         const splitReadAndUnreadMessages = (array1, array2) => {

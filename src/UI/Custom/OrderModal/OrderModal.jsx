@@ -6,11 +6,8 @@ import { usePostsHook } from '@hooks'
 export default function OrderModal({ setModalOpen, setTheme, selectedPost, setReciverPost, buttonFunc }) {
 
     const {
-        underPosts,
-        isLoadingGetUnderPosts,
-        isErrorGetUnderPosts,
-        isFetchingGetUnderPosts,
-    } = usePostsHook({postId: selectedPost})
+        postsForWorkingPlan,
+    } = usePostsHook()
 
     const [selectedReceiverPost, setSelectedRecieverPost] = useState()
 
@@ -23,7 +20,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
         setSelectedRecieverPost(value)
         setReciverPost(value)
     }
-    console.log(selectedPost, underPosts)
+    console.log(selectedPost, postsForWorkingPlan)
     return (
         <ModalContainer
             buttonText={'Отправить'}
@@ -41,7 +38,7 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
                         Пост:
                     </div>
                     <div className={classes.right}>
-                        {underPosts?.map((item, index) => (
+                        {postsForWorkingPlan?.map((item, index) => (
                             <div key={index} onClick={() => selectPost(item.id)}>
                                 <input type="radio" checked={item.id === selectedReceiverPost} />
                                 <span>{item.postName}</span>

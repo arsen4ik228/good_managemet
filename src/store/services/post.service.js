@@ -1,22 +1,33 @@
 import apiSlice from "./api";
+import { userId } from '@helpers/constants'
 
 
 export const postApi = apiSlice.injectEndpoints({
 
   endpoints: (build) => ({
     getPosts: build.query({
-      query: ({organizationId, structure = false}) => ({
+      query: ({ organizationId, structure = false }) => ({
         url: `posts/${organizationId}/?structure=${structure}`,
       }),
+      transformResponse: (response) => {
+        // Предполагаем, что response - это массив постов
+        const originalPosts = Array.isArray(response) ? response : [];
+        const filteredPosts = originalPosts.filter(post => post?.user?.id !== userId);
+
+        return {
+          originalPosts,
+          filteredPosts
+        };
+      },
       providesTags: (result) =>
-        Array.isArray(result)
+        Array.isArray(result?.originalPosts) // Проверяем originalPosts вместо result
           ? [
-              ...result?.map(({ id }) => ({
-                type: 'Post',
-                id,
-              })),
-              'Post',
-            ]
+            ...result.originalPosts.map(({ id }) => ({
+              type: 'Post',
+              id,
+            })),
+            'Post',
+          ]
           : ['Post'],
     }),
 
@@ -57,18 +68,18 @@ export const postApi = apiSlice.injectEndpoints({
       // transformResponse: (response) => {
       //   console.log(response); // Отладка ответа
       //   return {
-          
+
       //   };
       // },
       providesTags: ['Post', 'User'],
     }),
 
     getPostId: build.query({
-      query: ({postId}) => ({
+      query: ({ postId }) => ({
         url: `posts/${postId}/post`,
       }),
       transformResponse: (response) => {
-        console.log('getPostId    ',response); // Отладка ответа
+        console.log('getPostId    ', response); // Отладка ответа
         const sortWorkers = response?.workers?.sort((a, b) => {
           const lastNameComparison = a.lastName.localeCompare(b.lastName);
           if (lastNameComparison !== 0) {
@@ -83,7 +94,7 @@ export const postApi = apiSlice.injectEndpoints({
         const sortPosts = response?.posts?.sort((a, b) =>
           a.postName.localeCompare(b.postName)
         );
- 
+
         return {
           currentPost: response?.currentPost || {},
           parentPost: response?.parentPost || {},
@@ -103,17 +114,17 @@ export const postApi = apiSlice.injectEndpoints({
         url: 'posts/contacts'
       }),
       transformResponse: (response) => {
-        return response.sort((a,b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
+        return response.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
       },
     }),
 
     getUnderPosts: build.query({
-      query: ({postId }) => ({
+      query: ({ postId }) => ({
         url: `posts/${postId}/allUnderPosts`,
       }),
       providesTags: (result, error, arg) => [{ type: 'Post', id: arg.postId }],
       transformResponse: (response) => {
-        console.log('getUnderPosts    ',response); // Отладка ответа
+        console.log('getUnderPosts    ', response); // Отладка ответа
         return {
           // currentPost: response?.currentPost || {},
           // parentPost: response?.parentPost || {},
@@ -138,4 +149,4 @@ export const postApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetPostsQuery, useGetAllChatsQuery, useGetPostNewQuery, useGetPostsUserQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery} = postApi;
+export const { useGetPostsQuery, useGetAllChatsQuery, useGetPostNewQuery, useGetPostsUserQuery, usePostPostsMutation, useGetPostIdQuery, useUpdatePostsMutation, useGetUnderPostsQuery } = postApi;
