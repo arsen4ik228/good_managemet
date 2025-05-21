@@ -33,20 +33,20 @@ export default function Goal() {
       title: "Изменить порядок",
       description: "Нажмите и перетащите часть цели",
       target: () => (editorState.length > 0 ? ref1.current : null),
-      disabled: !editorState.length, 
+      disabled: !editorState.length,
     },
     {
       title: "Удалить",
       description: "Удалите чась цели",
       target: () => (editorState.length > 0 ? ref2.current : null),
-      disabled: !editorState.length, 
+      disabled: !editorState.length,
     },
     {
       title: "Добавить",
       description: "Добавьте новую часть цели",
       target: () => ref3.current,
     },
-  ].filter(step => !step.disabled);;
+  ].filter((step) => !step.disabled);
 
   const {
     reduxSelectedOrganizationId,
@@ -150,17 +150,17 @@ export default function Goal() {
 
   return (
     <div className={classes.dialog}>
-
-      <Headers name={"цели"} funcActiveHint = {() => setOpen(true)}>
-        <BottomHeaders update={saveUpdateGoal} refUpdate={refUpdate}></BottomHeaders>
+      <Headers name={"цели"} funcActiveHint={() => setOpen(true)}>
+        <BottomHeaders
+          update={saveUpdateGoal}
+          refUpdate={refUpdate}
+        ></BottomHeaders>
       </Headers>
 
       <div className={classes.main}>
-
         <ConfigProvider locale={ruRU}>
           <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
         </ConfigProvider>
-
 
         {isErrorGetGoal ? (
           <>
@@ -168,6 +168,7 @@ export default function Goal() {
           </>
         ) : (
           <>
+
             <HandlerQeury
               Loading={isLoadingGetGoal}
               Fetching={isFetchingGetGoal}

@@ -79,6 +79,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
           addIcon={
             <Tooltip placement="bottom" title={"создать проект"}>
               <Button
+              data-tour="create-button"
                 onClick={addProject}
                 size="small"
                 type="text"
@@ -90,6 +91,7 @@ export default function Project({ activeTabTypes, disabledTable }) {
 
         <Tooltip placement="bottom" title={"сохранить"}>
           <Button
+           data-tour="save-button"
             type="primary"
             style={{ width: "40px", marginBottom:"15px" }}
             icon={<SaveOutlined />}

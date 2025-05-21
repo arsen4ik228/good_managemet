@@ -117,11 +117,11 @@ export default function DrawerUpdateOrganization({
   return (
     <div style={{ display: "flex", justifyContent: "flex-end" }}>
       <ButtonImage
+        dataTour="setting-button"
         name={"редактировать"}
         icon={edit}
         onClick={showLoading}
       ></ButtonImage>
-
       <DrawerAnt
         closable
         destroyOnClose2

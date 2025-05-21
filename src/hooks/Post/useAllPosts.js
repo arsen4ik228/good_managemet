@@ -13,7 +13,7 @@ export const useAllPosts = ({organizationId = null, structure = false}) => {
     { organizationId: organizationId ?? reduxSelectedOrganizationId, structure },
     {
       selectFromResult: ({ data, isLoading, isFetching,  isError }) => ({
-        allPosts: data || [],
+        allPosts: data?.originalPosts || [],
         isLoadingGetPosts: isLoading,
         isFetchingGetPosts: isFetching,
         isErrorGetPosts: isError,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./Post.module.css";
 import greyPolicy from "@image/greyPolicy.svg";
 import blackStatistic from "@image/blackStatistic.svg";
@@ -21,6 +21,9 @@ import { usePostsHook } from "@hooks";
 import { useStatisticsHook } from "../../../hooks/useStatisticsHook";
 import RoleContainer from "./RoleContainer";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 export default function Post() {
   const navigate = useNavigate();
   const { postId } = useParams();
@@ -39,7 +42,7 @@ export default function Post() {
   const [disabledDivisionName, setDisabledDivisionName] = useState(false);
   const [parentPostId, setParentPostId] = useState("");
   const [worker, setWorker] = useState(null);
-  const [userRole, setUserRole] = useState()
+  const [userRole, setUserRole] = useState();
 
   const [product, setProduct] = useState(null);
   const [isProductChanges, setIsProductChanges] = useState(false);
@@ -60,6 +63,58 @@ export default function Post() {
   const [openModalStatisticWarning, setOpenModalStatisticWarning] =
     useState(false);
   const [openModalStatisticSave, setOpenModalStatisticSave] = useState(false);
+
+  const refPostName = useRef(null);
+  const refLupa = useRef(null);
+  const refDivisionName = useRef(null);
+  const refParentPostId = useRef(null);
+  const refWorker = useRef(null);
+  const refCreate = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Название поста",
+      description: "Здесь можно поменять название выбранного поста",
+      target: () => refPostName.current, // Добавляем проверку
+    },
+    {
+      title: "Выбрать пост",
+      description: "Нажмите и выберите пост",
+      target: () => refLupa.current, // Добавляем проверку
+    },
+    {
+      title: "Название подразделения",
+      description: "Здесь можно поменять название подразделения",
+      target: () => (selectedPostId ? refDivisionName.current : null), // Добавляем проверку
+      disabled: !selectedPostId,
+    },
+    {
+      title: "Руководитель",
+      description: "Нажмите и поменяйте руководителя",
+      target: () => (selectedPostId ? refParentPostId.current : null), // Добавляем проверку
+      disabled: !selectedPostId,
+    },
+    {
+      title: "Сотрудники",
+      description: "Нажмите и поменяйте сотрудника",
+      target: () => (selectedPostId ? refWorker.current : null), // Добавляем проверку
+      disabled: !selectedPostId,
+    },
+
+    {
+      title: "Создать",
+      description: "Нажмите для создания поста",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+  ].filter((step) => !step.disabled);
 
   const {
     allPosts,
@@ -171,7 +226,7 @@ export default function Post() {
       setSelectedPolicyName(selectedPolicyNameInPost);
     }
 
-    setUserRole(currentPost.roleId)
+    setUserRole(currentPost.roleId);
   }, [currentPost.id]);
 
   const saveUpdatePost = async () => {
@@ -344,14 +399,21 @@ export default function Post() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"посты"}>
-        <BottomHeaders create={newPost} update={saveUpdatePost}>
+      <Headers name={"посты"} funcActiveHint={() => setOpen(true)}>
+        <BottomHeaders
+          create={newPost}
+          update={saveUpdatePost}
+          refCreate={refCreate}
+          refUpdate={refUpdate}
+        >
           <Input
+            refInput={refPostName}
             name={"Название поста"}
             value={postName}
             onChange={setPostName}
           >
             <Lupa
+              refLupa={refLupa}
               setIsOpenSearch={methodForLupa}
               isOpenSearch={isOpenSearch}
               select={selectPost}
@@ -363,12 +425,14 @@ export default function Post() {
           {currentPost.id && (
             <>
               <Input
+                refInput={refDivisionName}
                 name={"Название подразделения"}
                 value={divisionName}
                 onChange={setDivisionName}
                 disabledPole={disabledDivisionName}
               ></Input>
               <Select
+                refSelect={refParentPostId}
                 name={"Руководитель"}
                 value={parentPostId}
                 onChange={setParentPostId}
@@ -378,6 +442,7 @@ export default function Post() {
                 <option value=""> — </option>
               </Select>
               <Select
+                refSelect={refWorker}
                 name={"Сотрудник"}
                 value={worker}
                 onChange={setWorker}
@@ -389,6 +454,10 @@ export default function Post() {
           )}
         </BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorGetPosts ? (
@@ -491,8 +560,11 @@ export default function Post() {
                           )}
                         </div>
 
-                        <RoleContainer rolesArray={roles} role={userRole} setRole={setUserRole}></RoleContainer>
-                        
+                        <RoleContainer
+                          rolesArray={roles}
+                          role={userRole}
+                          setRole={setUserRole}
+                        ></RoleContainer>
 
                         {openModalPolicy && (
                           <ModalSelectRadio

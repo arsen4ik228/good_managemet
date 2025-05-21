@@ -88,6 +88,7 @@ export default function PostSchema({ post, backgroundColor, setOnePost, setViewC
 
         <div className={classes.nameBlock}>
           <Button
+           data-tour="click-postName"
             type="link"
             onClick={() => {
               handleOpenPostButtonClick(post);

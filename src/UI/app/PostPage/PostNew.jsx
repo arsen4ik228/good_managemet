@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./PostNew.module.css";
 
 import greyPolicy from "@image/greyPolicy.svg";
@@ -21,6 +21,9 @@ import { usePostsHook } from "@hooks";
 import ButtonAttach from "@Custom/buttonAttach/ButtonAttach";
 import RoleContainer from "./RoleContainer";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 export default function PostNew() {
   const navigate = useNavigate();
   const back = () => {
@@ -42,7 +45,44 @@ export default function PostNew() {
   const [openModalPolicy, setOpenModalPolicy] = useState(false);
   const [openModalStatistic, setOpenModalStatistic] = useState(false);
 
-  const [userRole, setUserRole] = useState()
+  const [userRole, setUserRole] = useState();
+
+  const refPostName = useRef(null);
+  const refDivisionName = useRef(null);
+  const refParentPostId = useRef(null);
+  const refWorker = useRef(null);
+  const refUpdate = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Название поста",
+      description: "Укажите название поста",
+      target: () => refPostName.current, // Добавляем проверку
+    },
+
+    {
+      title: "Название подразделения",
+      description: "Укажите название подразделения",
+      target: () => refDivisionName.current, // Добавляем проверку
+    },
+    {
+      title: "Руководитель",
+      description: "Нажмите и назначьте руководителя",
+      target: () => refParentPostId.current, // Добавляем проверку
+    },
+    {
+      title: "Сотрудники",
+      description: "Нажмите и назначьте сотрудника",
+      target: () => refWorker.current, // Добавляем проверку
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+  ];
 
   const {
     reduxSelectedOrganizationId,
@@ -60,7 +100,7 @@ export default function PostNew() {
     isSuccessPostMutation,
     isErrorPostMutation,
     ErrorPostMutation,
-    localIsResponsePostPostMutation
+    localIsResponsePostPostMutation,
   } = usePostsHook();
 
   const successCreatePost = (id) => {
@@ -87,11 +127,8 @@ export default function PostNew() {
     }
 
     if (userRole) {
-      Data.roleId = userRole
-    }
-    else
-      Data.roleId = roles.find(item => item.roleName === 'Сотрудник').id
-
+      Data.roleId = userRole;
+    } else Data.roleId = roles.find((item) => item.roleName === "Сотрудник").id;
 
     await postPosts({
       postName: postName,
@@ -127,22 +164,30 @@ export default function PostNew() {
     setDivisionNameDB(`Подразделение №${maxDivisionNumber}`);
   }, [maxDivisionNumber]);
 
-  console.log(`worker = ${userRole}`)
+  console.log(`worker = ${userRole}`);
+
   return (
     <div className={classes.dialog}>
-      <Headers name={"создание поста"} back={back}>
-        <BottomHeaders update={savePosts}>
+      <Headers
+        name={"создание поста"}
+        back={back}
+        funcActiveHint={() => setOpen(true)}
+      >
+        <BottomHeaders update={savePosts} refUpdate={refUpdate}>
           <Input
+            refInput={refPostName}
             name={"Название поста"}
             value={postName}
             onChange={setPostName}
           ></Input>
           <Input
+            refInput={refDivisionName}
             name={"Название подразделения"}
             value={divisionName}
             onChange={setDivisionName}
           ></Input>
           <Select
+            refSelect={refParentPostId}
             name={"Руководитель"}
             value={parentId}
             onChange={setParentId}
@@ -152,6 +197,7 @@ export default function PostNew() {
             <option value="null"> — </option>
           </Select>
           <Select
+            refSelect={refWorker}
             name={"Сотрудник"}
             value={worker}
             onChange={setWorker}
@@ -159,10 +205,17 @@ export default function PostNew() {
             arrayItem={"lastName"}
             arrayItemTwo={"firstName"}
           >
-            <option value="null" disabled> — </option>
+            <option value="null" disabled>
+              {" "}
+              —{" "}
+            </option>
           </Select>
         </BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorGetNew ? (
@@ -209,7 +262,11 @@ export default function PostNew() {
                   btnName={" Выбрать или создать статистику для поста"}
                 ></ButtonAttach>
 
-                <RoleContainer rolesArray={roles} role={userRole} setRole={setUserRole}></RoleContainer>
+                <RoleContainer
+                  rolesArray={roles}
+                  role={userRole}
+                  setRole={setUserRole}
+                ></RoleContainer>
 
                 {openModalStatistic && (
                   <ModalWindow
@@ -240,7 +297,9 @@ export default function PostNew() {
                 <HandlerMutation
                   Loading={isLoadingPostMutation}
                   Error={isErrorPostMutation && localIsResponsePostPostMutation}
-                  Success={isSuccessPostMutation && localIsResponsePostPostMutation}
+                  Success={
+                    isSuccessPostMutation && localIsResponsePostPostMutation
+                  }
                   textSuccess={`Пост ${postName} успешно создан.`}
                   textError={
                     ErrorPostMutation?.data?.errors?.[0]?.errors?.[0]

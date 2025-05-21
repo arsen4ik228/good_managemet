@@ -28,7 +28,7 @@ export default function Node({ organization, allOrganizations, childrenOrg }) {
             allOrganizations={allOrganizations}
           ></DrawerUpdateOrganization>
 
-          <Button type="link" onClick={() => cardClick(organization.id)}>
+          <Button  data-tour = "click-companyName" type="link" onClick={() => cardClick(organization.id)}>
             {organization.organizationName}
           </Button>
         </Card>

@@ -81,6 +81,8 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
     updateSingleProject,
   } = usePrograma({ activeTabTypesProgram });
 
+
+  
   return (
     <div style={{ width: "100%" }}>
       <Flex justify="space-between" align="center" style={{ width: "100%" }}>
@@ -91,7 +93,7 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
           items={items}
           onChange={onChangeTab}
           addIcon={
-            <Tooltip placement="bottom" title={"создать программу"}>
+            <Tooltip  placement="bottom" title={"создать программу"}>
               <Popconfirm
                 placement="rightBottom"
                 showCancel={false}
@@ -131,13 +133,15 @@ export default function Program({ activeTabTypesProgram, disabledTable }) {
                   </>
                 }
               >
-                <Button size="small" type="text" icon={<PlusOutlined />} />
+                <Button  data-tour="create-button" size="small" type="text" icon={<PlusOutlined />} />
               </Popconfirm>
             </Tooltip>
           }
         />
+        
         <Tooltip placement="bottom" title={"сохранить"}>
           <Button
+            data-tour="save-button"
             type="primary"
             style={{ width: "40px" }}
             icon={<SaveOutlined />}

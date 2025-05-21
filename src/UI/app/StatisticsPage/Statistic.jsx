@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./Statistic.module.css";
 
 import Graphic from "@Custom/Graphic.jsx";
@@ -25,6 +25,10 @@ import { usePostsHook } from "@hooks";
 import { useOrganizationHook } from "@hooks";
 
 import _ from "lodash";
+
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 export default function Statistic() {
   const [colorFirstPoint, setColorFirstPoint] = useState();
   // Организация
@@ -88,6 +92,103 @@ export default function Statistic() {
   const [showReportDayComes, setShowReportDayComes] = useState();
 
   const [showCorrelationPoint, setShowCorrelationPoint] = useState([]);
+
+  const refDay = useRef(null);
+  const refName = useRef(null);
+  const refArrowLeft = useRef(null);
+  const refArrowRight = useRef(null);
+  const refLupa = useRef(null);
+  const refType = useRef(null);
+  const refPost = useRef(null);
+  const refTypeGraphic = useRef(null);
+  const refDescription = useRef(null);
+  const refCreate = useRef(null);
+  const refUpdate = useRef(null);
+  const refAddPoint = useRef(null);
+  const refDeletePoint = useRef(null);
+
+  const [open, setOpen] = useState(false);
+
+  const steps = [
+    {
+      title: "Отчетный день",
+      description:
+        "Выберите и поменяйте отчетный день (Отчетный день поменяется у всей организации)",
+      target: () => refDay.current, // Добавляем проверку
+    },
+
+    {
+      title: "Создать",
+      description: "Нажмите для создания статистики",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения статистики",
+      target: () => refUpdate.current,
+    },
+
+    {
+      title: "Назад",
+      description: "Нажмите для смещения графика назад",
+      target: () => refArrowLeft.current,
+      disabled: !statisticId,
+    },
+    {
+      title: "Вперед",
+      description: "Нажмите для смещения графика вперед",
+      target: () => refArrowRight.current,
+      disabled: !statisticId,
+    },
+
+    {
+      title: "Создание точки",
+      description: "Нажмите для добавления точки на график",
+      target: () => refAddPoint.current,
+      disabled: !statisticId,
+    },
+    {
+      title: "Удаление точки",
+      description: "Нажмите для удаления только что созданной точки",
+      target: () => refDeletePoint.current,
+      disabled: !statisticId,
+    },
+
+    {
+      title: "Название статистики",
+      description: "Здесь можно поменять название выбранной статистики",
+      target: () => refName.current, // Добавляем проверку
+    },
+    {
+      title: "Выбрать статистику",
+      description: "Нажмите и выберите пост",
+      target: () => refLupa.current, // Добавляем проверку
+    },
+    {
+      title: "Тип статистики",
+      description: "Здесь можно поменять тип статистики",
+      target: () => (statisticId ? refType.current : null), // Добавляем проверку
+      disabled: !statisticId,
+    },
+    {
+      title: "Пост",
+      description: "Здесь можно поменять пост у статистики",
+      target: () => (statisticId ? refPost.current : null), // Добавляем проверку
+      disabled: !statisticId,
+    },
+    {
+      title: "График",
+      description: "Здесь можно поменять тип отображаемого графика",
+      target: () => (statisticId ? refTypeGraphic.current : null), // Добавляем проверку
+      disabled: !statisticId,
+    },
+    {
+      title: "Описание",
+      description: "Описание графика",
+      target: () => (statisticId ? refDescription.current : null), // Добавляем проверку
+      disabled: !statisticId,
+    },
+  ].filter((step) => !step.disabled);
 
   const {
     statistics,
@@ -308,8 +409,9 @@ export default function Statistic() {
       if (
         !isNaN(itemDate) &&
         item?.correlationType !== "Год" &&
-        new Date(new Date().setFullYear(new Date().getFullYear() - 12 + count)) <
-          itemDate
+        new Date(
+          new Date().setFullYear(new Date().getFullYear() - 12 + count)
+        ) < itemDate
       ) {
         if (item?.correlationType === "Месяц") {
           acc[monthKey] = {
@@ -1066,9 +1168,7 @@ export default function Statistic() {
         dataWithCorrelationTypeYear.reduce((acc, item) => {
           const itemDate = new Date(item.valueDate).getFullYear();
           const yearKey = `${itemDate}`;
-          if (
-            startDate === itemDate
-          ) {
+          if (startDate === itemDate) {
             if (!acc[yearKey]) {
               acc[yearKey] = {
                 id: item.id,
@@ -1272,7 +1372,8 @@ export default function Statistic() {
       const dataWithCorrelationTypeYear = statisticDatas?.filter(
         (item) =>
           item.correlationType === "Год" &&
-          new Date().getFullYear() - 12 + count < new Date(item.valueDate).getFullYear()
+          new Date().getFullYear() - 12 + count <
+            new Date(item.valueDate).getFullYear()
       );
 
       const prepareData = dataMonth.reduce((acc, month) => {
@@ -1313,8 +1414,9 @@ export default function Statistic() {
           const itemDate = new Date(item.valueDate);
           const yearKey = `${itemDate.getFullYear()}`;
           if (
-            new Date(new Date().setFullYear(new Date().getFullYear() - 12 + count)) <
-            itemDate
+            new Date(
+              new Date().setFullYear(new Date().getFullYear() - 12 + count)
+            ) < itemDate
           ) {
             if (!acc[yearKey]) {
               acc[yearKey] = {
@@ -1556,9 +1658,15 @@ export default function Statistic() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"статистика"}>
-        <BottomHeaders create={functionOpenModalForCreated} update={save}>
+      <Headers name={"статистика"} funcActiveHint={() => setOpen(true)}>
+        <BottomHeaders
+          create={functionOpenModalForCreated}
+          update={save}
+          refCreate={refCreate}
+          refUpdate={refUpdate}
+        >
           <Select
+            refSelect={refDay}
             name={"Отчетный день"}
             value={reportDay}
             onChange={setReportDay}
@@ -1567,6 +1675,10 @@ export default function Statistic() {
           ></Select>
         </BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorGetStatistics && isErrorGetPosts ? (
@@ -1608,14 +1720,20 @@ export default function Statistic() {
                           ></Graphic>
 
                           <div className={classes.blockArrrow}>
-                            <div className={classes.statisticsArrow}>
+                            <div
+                              ref={refArrowLeft}
+                              className={classes.statisticsArrow}
+                            >
                               <img
                                 src={statisticsArrowLeft}
                                 alt="statisticsArrowLeftWhite"
                                 onClick={handleArrowLeftClick}
                               />
                             </div>
-                            <div className={classes.statisticsArrow}>
+                            <div
+                              ref={refArrowRight}
+                              className={classes.statisticsArrow}
+                            >
                               <img
                                 src={statisticsArrowRight}
                                 alt="statisticsArrowRightWhite"
@@ -1626,7 +1744,11 @@ export default function Statistic() {
                         </div>
 
                         <div className={classes.block2}>
-                          <div className={classes.addPoint} onClick={addPoint}>
+                          <div
+                            ref={refAddPoint}
+                            className={classes.addPoint}
+                            onClick={addPoint}
+                          >
                             <img src={addBlock} alt="addBlock" />
                           </div>
 
@@ -1769,6 +1891,7 @@ export default function Statistic() {
                           )}
 
                           <div
+                            ref={refDeletePoint}
                             className={classes.deletePoint}
                             onClick={deletePoint}
                           >
@@ -1779,11 +1902,13 @@ export default function Statistic() {
                         <div className={classes.block3}>
                           <div className={classes.row1}>
                             <Input
+                              refInput={refName}
                               name={"Статистика"}
                               value={name}
                               onChange={setName}
                             >
                               <Lupa
+                                refLupa={refLupa}
                                 setIsOpenSearch={setIsOpenSearch}
                                 isOpenSearch={isOpenSearch}
                                 select={selectStatistics}
@@ -1794,6 +1919,7 @@ export default function Statistic() {
                             </Input>
 
                             <Select
+                              refSelect={refType}
                               name={"Тип"}
                               value={type}
                               onChange={setType}
@@ -1802,6 +1928,7 @@ export default function Statistic() {
                             ></Select>
 
                             <Select
+                              refSelect={refPost}
                               name={"Пост"}
                               value={postId}
                               onChange={setPostId}
@@ -1810,6 +1937,7 @@ export default function Statistic() {
                             ></Select>
 
                             <Select
+                              refSelect={refTypeGraphic}
                               name={"График"}
                               value={typeGraphic}
                               onChange={setTypeGraphic}
@@ -1820,6 +1948,7 @@ export default function Statistic() {
 
                           <div className={classes.row2}>
                             <textarea
+                              ref={refDescription}
                               placeholder="Описание статистики: что и как считать"
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
@@ -1984,11 +2113,13 @@ export default function Statistic() {
                         <div className={classes.block3}>
                           <div className={classes.row1}>
                             <Input
+                              refInput={refName}
                               name={"Статистика"}
                               value={name}
                               onChange={setName}
                             >
                               <Lupa
+                                refLupa={refLupa}
                                 setIsOpenSearch={setIsOpenSearch}
                                 isOpenSearch={isOpenSearch}
                                 select={selectStatistics}
