@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import classes from "./ControlPanel.module.css";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
@@ -40,6 +40,8 @@ import {
 import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
 import { debounce, isEqual } from "lodash";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
 
 export default function ControlPanel() {
   const [openModalSetting, setOpenModalSetting] = useState(false);
@@ -55,6 +57,46 @@ export default function ControlPanel() {
   const [openModalStatistic, setOpenModalStatistic] = useState(false);
   const [modalStatisticName, setModalStatisticName] = useState("");
   const [modalStatisticDatas, setModalStatisticDatas] = useState([]);
+
+  const refCreate = useRef(null);
+  const [openHint, setOpenHint] = useState(false);
+
+  const steps = [
+    {
+      title: "Создать",
+      description: "Нажмите для создания панели управления",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Панель управления",
+      description: "Нажмите для показа содержимого (зажмите и поменяйте порядок панелей управлений)",
+      target: () => document.querySelector('[data-tour="controlPanel"]'),
+      disabled: !document.querySelector('[data-tour="controlPanel"]'),
+    },
+    {
+      title: "Настройки",
+      description: "Нажмите и отредактируйте панель управления",
+      target: () => document.querySelector('[data-tour="setting-controlPanel"]'),
+      disabled: !document.querySelector('[data-tour="setting-controlPanel"]'),
+    },
+    {
+      title: "Удалить",
+      description: "Нажмите и удалите панель управления",
+      target: () => document.querySelector('[data-tour="delete-controlPanel"]'),
+      disabled: !document.querySelector('[data-tour="delete-controlPanel"]'),
+    },
+    {
+      title: "Карточка статистики",
+      description: "Нажмите для показа подробной статистики (зажмите и поменяйте порядок статистик)",
+      target: () => document.querySelector('[data-tour="cardStatistics"]'),
+      disabled: !document.querySelector('[data-tour="cardStatistics"]'),
+    },
+  ].filter((step) => {
+    if (step.target.toString().includes("querySelector")) {
+      return !step.disabled;
+    }
+    return true;
+  });
 
   const {
     reduxSelectedOrganizationId,
@@ -261,7 +303,6 @@ export default function ControlPanel() {
           orderStatisticNumber: index + 1,
         }));
 
-
         debouncedUpdate(updatedStatistics);
 
         return newItems;
@@ -297,23 +338,32 @@ export default function ControlPanel() {
     }
   }, [allControlPanel]);
 
- // Сброс cards при изменении reduxSelectedOrganizationId
-useEffect(() => {
-  setCards([]);
-}, [reduxSelectedOrganizationId]);
+  // Сброс cards при изменении reduxSelectedOrganizationId
+  useEffect(() => {
+    setCards([]);
+  }, [reduxSelectedOrganizationId]);
 
-// Обновление cards при изменении statisticsPoints
-useEffect(() => {
-  if (statisticsPoints && !isEqual(statisticsPoints, cards)) {
-    setCards(statisticsPoints);
-  }
-}, [statisticsPoints]); 
+  // Обновление cards при изменении statisticsPoints
+  useEffect(() => {
+    if (statisticsPoints && !isEqual(statisticsPoints, cards)) {
+      setCards(statisticsPoints);
+    }
+  }, [statisticsPoints]);
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"панель управления"}>
-        <BottomHeaders create={openCreate}></BottomHeaders>
+      <Headers name={"панель управления"} funcActiveHint={() => setOpenHint(true)}>
+        <BottomHeaders create={openCreate}  refCreate={refCreate} ></BottomHeaders>
       </Headers>
+
+
+      <ConfigProvider locale={ruRU}>
+        <Tour
+          open={openHint}
+          onClose={() => setOpenHint(false)}
+          steps={steps}
+        />
+      </ConfigProvider>
 
       <div className={classes.main}>
         <DragDropContext onDragEnd={onDragEnd_ControlPanel}>
@@ -383,26 +433,32 @@ useEffect(() => {
           </DndContext>
         )}
 
-        {!isErrorGetontrolPanelId && !isLoadingGetontrolPanelId && !isFetchingGetontrolPanelId && openModalSetting && (
-          <ModalSetting
-            exit={() => setOpenModalSetting(false)}
-            updateControlPanel={updateControlPanel}
-            currentControlPanel={currentControlPanel}
-            statisticsIdsInPanel={statisticsIdsInPanel}
-          ></ModalSetting>
-        )}
-        {!isErrorGetontrolPanelId && !isLoadingGetontrolPanelId && !isFetchingGetontrolPanelId && openModalDelete && (
-          <ModalWindow
-            text={`Вы точно хотите удалить панель управления ${
-              currentControlPanel.isNameChanged
-                ? currentControlPanel.panelName
-                : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
-            }`}
-            close={setOpenModalDelete}
-            btnYes={btnYes}
-            btnNo={btnNo}
-          ></ModalWindow>
-        )}
+        {!isErrorGetontrolPanelId &&
+          !isLoadingGetontrolPanelId &&
+          !isFetchingGetontrolPanelId &&
+          openModalSetting && (
+            <ModalSetting
+              exit={() => setOpenModalSetting(false)}
+              updateControlPanel={updateControlPanel}
+              currentControlPanel={currentControlPanel}
+              statisticsIdsInPanel={statisticsIdsInPanel}
+            ></ModalSetting>
+          )}
+        {!isErrorGetontrolPanelId &&
+          !isLoadingGetontrolPanelId &&
+          !isFetchingGetontrolPanelId &&
+          openModalDelete && (
+            <ModalWindow
+              text={`Вы точно хотите удалить панель управления ${
+                currentControlPanel.isNameChanged
+                  ? currentControlPanel.panelName
+                  : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
+              }`}
+              close={setOpenModalDelete}
+              btnYes={btnYes}
+              btnNo={btnNo}
+            ></ModalWindow>
+          )}
         {openModalCreate && (
           <ModalSelectRadio
             nameTable={"Название поста"}

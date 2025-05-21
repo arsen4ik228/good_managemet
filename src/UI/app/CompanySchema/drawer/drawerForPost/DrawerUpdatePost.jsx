@@ -13,7 +13,7 @@ import {
 import { message } from "antd";
 import { useStatisticsHook } from "@hooks/useStatisticsHook";
 import { useGetSinglePost, useUpdateSinglePost } from "@hooks";
-import { isMobile } from "react-device-detect"; 
+import { isMobile } from "react-device-detect";
 
 const { TextArea } = Input;
 
@@ -166,6 +166,7 @@ export default function DrawerUpdatePost({ postId }) {
   return (
     <div style={{ with: "100%", marginLeft: "auto" }}>
       <ButtonImage
+        dataTour="setting-button"
         name={"редактировать"}
         icon={edit}
         onClick={showLoading}
