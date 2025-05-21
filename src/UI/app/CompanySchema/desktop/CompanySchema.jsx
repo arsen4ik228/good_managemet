@@ -124,7 +124,14 @@ export default function CompanySchema() {
       description: "Нажмите для перехода в Подразделение",
       target: () => document.querySelector('[data-tour="click-postName"]'),
       disabled: !document.querySelector('[data-tour="click-postName"]'),
-    },
+    },  
+    {
+      title: "Назад",
+      description: "Нажмите для перехода к схеме компаний",
+      target: () => document.querySelector('[data-tour="click-backCompany"]'),
+      disabled: !document.querySelector('[data-tour="click-backCompany"]'),
+    }, 
+        
   ].filter((step) => {
     if (step.target.toString().includes("querySelector")) {
       return !step.disabled;
@@ -208,6 +215,7 @@ export default function CompanySchema() {
                 <div className={classes.header}>
                   <h1 className={classes.boldText}>Посты отсутсвуют</h1>
                   <FloatButton
+                    data-tour="click-backCompany"
                     icon={
                       <img
                         src={arrowBack}
@@ -250,6 +258,7 @@ export default function CompanySchema() {
                         })}
 
                         <FloatButton
+                          data-tour="click-backCompany"
                           icon={
                             <img
                               src={arrowBack}
@@ -277,6 +286,7 @@ export default function CompanySchema() {
                         />
 
                         <FloatButton
+                          data-tour="click-backCompany"
                           icon={
                             <img
                               src={arrowBack}

@@ -571,6 +571,7 @@ export default function CardStatistic({
 
   return (
     <div
+      data-tour="cardStatistics"
       className={classes.graphic}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

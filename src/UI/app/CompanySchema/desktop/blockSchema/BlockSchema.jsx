@@ -137,7 +137,7 @@ export default function BlockSchema({
                 justifyContent: "space-between",
               }}
             >
-              <img src={palette} alt="palette" width="30px" height="30px" />
+              <img  data-tour="color-palette" src={palette} alt="palette" width="30px" height="30px" />
             </div>
           </Popover>
           <DrawerUpdatePost postId={post.id}></DrawerUpdatePost>
