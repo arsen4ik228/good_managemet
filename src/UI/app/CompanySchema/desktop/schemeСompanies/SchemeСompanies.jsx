@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./SchemeСompanies.module.css";
 
 import _ from "lodash";
@@ -13,6 +13,8 @@ import Node from "./elementTree/Node.jsx";
 import { useAllOrganizations } from "@hooks/Organization/useAllOrganizations.js";
 import DrawerCreateOrganization from "../../drawer/drawerForOrganization/DrawerCreateOrganization";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
 const buildTree = (organizations) => {
   const postMap = {};
   const roots = [];
@@ -60,6 +62,33 @@ export default function SchemeСompanies() {
   const [getOrganizations, setGetOrganizations] = useState([]);
   const [openCreateOrganization, setOpenCreateOrganization] = useState(false);
 
+  const [openHint, setOpenHint] = useState(false);
+  const refCreate = useRef(null); 
+  const steps = [
+    {
+      title: "Создать",
+      description: "Нажмите для создания компании",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Редактировать",
+      description: "Нажмите и отредактируйте",
+      target: () => document.querySelector('[data-tour="setting-button"]'),
+      disabled: !document.querySelector('[data-tour="setting-button"]'),
+    },
+    {
+      title: "Компания",
+      description: "Нажмите для перехода в компанию",
+      target: () => document.querySelector('[data-tour="click-companyName"]'),
+      disabled: !document.querySelector('[data-tour="click-companyName"]'),
+    },
+  ].filter((step) => {
+    if (step.target.toString().includes("querySelector")) {
+      return !step.disabled;
+    }
+    return true;
+  });
+
   const createOrganization = () => {
     setOpenCreateOrganization(true);
   };
@@ -72,9 +101,20 @@ export default function SchemeСompanies() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"схема компании"}>
-        <BottomHeaders create={createOrganization} />
+      <Headers
+        name={"схема компании"}
+        funcActiveHint={() => setOpenHint(true)}
+      >
+        <BottomHeaders create={createOrganization}  refCreate={refCreate}/>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour
+          open={openHint}
+          onClose={() => setOpenHint(false)}
+          steps={steps}
+        />
+      </ConfigProvider>
 
       <DrawerCreateOrganization
         open={openCreateOrganization}

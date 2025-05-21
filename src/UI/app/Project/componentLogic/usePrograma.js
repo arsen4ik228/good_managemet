@@ -359,9 +359,11 @@ export default function usePrograma({ activeTabTypesProgram, styleMessages }) {
               label: (
                 <>
                   <Button
+
                     size="small"
                     icon={
                       <EllipsisOutlined
+                      data-tour="setting-button"
                         style={{ transform: "rotate(90deg)" }}
                       />
                     }
@@ -383,6 +385,7 @@ export default function usePrograma({ activeTabTypesProgram, styleMessages }) {
               label: (
                 <>
                   <Button
+                  data-tour="setting-button"
                     size="small"
                     icon={
                       <EllipsisOutlined

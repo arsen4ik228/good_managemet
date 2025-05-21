@@ -333,6 +333,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
               label: (
                 <>
                   <Button
+                   data-tour="setting-button"
                     size="small"
                     icon={
                       <EllipsisOutlined
@@ -357,6 +358,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
               label: (
                 <>
                   <Button
+                  data-tour="setting-button"
                     size="small"
                     icon={
                       <EllipsisOutlined
@@ -381,6 +383,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
               label: (
                 <>
                   <Button
+                  data-tour="setting-button"
                     size="small"
                     icon={
                       <EllipsisOutlined
@@ -405,6 +408,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
               label: (
                 <>
                   <Button
+                  data-tour="setting-button"
                     size="small"
                     icon={
                       <EllipsisOutlined

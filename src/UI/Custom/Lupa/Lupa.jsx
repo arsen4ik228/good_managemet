@@ -18,6 +18,8 @@ export default function Lupa({
   array,
   arrayItem,
   positionBottomStyle,
+
+  refLupa,
 }) {
   const selectRef = useRef(null);
 
@@ -32,11 +34,12 @@ export default function Lupa({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [setIsOpenSearch, refLupa]);
 
   return (
     <div ref={selectRef}>
       <img
+        ref={refLupa}
         src={subbarSearch}
         alt="subbarSearch"
         onClick={() => {

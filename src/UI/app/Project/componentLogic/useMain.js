@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { isMobile } from "react-device-detect";
-
 
 import ProjectMobileDesktopLayout from "@app/Project/mobile/Project/Project";
 import ProgramMobileDesktopLayout from "@app/Project/mobile/Program/Program";
@@ -12,15 +11,56 @@ const ProgramDesktopLayout = React.lazy(() =>
   import("@app/Project/desktop//Program/Program")
 );
 
-
 export default function useMain() {
   const [activeTab, setActiveTab] = React.useState("программы");
   const [activeTabTypes, setActiveTabTypes] = React.useState("projects");
   const [activeTabTypesProgram, setActiveTabTypesProgram] =
     React.useState("programs");
 
+  const refProject = useRef(null);
+  const refPrograma = useRef(null);
+
+  const [openHint, setOpenHint] = useState(false);
+
+  const steps = [
+    {
+      title: "Проекты",
+      description: "Нажмите и выберите справа тип проекта",
+      target: () => refProject.current,
+    },
+    {
+      title: "Программы",
+      description: "Нажмите и выберите справа тип программы",
+      target: () => refPrograma.current,
+    },
+    {
+      title: "Настройки (проекты или программы)",
+      description: "Нажмите и отредактируйте",
+      target: () => document.querySelector('[data-tour="setting-button"]'),
+      disabled: !document.querySelector('[data-tour="setting-button"]'),
+    },
+    {
+      title: "Создать",
+      description: "Нажмите для создания стратегии",
+      target: () => document.querySelector('[data-tour="create-button"]'),
+      disabled: !document.querySelector('[data-tour="create-button"]'),
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => document.querySelector('[data-tour="save-button"]'),
+      disabled: !document.querySelector('[data-tour="save-button"]'),
+    },
+  ].filter((step) => {
+    if (step.target.toString().includes("querySelector")) {
+      return !step.disabled;
+    }
+    return true;
+  });
+
   const items = [
     {
+      ref: refPrograma,
       key: "программы",
       label: "Программы",
       children: (
@@ -40,6 +80,7 @@ export default function useMain() {
       ),
     },
     {
+      ref: refProject,
       key: "проекты",
       label: "Проекты",
       children: (
@@ -127,5 +168,11 @@ export default function useMain() {
     typesProgram,
     handleTabChangeTypes,
     handleTabChangeTypesProgram,
+
+    refProject,
+    refPrograma,
+    openHint,
+    setOpenHint,
+    steps,
   };
 }

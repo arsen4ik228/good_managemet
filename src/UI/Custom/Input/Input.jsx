@@ -3,6 +3,7 @@ import classes from "./Input.module.css";
 import { Form, Input as InputAnt, Search } from "antd";
 
 export default function Input({
+  refInput,
   children,
   name,
   value,
@@ -11,7 +12,7 @@ export default function Input({
   isShowInput,
 }) {
   return (
-    <div className={classes.item}>
+    <div className={classes.item} ref={refInput}>
       <div className={classes.itemName}>
         <span>
           {name} <span style={{ color: "red" }}>*</span>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./CompanySchema.module.css";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,9 @@ import { useGetSingleOrganization, useUpdateSingleOrganization } from "@hooks";
 import { useAllPosts } from "@hooks";
 
 import { buildTree } from "../constants/contsants.js";
+
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
 
 const PostTree = ({
   posts,
@@ -89,6 +92,46 @@ export default function CompanySchema() {
     fullName: "",
   });
 
+  const refCreate = useRef(null);
+  const refUpdate = useRef(null);
+  const [openHint, setOpenHint] = useState(false);
+
+  const steps = [
+    {
+      title: "Создать",
+      description: "Нажмите для создания стратегии",
+      target: () => refCreate.current,
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+    {
+      title: "Палитра",
+      description: "Нажмите и и поменяйте цветовую гамму поста",
+      target: () => document.querySelector('[data-tour="color-palette"]'),
+      disabled: !document.querySelector('[data-tour="color-palette"]'),
+    },
+    {
+      title: "Редактировать пост",
+      description: "Нажмите и отредактируйте пост",
+      target: () => document.querySelector('[data-tour="setting-button"]'),
+      disabled: !document.querySelector('[data-tour="setting-button"]'),
+    },
+    {
+      title: "Подразделение",
+      description: "Нажмите для перехода в Подразделение",
+      target: () => document.querySelector('[data-tour="click-postName"]'),
+      disabled: !document.querySelector('[data-tour="click-postName"]'),
+    },
+  ].filter((step) => {
+    if (step.target.toString().includes("querySelector")) {
+      return !step.disabled;
+    }
+    return true;
+  });
+
   const saveUpdateOrganization = async () => {
     const colorCodes = {};
     for (const [key, value] of arrayColors) {
@@ -125,9 +168,22 @@ export default function CompanySchema() {
   console.log(onePost);
   return (
     <div className={classes.dialog}>
-      <Headers name={"схема постов"}>
-        <BottomHeaders update={saveUpdateOrganization} create={createPost} />
+      <Headers name={"схема постов"} funcActiveHint={() => setOpenHint(true)}>
+        <BottomHeaders
+          update={saveUpdateOrganization}
+          create={createPost}
+          refCreate={refCreate}
+          refUpdate={refUpdate}
+        />
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour
+          open={openHint}
+          onClose={() => setOpenHint(false)}
+          steps={steps}
+        />
+      </ConfigProvider>
 
       <DrawerCreatePost
         open={openCreatePost}
