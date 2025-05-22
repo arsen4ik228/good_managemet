@@ -95,6 +95,7 @@
     flex-direction: row;
     align-items: center;
     column-gap: 12.5px;
+    transition: background 0.2s;
 
     & span {
         font-weight: 600;
@@ -127,6 +128,7 @@
     padding-left: 12.5px;
     background-color: var(--grey-light);
 
+    transition: background 0.2s;
     & svg {
         width: 24px;
         height: 24px;
