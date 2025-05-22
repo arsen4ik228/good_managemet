@@ -7,6 +7,7 @@ import { isMobile } from "react-device-detect";
 import { socketUrl, baseUrl } from "@helpers/constants";
 import telegram from '@Custom/icon/telegram.svg'
 import logo from '@Custom/icon/logo.svg'
+import icon from "@image/iconHeader.svg";
 
 
 const socket = io(`${socketUrl}auth`, {
@@ -15,6 +16,7 @@ const socket = io(`${socketUrl}auth`, {
     credentials: true,
   },
   transports: ["websocket"],
+  reconnection: false
 }); // Подключение к сокету
 
 export default function Content() {
@@ -101,35 +103,32 @@ export default function Content() {
 
   // Эффект для отправки данных после того, как все зависимости будут установлены
   useEffect(() => {
-    if (fingerprint && ip && tokenForTG) {
-      // Все данные готовы, подписываемся на событие requestInfo и отправляем
-      socket.on("requestInfo", (data) => {
-        console.log("Получено событие requestInfo:", data);
-        // Отправляем ответ через responseFromClient
-        console.log("--------------------");
-        console.log(fingerprint);
-        console.log(userAgent);
-        console.log(ip);
-        console.log(tokenForTG);
-        console.log("--------------------");
-
-        localStorage.setItem("fingerprint", fingerprint);
-
-        socket.emit("responseFromClient", {
-          fingerprint: fingerprint,
-          userAgent: userAgent,
-          ip: ip,
-          token: tokenForTG,
-        });
-      });
-
-      socket.on("receiveAuthInfo", (authData) => {
-        console.log("Получено событие receiveAuthInfo:", authData);
-        // Обработка полученных данных
-        setData(authData);
-      });
+    if (!fingerprint || !tokenForTG || !ip || !userAgent || !socket) return
+    const handleRequestInfo = (data) => {
+      localStorage.setItem("fingerprint", fingerprint)
+      socket.emit("responseFromClient", {
+        fingerprint: fingerprint,
+        userAgent: userAgent,
+        ip: ip,
+        token: tokenForTG,
+      })
     }
-  }, [fingerprint, ip, tokenForTG]); // Зависимости эффекта
+    const handleAuthInfo = (authData) => {
+      console.log(authData)
+      setData(authData)
+    }
+    const handleDisconnect = () => {
+      console.log('Disconnected')
+    };
+    socket.on("requestInfo", handleRequestInfo)
+    socket.on("receiveAuthInfo", handleAuthInfo)
+    socket.on('disconnect', handleDisconnect)
+    return () => {
+      socket.off("requestInfo", handleRequestInfo);
+      socket.off("receiveAuthInfo", handleAuthInfo);
+      socket.disconnect();
+    }
+  }, [fingerprint, tokenForTG, ip])
 
   // Перенаправление на другую страницу при наличии userId
   useEffect(() => {
@@ -157,7 +156,7 @@ export default function Content() {
           alert("Не удалось установить соединение с сервером.");
         });
     }
-  }, [data]);
+  }, [data, tokenForTG]);
 
   // Установка QR-кода при наличии tokenForTG и socketId
   useEffect(() => {
@@ -198,22 +197,27 @@ export default function Content() {
       <div className={classes.body}>
         <span className={classes.text}>Для входа отсканируйте QR-код</span>
         <div className={classes.QR}>
-          {!socketId ? (
-            <div>Подключение к сокету...</div>
+          {!socketId || !tokenForTG ? (
+            <span className={classes.loader}>
+              <img
+                src={icon}
+                alt="icon"
+              />
+            </span>
           ) : tokenForTG && qrUrl ? (
             <div className={classes.telegram}>
               <QRCode errorLevel="H" value={qrUrl} />
-              <a
-                href={qrUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={classes.link}
-              >
+              <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>
                 Или перейдите по ссылке
               </a>
             </div>
           ) : (
-            <>Подождите</>
+            <span className={classes.loader}>
+              <img
+                src={icon}
+                alt="icon"
+              />
+            </span>
           )}
         </div>
       </div>
