@@ -4,12 +4,45 @@ import Headers from "@Custom/Headers/Headers";
 import Task from '@app/WorkingPlanPage/mobile/TaskContainer/Task';
 import InputTextContainer from '@Custom/ContainerForInputText/InputTextContainer';
 import { useTargetsHook } from '@hooks';
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
 import Input from './mobile/Input';
 
 export default function MainWorkingPlan() {
 
 
     const [isViewArchive, setIsViewArchive] = useState(false)
+    const [open, setOpen] = useState(false)
+
+
+
+    const steps = [
+    {
+      title: "Выбор поста",
+      description: "Выберите Пост отправителя",
+      target: () => document.querySelector('[data-tour="current-post"]'),
+    },
+    {
+      title: "Выбор даты",
+      description: "Выберите дату начала и завершения задачи",
+      target: () => document.querySelector('[data-tour="date-for-task"]'),
+    },
+    {
+      title: "Вложения",
+      description: "Прикрепите файлы к задаче",
+      target: () => document.querySelector('[data-tour="files-attachment"]'),
+    },
+    {
+      title: "Отправить задачу",
+      description: "Нажмите для создания личной задачи",
+      target: () => document.querySelector('[data-tour="send-message"]'),
+    },
+    {
+      title: "Создать приказ",
+      description: "Нажмите для отправки приказа",
+      target: () => document.querySelector('[data-tour="share-icon"]'),
+    },
+  ].filter((step) => !step.disabled);
 
     const {
         personalTargets,
@@ -32,11 +65,14 @@ export default function MainWorkingPlan() {
 
     return (
         <div className={classes.dialog}>
-            <Headers name={"Рабочий План"}>
+            <Headers name={"Рабочий План"} funcActiveHint={() => setOpen(true)}>
                 {/* <BottomHeaders></BottomHeaders> */}
             </Headers>
 
             <div className={classes.main}>
+                <ConfigProvider locale={ruRU}>
+                    <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+                </ConfigProvider>
                 <div className={classes.body}>
                     <div key={'un'} className={classes.archiveButton} onClick={() => setIsViewArchive(!isViewArchive)}>
                         {isViewArchive ? 'Скрыть ' : 'Показать'} завершенные задачи

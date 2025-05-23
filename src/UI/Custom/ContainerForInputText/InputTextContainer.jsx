@@ -86,7 +86,7 @@ export default function InputTextContainer({
       <div className={classes.wrapper}>
         <div className={classes.body}>
           <div className={classes.choosePostContainer}>
-            <select name="choosePost" onChange={selectPost}>
+            <select name="choosePost" onChange={selectPost} data-tour="current-post">
               {senderPostName ? (
                 <option>{senderPostName}</option>
               ) : (
@@ -100,7 +100,7 @@ export default function InputTextContainer({
           </div>
           <div className={classes.inputTextContainer}>
             <div className={classes.buttonSection}>
-              <div>
+              <div data-tour="files-attachment">
                 {!offAttachIcon && (
                   <FilesModal
                     openModal={openFilesModal}
@@ -118,7 +118,7 @@ export default function InputTextContainer({
                   />
                 )}
               </div>
-              <div>
+              <div data-tour="date-for-task">
                 {!offSetDate && (
                   <CalendarModal
                     openModal={openCalendarModal}
@@ -140,12 +140,12 @@ export default function InputTextContainer({
               />
             </div>
             <div className={classes.buttonSection}>
-              <div>
+              <div data-tour="share-icon">
                 {!offShareIcon && (
                   <img src={shareIcon} alt="shareIcon" onClick={shareClick} />
                 )}
               </div>
-              <div>
+              <div data-tour="send-message">
                 <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
               </div>
             </div>
