@@ -21,6 +21,8 @@ import exitHeader from "@image/exitHeader.svg";
 import { useUserHook } from "@hooks";
 import { usePostImageMutation } from "@services";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
 
 export default function SettingsPage() {
   const [firstName, setFirstName] = useState("");
@@ -31,6 +33,42 @@ export default function SettingsPage() {
 
   const [avatarLocal, setAvatarLocal] = useState("");
   const [file, setFile] = useState("");
+
+  const refUpdate = useRef(null);
+  const [openHint, setOpenHint] = useState(false);
+
+  const steps = [
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => refUpdate.current,
+    },
+    {
+      title: "Аватар",
+      description: "Нажмите на аватар и поменяйте фотографию, при нажатии на крестик аватар удалиться",
+      target: () => document.querySelector('[data-tour="data-avatar"]'),
+    },
+    {
+      title: "Личная информация",
+      description: "Нажмите и поменяйте данные",
+      target: () => document.querySelector('[data-tour="data-form"]'),
+    },
+    {
+      title: "Личная информация",
+      description: "Нажмите и поменяйте данные",
+      target: () => document.querySelector('[data-tour="data-form"]'),
+    },
+    {
+      title: "Закрепленные посты",
+      description: "Распологаются все посты закрепленные за пользователем",
+      target: () => document.querySelector('[data-tour="data-post"]'),
+    },
+        {
+      title: "Пост",
+      description: "Нажмите на название поста и перейдите к этому посту",
+      target: () => document.querySelector('[data-tour="data-postItem"]'),
+    },
+  ];
 
   const handleChangeFirstName = (e) => {
     const inputValue = e;
@@ -187,14 +225,28 @@ export default function SettingsPage() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"редактирование пользователя"}>
-        <BottomHeaders></BottomHeaders>
+      <Headers
+        name={"редактирование пользователя"}
+        funcActiveHint={() => setOpenHint(true)}
+      >
+        <BottomHeaders
+          update={handleUpdateUserButtonClick}
+          refUpdate={refUpdate}
+        ></BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour
+          open={openHint}
+          onClose={() => setOpenHint(false)}
+          steps={steps}
+        />
+      </ConfigProvider>
 
       <div className={classes.main}>
         <div className={classes.wrapper}>
           <div className={classes.block}>
-            <div className={classes.avatarContainer}>
+            <div className={classes.avatarContainer} data-tour="data-avatar">
               <img
                 src={avatarLocal || addCircle}
                 alt="avatar"
@@ -217,7 +269,7 @@ export default function SettingsPage() {
               ></img>
             </div>
 
-            <div className={classes.column2}>
+            <div className={classes.column2} data-tour="data-form">
               <Input
                 name={"Имя"}
                 value={firstName}
@@ -253,6 +305,7 @@ export default function SettingsPage() {
           </div>
 
           <List
+            data-tour="data-post"
             style={{ alignSelf: "flex-start", width: "100%" }}
             header={<div>Закрепленные посты</div>}
             bordered
@@ -280,6 +333,7 @@ export default function SettingsPage() {
                   }
                   title={
                     <Button
+                    data-tour="data-postItem"
                       style={{ padding: 0 }}
                       color="default"
                       variant="link"
@@ -295,7 +349,7 @@ export default function SettingsPage() {
           />
         </div>
 
-        <FloatButton
+        {/* <FloatButton
           icon={<SaveOutlined />}
           type="primary"
           tooltip="Сохранить изменения"
@@ -303,8 +357,8 @@ export default function SettingsPage() {
           style={{
             insetInlineEnd: 94,
           }}
-        />
-        
+        /> */}
+
         <HandlerMutation
           Loading={isLoadingUserMutation}
           Error={isErrorUserMutation && localIsResponseUserMutation}
@@ -316,10 +370,7 @@ export default function SettingsPage() {
               : ErrorUserMutation?.data?.message
           }
         ></HandlerMutation>
-
-
       </div>
-
     </div>
   );
 }

@@ -21,6 +21,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCreatedUserId } from "@slices";
 
+import { ConfigProvider, Tour } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 export default function User() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -34,6 +37,32 @@ export default function User() {
   const [openModalSelectPosts, setOpenModalSelectPosts] = useState("");
   const [arrayCheckedPostsIds, setArrayCheckedPostsIds] = useState([]);
   const [arrayCheckedPostsNames, setArrayCheckedPostsNames] = useState([]);
+
+  const [openHint, setOpenHint] = useState(false);
+
+  const steps = [
+    {
+      title: "Аватар",
+      description:
+        "Нажмите на аватар и поменяйте фотографию, при нажатии на крестик аватар удалиться",
+      target: () => document.querySelector('[data-tour="data-avatar"]'),
+    },
+    {
+      title: "Личная информация",
+      description: "Заполните поля для создания пользователя",
+      target: () => document.querySelector('[data-tour="data-form"]'),
+    },
+    {
+      title: "Пост",
+      description: "Здесь можете создать или прикрепить пост к пользователю",
+      target: () => document.querySelector('[data-tour="data-post"]'),
+    },
+    {
+      title: "Сохранить",
+      description: "Нажмите для сохранения",
+      target: () => document.querySelector('[data-tour="data-save"]'),
+    },
+  ];
 
   const handleChangeFirstName = (e) => {
     const inputValue = e;
@@ -92,39 +121,45 @@ export default function User() {
   const [postImage] = usePostImageMutation();
 
   // Для картинки
-  
- const dispatch = useDispatch();
+
+  const dispatch = useDispatch();
 
   const handleCreateUserButtonClick = async () => {
     const userData = {
-        firstName,
-        lastName,
-        middleName,
-        telephoneNumber,
-        organizationId: reduxSelectedOrganizationId,
+      firstName,
+      lastName,
+      middleName,
+      telephoneNumber,
+      organizationId: reduxSelectedOrganizationId,
     };
 
     if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-        try {
-            const result = await postImage(formData).unwrap();
-            userData.avatar_url = result.filePath;
-        } catch (error) {
-            console.error("Ошибка загрузки изображения:", JSON.stringify(error, null, 2));
-        }
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const result = await postImage(formData).unwrap();
+        userData.avatar_url = result.filePath;
+      } catch (error) {
+        console.error(
+          "Ошибка загрузки изображения:",
+          JSON.stringify(error, null, 2)
+        );
+      }
     }
 
     try {
-        const result = await postUser(userData).unwrap();
-        reset();
-        saveUpdatePost(result.id);
-        dispatch(setCreatedUserId(result.id));
+      const result = await postUser(userData).unwrap();
+      reset();
+      saveUpdatePost(result.id);
+      dispatch(setCreatedUserId(result.id));
     } catch (error) {
       reset();
-      console.error("Ошибка создания пользователя:", JSON.stringify(error, null, 2));
+      console.error(
+        "Ошибка создания пользователя:",
+        JSON.stringify(error, null, 2)
+      );
     }
-};
+  };
 
   const fileInputRef = useRef(null);
 
@@ -243,12 +278,24 @@ export default function User() {
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"создание пользователя"}>
+      <Headers
+        name={"создание пользователя"}
+        funcActiveHint={() => setOpenHint(true)}
+      >
         <BottomHeaders></BottomHeaders>
       </Headers>
+
+      <ConfigProvider locale={ruRU}>
+        <Tour
+          open={openHint}
+          onClose={() => setOpenHint(false)}
+          steps={steps}
+        />
+      </ConfigProvider>
+
       <div className={classes.main}>
         <div className={classes.block}>
-          <div className={classes.avatarContainer}>
+          <div className={classes.avatarContainer} data-tour="data-avatar">
             <img
               src={avatarLocal || addCircle}
               alt="avatar"
@@ -271,39 +318,42 @@ export default function User() {
           </div>
 
           <div className={classes.column2}>
-            <Input
-              name={"Имя"}
-              value={firstName}
-              onChange={handleChangeFirstName}
-            ></Input>
+            <div data-tour="data-form" className={classes.column2}>
+              <Input
+                name={"Имя"}
+                value={firstName}
+                onChange={handleChangeFirstName}
+              ></Input>
 
-            <Input
-              name={"Фамилия"}
-              value={lastName}
-              onChange={handleChangeLastName}
-            ></Input>
+              <Input
+                name={"Фамилия"}
+                value={lastName}
+                onChange={handleChangeLastName}
+              ></Input>
 
-            <Input
-              name={"Отчество"}
-              value={middleName}
-              onChange={handleChangeMiddleName}
-            ></Input>
+              <Input
+                name={"Отчество"}
+                value={middleName}
+                onChange={handleChangeMiddleName}
+              ></Input>
 
-            <Input name={"Телефон"} isShowInput={true}>
-              <InputMask
-                mask="+9 (999) 999-99-99"
-                value={telephoneNumber}
-                onChange={handleChangeTelephoneNumber}
-                placeholder="+9 (999) 999-99-99"
-                required
-              >
-                {(inputProps) => (
-                  <input {...inputProps} type="tel" id="phone" />
-                )}
-              </InputMask>
-            </Input>
+              <Input name={"Телефон"} isShowInput={true}>
+                <InputMask
+                  mask="+9 (999) 999-99-99"
+                  value={telephoneNumber}
+                  onChange={handleChangeTelephoneNumber}
+                  placeholder="+9 (999) 999-99-99"
+                  required
+                >
+                  {(inputProps) => (
+                    <input {...inputProps} type="tel" id="phone" />
+                  )}
+                </InputMask>
+              </Input>
+            </div>
 
             <ButtonAttach
+              dataTour="data-post"
               image={post}
               onClick={() => setOpenModalSelectPosts(true)}
               selectArray={arrayCheckedPostsNames}
@@ -332,6 +382,7 @@ export default function User() {
             )}
 
             <button
+              data-tour="data-save"
               onClick={handleCreateUserButtonClick}
               className={classes.btnSave}
               disabled={!isValid}
