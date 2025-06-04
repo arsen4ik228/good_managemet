@@ -216,7 +216,7 @@ export default function Statistic() {
     ErrorPostStatisticMutation,
     localIsResponsePostStatisticsMutation,
   } = useStatisticsHook({
-    statisticData: true,
+    statisticData: false,
     statisticId: statisticId,
   });
 
@@ -271,7 +271,7 @@ export default function Statistic() {
       if (type === "value") {
         updatedPoints[index][type] = Number(value);
       } else {
-        updatedPoints[index][type] = value;
+        updatedPoints[index][type] =  Number(value);
       }
       setReceivedPoints(updatedPoints);
     } else {
@@ -416,7 +416,7 @@ export default function Statistic() {
         if (item?.correlationType === "Месяц") {
           acc[monthKey] = {
             id: item.id,
-            valueSum: item.value,
+            valueSum: Number(item.value),
             year: itemDate.getFullYear(),
             month: itemDate.getMonth() + 1,
             correlationType: "Месяц",
@@ -425,14 +425,14 @@ export default function Statistic() {
 
         if (!acc[monthKey]) {
           acc[monthKey] = {
-            valueSum: 0,
+            valueSum: Number(0),
             year: itemDate.getFullYear(),
             month: itemDate.getMonth() + 1,
           };
         }
 
         if (!acc[monthKey]?.correlationType) {
-          acc[monthKey].valueSum += item.value;
+          acc[monthKey].valueSum += Number(item.value);
         }
       }
       return acc;
@@ -448,7 +448,7 @@ export default function Statistic() {
       return {
         id: id || null,
         valueDate: `${year}-${month}-${date}`,
-        value: valueSum,
+        value: Number(valueSum),
         correlationType: correlationType,
       };
     });
@@ -593,7 +593,7 @@ export default function Statistic() {
           if (item?.correlationType === "Месяц") {
             acc[monthKey] = {
               id: item.id,
-              valueSum: item.value,
+              valueSum: Number(item.value),
               year: itemDate.getFullYear(),
               month: itemDate.getMonth() + 1,
               correlationType: "Месяц",
@@ -602,14 +602,14 @@ export default function Statistic() {
 
           if (!acc[monthKey]) {
             acc[monthKey] = {
-              valueSum: 0,
+              valueSum: Number(0),
               year: itemDate.getFullYear(),
               month: itemDate.getMonth() + 1,
             };
           }
 
           if (!acc[monthKey]?.correlationType) {
-            acc[monthKey].valueSum += item.value;
+            acc[monthKey].valueSum += Number(item.value);
           }
         }
         return acc;
@@ -629,7 +629,7 @@ export default function Statistic() {
         // Если данных нет для этого месяца, создаем запись с суммой 0
         if (!monthlyData[monthKey]) {
           monthlyData[monthKey] = {
-            valueSum: 0,
+            valueSum: Number(0),
             year: monthDate.getFullYear(),
             month: monthDate.getMonth() + 1,
           };
@@ -688,7 +688,7 @@ export default function Statistic() {
         if (elementWithSameYear && !acc[yearKey]) {
           acc[yearKey] = {
             id: month.id,
-            valueSum: elementWithSameYear.value,
+            valueSum: Number(elementWithSameYear.value),
             correlationType: elementWithSameYear.correlationType,
           };
           return acc;
@@ -697,14 +697,14 @@ export default function Statistic() {
         if (!acc[yearKey]) {
           // Если года ещё нет в объекте, создаём новую запись
           acc[yearKey] = {
-            valueSum: 0,
+            valueSum: Number(0),
             year: date.getFullYear(),
           };
         }
 
         // Если у года нет свойства correlationType, добавляем значение к valueSum
         if (!acc[yearKey]?.correlationType) {
-          acc[yearKey].valueSum += month.value;
+          acc[yearKey].valueSum += Number(month.value);
         }
 
         return acc;
@@ -721,7 +721,7 @@ export default function Statistic() {
             if (!acc[yearKey]) {
               acc[yearKey] = {
                 id: item.id,
-                valueSum: item.value,
+                valueSum: Number(item.value),
                 correlationType: item.correlationType,
               };
             }
@@ -746,7 +746,7 @@ export default function Statistic() {
 
         if (!prepareObjectData[yearKey]) {
           prepareObjectData[yearKey] = {
-            valueSum: 0,
+            valueSum: Number(0),
             year: yearDate.getFullYear(),
           };
         }
@@ -805,7 +805,7 @@ export default function Statistic() {
             }
             return isValid;
           })
-          .reduce((sum, item) => sum + item.value, 0);
+          .reduce((sum, item) => Number(sum) + Number(item.value), 0);
 
         // Создаем новую дату на день позже
         const valueDate = new Date(nextDate.getTime() + 24 * 60 * 60 * 1000);
@@ -821,7 +821,7 @@ export default function Statistic() {
           );
 
           result.push({
-            value: currentSum,
+            value: Number(currentSum),
             valueDate: valueDate.toISOString().split("T")[0],
           });
         }
@@ -1292,7 +1292,7 @@ export default function Statistic() {
           if (item?.correlationType === "Месяц") {
             acc[monthKey] = {
               id: item.id,
-              valueSum: item.value,
+              valueSum: Number(item.value),
               year: itemDate.getFullYear(),
               month: itemDate.getMonth() + 1,
               correlationType: "Месяц",
@@ -1300,14 +1300,14 @@ export default function Statistic() {
           }
           if (!acc[monthKey]) {
             acc[monthKey] = {
-              valueSum: 0,
+              valueSum: Number(0),
               year: itemDate.getFullYear(),
               month: itemDate.getMonth() + 1,
             };
           }
 
           if (!acc[monthKey]?.correlationType) {
-            acc[monthKey].valueSum += item.value;
+            acc[monthKey].valueSum += Number(item.value);
           }
         }
         return acc;
@@ -1327,7 +1327,7 @@ export default function Statistic() {
         // Если данных нет для этого месяца, создаем запись с суммой 0
         if (!monthlyData[monthKey]) {
           monthlyData[monthKey] = {
-            valueSum: 0,
+            valueSum: Number(0),
             year: monthDate.getFullYear(),
             month: monthDate.getMonth() + 1,
           };
@@ -1387,7 +1387,7 @@ export default function Statistic() {
         if (elementWithSameYear && !acc[yearKey]) {
           acc[yearKey] = {
             id: month.id,
-            valueSum: elementWithSameYear.value,
+            valueSum: Number(elementWithSameYear.value),
             correlationType: elementWithSameYear.correlationType,
           };
           return acc;
@@ -1396,14 +1396,14 @@ export default function Statistic() {
         if (!acc[yearKey]) {
           // Если года ещё нет в объекте, создаём новую запись
           acc[yearKey] = {
-            valueSum: 0,
+            valueSum:  Number(0),
             year: date.getFullYear(),
           };
         }
 
         // Если у года нет свойства correlationType, добавляем значение к valueSum
         if (!acc[yearKey]?.correlationType) {
-          acc[yearKey].valueSum += month.value;
+          acc[yearKey].valueSum += Number(month.value);
         }
 
         return acc;
@@ -1421,7 +1421,7 @@ export default function Statistic() {
             if (!acc[yearKey]) {
               acc[yearKey] = {
                 id: item.id,
-                valueSum: item.value,
+                valueSum: Number(item.value),
                 correlationType: item.correlationType,
               };
             }
@@ -1450,7 +1450,7 @@ export default function Statistic() {
         // Если данных нет для этого года, создаем запись с суммой 0
         if (!prepareObjectData[yearKey]) {
           prepareObjectData[yearKey] = {
-            valueSum: 0,
+            valueSum: Number(0),
             year: yearDate.getFullYear(),
           };
         }
@@ -1513,7 +1513,7 @@ export default function Statistic() {
               item.correlationType === null
             );
           })
-          .reduce((sum, item) => sum + item.value, 0);
+          .reduce((sum, item) =>  Number(sum) + Number(item.value), 0);
 
         // Создаем новую дату на день позже
         const valueDate = new Date(nextDate.getTime() + 24 * 60 * 60 * 1000);
@@ -1823,7 +1823,7 @@ export default function Statistic() {
                                             null
                                           );
                                         }}
-                                        className={`${classes.date}`}
+                                        className={classes.date}
                                         disabled={disabledPoints}
                                       />
 
