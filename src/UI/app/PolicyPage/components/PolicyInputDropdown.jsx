@@ -73,17 +73,6 @@ const PolicyInputWithDropdown = ({
     processItems(disposalsDraft, "draft-dis");
     processItems(disposalsCompleted, "completed-dis");
 
-    // Добавляем элементы из папок
-    foldersSort?.forEach((folder) => {
-      folder.policyToPolicyDirectories?.forEach((policyDir) => {
-        items.push({
-          ...policyDir.policy,
-          searchType: `folder-${folder.id}`,
-          originalItem: policyDir,
-        });
-      });
-    });
-
     return items;
   };
 
