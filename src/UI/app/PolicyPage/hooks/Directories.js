@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-  useDeleteDirectoriesMutation,
-  useGetDirectoriesQuery,
-  usePostDirectoriesMutation,
-  useUpdateDirectoriesMutation,
-} from "@hooks";
 import { usePolicyDirectoriesHook } from "../../../../hooks/usePolicyDirectoriesHook";
 
-export function useDirectories({ instructionsActive, directivesActive }) {
+export function useDirectories({
+  instructionsActive,
+  directivesActive,
+  disposalsActive,
+}) {
   const [currentDirectoryName, setCurrentDirectoryName] = useState();
   const [currentDirectoryId, setCurrentDirectoryId] = useState();
 
@@ -28,6 +26,9 @@ export function useDirectories({ instructionsActive, directivesActive }) {
   const [currentDirectoryDirectives, setCurrentDirectoryDirectives] = useState(
     []
   );
+  const [currentDirectoryDisposals, setCurrentDirectoryDisposals] = useState(
+    []
+  );
 
   const [inputSearchModalDirectory, setInputSearchModalDirectory] =
     useState("");
@@ -39,7 +40,8 @@ export function useDirectories({ instructionsActive, directivesActive }) {
     filterArraySearchModalInstructions,
     setFilterArraySearchModalInstructions,
   ] = useState([]);
-
+  const [filterArraySearchModalDisposals, setFilterArraySearchModalDisposals] =
+    useState([]);
   const {
     folders,
     foldersSort,
@@ -116,6 +118,7 @@ export function useDirectories({ instructionsActive, directivesActive }) {
   };
 
   const openCreateDirectory = () => {
+    updateDirectory(null);
     setOpenModalCreateDirectory(true);
   };
   const exitCreateDirectory = () => {
@@ -123,7 +126,7 @@ export function useDirectories({ instructionsActive, directivesActive }) {
   };
 
   const updateDirectory = (element) => {
-    const obj = folders?.filter((item) => item.id === element.id);
+    const obj = folders?.filter((item) => item.id === element?.id);
     if (obj?.length > 0) {
       const { id, directoryName, policyToPolicyDirectories } = obj[0];
       const policyIds = policyToPolicyDirectories.map(
@@ -138,6 +141,14 @@ export function useDirectories({ instructionsActive, directivesActive }) {
           checked: true,
         }));
       const filterArray1 = directivesActive
+        .filter((item) => policyIds.includes(item.id))
+        .map((item) => ({
+          id: item.id,
+          policyName: item.policyName,
+          checked: true,
+        }));
+
+      const filterArray2 = disposalsActive
         .filter((item) => policyIds.includes(item.id))
         .map((item) => ({
           id: item.id,
@@ -184,8 +195,31 @@ export function useDirectories({ instructionsActive, directivesActive }) {
           }
           return b.checked - a.checked; // true (1) должно быть выше false (0)
         });
+
+      const update2 = currentDirectoryDisposals
+        ?.map((item) => {
+          const foundItem = filterArray2?.find(
+            (element) => item.id === element.id
+          );
+          return {
+            id: item.id,
+            policyName: item.policyName,
+            checked: foundItem ? true : false,
+          };
+        })
+        ?.sort((a, b) => {
+          // Сначала сортируем по checked: true должны быть выше
+          if (a.checked === b.checked) {
+            // Если оба элемента имеют одинаковое значение checked, сортируем по policyName (алфавитно)
+            return a.policyName.localeCompare(b.policyName);
+          }
+          return b.checked - a.checked; // true (1) должно быть выше false (0)
+        });
+
       setCurrentDirectoryInstructions(update);
       setCurrentDirectoryDirectives(update1);
+      setCurrentDirectoryDisposals(update2);
+
       setCurrentDirectoryName(directoryName);
       setCurrentDirectoryId(id);
       setOpenModalUpdateDirectory(true);
@@ -195,7 +229,7 @@ export function useDirectories({ instructionsActive, directivesActive }) {
     setOpenModalUpdateDirectory(false);
   };
 
-  const handleCheckboxChange = (id) => {
+  const handleCheckboxChange = (id, type) => {
     setDirectoriesSendBD((prev) => {
       if (prev.includes(id)) {
         return prev.filter((item) => item !== id);
@@ -203,7 +237,42 @@ export function useDirectories({ instructionsActive, directivesActive }) {
         return [...prev, id];
       }
     });
+
+    if (type === "directives") {
+      setCurrentDirectoryDirectives((prev) => {
+        return prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, checked: !item.checked };
+          }
+          return item;
+        });
+      });
+    }
+
+    if (type === "instructions") {
+      setCurrentDirectoryInstructions((prev) => {
+        return prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, checked: !item.checked };
+          }
+          return item;
+        });
+      });
+    }
+
+    if (type === "disposals") {
+      setCurrentDirectoryDisposals((prev) => {
+        return prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, checked: !item.checked };
+          }
+          return item;
+        });
+      });
+    }
+
   };
+  
   const handleCheckboxChangeUpdate = (id, type) => {
     setDirectoriesUpdate((prev) => {
       if (prev.includes(id)) {
@@ -234,6 +303,17 @@ export function useDirectories({ instructionsActive, directivesActive }) {
         });
       });
     }
+
+    if (type === "disposals") {
+      setCurrentDirectoryDisposals((prev) => {
+        return prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, checked: !item.checked };
+          }
+          return item;
+        });
+      });
+    }
   };
 
   const handleInputChangeModalSearch = (e) => {
@@ -244,6 +324,8 @@ export function useDirectories({ instructionsActive, directivesActive }) {
     if (inputSearchModalDirectory !== "") {
       const arrayDirectives = [...directivesActive];
       const arrayInstructions = [...instructionsActive];
+      const arrayDispoals = [...disposalsActive];
+
       const filteredDirectives = arrayDirectives.filter((item) =>
         item.policyName
           .toLowerCase()
@@ -254,11 +336,20 @@ export function useDirectories({ instructionsActive, directivesActive }) {
           .toLowerCase()
           .includes(inputSearchModalDirectory.toLowerCase())
       );
+
+      const filteredDispoals = arrayDispoals.filter((item) =>
+        item.policyName
+          .toLowerCase()
+          .includes(inputSearchModalDirectory.toLowerCase())
+      );
+
       setFilterArraySearchModalDirectives(filteredDirectives);
       setFilterArraySearchModalInstructions(filteredInstructions);
+      setFilterArraySearchModalDisposals(filteredDispoals);
     } else {
       setFilterArraySearchModalDirectives([]);
       setFilterArraySearchModalInstructions([]);
+      setFilterArraySearchModalDisposals([]);
     }
   }, [inputSearchModalDirectory]);
 
@@ -267,20 +358,14 @@ export function useDirectories({ instructionsActive, directivesActive }) {
       setInputSearchModalDirectory("");
       setFilterArraySearchModalDirectives([]);
       setFilterArraySearchModalInstructions([]);
+      setFilterArraySearchModalDisposals([]);
     }
   }, [openModalUpdateDirectory]);
-
-  useEffect(() => {
-    if (openModalCreateDirectory === false) {
-      setInputSearchModalDirectory("");
-      setFilterArraySearchModalDirectives([]);
-      setFilterArraySearchModalInstructions([]);
-    }
-  }, [openModalCreateDirectory]);
 
   return {
     setCurrentDirectoryInstructions,
     setCurrentDirectoryDirectives,
+    setCurrentDirectoryDisposals,
 
     directoriesSendBD,
     currentDirectoryName,
@@ -291,10 +376,12 @@ export function useDirectories({ instructionsActive, directivesActive }) {
 
     currentDirectoryInstructions,
     currentDirectoryDirectives,
+    currentDirectoryDisposals,
 
     inputSearchModalDirectory,
     filterArraySearchModalDirectives,
     filterArraySearchModalInstructions,
+    filterArraySearchModalDisposals,
 
     //Получение папок
     foldersSort,
@@ -329,7 +416,6 @@ export function useDirectories({ instructionsActive, directivesActive }) {
     isErrorUpdatePolicyDirectoriesMutation,
     ErrorUpdateDirectories,
     localIsResponseUpdatePolicyDirectoriesMutation,
-
 
     //Удаление папки
     openModalDeleteDirectory,

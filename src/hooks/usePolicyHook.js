@@ -27,6 +27,10 @@ export const usePolicyHook = ({
     directivesDraft = [],
     directivesCompleted = [],
 
+    disposalsActive = [],
+    disposalsDraft = [],
+    disposalsCompleted = [],
+
     isLoadingGetPolicies,
     isErrorGetPolicies,
     isFetchingGetPolicies,
@@ -48,6 +52,10 @@ export const usePolicyHook = ({
         directivesActive: data?.directivesActive || [],
         directivesDraft: data?.directivesDraft || [],
         directivesCompleted: data?.directivesCompleted || [],
+
+        disposalsActive: data?.disposalsActive || [],
+        disposalsDraft: data?.disposalsDraft || [],
+        disposalsCompleted: data?.disposalsCompleted || [],
 
         isLoadingGetPolicies: isLoading,
         isErrorGetPolicies: isError,
@@ -129,6 +137,10 @@ export const usePolicyHook = ({
     directivesActive,
     directivesDraft,
     directivesCompleted,
+
+    disposalsActive,
+    disposalsDraft,
+    disposalsCompleted,
 
     //useGetPoliciesIdQuery
     currentPolicy,

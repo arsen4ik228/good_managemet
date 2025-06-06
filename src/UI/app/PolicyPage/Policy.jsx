@@ -17,8 +17,21 @@ import { usePolicyHook, useGetReduxOrganization } from "@hooks";
 import { useDirectories } from "./hooks/Directories";
 import { useParams } from "react-router-dom";
 
-import { ConfigProvider, Tour } from "antd";
-import ruRU from "antd/locale/ru_RU";
+import { Tour } from "antd";
+import dayjs from "dayjs";
+
+import { Menu, Input, Tooltip, DatePicker, Button, Dropdown } from "antd";
+import {
+  FolderOutlined,
+  DownOutlined,
+  FileOutlined,
+  PlusCircleOutlined,
+  ExclamationOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+
+import PolicyInputDropdown from "./components/PolicyInputDropdown";
 
 export default function Policy() {
   const { policyId } = useParams();
@@ -37,6 +50,7 @@ export default function Policy() {
   const [policyName, setPolicyName] = useState(null);
   const [type, setType] = useState(null);
   const [state, setState] = useState(null);
+  const [deadline, setDeadline] = useState(null);
   const [editorState, setEditorState] = useState("");
   const [disabledArchive, setDisabledArchive] = useState(false);
 
@@ -100,6 +114,10 @@ export default function Policy() {
     directivesDraft,
     directivesCompleted,
 
+    disposalsActive,
+    disposalsDraft,
+    disposalsCompleted,
+
     //useGetPoliciesIdQuery
     currentPolicy,
     isLoadingGetPoliciesId,
@@ -127,6 +145,7 @@ export default function Policy() {
   const {
     setCurrentDirectoryInstructions,
     setCurrentDirectoryDirectives,
+    setCurrentDirectoryDisposals,
 
     directoriesSendBD,
     currentDirectoryName,
@@ -137,10 +156,12 @@ export default function Policy() {
 
     currentDirectoryInstructions,
     currentDirectoryDirectives,
+    currentDirectoryDisposals,
 
     inputSearchModalDirectory,
     filterArraySearchModalDirectives,
     filterArraySearchModalInstructions,
+    filterArraySearchModalDisposals,
 
     //Получение папок
     foldersSort,
@@ -191,7 +212,7 @@ export default function Policy() {
     handleInputChangeModalSearch,
     handleCheckboxChange,
     handleCheckboxChangeUpdate,
-  } = useDirectories({ instructionsActive, directivesActive });
+  } = useDirectories({ instructionsActive, directivesActive, disposalsActive });
 
   const savePostPolicy = async () => {
     await postPolicy({
@@ -215,8 +236,14 @@ export default function Policy() {
     if (state !== null && currentPolicy.state !== state) {
       Data.state = state;
     }
-    if (type !== null && currentPolicy.type !== type) {
+    if (
+      (type !== null && currentPolicy.type !== type) ||
+      type === "Распоряжение"
+    ) {
       Data.type = type;
+    }
+    if (currentPolicy.deadline !== deadline) {
+      Data.deadline = deadline;
     }
     if (editorState !== null && currentPolicy.content !== editorState) {
       Data.content = editorState;
@@ -226,7 +253,11 @@ export default function Policy() {
       ...Data,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => {
+        if (state === "Отменён") {
+          setDisabledArchive(true);
+        }
+      })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
@@ -246,9 +277,14 @@ export default function Policy() {
     if (currentPolicy.state) {
       setState(currentPolicy.state);
     }
+    if (currentPolicy.deadline) {
+      setDeadline(dayjs(currentPolicy.deadline));
+    }
     if (currentPolicy.content && currentPolicy.content !== editorState) {
       setEditorState(currentPolicy.content);
     }
+
+    setDisabledArchive(false);
   }, [currentPolicy.id]);
 
   useEffect(() => {
@@ -268,6 +304,14 @@ export default function Policy() {
       }));
       setCurrentDirectoryDirectives(update);
     }
+    if (disposalsActive.length > 0) {
+      const update = disposalsActive.map((item) => ({
+        id: item.id,
+        policyName: item.policyName,
+        checked: false,
+      }));
+      setCurrentDirectoryDisposals(update);
+    }
   }, [isLoadingGetPolicies, isFetchingGetPolicies]);
 
   useEffect(() => {
@@ -286,6 +330,7 @@ export default function Policy() {
   const arrayTypes = [
     { id: "Директива", value: "Директива" },
     { id: "Инструкция", value: "Инструкция" },
+    { id: "Распоряжение", value: "Распоряжение" },
   ];
 
   const arrayState = [
@@ -311,331 +356,33 @@ export default function Policy() {
           refCreate={refCreate}
           refUpdate={refUpdate}
         >
-          <div className={classes.item} ref={refName}>
-            <div className={classes.itemName} >
-              <span>
-                Название политики <span style={{ color: "red" }}>*</span>
-              </span>
-            </div>
-            <div className={classes.div}>
-              <input
-                type="text"
-                value={policyName}
-                onChange={(e) => setPolicyName(e.target.value)}
-                title="Название политики"
-                className={`${classes.five} ${classes.textMontserrat14}`}
-                disabled={disabledArchive}
-              ></input>
-              <div className={classes.sixth} ref={selectRef}>
-                <img
-                  src={subbarSearch}
-                  alt="subbarSearch"
-                  onClick={() => setIsOpenSearch(true)}
-                />
-                {isOpenSearch && (
-                  <ul className={classes.policySearch}>
-                    <li className={classes.policySearchItemNested}>
-                      <div className={classes.listUL}>
-                        <img src={folder} alt="folder" />
-                        <div className={classes.listText}>Директивы</div>
-                        <img
-                          src={iconSublist}
-                          alt="iconSublist"
-                          style={{ marginLeft: "auto" }}
-                        />
-                      </div>
-                      <ul className={classes.listULElementNested}>
-                        <li className={classes.policySearchItemNestedNested}>
-                          <div className={classes.listULNested}>
-                            <img src={folder} alt="folder" />
-                            <div
-                              className={`${classes.listText} ${classes.activeText}`}
-                            >
-                              Активные
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElementNestedTwo}>
-                            {directivesActive?.map((item) => (
-                              <li
-                                key={item.id}
-                                onClick={() => {
-                                  getPolicyId(item.id);
-                                  setIsOpenSearch(false);
-                                }}
-                                className={classes.textMontserrat}
-                              >
-                                {item.policyName}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
+          <PolicyInputDropdown
+            // Основные параметры
+            policyName={policyName}
+            setPolicyName={setPolicyName}
+            disabledArchive={disabledArchive}
+            // Коллбэки
+            getPolicyId={getPolicyId}
+            setDisabledArchive={setDisabledArchive}
+            updateDirectory={updateDirectory}
+            openCreateDirectory={openCreateDirectory}
+            // Данные для меню
+            directivesActive={directivesActive}
+            directivesDraft={directivesDraft}
+            directivesCompleted={directivesCompleted}
+            instructionsActive={instructionsActive}
+            instructionsDraft={instructionsDraft}
+            instructionsCompleted={instructionsCompleted}
+            disposalsActive={disposalsActive}
+            disposalsDraft={disposalsDraft}
+            disposalsCompleted={disposalsCompleted}
+            foldersSort={foldersSort}
+          />
 
-                        <li className={classes.policySearchItemNestedNested}>
-                          <div className={classes.listULNested}>
-                            <img src={folder} alt="folder" />
-                            <div
-                              className={`${classes.listText} ${classes.draftText}`}
-                            >
-                              Черновики
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElementNestedTwo}>
-                            {directivesDraft?.map((item) => (
-                              <li
-                                key={item.id}
-                                onClick={() => {
-                                  getPolicyId(item.id);
-                                  setIsOpenSearch(false);
-                                }}
-                                className={classes.textMontserrat}
-                              >
-                                {item.policyName}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-
-                        <li className={classes.policySearchItemNestedNested}>
-                          <div className={classes.listULNested}>
-                            <img src={folder} alt="folder" />
-                            <div
-                              className={`${classes.listText} ${classes.completedText}`}
-                            >
-                              Завершенные
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElementNestedTwo}>
-                            {directivesCompleted?.map((item) => (
-                              <li
-                                key={item.id}
-                                onClick={() => {
-                                  getPolicyId(item.id);
-                                  setDisabledArchive(true);
-                                  setIsOpenSearch(false);
-                                }}
-                                className={classes.textMontserrat}
-                              >
-                                {item.policyName}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-
-                    <li className={classes.policySearchItemNested}>
-                      <div className={classes.listUL}>
-                        <img src={folder} alt="folder" />
-                        <div className={classes.listText}>Инструкции</div>
-                        <img
-                          src={iconSublist}
-                          alt="iconSublist"
-                          style={{ marginLeft: "auto" }}
-                        />
-                      </div>
-                      <ul className={classes.listULElementNested}>
-                        <li className={classes.policySearchItemNestedNested}>
-                          <div className={classes.listULNested}>
-                            <img src={folder} alt="folder" />
-                            <div
-                              className={`${classes.listText} ${classes.activeText}`}
-                            >
-                              Активные
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElementNestedTwo}>
-                            {instructionsActive?.map((item) => (
-                              <li
-                                key={item.id}
-                                onClick={() => {
-                                  getPolicyId(item.id);
-                                  setIsOpenSearch(false);
-                                }}
-                                className={classes.textMontserrat}
-                              >
-                                {item.policyName}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-
-                        <li className={classes.policySearchItemNestedNested}>
-                          <div className={classes.listULNested}>
-                            <img src={folder} alt="folder" />
-                            <div
-                              className={`${classes.listText} ${classes.draftText}`}
-                            >
-                              Черновики
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElementNestedTwo}>
-                            {instructionsDraft?.map((item) => (
-                              <li
-                                key={item.id}
-                                onClick={() => {
-                                  getPolicyId(item.id);
-                                  setIsOpenSearch(false);
-                                }}
-                                className={classes.textMontserrat}
-                              >
-                                {item.policyName}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-
-                        <li className={classes.policySearchItemNestedNested}>
-                          <div className={classes.listULNested}>
-                            <img src={folder} alt="folder" />
-                            <div
-                              className={`${classes.listText} ${classes.completedText}`}
-                            >
-                              Завершенные
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElementNestedTwo}>
-                            {instructionsCompleted?.map((item) => (
-                              <li
-                                key={item.id}
-                                onClick={() => {
-                                  getPolicyId(item.id);
-                                  setDisabledArchive(true);
-                                  setIsOpenSearch(false);
-                                }}
-                                className={classes.textMontserrat}
-                              >
-                                {item.policyName}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-
-                    {foldersSort?.map((item) => {
-                      let hasInstruction = false;
-                      let hasDirective = false;
-                      return (
-                        <li className={classes.policySearchItem} key={item.id}>
-                          <div
-                            className={classes.listUL}
-                            onClick={() => updateDirectory(item)}
-                          >
-                            <img src={folder} alt="folder" />
-                            <div className={classes.listText}>
-                              {item.directoryName}
-                            </div>
-                            <img
-                              src={iconSublist}
-                              alt="iconSublist"
-                              style={{ marginLeft: "auto" }}
-                            />
-                          </div>
-                          <ul className={classes.listULElement}>
-                            {item.policyToPolicyDirectories?.map((element) => {
-                              const isInstruction =
-                                element.policy.type === "Инструкция";
-
-                              let instructionHeader = null;
-
-                              if (isInstruction && !hasInstruction) {
-                                hasInstruction = true;
-                                instructionHeader = (
-                                  <li
-                                    key="instruction-header"
-                                    className={`${classes.headerText}`}
-                                  >
-                                    Инструкции
-                                  </li>
-                                );
-                              }
-
-                              const isDirective =
-                                element.policy.type === "Директива";
-
-                              let directiveHeader = null;
-
-                              if (isDirective && !hasDirective) {
-                                hasDirective = true;
-                                directiveHeader = (
-                                  <li
-                                    key="directive-header"
-                                    className={`${classes.headerText}`}
-                                  >
-                                    Директивы
-                                  </li>
-                                );
-                              }
-
-                              return (
-                                <React.Fragment key={element.policy.id}>
-                                  {directiveHeader}
-                                  {instructionHeader}
-                                  <li
-                                    onClick={() => {
-                                      getPolicyId(element.policy.id);
-                                      setIsOpenSearch(false);
-                                    }}
-                                    className={classes.textMontserrat}
-                                  >
-                                    {element.policy.policyName}
-                                  </li>
-                                </React.Fragment>
-                              );
-                            })}
-                          </ul>
-                        </li>
-                      );
-                    })}
-
-                    <li className={classes.policySearchItem}>
-                      <div
-                        className={classes.listUL}
-                        onClick={openCreateDirectory}
-                      >
-                        <img src={addCircleBlue} alt="addCircleBlue" />
-                        <div className={classes.listText}>Создать папку</div>
-                      </div>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
           {currentPolicy.id && (
             <>
               <Select
-               refSelect={refType}
+                refSelect={refType}
                 name={"Тип"}
                 value={type}
                 onChange={setType}
@@ -652,14 +399,24 @@ export default function Policy() {
                 arrayItem={"value"}
                 disabledPole={disabledArchive}
               ></Select>
+              {currentPolicy.type === "Распоряжение" && (
+                <div className={classes.item}>
+                  <div className={classes.itemName}>
+                    <span>Дата окончания</span>
+                  </div>
+                  <DatePicker
+                    format="DD.MM.YYYY"
+                    value={deadline}
+                    onChange={(date) => setDeadline(date)}
+                  />
+                </div>
+              )}
             </>
           )}
         </BottomHeaders>
       </Headers>
 
-      <ConfigProvider locale={ruRU}>
-        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
-      </ConfigProvider>
+      <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
 
       <div className={classes.main}>
         {isErrorPostPoliciesMutation ||
@@ -815,8 +572,14 @@ export default function Policy() {
                         searchArrayInstructions={
                           filterArraySearchModalInstructions
                         }
-                        arrayDirectives={directivesActive}
-                        arrayInstructions={instructionsActive}
+                        searchArrayDisposals={filterArraySearchModalDisposals}
+                        // arrayDirectives={directivesActive}
+                        // arrayInstructions={instructionsActive}
+                        // arrayDisposals={disposalsActive}
+
+                        arrayDirectives={currentDirectoryDirectives}
+                        arrayInstructions={currentDirectoryInstructions}
+                        arrayDisposals={currentDirectoryDisposals}
                         handleInputChangeModalSearch={
                           handleInputChangeModalSearch
                         }
@@ -838,8 +601,10 @@ export default function Policy() {
                         searchArrayInstructions={
                           filterArraySearchModalInstructions
                         }
+                        searchArrayDisposals={filterArraySearchModalDisposals}
                         arrayDirectives={currentDirectoryDirectives}
                         arrayInstructions={currentDirectoryInstructions}
+                        arrayDisposals={currentDirectoryDisposals}
                         handleInputChangeModalSearch={
                           handleInputChangeModalSearch
                         }

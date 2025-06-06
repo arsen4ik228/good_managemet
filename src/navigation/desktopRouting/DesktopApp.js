@@ -4,6 +4,9 @@ import "./DesktopApp.css";
 import HandlerMutation from "@Custom/HandlerMutation";
 import ErrorPage from "@app/ErrorPage/ErrorPage";
 
+import { ConfigProvider } from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
@@ -39,9 +42,7 @@ const DesktopConvertsPage = React.lazy(() =>
 const DesktopDoalogPage = React.lazy(() =>
   import("@app/DialogPage/desktop/DesktopDoalogPage.jsx")
 );
-const DialogPage = React.lazy(() =>
-  import("@app/DialogPage/DialogPage.jsx")
-);
+const DialogPage = React.lazy(() => import("@app/DialogPage/DialogPage.jsx"));
 const CardProject = React.lazy(() =>
   import("@app/CardProject/CardProject.jsx")
 );
@@ -50,204 +51,214 @@ const SettingsPage = React.lazy(() =>
 );
 const WatcherDialogPage = React.lazy(() =>
   import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
-)
-const ArchiveDialog = React.lazy(() => 
-import("@app/DialogPage/ArchiveDialog/ArchiveDialog.jsx")
-)
-const AgreementDialogPage = React.lazy(() => 
-import("@app/DialogPage/AgreementDialogPage/AgreementDialogPage.jsx")
-)
+);
+const ArchiveDialog = React.lazy(() =>
+  import("@app/DialogPage/ArchiveDialog/ArchiveDialog.jsx")
+);
+const AgreementDialogPage = React.lazy(() =>
+  import("@app/DialogPage/AgreementDialogPage/AgreementDialogPage.jsx")
+);
 
 function DesktopApp() {
   return (
     <div>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="wrapper">
+      <ConfigProvider locale={ruRU}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="wrapper">
+                <React.Suspense
+                  fallback={<HandlerMutation Loading={true}></HandlerMutation>}
+                >
+                  <Main />
+                </React.Suspense>
+              </div>
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true}></HandlerMutation>
+                  </div>
+                }
+              >
+                <Routes>
+                  <Route
+                    path="account"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <SettingsPage />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  {/* Маршрут для чата */}
+                  <Route
+                    path="chat/:contactId"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <DesktopConvertsPage />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  <Route
+                    path="chat/:contactId/:convertId"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <DialogPage />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  <Route
+                    path="chat/:contactId/watcher/:convertId"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <WatcherDialogPage />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  <Route
+                    path="chat/:contactId/archive/:convertId"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <ArchiveDialog />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  <Route
+                    path="Chat/:contactId/agreement/:convertId"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <AgreementDialogPage />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  {/* Маршрут для пользователя */}
+                  <Route
+                    path="user"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <User />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  {/* Маршрут для ControlPanel */}
+                  <Route
+                    path="controlPanel"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <ControlPanel />
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  {/* Маршрут для Pomoshnik и его вложенных маршрутов */}
+                  <Route
+                    path="pomoshnik/*"
+                    element={
+                      <div className="messages">
+                        <Panel />
+                        <div className="content">
+                          <Chat />
+                          <Routes>
+                            <Route path="card" element={<CardProject />} />
+
+                            <Route path="start" element={<Pomoshnik />} />
+                            <Route path="goal" element={<Goal />} />
+                            <Route
+                              path="policy/:policyId?"
+                              element={<Policy />}
+                            />
+                            <Route path="statistic" element={<Statistic />} />
+                            <Route path="objective" element={<Objective />} />
+                            <Route path="strategy" element={<Strategy />} />
+                            <Route
+                              path="projectWithProgramm"
+                              element={<ProjectWithProgramm />}
+                            />
+
+                            <Route path="post/:postId?" element={<Post />} />
+                            <Route path="postNew" element={<PostNew />} />
+                            <Route
+                              path="workingPlan"
+                              element={<WorkingPlan />}
+                            />
+                            <Route
+                              path="companySchema"
+                              element={<SchemeСompanies />}
+                            />
+                            <Route
+                              path="postSchema/:organizationId"
+                              element={<PostSchema />}
+                            />
+                            {/* Маршрут для NotFound внутри Pomoshnik */}
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </div>
+                      </div>
+                    }
+                  />
+
+                  {/* Маршрут для NotFound на верхнем уровне */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/error"
+            element={
               <React.Suspense
                 fallback={<HandlerMutation Loading={true}></HandlerMutation>}
               >
-                <Main />
+                <ErrorPage />
               </React.Suspense>
-            </div>
-          }
-        />
-        <Route
-          path="/*"
-          element={
-            <React.Suspense
-              fallback={
-                <div className="lazy">
-                  <HandlerMutation Loading={true}></HandlerMutation>
-                </div>
-              }
-            >
-              <Routes>
-
-                <Route
-                  path="account"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <SettingsPage />
-                      </div>
-                    </div>
-                  }
-                />
-
-                {/* Маршрут для чата */}
-                <Route
-                  path="chat/:contactId"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <DesktopConvertsPage />
-                      </div>
-                    </div>
-                  }
-                />
-
-                <Route
-                  path="chat/:contactId/:convertId"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <DialogPage />
-                      </div>
-                    </div>
-                  }
-                />
-
-                <Route
-                  path="chat/:contactId/watcher/:convertId"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <WatcherDialogPage />
-                      </div>
-                    </div>
-                  }
-                />
-
-                <Route
-                  path="chat/:contactId/archive/:convertId"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <ArchiveDialog />
-                      </div>
-                    </div>
-                  }
-                />
-
-                <Route
-                  path="Chat/:contactId/agreement/:convertId"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <AgreementDialogPage />
-                      </div>
-                    </div>
-                  }
-                />
-
-                {/* Маршрут для пользователя */}
-                <Route
-                  path="user"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <User />
-                      </div>
-                    </div>
-                  }
-                />
-
-                {/* Маршрут для ControlPanel */}
-                <Route
-                  path="controlPanel"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <ControlPanel />
-                      </div>
-                    </div>
-                  }
-                />
-
-                {/* Маршрут для Pomoshnik и его вложенных маршрутов */}
-                <Route
-                  path="pomoshnik/*"
-                  element={
-                    <div className="messages">
-                      <Panel />
-                      <div className="content">
-                        <Chat />
-                        <Routes>
-                          <Route path="card" element={<CardProject />} />
-
-                          <Route path="start" element={<Pomoshnik />} />
-                          <Route path="goal" element={<Goal />} />
-                          <Route path="policy/:policyId?" element={<Policy />} />
-                          <Route path="statistic" element={<Statistic />} />
-                          <Route path="objective" element={<Objective />} />
-                          <Route path="strategy" element={<Strategy />} />
-                          <Route path="projectWithProgramm" element={<ProjectWithProgramm />} />
-
-                          <Route path="post/:postId?" element={<Post />} />
-                          <Route path="postNew" element={<PostNew />} />
-                          <Route path="workingPlan" element={<WorkingPlan />} />
-                          <Route
-                            path="companySchema"
-                            element={<SchemeСompanies />}
-                          />
-                          <Route
-                            path="postSchema/:organizationId"
-                            element={<PostSchema />}
-                          />
-                          {/* Маршрут для NotFound внутри Pomoshnik */}
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </div>
-                    </div>
-                  }
-                />
-
-                {/* Маршрут для NotFound на верхнем уровне */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </React.Suspense>
-          }
-        />
-        <Route
-          path="/error"
-          element={
-            <React.Suspense
-              fallback={<HandlerMutation Loading={true}></HandlerMutation>}
-            >
-              <ErrorPage />
-            </React.Suspense>
-          }
-        />
-      </Routes>
+            }
+          />
+        </Routes>
+      </ConfigProvider>
     </div>
   );
 }
