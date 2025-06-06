@@ -15,7 +15,8 @@ export const policyApi = apiSlice.injectEndpoints({
         console.log("getPolicies    ", response);
         const directivesDB = response.directives;
         const instructionsDB = response.instructions;
-        const sharedArray = [...directivesDB, ...instructionsDB]
+        const disposalsDB = response.disposals;
+        const sharedArray = [...directivesDB, ...instructionsDB, ...disposalsDB]
 
         const sortArray = (array) =>
           array.sort((a, b) => {
@@ -26,6 +27,7 @@ export const policyApi = apiSlice.injectEndpoints({
 
         const sortedDirectives = sortArray(directivesDB);
         const sortedInstructions = sortArray(instructionsDB);
+        const sortedDisposals = sortArray(disposalsDB);
 
         const activeDirectives = sortedDirectives.filter(
           (item) => item.state === "Активный"
@@ -47,6 +49,16 @@ export const policyApi = apiSlice.injectEndpoints({
           (item) => item.state === "Отменён"
         );
 
+          const activeDisposals = sortedDisposals.filter(
+          (item) => item.state === "Активный"
+        );
+        const draftDisposals = sortedDisposals.filter(
+          (item) => item.state === "Черновик"
+        );
+        const archiveDisposals = sortedDisposals.filter(
+          (item) => item.state === "Отменён"
+        );
+
         return {
           activeDirectives: activeDirectives,
           draftDirectives: draftDirectives,
@@ -63,6 +75,10 @@ export const policyApi = apiSlice.injectEndpoints({
           instructionsActive: activeInstructions,
           instructionsDraft: draftInstructions,
           instructionsCompleted: archiveInstructions,
+
+          disposalsActive: activeDisposals,
+          disposalsDraft: draftDisposals,
+          disposalsCompleted: archiveDisposals,
 
          
         };
