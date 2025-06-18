@@ -484,7 +484,7 @@ export default function Post() {
                         <div className={classes.productTeaxtaera}>
                           <textarea
                             className={classes.Teaxtaera}
-                            placeholder="описание продукта поста"
+                            placeholder="Описание продукта поста"
                             value={
                               isProductChanges
                                 ? product
@@ -500,7 +500,7 @@ export default function Post() {
                         <div className={classes.destinyTeaxtaera}>
                           <textarea
                             className={classes.Teaxtaera}
-                            placeholder="описнаие предназначения поста"
+                            placeholder="Описание предназначения поста"
                             value={
                               isPurposeChanges
                                 ? purpose
