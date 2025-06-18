@@ -32,11 +32,23 @@
     border-radius: 50%;
 }
 
-.iconBack:hover {
-    background-color: rgb(240, 240, 240);
-    border-radius: 50%;
-    cursor: pointer;
+.iconBack {
+
+    transition: all 0.1s ease;
+
+    &:hover {
+        background-color: rgb(240, 240, 240);
+        border-radius: 50%;
+        cursor: pointer;
+        transform: scale(1.1);
+    }
+
+
+    &:active {
+        transform: scale(0.95);
+    }
 }
+
 
 .search {
     -webkit-appearance: none;
@@ -70,4 +82,20 @@
     font-weight: 600;
     font-size: 12px;
     text-transform: uppercase;
+}
+
+
+.buttonHealper {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }

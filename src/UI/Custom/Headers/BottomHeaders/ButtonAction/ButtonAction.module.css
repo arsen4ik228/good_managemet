@@ -4,3 +4,15 @@
     column-gap: 20px;
     margin-left: auto;
 }
+
+.button {
+    transition: all 0.1s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}

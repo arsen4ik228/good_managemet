@@ -89,7 +89,7 @@ export default function Goal() {
       content: editorState,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
@@ -195,10 +195,15 @@ export default function Goal() {
                             className={classes.editorContainer}
                           >
                             <div
-                              {...provided.dragHandleProps}
                               className={classes.dragHandle}
                             >
-                              <img ref={ref1} src={drag} alt="drag" />
+                              <img
+                                {...provided.dragHandleProps}
+                                className={classes.drag}
+                                ref={ref1}
+                                src={drag}
+                                alt="drag"
+                              />
                             </div>
 
                             <TextArea

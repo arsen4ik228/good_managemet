@@ -14,13 +14,13 @@ export default function TopHeaders({
   speedGoal,
   sectionName,
   avatar,
-  funcActiveHint 
+  funcActiveHint
 }) {
   const navigate = useNavigate();
 
   const handleBack = back || (() => navigate(`/pomoshnik/start`));
 
-   const handleHintClick = () => {
+  const handleHintClick = () => {
     if (funcActiveHint && typeof funcActiveHint === 'function') {
       funcActiveHint();
     }
@@ -46,11 +46,11 @@ export default function TopHeaders({
           </div>
         </div>
 
-        <Tooltip placement="bottom" title={"нажмите для подсказки по разделу"}  overlayStyle={{ maxWidth: "200px", textAlign: "center" }}>
+        <Tooltip placement="bottom" title={"Нажмите для подсказки по разделу"} overlayStyle={{ maxWidth: "200px", textAlign: "center" }}>
           <img
+            className={classes.buttonHealper}
             src={hint}
-            alt="подсказка"
-            style={{ width: "25px", height: "25px" }}
+            alt="Подсказка"
             onClick={handleHintClick}
           />
         </Tooltip>
@@ -65,7 +65,7 @@ TopHeaders.propTypes = {
   speedGoal: PropTypes.string,
   sectionName: PropTypes.string,
   avatar: PropTypes.string,
-  funcActiveHint:PropTypes.func,
+  funcActiveHint: PropTypes.func,
 };
 
 TopHeaders.defaultProps = {

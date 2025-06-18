@@ -9,7 +9,7 @@ export default function ButtonAction({ create, update, refUpdate, refCreate }) {
       {create && (
         <ButtonImage
           refAction={refCreate}
-          name={"создать"}
+          name={"Создать"}
           icon={iconAdd}
           onClick={create}
         ></ButtonImage>
@@ -18,7 +18,7 @@ export default function ButtonAction({ create, update, refUpdate, refCreate }) {
       {update && (
         <ButtonImage
           refAction={refUpdate}
-          name={"обновить"}
+          name={"Обновить"}
           icon={Blacksavetmp}
           onClick={update}
         ></ButtonImage>
