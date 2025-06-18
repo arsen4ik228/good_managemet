@@ -19,6 +19,8 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 
+import styles from "./PolicyInputWithDropdown.module.css";
+
 const PolicyInputWithDropdown = ({
   policyName,
   setPolicyName,
@@ -141,7 +143,20 @@ const PolicyInputWithDropdown = ({
     }
     return items.map((item) => ({
       key: `${type}-${item.id}`,
-      label: item.policyName,
+      label: (
+        <span
+          style={{
+            display: "inline-block",
+            maxWidth: "300px", // Максимальная ширина
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+          title={item.policyName}
+        >
+          {item.policyName}
+        </span>
+      ),
       icon: <FileOutlined />,
       onClick: () => {
         getPolicyId(item.id);
@@ -167,7 +182,20 @@ const PolicyInputWithDropdown = ({
     }
     return items.map((item) => ({
       key: `${type}-${item.policy.id}`,
-      label: item.policy.policyName,
+      label: (
+        <span
+          style={{
+            display: "inline-block",
+            maxWidth: "300px", // Максимальная ширина
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+          title={item.policy.policyName}
+        >
+          {item.policy.policyName}
+        </span>
+      ),
       icon: <FileOutlined />,
       onClick: () => {
         getPolicyId(item.policy.id);
@@ -263,7 +291,19 @@ const PolicyInputWithDropdown = ({
                 alignItems: "center",
               }}
             >
-              <span>{item.directoryName}</span>
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "130px", // Максимальная ширина
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                title={item.directoryName}
+              >
+                {item.directoryName}
+              </span>
+
               <Tooltip title="Редактировать папку" placement="bottom">
                 <Button
                   type="text"
@@ -326,6 +366,7 @@ const PolicyInputWithDropdown = ({
 
   const searchResultsMenu = (
     <Menu
+     
       style={{
         width: 250,
         maxHeight: 300,
@@ -335,6 +376,7 @@ const PolicyInputWithDropdown = ({
         top: "100%", // Располагаем ниже
         marginTop: 8, // Небольшой отступ от элемента триггера
       }}
+     
     >
       {filteredItems.length > 0 ? (
         filteredItems.map((item) => (
@@ -359,7 +401,7 @@ const PolicyInputWithDropdown = ({
 
   const mainMenu = (
     <Menu
-      mode="inline"
+    
       style={{
         width: 250,
         maxHeight: "calc(100vh - 200px)",
@@ -380,6 +422,10 @@ const PolicyInputWithDropdown = ({
         />
       )}
       multiple={false}
+      // Добавляем стиль для вложенных меню
+      subMenuOpenDelay={0.1}
+      subMenuCloseDelay={0.1}
+      
     />
   );
 
@@ -393,6 +439,7 @@ const PolicyInputWithDropdown = ({
         if (!open) setSearchValue("");
       }}
       placement="bottomRight"
+      
     >
       <Input
         ref={inputRef}
@@ -404,6 +451,7 @@ const PolicyInputWithDropdown = ({
             setIsOpenSearch(true);
           }
         }}
+        title={policyName}
         onKeyDown={handleKeyDown}
         placeholder="Название политики"
         disabled={disabledArchive}
