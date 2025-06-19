@@ -55,36 +55,49 @@
 
 }
 
-.icon {
-    fill: var(--grey);
-}
-
 .row {
     padding-left: 12.5px;
-
     height: 50px;
     min-height: 50px;
     max-height: 50px;
-
     width: 100%;
-
+    
+    /* Используем flex вместо inline-block */
     display: flex;
     flex-direction: row;
     align-items: center;
-    column-gap: 12.5px;
+    gap: 12.5px; /* Заменяет column-gap для flex */
     transition: background 0.2s;
+    overflow: hidden; /* Для корректного обрезания текста */
+}
 
-    & span {
-        font-weight: 600;
+.icon {
+    width: 30px;
+    height: 25px;
+    fill: var(--grey);
+    flex-shrink: 0; /* Запрещаем сжатие иконки */
+}
 
-        color: var(--grey);
+.row span {
+    font-weight: 600;
+    color: var(--grey);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1; /* Занимает всё доступное пространство */
+    min-width: 0; /* Ключевое свойство для обрезки в flex-контейнере */
+
+        &:hover {
+        position: relative;
+        white-space: normal;
+        overflow: visible;
+        z-index: 100;
     }
+}
 
-    &.collapsed {
-        max-height: 0;
-        opacity: 0;
-    }
-
+.row.collapsed {
+    max-height: 0;
+    opacity: 0;
 }
 
 .row_active {
