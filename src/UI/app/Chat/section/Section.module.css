@@ -91,7 +91,6 @@
         position: relative;
         white-space: normal;
         overflow: visible;
-        z-index: 100;
     }
 }
 
