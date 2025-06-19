@@ -207,7 +207,6 @@ export default function Goal() {
                               <img
                                 {...provided.dragHandleProps}
                                 className={classes.drag}
-
                                 ref={ref1}
                                 src={drag}
                                 alt="drag"
@@ -216,6 +215,7 @@ export default function Goal() {
 
                             <div
                               style={{
+                                padding: '20px',
                                 height: pressedIndex === index ? '100px' : 'auto',
                                 transition: 'height 3.5s ease',
                               }}
