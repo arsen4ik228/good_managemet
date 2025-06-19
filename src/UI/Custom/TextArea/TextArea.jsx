@@ -19,7 +19,7 @@ export default function TextArea({ value, onChange, readOnly }) {
   return (
     <textarea
       ref={textareaRef}
-      className={`${classes.textArea} ${readOnly ? classes.textColor : ""}`}
+      className={`${classes.textArea} `} // ${readOnly ? classes.textColor : ""}
       value={value}
       onChange={(e) => {
         onChange(e.target.value);

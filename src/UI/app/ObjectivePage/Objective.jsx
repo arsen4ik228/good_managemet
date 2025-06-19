@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./Objective.module.css";
 import classNames from "classnames";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
@@ -9,13 +9,15 @@ import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import { useObjectiveHook, useStrategyHook } from "@hooks";
-
-import { ConfigProvider, Tour } from "antd";
+import { EditOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, Select, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
+import { notEmpty } from "@helpers/helpers";
 
 export default function Objective() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedStrategyId, setSelectedStrategyId] = useState("");
+  const [editMode, setEditMode] = useState(false)
 
   const [contentEditors, setContentEditors] = useState([]);
   const [situationEditors, setSituationEditors] = useState([]);
@@ -50,7 +52,7 @@ export default function Objective() {
     {
       title: "Выбрать стратегию",
       description: "Выбрать стратегию для показа краткосрочной цели",
-      target: () => refSelectBorder.current,
+      target: () => document.querySelector('[data-tour = "refSelectBorder"]'),
     },
     {
       title: "Сохранить",
@@ -88,7 +90,7 @@ export default function Objective() {
       rootCause: rootCauseEditors,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         console.error("Error:", JSON.stringify(error, null, 2));
       });
@@ -146,13 +148,21 @@ export default function Objective() {
     setStateStrategy(element?.state);
   }, [selectedStrategyId]);
 
+  // Авто открытие Активной Стратегии
+  useEffect(() => {
+    if (!notEmpty(activeAndDraftStrategies)) return
+
+    setSelectedStrategyId(activeAndDraftStrategies[activeAndDraftStrategies.length - 1].id)
+
+  }, [activeAndDraftStrategies])
+
   return (
     <div className={classes.dialog}>
-      <Headers name={"Краткосрочная цель"} speedGoal={"speedGoal"}  funcActiveHint = {() => setOpen(true)}>
+      <Headers name={"Краткосрочная цель"} speedGoal={"speedGoal"} funcActiveHint={() => setOpen(true)}>
         <div className={classes.selectHeader}>
-          {[{name: "КРАТКОСРОЧАЯ ЦЕЛЬ", ref: ref1},{name: "СИТУАЦИЯ", ref: ref2} , {name: "ПРИЧИНА", ref: ref3}].map((obj, index) => (
+          {[{ name: "КРАТКОСРОЧАЯ ЦЕЛЬ", ref: ref1 }, { name: "СИТУАЦИЯ", ref: ref2 }, { name: "ПРИЧИНА", ref: ref3 }].map((obj, index) => (
             <div
-             ref={obj.ref}
+              ref={obj.ref}
               key={index}
               className={classNames(
                 classes.textSelectHeader,
@@ -172,9 +182,9 @@ export default function Objective() {
             </div>
           ))}
         </div>
-        <BottomHeaders update={saveUpdateObjective} refUpdate={refUpdate}> 
-          <SelectBorder
-            refSelectBorder = {refSelectBorder}
+        <BottomHeaders update={saveUpdateObjective} refUpdate={refUpdate}>
+          {/* <SelectBorder
+            refSelectBorder={refSelectBorder}
             value={selectedStrategyId}
             onChange={changeStrategyId}
             array={activeAndDraftStrategies}
@@ -182,13 +192,29 @@ export default function Objective() {
             arrayItem={"strategyNumber"}
             prefix={"Стратегия №"}
             styleSelected={stateStrategy}
-          ></SelectBorder>
+          ></SelectBorder> */}
+
+          <Select
+            data-tour='refSelectBorder'
+            placeholder={"Выберите стратегию"}
+            value={selectedStrategyId}
+            onChange={(e) => setSelectedStrategyId(e)}
+          >
+            {activeAndDraftStrategies.map((item, index) => (
+              <Select.Option
+                value={item.id}
+                style={{ color: item.state === 'Активный' ? '#005475' : 'none' }}
+              >
+                Стратегия № {item.strategyNumber}
+              </Select.Option>
+            ))}
+          </Select>
         </BottomHeaders>
       </Headers>
 
-        <ConfigProvider locale={ruRU}>
-          <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
-        </ConfigProvider>
+      <ConfigProvider locale={ruRU}>
+        <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      </ConfigProvider>
 
       <div className={classes.main}>
         {isErrorGetObjectiveId || isErrorStrategies ? (
@@ -202,6 +228,19 @@ export default function Objective() {
           />
         ) : (
           <>
+            {selectedStrategyId && (
+              <div className={classes.editButton}>
+                <Button
+                  type="primary"
+                  icon={<EditOutlined />}
+                  iconPosition={'end'}
+                  onClick={() => setEditMode(true)}
+                >
+                  Редактировать
+                </Button>
+              </div>
+            )}
+
             {currentObjective.id ? (
               <>
                 {activeIndex === 0 && (
@@ -213,7 +252,7 @@ export default function Objective() {
                         onChange={(newState) =>
                           handleEditorChange(index, newState, "content")
                         }
-                        readOnly={stateStrategy === "Завершено"}
+                        readOnly={!editMode}
                       ></TextArea>
                     ))}
                   </>
@@ -228,7 +267,7 @@ export default function Objective() {
                         onChange={(newState) =>
                           handleEditorChange(index, newState, "situation")
                         }
-                        readOnly={stateStrategy === "Завершено"}
+                        readOnly={!editMode}
                       ></TextArea>
                     ))}
                   </>
@@ -243,7 +282,7 @@ export default function Objective() {
                         onChange={(newState) =>
                           handleEditorChange(index, newState, "rootCause")
                         }
-                        readOnly={stateStrategy === "Завершено"}
+                        readOnly={!editMode}
                       ></TextArea>
                     ))}
                   </>

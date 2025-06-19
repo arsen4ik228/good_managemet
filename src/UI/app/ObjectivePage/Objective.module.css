@@ -210,6 +210,9 @@
     row-gap: 1%;
 }
 
+.editButton{
+}
+
 .editorContainer {
     margin-top: 20px;
     position: relative;
