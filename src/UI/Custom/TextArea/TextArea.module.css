@@ -1,6 +1,7 @@
-.textArea {
-    width: 750px;
-    height: 300px;
+
+.textArea{
+    width: 700px;
+    min-height: 150px;
     background-color: #ffff;
     border-radius: 10px;
     /* box-shadow: 1px 1px 10px 0px rgba(245, 245, 245, 0.208); */
