@@ -9,6 +9,8 @@ import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js";
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { FloatButton } from "antd";
+import dropdown from '../../image/drop-down.svg';
+import search from '../../image/search.svg'
 import arrowBack from "@image/back_white.svg";
 
 export default function Chat() {
@@ -18,6 +20,8 @@ export default function Chat() {
 
   const [copyChats, setCopyChats] = useState()
   const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
+  const [isOrganizationsClosed, setOrganizationsClosed] = useState(false);
+  const [isSearchClosed, setSearchClosed] = useState(true);
 
   const eventNames = useMemo(
     () => ["convertCreationEvent", "messageCountEvent"],
@@ -75,13 +79,7 @@ export default function Chat() {
 
   return (
     <div className={classes.contact}>
-      <div className={classes.header}>
-        <div className={classes.headerName}>контакты</div>
-        <img src={burger} alt="burger" />
-      </div>
-      <div className={classes.search}>
-        <input type="search" placeholder="поиск"></input>
-      </div>
+
       <div className={classes.main}>
         <button
           className={classes.btnPomoshnik}
@@ -90,11 +88,116 @@ export default function Chat() {
           <img src={iconHeader} alt="iconHeader" />
           <span>Личный помощник</span>
         </button>
-        <Section></Section>
+        <div className={classes.orgHeader}>
+          <div className={classes.orgHeaderName}>организации</div>
+          <div className={classes.dropdown}
+            onClick={() => setOrganizationsClosed(!isOrganizationsClosed)}
+          >
+            <img
+              src={dropdown}
+              alt="dropdown"
+              className={`${classes.collapseIcon} ${isOrganizationsClosed ? classes.collapsed : ''
+                }`}
+            />
+          </div>
+        </div>
+        <Section isOrganizationsClosed={isOrganizationsClosed}></Section>
 
         <div>
+          <div className={classes.header}>
+            <div className={classes.headerName}>контакты</div>
+            <img className={classes.searchIcon} src={search} alt="search" onClick={() => setSearchClosed(!isSearchClosed)} />
+          </div>
+          {
+            !isSearchClosed && <div className={classes.search}>
+              <input type="search" placeholder="поиск"></input>
+            </div>
+          }
 
-          {copyChats?.map((item, index) => (
+          <button onClick={handleUserButtonClick} className={`${classes.btnAddUser} ${!isSearchClosed ? classes['btnAddUserWithSearch'] : ''}`}>
+            <span> Добавить пользователя </span>
+          </button>
+          {[
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' },
+            { postName: 'a', userName: 'a' }
+          ]?.map((item, index) => (
             <div onClick={() => handleItemClick(item)}>
               <React.Fragment key={index} >
                 <DialogContainer
@@ -108,13 +211,11 @@ export default function Chat() {
                   }
                 ></DialogContainer>
               </React.Fragment>
+
             </div>
           ))}
         </div>
 
-        <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
-          <span> Добавить пользователя </span>
-        </button>
 
         {/* <FloatButton
           icon={
