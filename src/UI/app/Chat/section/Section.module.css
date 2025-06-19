@@ -37,6 +37,7 @@
     background-color: var(--white);
 
     /* overflow-y: auto; */
+    margin-bottom: 3px;
 
     cursor: pointer;
 

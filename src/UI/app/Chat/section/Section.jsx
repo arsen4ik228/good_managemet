@@ -62,7 +62,7 @@ export default function Section({isOrganizationsClosed}) {
       <div className={classes.block}>
         {organizations.map((item) => (
           <React.Fragment key={item.id}>
-            {!isOrganizationsClosed && (
+            {(reduxSelectedOrganizationId === item.id || !isOrganizationsClosed) && (
               <>
                 <div
                   className={`${classes.row} ${reduxSelectedOrganizationId === item.id ? classes.row_active : ""
