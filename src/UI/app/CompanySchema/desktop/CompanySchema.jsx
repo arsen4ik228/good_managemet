@@ -11,7 +11,6 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 
-import PostSchema from "./postSchema/PostSchema";
 import BlockSchema from "./blockSchema/BlockSchema";
 
 import arrowBack from "@image/back_white.svg";
@@ -124,14 +123,13 @@ export default function CompanySchema() {
       description: "Нажмите для перехода в Подразделение",
       target: () => document.querySelector('[data-tour="click-postName"]'),
       disabled: !document.querySelector('[data-tour="click-postName"]'),
-    },  
+    },
     {
       title: "Назад",
       description: "Нажмите для перехода к схеме компаний",
       target: () => document.querySelector('[data-tour="click-backCompany"]'),
       disabled: !document.querySelector('[data-tour="click-backCompany"]'),
-    }, 
-        
+    },
   ].filter((step) => {
     if (step.target.toString().includes("querySelector")) {
       return !step.disabled;
@@ -245,9 +243,10 @@ export default function CompanySchema() {
                         {onePost[0]?.children?.map((item) => {
                           return (
                             <>
-                              <PostSchema
+                              <BlockSchema
                                 key={item.id}
                                 post={item}
+                                arrayColors={null}
                                 backgroundColor={onePost[0].color}
                                 setOnePost={setOnePost}
                                 setViewChildrenPost={setViewChildrenPost}
@@ -267,8 +266,15 @@ export default function CompanySchema() {
                             />
                           }
                           type="primary"
-                          tooltip="Вернуться назад"
-                          onClick={() => setViewChildrenPost(false)}
+                          tooltip="Вернуться назад child"
+                          onClick={() => {
+                            setHeader({
+                              postName: "",
+                              divisionName: "",
+                              fullName: "",
+                            });
+                            setViewChildrenPost(false);
+                          }}
                           style={{
                             insetInlineEnd: 94,
                           }}
