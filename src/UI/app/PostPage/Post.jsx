@@ -277,7 +277,7 @@ export default function Post() {
         ...updatedData, // отправляем только измененные поля
       })
         .unwrap()
-        .then(() => {})
+        .then(() => { })
         .catch((error) => {
           console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
@@ -391,7 +391,7 @@ export default function Post() {
       postId: selectedPostId,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
@@ -482,6 +482,11 @@ export default function Post() {
                     {currentPost.id ? (
                       <>
                         <div className={classes.productTeaxtaera}>
+                          <div className={classes.backgroundBorder}>
+                            <div className={classes.productHeader}>
+                              Продукт поста *
+                            </div>
+                          </div>
                           <textarea
                             className={classes.Teaxtaera}
                             placeholder="Описание продукта поста"
@@ -498,6 +503,12 @@ export default function Post() {
                         </div>
 
                         <div className={classes.destinyTeaxtaera}>
+                          <div className={classes.backgroundBorder}>
+                            <div className={classes.destinyHeader}>
+                              Предназначение поста *
+                            </div>
+                          </div>
+
                           <textarea
                             className={classes.Teaxtaera}
                             placeholder="Описание предназначения поста"
@@ -676,9 +687,9 @@ export default function Post() {
                             ErrorUpdateStatisticsToPostIdMutation?.data
                               ?.errors?.[0]?.errors?.[0]
                               ? ErrorUpdateStatisticsToPostIdMutation.data
-                                  .errors[0].errors[0]
+                                .errors[0].errors[0]
                               : ErrorUpdateStatisticsToPostIdMutation?.data
-                                  ?.message
+                                ?.message
                           }
                         ></HandlerMutation>
 
@@ -697,7 +708,7 @@ export default function Post() {
                             ErrorPostStatisticMutation?.data?.errors?.[0]
                               ?.errors?.[0]
                               ? ErrorPostStatisticMutation.data.errors[0]
-                                  .errors[0]
+                                .errors[0]
                               : ErrorPostStatisticMutation?.data?.message
                           }
                         ></HandlerMutation>
