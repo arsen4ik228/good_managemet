@@ -7,9 +7,10 @@ import WaveLetters from "@Custom/WaveLetters.jsx";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
+import ModalWindow from "@Custom/ModalWindow.jsx";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
 import { useObjectiveHook, useStrategyHook } from "@hooks";
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 import { notEmpty } from "@helpers/helpers";
@@ -24,6 +25,7 @@ export default function Objective() {
   const [rootCauseEditors, setRootCauseEditors] = useState([]);
 
   const [stateStrategy, setStateStrategy] = useState("");
+  const [modalAlertOpen, setModalAlertOpen] = useState(false)
 
   const ref1 = useRef(null);
   const ref2 = useRef(null);
@@ -80,6 +82,9 @@ export default function Objective() {
     archiveStrategies,
     isLoadingStrategies,
     isErrorStrategies,
+    reduxSelectedOrganizationId,
+    postStrategy,
+    isLoadingPostStrategyMutation
   } = useStrategyHook();
 
   const saveUpdateObjective = async () => {
@@ -127,6 +132,32 @@ export default function Objective() {
   const changeStrategyId = (id) => {
     setSelectedStrategyId(id);
   };
+
+  const onEditMode = () => {
+    setEditMode(prev => !prev)
+  }
+
+  const createNewStrategy = async () => {
+    if (activeAndDraftStrategies.some(item => item.state === 'Черновик')) {
+      console.warn("Черновик уже существует");
+      setModalAlertOpen(true)
+      return false
+    }
+
+    await postStrategy({
+      content: " ",
+      organizationId: reduxSelectedOrganizationId,
+    })
+      .unwrap()
+      .then((result) => {
+        setTimeout(() => {
+          setSelectedStrategyId(result.id) // navigate(result?.id); 
+        }, 500);
+      })
+      .catch((error) => {
+        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+      });
+  }
 
   useEffect(() => {
     if (Array.isArray(currentObjective.content)) {
@@ -199,7 +230,12 @@ export default function Objective() {
             placeholder={"Выберите стратегию"}
             value={selectedStrategyId}
             onChange={(e) => setSelectedStrategyId(e)}
+            style={{ width: '200px' }}
           >
+            {/* <Select.Option
+            >
+              СОЗДАТЬ СТРАТЕГИЮ
+            </Select.Option> */}
             {activeAndDraftStrategies.map((item, index) => (
               <Select.Option
                 value={item.id}
@@ -209,6 +245,16 @@ export default function Objective() {
               </Select.Option>
             ))}
           </Select>
+
+          <Button
+            icon={<PlusCircleOutlined />}
+            iconPosition={'end'}
+            onClick={() => createNewStrategy()}
+            loading={isLoadingPostStrategyMutation}
+          >
+            Cоздать новую стратегию
+          </Button>
+
         </BottomHeaders>
       </Headers>
 
@@ -234,7 +280,7 @@ export default function Objective() {
                   type="primary"
                   icon={<EditOutlined />}
                   iconPosition={'end'}
-                  onClick={() => setEditMode(true)}
+                  onClick={() => onEditMode()}
                 >
                   Редактировать
                 </Button>
@@ -314,6 +360,15 @@ export default function Objective() {
           </>
         )}
       </div>
+
+      {modalAlertOpen && (
+        <ModalWindow
+          text={'Невозможно создать два "Черновика" Стратегии'}
+          close={setModalAlertOpen}
+          exitBtn={true}
+        ></ModalWindow>
+      )}
+
     </div>
   );
 }
