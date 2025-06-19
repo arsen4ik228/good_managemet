@@ -162,7 +162,7 @@ export default function Content() {
   useEffect(() => {
     if (tokenForTG && socketId) {
       setQrUrl(
-        `tg://resolve?domain=GMAuthBot&start=${encodeURIComponent(
+        `tg://resolve?domain=gm_ilyxa_bot&start=${encodeURIComponent(
           tokenForTG
         )}-${encodeURIComponent(socketId)}`
       );

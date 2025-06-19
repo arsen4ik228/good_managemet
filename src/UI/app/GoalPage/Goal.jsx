@@ -20,6 +20,8 @@ export default function Goal() {
   const ref2 = useRef(null);
   const ref3 = useRef(null);
   const refUpdate = useRef(null);
+  const [pressedIndex, setPressedIndex] = useState(null);
+
 
   const [open, setOpen] = useState(false);
 
@@ -71,6 +73,7 @@ export default function Goal() {
     localIsResponsePostGoalMutation,
   } = useGoalHook();
 
+
   const saveGoal = async () => {
     await postGoal({
       content: [""],
@@ -89,7 +92,7 @@ export default function Goal() {
       content: editorState,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
@@ -193,23 +196,38 @@ export default function Goal() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             className={classes.editorContainer}
+                          // style={{'height':'150px'}}
                           >
                             <div
                               {...provided.dragHandleProps}
                               className={classes.dragHandle}
+                              onMouseDown={() => setPressedIndex(index)}
+                              onMouseUp={() => setPressedIndex(null)}
+                              onMouseLeave={() => setPressedIndex(null)}
                             >
-                              <img ref={ref1} src={drag} alt="drag" />
+                              <img
+                                ref={ref1}
+                                src={drag}
+                                alt="drag"
+                              />
                             </div>
 
-                            <TextArea
-                              key={index}
-                              value={item}
-                              onChange={(newState) => {
-                                const updatedState = [...editorState];
-                                updatedState[index] = newState;
-                                setEditorState(updatedState);
+                            <div
+                              style={{
+                                height: pressedIndex === index ? '100px' : 'auto',
+                                transition: 'height 3.5s ease',
                               }}
-                            ></TextArea>
+                            >
+                              <TextArea
+                                key={index}
+                                value={item}
+                                onChange={(newState) => {
+                                  const updatedState = [...editorState];
+                                  updatedState[index] = newState;
+                                  setEditorState(updatedState);
+                                }}
+                              ></TextArea>
+                            </div>
 
                             <img
                               ref={ref2}
