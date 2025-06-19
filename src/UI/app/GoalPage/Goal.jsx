@@ -199,13 +199,15 @@ export default function Goal() {
                           // style={{'height':'150px'}}
                           >
                             <div
-                              {...provided.dragHandleProps}
                               className={classes.dragHandle}
                               onMouseDown={() => setPressedIndex(index)}
                               onMouseUp={() => setPressedIndex(null)}
                               onMouseLeave={() => setPressedIndex(null)}
                             >
                               <img
+                                {...provided.dragHandleProps}
+                                className={classes.drag}
+
                                 ref={ref1}
                                 src={drag}
                                 alt="drag"

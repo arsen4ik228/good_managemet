@@ -172,7 +172,7 @@
 .blockSelect {
     position: relative;
 
-    & > img:hover {
+    &>img:hover {
         background-color: rgb(240, 240, 240);
         border-radius: 20%;
     }
@@ -262,7 +262,7 @@
 
 .main {
     position: relative;
-    flex: 1 0 120px; 
+    flex: 1 0 120px;
     overflow-y: auto;
     background-color: #F0F0F0;
     padding-top: 1%;
@@ -298,6 +298,26 @@
     /* Расстояние от правой части контейнера */
     cursor: pointer;
     /* Изменяем курсор при наведении на иконку */
+    transition: all 0.1s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.drag {
+    transition: all 0.1s ease;
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }
 
 .add {
@@ -370,6 +390,6 @@ mark {
     margin-right: 5px;
 }
 
-.select{
+.select {
     font-family: 'Montserrat';
 }
