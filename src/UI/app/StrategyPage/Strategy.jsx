@@ -7,41 +7,37 @@ import ModalWindow from "@Custom/ModalWindow.jsx";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import SelectBorder from "@Custom/SelectBorder/SelectBorder";
-import Select from "@Custom/Select/Select";
 import { useStrategyHook } from "@hooks";
-
-import { ConfigProvider, Tour } from "antd";
+import { ConfigProvider, Tour, Select } from "antd";
 import ruRU from "antd/locale/ru_RU";
+
+const { Option } = Select;
 
 export default function Strategy() {
   const [number, setNumber] = useState("");
   const [state, setState] = useState("");
   const [editorState, setEditorState] = useState("");
-
   const [postId, setPostId] = useState(null);
-
   const [openModal, setOpenModal] = useState(false);
   const [openModalDraft, setOpenModalDraft] = useState(false);
 
-  const refSelect = useRef(null);
-  const refSelectBorder = useRef(null);
+  const selectRef = useRef(null);
+  const selectBorderRef = useRef(null);
   const refCreate = useRef(null);
   const refUpdate = useRef(null);
-
   const [open, setOpen] = useState(false);
 
   const steps = [
     {
       title: "Выбрать стратегию",
       description: "Выбрать стратегию для показа краткосрочной цели",
-      target: () => refSelectBorder.current,
+      target: () => selectBorderRef.current?.select,
     },
     {
       title: "Состояние стратегии",
       description: "Нажмите и поменяйте состояние",
-      target: () => (number ? refSelect.current : null), // Добавляем проверку
-      disabled: !number, // Отключаем шаг, если элемент не виден
+      target: () => (number ? selectRef.current?.select : null),
+      disabled: !number,
     },
     {
       title: "Создать",
@@ -53,35 +49,27 @@ export default function Strategy() {
       description: "Нажмите для сохранения",
       target: () => refUpdate.current,
     },
-  ].filter(step => !step.disabled); // Фильтруем шаги, у которых disabled=true;
+  ].filter(step => !step.disabled);
 
   const {
     reduxSelectedOrganizationId,
-
-    // Получить все стратегии
     activeAndDraftStrategies,
     archiveStrategies,
     activeStrategyId,
     hasDraftStrategies,
     isLoadingStrategies,
     isErrorStrategies,
-
-    // Создать стратегию
     postStrategy,
     isLoadingPostStrategyMutation,
     isSuccessPostStrategyMutation,
     isErrorPostStrategyMutation,
     errorPostStrategyMutation,
     localIsResponsePostStrategyMutation,
-
-    // Получить стратегию по id
     currentStrategy,
     currentStrategyState,
     isLoadingStrategyId,
     isFetchingStrategyId,
     isErrorStrategyId,
-
-    // Обновить стратегию
     updateStrategy,
     isLoadingUpdateStrategyMutation,
     isSuccessUpdateStrategyMutation,
@@ -103,8 +91,8 @@ export default function Strategy() {
     })
   );
 
-  const handleNumberOnChange = (e) => {
-    setNumber(e);
+  const handleNumberOnChange = (value) => {
+    setNumber(value);
   };
 
   const newStrateg = () => {
@@ -125,13 +113,11 @@ export default function Strategy() {
         setPostId(result.id);
       })
       .catch((error) => {
-        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+        console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
   };
 
   const save = () => {
-    console.log("activeStrategyId");
-    console.log(activeStrategyId);
     if (
       state === "Активный" &&
       currentStrategy.state === "Черновик" &&
@@ -144,11 +130,10 @@ export default function Strategy() {
   };
 
   const saveUpdateStrateg = async () => {
-    const Data = [];
+    const Data = {};
     if (state !== "" && state !== currentStrategy.state) {
       Data.state = state;
     }
-    console.log(editorState);
     if (editorState !== currentStrategy.content) {
       Data.content = editorState;
     }
@@ -161,7 +146,7 @@ export default function Strategy() {
         setOpenModal(false);
       })
       .catch((error) => {
-        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+        console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
   };
 
@@ -180,7 +165,7 @@ export default function Strategy() {
   };
 
   const btnNo = async () => {
-    const Data = [];
+    const Data = {};
     if (editorState !== currentStrategy.content) {
       Data.content = editorState;
     }
@@ -195,7 +180,7 @@ export default function Strategy() {
           setOpenModal(false);
         })
         .catch((error) => {
-          console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+          console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
     } else {
       setOpenModal(false);
@@ -213,7 +198,6 @@ export default function Strategy() {
     if (currentStrategy.content) {
       setEditorState(currentStrategy.content);
     }
-
     if (currentStrategy.state) {
       setState(currentStrategy.state);
     }
@@ -228,26 +212,40 @@ export default function Strategy() {
           refCreate={refCreate}
           refUpdate={refUpdate}
         >
-          <SelectBorder
-            refSelectBorder={refSelectBorder}
+          <Select
+            ref={selectBorderRef}
             value={number}
             onChange={handleNumberOnChange}
-            array={activeAndDraftStrategies}
-            array1={archiveStrategies}
-            arrayItem={"strategyNumber"}
-            prefix={"Стратегия №"}
-            styleSelected={currentStrategyState}
-          ></SelectBorder>
+            placeholder="Выберите стратегию"
+            style={{ width: "180px"}} 
+            className={currentStrategyState}
+          >
+            {activeAndDraftStrategies?.map((item) => (
+              <Option key={item.id} value={item.id}>
+                Стратегия №{item.strategyNumber}
+              </Option>
+            ))}
+            {archiveStrategies?.map((item) => (
+              <Option key={item.id} value={item.id}>
+                Стратегия №{item.strategyNumber}
+              </Option>
+            ))}
+          </Select>
           {number && (
             <Select
-              refSelect={refSelect}
-              name={"Состояние"}
+              ref={selectRef}
               value={state}
               onChange={setState}
-              array={filteredArrayState}
-              arrayItem={"value"}
-              disabledPole={currentStrategy.state === "Завершено"}
-            ></Select>
+              placeholder="Состояние"
+              disabled={currentStrategy.state === "Завершено"}
+              style={{ width: "130px" }}
+            >
+              {filteredArrayState?.map((item) => (
+                <Option key={item.value} value={item.value}>
+                  {item.value}
+                </Option>
+              ))}
+            </Select>
           )}
         </BottomHeaders>
       </Headers>
@@ -258,107 +256,77 @@ export default function Strategy() {
 
       <div className={classes.main}>
         {isErrorStrategies ? (
-          <>
-            <HandlerQeury Error={true}></HandlerQeury>
-          </>
+          <HandlerQeury Error={true} />
+        ) : isErrorStrategyId ? (
+          <HandlerQeury Error={isErrorStrategyId} />
         ) : (
           <>
-            {isErrorStrategyId ? (
-              <HandlerQeury Error={isErrorStrategyId}></HandlerQeury>
-            ) : (
+            <HandlerQeury Loading={isLoadingStrategies} />
+            {isLoadingStrategyId || isFetchingStrategyId ? (
+              <HandlerQeury
+                Loading={isLoadingStrategyId}
+                Fetching={isFetchingStrategyId}
+              />
+            ) : currentStrategy.id ? (
               <>
-                <HandlerQeury Loading={isLoadingStrategies}></HandlerQeury>
-
-                {isLoadingStrategyId || isFetchingStrategyId ? (
-                  <HandlerQeury
-                    Loading={isLoadingStrategyId}
-                    Fetching={isFetchingStrategyId}
-                  ></HandlerQeury>
-                ) : (
-                  <>
-                    {currentStrategy.id ? (
-                      <>
-                        <TextArea
-                          key={currentStrategy.id}
-                          value={editorState}
-                          onChange={setEditorState}
-                          readOnly={currentStrategy.state === "Завершено"}
-                        ></TextArea>
-
-                        <HandlerMutation
-                          Loading={isLoadingUpdateStrategyMutation}
-                          Error={
-                            isErrorUpdateStrategyMutation &&
-                            localIsResponseUpdateStrategyMutation
-                          }
-                          Success={
-                            isSuccessUpdateStrategyMutation &&
-                            localIsResponseUpdateStrategyMutation
-                          }
-                          textSuccess={"Стратегия обновлена"}
-                          textError={
-                            errorUpdateStrategyMutation?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? errorUpdateStrategyMutation.data.errors[0]
-                                  .errors[0]
-                              : errorUpdateStrategyMutation?.data?.message
-                          }
-                        ></HandlerMutation>
-
-                        <HandlerMutation
-                          Loading={isLoadingPostStrategyMutation}
-                          Error={
-                            isErrorPostStrategyMutation &&
-                            localIsResponsePostStrategyMutation
-                          }
-                          Success={
-                            isSuccessPostStrategyMutation &&
-                            localIsResponsePostStrategyMutation
-                          }
-                          textSuccess={"Стратегия успешно создана."}
-                          textError={
-                            errorPostStrategyMutation?.data?.errors?.[0]
-                              ?.errors?.[0]
-                              ? errorPostStrategyMutation.data.errors[0]
-                                  .errors[0]
-                              : errorPostStrategyMutation?.data?.message
-                          }
-                        ></HandlerMutation>
-                      </>
-                    ) : (
-                      <>
-                        <WaveLetters
-                          letters={"Выберите стратегию"}
-                        ></WaveLetters>
-                      </>
-                    )}
-                  </>
-                )}
+                <TextArea
+                  key={currentStrategy.id}
+                  value={editorState}
+                  onChange={setEditorState}
+                  readOnly={currentStrategy.state === "Завершено"}
+                />
+                <HandlerMutation
+                  Loading={isLoadingUpdateStrategyMutation}
+                  Error={
+                    isErrorUpdateStrategyMutation &&
+                    localIsResponseUpdateStrategyMutation
+                  }
+                  Success={
+                    isSuccessUpdateStrategyMutation &&
+                    localIsResponseUpdateStrategyMutation
+                  }
+                  textSuccess="Стратегия обновлена"
+                  textError={
+                    errorUpdateStrategyMutation?.data?.errors?.[0]?.errors?.[0] ||
+                    errorUpdateStrategyMutation?.data?.message
+                  }
+                />
+                <HandlerMutation
+                  Loading={isLoadingPostStrategyMutation}
+                  Error={
+                    isErrorPostStrategyMutation &&
+                    localIsResponsePostStrategyMutation
+                  }
+                  Success={
+                    isSuccessPostStrategyMutation &&
+                    localIsResponsePostStrategyMutation
+                  }
+                  textSuccess="Стратегия успешно создана."
+                  textError={
+                    errorPostStrategyMutation?.data?.errors?.[0]?.errors?.[0] ||
+                    errorPostStrategyMutation?.data?.message
+                  }
+                />
               </>
+            ) : (
+              <WaveLetters letters="Выберите стратегию" />
             )}
           </>
         )}
-        {openModal ? (
+        {openModal && (
           <ModalWindow
-            text={
-              "У Вас уже есть Активная стратегия, при нажатии на Да, Она будет завершена."
-            }
+            text="У Вас уже есть Активная стратегия, при нажатии на Да, Она будет завершена."
             close={setOpenModal}
             btnYes={btnYes}
             btnNo={btnNo}
-          ></ModalWindow>
-        ) : (
-          <></>
+          />
         )}
-
-        {openModalDraft ? (
+        {openModalDraft && (
           <ModalWindow
-            text={"У Вас уже есть Черновик стратегии"}
+            text="У Вас уже есть Черновик стратегии"
             close={setOpenModalDraft}
             exitBtn={true}
-          ></ModalWindow>
-        ) : (
-          <></>
+          />
         )}
       </div>
     </div>
