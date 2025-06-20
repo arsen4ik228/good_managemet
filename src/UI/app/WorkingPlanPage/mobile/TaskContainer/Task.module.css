@@ -1,7 +1,6 @@
 .wrapper {
     height: 70px;
     width: 100%;
-
     padding: 5px;
     margin: 10px 0;
 
@@ -9,6 +8,45 @@
     border-radius: 10px;
     max-width: 700px;
 
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    opacity: 1;
+    transition: all 0.2s ease;
+
+    &:hover {
+        margin-top: 8px;
+        margin-bottom: 12px;
+    }
+
+
+
+}
+
+.wrapper.draft {
+    position: relative;
+    border-left: 4px solid #8b8b8b;
+}
+
+.wrapper.draft::after {
+    content: 'Черновик';
+    position: absolute;
+    left: 8px;
+    top: 5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: #8b8b8b;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.wrapper:has(.checkboxContainer:nth-of-type(1):hover) {
+    box-shadow: 0px 0px 10px 2px #24e02db6;
+}
+
+
+.wrapper.completed {
+    box-shadow: 0px 0px 10px 2px #24e02db6;
 }
 
 .body {
@@ -63,13 +101,11 @@
 }
 
 .checkboxContainer {
-
     margin: auto 0;
+    width: 15px;
+    height: 15px;
 
-    >input {
-        width: 15px;
-        height: 15px;
-    }
+    pointer-events: auto;
 }
 
 .titleContainer {
@@ -78,6 +114,7 @@
     align-items: center;
     flex: 1;
 
+    cursor: pointer;
 
     height: 50px;
 
@@ -98,8 +135,31 @@
 .dateContainer {
     padding: 20px 0;
     font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s ease, color 0.2s ease;
 
     >span {
         display: block;
     }
+}
+
+
+.deleteButton {
+    transform: translateY(-95%);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 30px;
+    color: #ff4d4f;
+    transition: all 0.2s ease;
+}
+
+.deleteButton:hover {
+    color: #ff7875;
+    background: #ffebe8;
+    border-radius: 50%;
 }

@@ -56,20 +56,6 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
 
     const updateTask = async () => {
 
-        if (taskStatus === 'Удалена') {
-            await deleteTarget({
-                targetId: taskData.id,
-            })
-                .unwrap()
-                .then(() => {
-                })
-                .catch((error) => {
-                    console.error("Ошибка:", JSON.stringify(error, null, 2));
-                });
-        }
-        else {
-
-
             const Data = {}
 
             if (contentInput !== taskData.content) Data.content = contentInput
@@ -98,7 +84,6 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                 .catch((error) => {
                     console.error("Ошибка:", JSON.stringify(error, null, 2));
                 });
-        }
     }
 
     const setHolderPostId = (value) => {
@@ -210,7 +195,6 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                         >
                             <option value="Активная">Активная</option>
                             <option value="Завершена">Завершена</option>
-                            <option value="Удалена">Удалена</option>
                         </select>
                     </div>
                     <div className={classes.attachContainer}>

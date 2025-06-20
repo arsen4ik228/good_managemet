@@ -7,40 +7,7 @@
 
 .body {}
 
-.choosePostContainer {
-    position: relative;
 
-    width: 90%;
-    max-width: 420px;
-
-    margin: 0 auto;
-
-    >select {
-        width: 100%;
-
-        padding-left: 26px;
-
-        border-bottom: 1px solid #bfbfbf;
-        background-color: #FDFDFD;
-
-        text-align: center;
-
-        text-overflow: ellipsis;
-    }
-}
-
-
-.choosePostContainer::before {
-    content: "Пост";
-    color: rgb(58, 58, 58);
-    position: absolute;
-    top: -6px;
-    left: 8px;
-    pointer-events: none;
-    font-weight: 500;
-    font-size: 12px;
-    font-style: italic;
-}
 
 
 .inputTextContainer {
@@ -51,7 +18,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
 
     padding: 5px 0;
 }
@@ -77,22 +43,87 @@
     }
 }
 
+/* Общие стили контейнера */
+.choosePostContainer {
+  position: relative;
+  width: 90%;
+  max-width: 420px;
+  margin: 0 auto;
+}
 
-.inputText > textarea {
-    padding-right: 12px; /* Оставляем место для скролла */
+/* Стили для текста-подсказки */
+.choosePostContainer::before {
+  color: rgb(58, 58, 58);
+  position: absolute;
+  top: -12px;
+  left: 8px;
+  pointer-events: none;
+  font-weight: 600;
+  font-size: 14px;
+  font-style: normal;
+  z-index: 1;
+}
+
+/* Кастомизация AntD Select */
+.choosePostContainer .ant-select-selector {
+  width: 100%;
+  padding-left: 26px !important;
+  border-bottom: 1px solid #bfbfbf !important;
+  background-color: #FDFDFD !important;
+  text-align: center;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Стиль для текста в select */
+.choosePostContainer .ant-select-selection-item {
+  text-overflow: ellipsis;
+  display: block;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Убираем стандартные стрелки AntD */
+.choosePostContainer .ant-select-arrow {
+  display: none;
+}
+
+.dialogButton {
+    cursor: pointer;
+
+    transition: all 0.1s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+
+.inputText>textarea {
+    padding-right: 12px;
+    /* Оставляем место для скролла */
 }
 
 .customTextarea::-webkit-scrollbar {
-    width: 4px; /* Увеличиваем ширину для визуального отступа */
+    width: 4px;
+    /* Увеличиваем ширину для визуального отступа */
 }
 
 .customTextarea::-webkit-scrollbar-track {
-    margin: 10px 3px; /* Отступ сверху и снизу */
-    background: transparent; /* Прозрачный трек */
+    margin: 10px 3px;
+    /* Отступ сверху и снизу */
+    background: transparent;
+    /* Прозрачный трек */
 }
 
 .customTextarea::-webkit-scrollbar-thumb {
-    margin: 4px 2px; /* Отступы со всех сторон */
+    margin: 4px 2px;
+    /* Отступы со всех сторон */
     background: #d1d1d1;
     border-radius: 4px;
 }
