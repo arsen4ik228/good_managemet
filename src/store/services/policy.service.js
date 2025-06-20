@@ -114,14 +114,10 @@ export const policyApi = apiSlice.injectEndpoints({
     }),
 
     postPolicies: build.mutation({
-      query: ({organizationId}) => ({
+      query: (body) => ({
         url: `policies/new`,
         method: "POST",
-        body: {
-          policyName: "Политика",
-          content: " ",
-          organizationId: organizationId,
-        },
+        body,
       }),
       transformResponse: (response) => ({
         id: response.id,
