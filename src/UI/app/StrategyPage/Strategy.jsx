@@ -14,34 +14,34 @@ import { useStrategyHook } from "@hooks";
 import { ConfigProvider, Tour, Select } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
+const { Option } = Select;
+
 export default function Strategy() {
   const [number, setNumber] = useState("");
   const [state, setState] = useState("");
   const [editorState, setEditorState] = useState("");
   console.log(state)
   const [postId, setPostId] = useState(null);
-
   const [openModal, setOpenModal] = useState(false);
   const [openModalDraft, setOpenModalDraft] = useState(false);
 
-  const refSelect = useRef(null);
-  const refSelectBorder = useRef(null);
+  const selectRef = useRef(null);
+  const selectBorderRef = useRef(null);
   const refCreate = useRef(null);
   const refUpdate = useRef(null);
-
   const [open, setOpen] = useState(false);
 
   const steps = [
     {
       title: "Выбрать стратегию",
       description: "Выбрать стратегию для показа краткосрочной цели",
-      target: () => refSelectBorder.current,
+      target: () => selectBorderRef.current?.select,
     },
     {
       title: "Состояние стратегии",
       description: "Нажмите и поменяйте состояние",
-      target: () => (number ? refSelect.current : null), // Добавляем проверку
-      disabled: !number, // Отключаем шаг, если элемент не виден
+      target: () => (number ? selectRef.current?.select : null),
+      disabled: !number,
     },
     {
       title: "Создать",
@@ -53,35 +53,27 @@ export default function Strategy() {
       description: "Нажмите для сохранения",
       target: () => refUpdate.current,
     },
-  ].filter(step => !step.disabled); // Фильтруем шаги, у которых disabled=true;
+  ].filter(step => !step.disabled);
 
   const {
     reduxSelectedOrganizationId,
-
-    // Получить все стратегии
     activeAndDraftStrategies,
     archiveStrategies,
     activeStrategyId,
     hasDraftStrategies,
     isLoadingStrategies,
     isErrorStrategies,
-
-    // Создать стратегию
     postStrategy,
     isLoadingPostStrategyMutation,
     isSuccessPostStrategyMutation,
     isErrorPostStrategyMutation,
     errorPostStrategyMutation,
     localIsResponsePostStrategyMutation,
-
-    // Получить стратегию по id
     currentStrategy,
     currentStrategyState,
     isLoadingStrategyId,
     isFetchingStrategyId,
     isErrorStrategyId,
-
-    // Обновить стратегию
     updateStrategy,
     isLoadingUpdateStrategyMutation,
     isSuccessUpdateStrategyMutation,
@@ -103,8 +95,8 @@ export default function Strategy() {
     })
   );
 
-  const handleNumberOnChange = (e) => {
-    setNumber(e);
+  const handleNumberOnChange = (value) => {
+    setNumber(value);
   };
 
   const newStrateg = () => {
@@ -125,13 +117,11 @@ export default function Strategy() {
         setPostId(result.id);
       })
       .catch((error) => {
-        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+        console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
   };
 
   const save = () => {
-    console.log("activeStrategyId");
-    console.log(activeStrategyId);
     if (
       state === "Активный" &&
       currentStrategy.state === "Черновик" &&
@@ -144,11 +134,10 @@ export default function Strategy() {
   };
 
   const saveUpdateStrateg = async () => {
-    const Data = [];
+    const Data = {};
     if (state !== "" && state !== currentStrategy.state) {
       Data.state = state;
     }
-    console.log(editorState);
     if (editorState !== currentStrategy.content) {
       Data.content = editorState;
     }
@@ -161,7 +150,7 @@ export default function Strategy() {
         setOpenModal(false);
       })
       .catch((error) => {
-        console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+        console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
   };
 
@@ -180,7 +169,7 @@ export default function Strategy() {
   };
 
   const btnNo = async () => {
-    const Data = [];
+    const Data = {};
     if (editorState !== currentStrategy.content) {
       Data.content = editorState;
     }
@@ -195,7 +184,7 @@ export default function Strategy() {
           setOpenModal(false);
         })
         .catch((error) => {
-          console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
+          console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
     } else {
       setOpenModal(false);
@@ -213,7 +202,6 @@ export default function Strategy() {
     if (currentStrategy.content) {
       setEditorState(currentStrategy.content);
     }
-
     if (currentStrategy.state) {
       setState(currentStrategy.state);
     }
@@ -258,8 +246,7 @@ export default function Strategy() {
 
           {number && (
             <Select
-              refSelect={refSelect}
-              name={"Состояние"}
+              ref={selectRef}
               value={state}
               onChange={(e) => setState(e)}
               options={filteredArrayState}
@@ -276,9 +263,9 @@ export default function Strategy() {
 
       <div className={classes.main}>
         {isErrorStrategies ? (
-          <>
-            <HandlerQeury Error={true}></HandlerQeury>
-          </>
+          <HandlerQeury Error={true} />
+        ) : isErrorStrategyId ? (
+          <HandlerQeury Error={isErrorStrategyId} />
         ) : (
           <>
             {isErrorStrategyId ? (
@@ -356,27 +343,20 @@ export default function Strategy() {
             )}
           </>
         )}
-        {openModal ? (
+        {openModal && (
           <ModalWindow
-            text={
-              "У Вас уже есть Активная стратегия, при нажатии на Да, Она будет завершена."
-            }
+            text="У Вас уже есть Активная стратегия, при нажатии на Да, Она будет завершена."
             close={setOpenModal}
             btnYes={btnYes}
             btnNo={btnNo}
-          ></ModalWindow>
-        ) : (
-          <></>
+          />
         )}
-
-        {openModalDraft ? (
+        {openModalDraft && (
           <ModalWindow
-            text={"У Вас уже есть Черновик стратегии"}
+            text="У Вас уже есть Черновик стратегии"
             close={setOpenModalDraft}
             exitBtn={true}
-          ></ModalWindow>
-        ) : (
-          <></>
+          />
         )}
       </div>
     </div>

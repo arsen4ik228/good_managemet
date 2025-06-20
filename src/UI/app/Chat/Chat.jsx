@@ -9,6 +9,8 @@ import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js";
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { FloatButton } from "antd";
+import dropdown from '../../image/drop-down.svg';
+import search from '../../image/search.svg'
 import arrowBack from "@image/back_white.svg";
 
 export default function Chat() {
@@ -18,6 +20,8 @@ export default function Chat() {
 
   const [copyChats, setCopyChats] = useState()
   const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
+  const [isOrganizationsClosed, setOrganizationsClosed] = useState(false);
+  const [isSearchClosed, setSearchClosed] = useState(true);
 
   const eventNames = useMemo(
     () => ["convertCreationEvent", "messageCountEvent"],
@@ -74,60 +78,60 @@ export default function Chat() {
   }, [allChats])
 
   return (
-    <div className={classes.contact}>
+
+    <div className={classes.main}>
+      <button
+        className={classes.btnPomoshnik}
+        onClick={handleStartButtonClick}
+      >
+        <img src={iconHeader} alt="iconHeader" />
+        <span>Личный помощник</span>
+      </button>
+      <div className={classes.orgHeader}>
+        <div className={classes.orgHeaderName}>организации</div>
+        <div className={classes.dropdown}
+          onClick={() => setOrganizationsClosed(!isOrganizationsClosed)}
+        >
+          <img
+            src={dropdown}
+            alt="dropdown"
+            className={`${classes.collapseIcon} ${isOrganizationsClosed ? classes.collapsed : ''
+              }`}
+          />
+        </div>
+      </div>
+      <Section isOrganizationsClosed={isOrganizationsClosed}></Section>
+
       <div className={classes.header}>
         <div className={classes.headerName}>контакты</div>
-        <img src={burger} alt="burger" />
+        <img className={classes.searchIcon} src={search} alt="search" onClick={() => setSearchClosed(!isSearchClosed)} />
       </div>
-      <div className={classes.search}>
-        <input type="search" placeholder="поиск"></input>
-      </div>
-      <div className={classes.main}>
-        <button
-          className={classes.btnPomoshnik}
-          onClick={handleStartButtonClick}
-        >
-          <img src={iconHeader} alt="iconHeader" />
-          <span>Личный помощник</span>
-        </button>
-        <Section></Section>
-
-        <div>
-
-          {copyChats?.map((item, index) => (
-            <div onClick={() => handleItemClick(item)}>
-              <React.Fragment key={index} >
-                <DialogContainer
-                  postName={item?.postName}
-                  userName={item?.userFirstName + ' ' + item?.userLastName}
-                  avatarUrl={item?.userAvatar}
-                  unseenMessagesCount={
-                    (+item?.unseenMessagesCount) +
-                    (+item?.watcherUnseenCount) +
-                    (+socketMessagesCount.get(item?.id) || 0)
-                  }
-                ></DialogContainer>
-              </React.Fragment>
-            </div>
-          ))}
+      {
+        !isSearchClosed && <div className={classes.search}>
+          <input type="search" placeholder="поиск"></input>
         </div>
+      }
 
-        <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
-          <span> Добавить пользователя </span>
-        </button>
+      <button onClick={handleUserButtonClick} className={`${classes.btnAddUser} ${!isSearchClosed ? classes['btnAddUserWithSearch'] : ''}`}>
+        <span> Добавить пользователя </span>
+      </button>
+      {copyChats?.map((item, index) => (
+        <div onClick={() => handleItemClick(item)}>
+          <React.Fragment key={index} >
+            <DialogContainer
+              postName={item?.postName}
+              userName={item?.userFirstName + ' ' + item?.userLastName}
+              avatarUrl={item?.userAvatar}
+              unseenMessagesCount={
+                (+item?.unseenMessagesCount) +
+                (+item?.watcherUnseenCount) +
+                (+socketMessagesCount.get(item?.id) || 0)
+              }
+            ></DialogContainer>
+          </React.Fragment>
 
-        {/* <FloatButton
-          icon={
-            <img src={arrowBack} alt="back" style={{ width: 20, height: 20 }} />
-          }
-          type="primary"
-          tooltip="Добавить пользователя"
-          onClick={handleUserButtonClick}
-          style={{
-            insetInlineStart: 380,
-          }}
-        /> */}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }

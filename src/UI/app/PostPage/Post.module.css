@@ -216,15 +216,13 @@
     justify-content: center;
 }
 
-.productTeaxtaera:before {
+.productHeader {
     top: 10px;
-    content: 'Предназначение поста *';
     position: absolute;
     color: black;
     font-weight: 600;
     font-family: 'Montserrat';
     font-size: 14px;
-    left: 26.5%;
     border: 1px dashed #005475e0;
     background: #0054754f;
     padding: 4px 8px;
@@ -243,21 +241,27 @@
     justify-content: center;
 }
 
-.destinyTeaxtaera:before {
+.destinyHeader {
     top: 10px;
-    content: 'Предназначение поста *';
     position: absolute;
     color: black;
     font-weight: 600;
     font-family: 'Montserrat';
     font-size: 14px;
-    left: 26.5%;
     border: 1px dashed #005475e0;
     background: #0054754f;
     padding: 4px 8px;
     border-radius: 12px;
     white-space: nowrap;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.backgroundBorder {
+    left: 26.5%;
+    height: 40px;
+    width: 48%;
+    position: absolute;
+    background-color: white;
 }
 
 .Teaxtaera {
@@ -270,7 +274,7 @@
     font-size: 12px;
     border-radius: 8px 8px 8px 8px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-
+    line-height: 1.5;
     transition: all 0.3s;
 
     &:hover {
@@ -278,14 +282,12 @@
         box-shadow: 0px 0px 15px 2px #005475;
 
     }
-
-
 }
 
 textarea::placeholder {
     color: #B4B4B4;
     font-style: italic;
-    font-size: 12px;
+    font-size: 14px;
     font-family: 'Montserrat';
     padding-top: 2%;
     padding-left: 1%;
