@@ -8,17 +8,17 @@ import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import SelectBorder from "@Custom/SelectBorder/SelectBorder";
-import Select from "@Custom/Select/Select";
+// import Select from "@Custom/Select/Select";
 import { useStrategyHook } from "@hooks";
 
-import { ConfigProvider, Tour } from "antd";
+import { ConfigProvider, Tour, Select } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
 export default function Strategy() {
   const [number, setNumber] = useState("");
   const [state, setState] = useState("");
   const [editorState, setEditorState] = useState("");
-
+  console.log(state)
   const [postId, setPostId] = useState(null);
 
   const [openModal, setOpenModal] = useState(false);
@@ -228,7 +228,7 @@ export default function Strategy() {
           refCreate={refCreate}
           refUpdate={refUpdate}
         >
-          <SelectBorder
+          {/* <SelectBorder
             refSelectBorder={refSelectBorder}
             value={number}
             onChange={handleNumberOnChange}
@@ -237,14 +237,32 @@ export default function Strategy() {
             arrayItem={"strategyNumber"}
             prefix={"Стратегия №"}
             styleSelected={currentStrategyState}
-          ></SelectBorder>
+          ></SelectBorder> */}
+
+          <Select
+            data-tour='refSelectBorder'
+            placeholder="Выберите стратегию"
+            value={number}
+            onChange={(e) => setNumber(e)}
+            style={{ width: '230px' }}
+          >
+            {activeAndDraftStrategies.concat(archiveStrategies).map((item, index) => (
+              <Select.Option
+                value={item.id}
+                style={{ color: item.state === 'Активный' ? '#005475' : item.state === 'Завершено' ? 'grey' : 'none' }}
+              >
+                Стратегия № {item.strategyNumber}
+              </Select.Option>
+            ))}
+          </Select>
+
           {number && (
             <Select
               refSelect={refSelect}
               name={"Состояние"}
               value={state}
-              onChange={setState}
-              array={filteredArrayState}
+              onChange={(e) => setState(e)}
+              options={filteredArrayState}
               arrayItem={"value"}
               disabledPole={currentStrategy.state === "Завершено"}
             ></Select>
@@ -300,7 +318,7 @@ export default function Strategy() {
                             errorUpdateStrategyMutation?.data?.errors?.[0]
                               ?.errors?.[0]
                               ? errorUpdateStrategyMutation.data.errors[0]
-                                  .errors[0]
+                                .errors[0]
                               : errorUpdateStrategyMutation?.data?.message
                           }
                         ></HandlerMutation>
@@ -320,7 +338,7 @@ export default function Strategy() {
                             errorPostStrategyMutation?.data?.errors?.[0]
                               ?.errors?.[0]
                               ? errorPostStrategyMutation.data.errors[0]
-                                  .errors[0]
+                                .errors[0]
                               : errorPostStrategyMutation?.data?.message
                           }
                         ></HandlerMutation>
