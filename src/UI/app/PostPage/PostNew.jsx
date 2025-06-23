@@ -227,6 +227,11 @@ export default function PostNew() {
             ) : (
               <>
                 <div className={classes.productTeaxtaera}>
+                  <div className={classes.backgroundBorder}>
+                    <div className={classes.productHeader}>
+                      Продукт поста *
+                    </div>
+                  </div>
                   <textarea
                     className={classes.Teaxtaera}
                     placeholder="описание продукта поста"
@@ -238,6 +243,11 @@ export default function PostNew() {
                 </div>
 
                 <div className={classes.destinyTeaxtaera}>
+                  <div className={classes.backgroundBorder}>
+                    <div className={classes.destinyHeader}>
+                      Предназначение поста *
+                    </div>
+                  </div>
                   <textarea
                     className={classes.Teaxtaera}
                     placeholder="описнаие предназначения поста"
