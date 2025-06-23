@@ -8,8 +8,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
-import { useGoalHook } from "@hooks";
-
+import { useGoalHook, usePolicyHook } from "@hooks";
+import {transformToString, } from "@helpers/helpers"
 import { ConfigProvider, Tour, Button } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
@@ -20,6 +20,8 @@ export default function Goal() {
   const ref2 = useRef(null);
   const ref3 = useRef(null);
   const refUpdate = useRef(null);
+  const [pressedIndex, setPressedIndex] = useState(null);
+
 
   const [open, setOpen] = useState(false);
 
@@ -70,6 +72,50 @@ export default function Goal() {
     ErrorPostGoalMutation,
     localIsResponsePostGoalMutation,
   } = useGoalHook();
+
+  const {
+    postPolicy,
+    isLoadingPostPoliciesMutation,
+    isSuccessPostPoliciesMutation,
+    isErrorPostPoliciesMutation,
+    ErrorPostPoliciesMutation,
+    localIsResponsePostPoliciesMutation,
+  } = usePolicyHook({
+    organizationId: reduxSelectedOrganizationId,
+  })
+
+  const createDirective = async () => {
+    try {
+      const date = new Date();
+      const day = date.getDate(); // День месяца (1-31)
+      const month = date.getMonth() + 1; // Месяц (0-11, поэтому +1)
+      const year = date.getFullYear(); // Год (4 цифры)
+      const formattedDate = `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;      
+      
+      await updateGoal({
+        _id: currentGoal.id,
+        content: editorState,
+      }).unwrap();
+      
+      const result = await postPolicy({
+        policyName: `Цели Компании ${formattedDate}`,   //${formattedDate(date)
+        organizationId: reduxSelectedOrganizationId,
+        content: transformToString(editorState)
+      }).unwrap();
+  
+      console.warn(result)
+    } catch (error) {
+      console.error("Ошибка:", error);
+    }
+  };
+
+  const shareFunctionList = [
+    {
+      title: 'Создать директиву',
+      func: createDirective
+    }
+  ]
+
 
   const saveGoal = async () => {
     await postGoal({
@@ -148,12 +194,16 @@ export default function Goal() {
     };
   }, []);
 
+
+  console.log(editorState)
   return (
     <div className={classes.dialog}>
       <Headers name={"цели"} funcActiveHint={() => setOpen(true)}>
         <BottomHeaders
+          // share={}
           update={saveUpdateGoal}
           refUpdate={refUpdate}
+          shareFunctionList={shareFunctionList}
         ></BottomHeaders>
       </Headers>
 
@@ -193,9 +243,13 @@ export default function Goal() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             className={classes.editorContainer}
+                          // style={{'height':'150px'}}
                           >
                             <div
                               className={classes.dragHandle}
+                              onMouseDown={() => setPressedIndex(index)}
+                              onMouseUp={() => setPressedIndex(null)}
+                              onMouseLeave={() => setPressedIndex(null)}
                             >
                               <img
                                 {...provided.dragHandleProps}
@@ -206,15 +260,23 @@ export default function Goal() {
                               />
                             </div>
 
-                            <TextArea
-                              key={index}
-                              value={item}
-                              onChange={(newState) => {
-                                const updatedState = [...editorState];
-                                updatedState[index] = newState;
-                                setEditorState(updatedState);
+                            <div
+                              style={{
+                                padding: '20px',
+                                height: pressedIndex === index ? '100px' : 'auto',
+                                transition: 'height 3.5s ease',
                               }}
-                            ></TextArea>
+                            >
+                              <TextArea
+                                key={index}
+                                value={item}
+                                onChange={(newState) => {
+                                  const updatedState = [...editorState];
+                                  updatedState[index] = newState;
+                                  setEditorState(updatedState);
+                                }}
+                              ></TextArea>
+                            </div>
 
                             <img
                               ref={ref2}

@@ -39,6 +39,8 @@
     /* overflow-y: auto; */
     margin-bottom: 3px;
 
+    cursor: pointer;
+
     :hover {
         background-color: var(--primary-light);
 

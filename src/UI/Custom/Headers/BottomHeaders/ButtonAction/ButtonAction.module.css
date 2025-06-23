@@ -5,14 +5,47 @@
     margin-left: auto;
 }
 
-.button {
-    transition: all 0.1s ease;
+.shareIconContainer {
+    position: relative;
+}
 
-    &:hover {
-        transform: scale(1.1);
-    }
+.menuList {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 200px;
+    max-width: 300px;
+    background-color: white;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
-    &:active {
-        transform: scale(0.95);
-    }
+    /* Начальное состояние */
+    transform: scale(0.95);
+    opacity: 0;
+    transform-origin: top right;
+    transition: all 0.3s ease;
+    visibility: hidden;
+    margin-top: 5px;
+}
+
+.menuList.open {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.menuList li {
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    list-style: none;
+}
+
+.menuList li:hover {
+    background-color: var(--primary-light);
+    font-weight: 500;
+    transform: scale(1.05);
 }

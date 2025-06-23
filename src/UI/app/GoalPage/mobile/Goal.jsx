@@ -13,6 +13,8 @@ import { ButtonContainer } from "@Custom/CustomButtomContainer/ButtonContainer";
 function MobileGoal(props) {
   const [editorState, setEditorState] = useState([]);
   const [index, setIndex] = useState();
+  const [pressedIndex, setPressedIndex] = useState(null);
+
 
   const {
     currentGoal,
@@ -110,6 +112,8 @@ function MobileGoal(props) {
     setEditorState([...(currentGoal.content || [])]);
   }, [currentGoal]);
 
+
+  console.log(pressedIndex)
   return (
     <>
       <div className={classes.wrapper}>
@@ -141,22 +145,37 @@ function MobileGoal(props) {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                           >
-                            <CustomtextArea
-                              content={item}
-                              setContent={setContent}
-                            ></CustomtextArea>
+                            <div
+                              style={{
+                                height: pressedIndex === index ? '100px' : 'auto',
+                                transition: 'height 3.5s ease',
+                              }}
+                            >
+                              <CustomtextArea
+                                content={item}
+                                setContent={setContent}
+                              ></CustomtextArea>
+                            </div>
                             <img
                               src={deleteImage}
                               alt="deleteImage"
                               className={classes.deleteIcon}
                               onClick={() => deleteEditor(index)}
                             />
-                            <img
-                              src={dragIcon}
-                              alt="dragImage"
-                              className={classes.dragIcon}
-                              {...provided.dragHandleProps}
-                            />
+                            <div
+                              onMouseDown={() => setPressedIndex(index)}
+                              onMouseUp={() => setPressedIndex(null)}
+                              onMouseLeave={() => setPressedIndex(null)}
+                              onTouchStart={() => setPressedIndex(index)}
+                              onTouchEnd={() => setPressedIndex(null)}
+                            >
+                              <img
+                                src={dragIcon}
+                                alt="dragImage"
+                                className={classes.dragIcon}
+                                {...provided.dragHandleProps}
+                              />
+                            </div>
                           </div>
                         )}
                       </Draggable>

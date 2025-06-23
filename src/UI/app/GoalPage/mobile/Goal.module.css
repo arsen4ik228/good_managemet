@@ -30,21 +30,24 @@
 
     position: relative;
 
-    height: 45vh;
-
+    /* height: 45vh; */
+    overflow: hidden;
+    
+    padding-top: 5px;
     margin-bottom: 20px;
+    /* border: 1px solid red; */
 }
 
 
 .deleteIcon {
     position: absolute;
-    top: -17px;
+    top: -10px;
     right: 0px;
 }
 
 .dragIcon{
     position: absolute;
-    top: -11px;
+    top: -8px;
     left: 13px;
 }
 

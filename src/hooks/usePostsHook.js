@@ -117,7 +117,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
 
   const { data: userPosts } = useGetPostsUserQuery()
 
-  const { data: allChats, refetch: refetchAllChats} = useGetAllChatsQuery()
+  const { data: allChats, refetch: refetchAllChats} = useGetAllChatsQuery({organizationId: reduxSelectedOrganizationId})
 
   const [
     updatePost,

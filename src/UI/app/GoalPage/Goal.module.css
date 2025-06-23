@@ -279,14 +279,22 @@
     /* Это позволит дочернему элементу быть позиционированным относительно этого контейнера */
     margin-bottom: 16px;
     /* Расстояние между редакторами */
+    overflow: hidden;
+}
+
+.dragHandle{
+    /* border: 1px solid red; */
+    /* width: 90%; */
 }
 
 .deleteIcon {
+    /* display: block;
+    border: #3A3A3A 1px solid; */
     position: absolute;
     /* Позиционируем элемент абсолютно */
-    top: -10px;
+    top: -5px;
     /* Расстояние от верхней части контейнера */
-    right: -30px;
+    right: -5px;
     /* Расстояние от правой части контейнера */
     cursor: pointer;
     /* Изменяем курсор при наведении на иконку */
@@ -302,6 +310,11 @@
 }
 
 .drag {
+    position: absolute;
+    /* Позиционируем элемент абсолютно */
+    top: -3px;
+    /* Расстояние от верхней части контейнера */
+    left: 17px;
     transition: all 0.1s ease;
     &:hover {
         transform: scale(1.1);
