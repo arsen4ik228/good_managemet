@@ -50,7 +50,6 @@ export default function InputTextContainer({
   const [openFilesModal, setOpenFilesModal] = useState(false);
   const [defaultPost, setDefaultPost] = useState(undefined)
   const [selectedValue, setSelectedValue] = useState(null);
-
   // Инициализация дефолтного значения
   useEffect(() => {
     if (senderPostName) {

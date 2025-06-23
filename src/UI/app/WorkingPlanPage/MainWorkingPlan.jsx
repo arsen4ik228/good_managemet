@@ -65,11 +65,6 @@ export default function MainWorkingPlan() {
 
     } = useTargetsHook()
 
-    const logoLoader = () => (
-        <div className={classes.loaderContainer}>
-            <span className={classes.loader}></span>
-        </div>
-    )
 
     return (
         <div className={classes.dialog}>
