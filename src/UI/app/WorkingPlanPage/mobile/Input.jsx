@@ -129,7 +129,6 @@ const Input = ({ userPosts }) => {
             setSelectedPostOrganizationId(userPosts[0].organization);
         }
     }, [userPosts]);
-
     useEffect(() => {
         loadDraft('DraftDB', 'drafts', idTextarea, setContentInput);
     }, []);
