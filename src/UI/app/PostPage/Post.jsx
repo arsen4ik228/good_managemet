@@ -268,12 +268,14 @@ export default function Post() {
       updatedData.policyId =
         selectedPolicyID === null ? null : selectedPolicyID;
     }
+    if (currentPost.roleId !== userRole){
+      updatedData.roleId = userRole
+    }
     console.log(JSON.stringify(updatedData));
     // Проверяем, если есть данные для обновления
     if (Object.keys(updatedData).length > 0) {
       await updatePost({
         _id: selectedPostId,
-        roleId: userRole,
         ...updatedData, // отправляем только измененные поля
       })
         .unwrap()
