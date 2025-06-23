@@ -225,8 +225,10 @@ export default function Post() {
       setSelectedPolicyID(selectedPolicyIDInPost);
       setSelectedPolicyName(selectedPolicyNameInPost);
     }
-
-    setUserRole(currentPost.roleId);
+    if (currentPost?.role != null) {
+      setUserRole(currentPost?.role);
+    }
+    console.log(currentPost.role)
   }, [currentPost.id]);
 
   const saveUpdatePost = async () => {
@@ -268,7 +270,7 @@ export default function Post() {
       updatedData.policyId =
         selectedPolicyID === null ? null : selectedPolicyID;
     }
-    if (currentPost.roleId !== userRole){
+    if (currentPost.roleId !== userRole) {
       updatedData.roleId = userRole
     }
     console.log(JSON.stringify(updatedData));
