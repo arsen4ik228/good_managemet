@@ -77,6 +77,8 @@ export default function Chat() {
     setCopyChats([...allChats])
   }, [allChats])
 
+
+  console.warn(allChats)
   return (
 
     <div className={classes.main}>
@@ -120,19 +122,16 @@ export default function Chat() {
           <React.Fragment key={index} >
             <DialogContainer
               postName={item?.postName}
-              userName={item?.userFirstName + ' ' + item?.userLastName}
-              avatarUrl={item?.userAvatar}
-              unseenMessagesCount={
-                (+item?.unseenMessagesCount) +
-                (+item?.watcherUnseenCount) +
-                (+socketMessagesCount.get(item?.id) || 0)
-              }
+              userName={item?.user?.firstName + ' ' + item?.user?.lastName}
+              avatarUrl={item?.user?.avatar_url}
+              unseenMessagesCount={calculateUnseenMessages(item, socketMessagesCount)}
             ></DialogContainer>
           </React.Fragment>
 
         </div>
-      ))}
-    </div>
+      ))
+      }
+    </div >
   );
 }
 
@@ -158,4 +157,16 @@ const getChatsWithTimeOfSocketMessage = (chatsArray, id) => {
   );
   console.warn(sortedChats)
   return sortedChats;
+};
+
+
+
+const calculateUnseenMessages = (item, socketMessagesCount) => {
+  if (!item?.unseenMessagesCount) return null;
+  
+  return (
+    (+item.unseenMessagesCount || 0) +
+    (+item.watcherUnseenCount || 0) +
+    (+(socketMessagesCount.get(item.id)) || 0)
+  );
 };

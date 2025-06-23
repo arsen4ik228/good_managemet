@@ -16,11 +16,13 @@ export const DialogContainer = ({ postName, userName, avatarUrl, unseenMessagesC
                         <div className={classes.postName}>{postName.toUpperCase()}</div>
                         <div className={classes.userName}>{userName}</div>
                     </div>
-                    <div className={classes.bage}>
-                        <div>
-                            <span>{unseenMessagesCount}</span>
+                    {unseenMessagesCount && (
+                        <div className={classes.bage}>
+                            <div>
+                                <span>{unseenMessagesCount}</span>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 
