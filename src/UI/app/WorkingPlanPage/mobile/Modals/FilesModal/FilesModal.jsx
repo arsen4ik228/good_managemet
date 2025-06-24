@@ -7,6 +7,9 @@ import { baseUrl } from "@helpers/constants";
 import { notEmpty } from "@helpers/helpers";
 import { isMobile } from "react-device-detect";
 import DesktopLayout from "./desktopLayout/DesktopLayout";
+import {
+  message,
+} from 'antd';
 
 export default function FilesModal({
   openModal,
@@ -25,6 +28,9 @@ export default function FilesModal({
   const [postFiles] = usePostFilesMutation();
   const [deleteFile, setDeleteFile] = useState([]);
   const fileInputRef = useRef(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
 
   const { activeDirectives, activeInstructions } = usePolicyHook({
     organizationId: postOrganizationId
@@ -38,12 +44,8 @@ export default function FilesModal({
   };
 
   const handleUpload = async () => {
-    if (notEmpty(deleteFile)) setUnpinFiles(deleteFile);
-
-    if (selectedFiles.length === 0 && deleteFile.length === 0) {
-      alert("Нет изменений для сохранения.");
-      return;
-    }
+    setIsUploading(true);
+    setUploadProgress(0);
 
     try {
       if (selectedFiles.length > 0) {
@@ -51,17 +53,30 @@ export default function FilesModal({
         selectedFiles.forEach((file) => {
           formData.append("files", file);
         });
-        
-        const response = await postFiles({ formData }).unwrap();
-        setFiles(prev => [...prev, ...response]);
+
+        const response = await postFiles({
+          formData,
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+          }
+        }).unwrap();
+
+        setFiles(prev => [...(prev || []), ...response]);
+
       }
 
       setSelectedFiles([]);
       setOpenModal(false);
-      alert("Изменения успешно сохранены!");
+      message.success("Изменения успешно сохранены!");
     } catch (error) {
-      console.error("Ошибка:", error);
-      alert("Произошла ошибка при сохранении.");
+      message.error(`Произошла ошибка при сохранении: ${error.data.message}`);
+      console.error(error.data);
+    } finally {
+      setIsUploading(false);
+
     }
   };
 
@@ -78,11 +93,13 @@ export default function FilesModal({
         fileInputRef={fileInputRef}
         handleFileChange={handleFileChange}
         selectedFiles={selectedFiles}
-        setSelectedFiles={setSelectedFiles} // Добавлено!
+        setSelectedFiles={setSelectedFiles}
         deleteFile={deleteFile}
         setDeleteFile={setDeleteFile}
         setContentInput={setContentInput}
         setContentInputPolicyId={setContentInputPolicyId}
+        isUploading={isUploading} // статус загрузки можно юзать в некст 
+        uploadProgress={uploadProgress} // статус загрузки можно юзать в некст 
       />
     </>
   );

@@ -103,20 +103,17 @@
     transform: translateY(5px);
 }
 
-/* Стили для контейнера выбранных файлов */
 .selectedFiles {
     margin-top: 16px;
     width: 100%;
     max-height: 200px;
     overflow-y: auto;
-    /* Добавляем прокрутку, если файлов слишком много */
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 8px;
     background-color: #f9f9f9;
 }
 
-/* Стили для каждого элемента файла */
 .fileItem {
     display: flex;
     justify-content: space-between;
@@ -130,30 +127,22 @@
 
 .imagePreview {
     max-width: 100px;
-    /* Максимальная ширина превью */
     max-height: 100px;
-    /* Максимальная высота превью */
     border-radius: 4px;
-    /* Скругление углов */
     object-fit: cover;
-    /* Сохраняет пропорции изображения */
     margin-right: 8px;
-    /* Отступ от текста или кнопки */
 }
 
-/* Стили для текста с именем файла */
 .fileItem span {
     font-size: 14px;
     color: #333;
     flex-grow: 1;
-    /* Чтобы текст занимал все доступное пространство */
     margin-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Стили для кнопки удаления */
 .fileItem button {
     background-color: #ff4d4f;
     color: white;
@@ -165,12 +154,10 @@
     transition: background-color 0.3s ease;
 }
 
-/* Эффект при наведении на кнопку удаления */
 .fileItem button:hover {
     background-color: #ff7875;
 }
 
-/* Эффект при нажатии на кнопку удаления */
 .fileItem button:active {
     background-color: #d9363e;
 }
@@ -185,7 +172,5 @@
 }
 
 .notSelectOption {
-    font-size: 18px !important;
-    font-weight: 600 !important;
     color: black !important;
 }

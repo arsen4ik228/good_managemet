@@ -77,6 +77,9 @@ const Input = ({ userPosts }) => {
             .catch((error) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2));
             });
+
+            setFiles([]);
+            setUnpinFiles([]);
     }
 
     const createOrder = async () => {

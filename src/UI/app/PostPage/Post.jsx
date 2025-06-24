@@ -271,7 +271,6 @@ export default function Post() {
         selectedPolicyID === null ? null : selectedPolicyID;
     }
     if (currentPost.roleId !== userRole) {
-
       updatedData.roleId = userRole
     }
     console.log(JSON.stringify(updatedData));
