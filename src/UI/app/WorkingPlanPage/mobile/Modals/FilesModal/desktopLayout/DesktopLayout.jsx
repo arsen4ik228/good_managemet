@@ -221,7 +221,6 @@ export default function DesktopLayout({
                   />
                 )}
               </Card>
-
               <Modal
                 visible={!!previewImage}
                 title={previewTitle}

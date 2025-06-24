@@ -31,6 +31,7 @@ export default function FilesModal({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
+
   const { activeDirectives, activeInstructions } = usePolicyHook({
     organizationId: postOrganizationId
   });
@@ -64,6 +65,7 @@ export default function FilesModal({
         }).unwrap();
 
         setFiles(prev => [...(prev || []), ...response]);
+
       }
 
       setSelectedFiles([]);
@@ -74,6 +76,7 @@ export default function FilesModal({
       console.error(error.data);
     } finally {
       setIsUploading(false);
+
     }
   };
 
