@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classes from "./DesktopLayout.module.css";
 import {
+  Modal, 
   Popconfirm,
   Flex,
   Select,
@@ -54,7 +55,7 @@ export default function DesktopLayout({
       setPreviewTitle(file.name);
     } else if (file.attachmentMimetype?.startsWith('image/')) {
       setPreviewImage(`${baseUrl}${file.attachmentPath}`);
-      setPreviewTitle(file.attachmentName);
+      setPreviewTitle(file.originalName);
     } else {
       message.info('Превью доступно только для изображений');
     }
@@ -89,6 +90,10 @@ export default function DesktopLayout({
     setSelectedFiles(newFiles);
   };
 
+  const handlePolicySelect = (policyId) => {
+    setPolicyId(policyId);
+  }
+
   return (
     <Popconfirm
       placement="topLeft"
@@ -106,17 +111,26 @@ export default function DesktopLayout({
                     showSearch
                     style={{ width: '500px' }}
                     optionFilterProp="label"
+                    onChange={handlePolicySelect}
                   >
                     <Option className={classes.notSelectOption} value="null">Не выбрано</Option>
+
                     <Select.OptGroup className={classes.optGroup} label="Директивы">
-                      {activeDirectives.map((item) => (
-                        <Option key={item.id} value={item.id}>{item.policyName}</Option>
-                      ))}
+                      {activeDirectives
+                        .slice()
+                        .sort((a, b) => a.policyName.localeCompare(b.policyName))
+                        .map((item) => (
+                          <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                        ))}
                     </Select.OptGroup>
+
                     <Select.OptGroup className={classes.optGroup} label="Инструкции">
-                      {activeInstructions.map((item) => (
-                        <Option key={item.id} value={item.id}>{item.policyName}</Option>
-                      ))}
+                      {activeInstructions
+                        .slice() // создаем копию массива чтобы не мутировать оригинал
+                        .sort((a, b) => a.policyName.localeCompare(b.policyName)) // сортировка по алфавиту
+                        .map((item) => (
+                          <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                        ))}
                     </Select.OptGroup>
                   </Select>
                 </Form.Item>
@@ -150,6 +164,13 @@ export default function DesktopLayout({
                     renderItem={(file, index) => (
                       <List.Item
                         actions={[
+                          file.type.startsWith('image/') && (
+                            <Button
+                              icon={<EyeOutlined />}
+                              type="text"
+                              onClick={() => handlePreview({ originFileObj: file, name: file.name })}
+                            />
+                          ),
                           <Button
                             icon={<DeleteOutlined />}
                             type="text"
@@ -193,14 +214,27 @@ export default function DesktopLayout({
                       >
                         <List.Item.Meta
                           avatar={<PaperClipOutlined />}
-                          title={file.attachmentName}
-                          description={file.attachmentMimetype}
+                          title={file.originalName}
                         />
                       </List.Item>
                     )}
                   />
                 )}
               </Card>
+
+              <Modal
+                visible={!!previewImage}
+                title={previewTitle}
+                footer={null}
+                onCancel={() => setPreviewImage('')}
+                width="80%"
+              >
+                <Image
+                  alt={previewTitle}
+                  style={{ width: '100%' }}
+                  src={previewImage}
+                />
+              </Modal>
             </Flex>
           </div>
         </Flex>
