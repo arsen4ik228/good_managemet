@@ -24,18 +24,18 @@ export default function Panel() {
         body: JSON.stringify({ accessToken: localStorage.getItem('accessToken') }),
         credentials: "include",
       });
-  
+
       if (!response.ok) {
         throw new Error('Logout failed');
       }
-  
+
       // Очистка клиентских данных (пример)
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      
+
       // Перенаправление на страницу входа
-      window.location.href = '/'; 
-  
+      window.location.href = '/';
+
     } catch (error) {
       console.error('Logout error:', error);
       // Можно добавить уведомление пользователю
@@ -45,6 +45,7 @@ export default function Panel() {
   return (
     <div className={classes.block}>
       <Avatar
+        className={classes.avatar}
         icon={!userInfo?.avatar_url ? <UserOutlined /> : undefined}
         src={baseUrl + userInfo?.avatar_url}
         onClick={userView}

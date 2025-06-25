@@ -20,9 +20,16 @@ import { ModalSelectedStatistic } from "@Custom/modalSelectedStatistic/ModalSele
 import { usePostsHook } from "@hooks";
 import { useStatisticsHook } from "../../../hooks/useStatisticsHook";
 import RoleContainer from "./RoleContainer";
+import avatar from '@Custom/icon/icon _ GM.svg'
+import { baseUrl } from "@helpers/constants.js"; // Импорт базового URL
 
-import { ConfigProvider, Tour } from "antd";
+import { ConfigProvider, Tour, Select as SelectAnt, Input as InputAnt, Tooltip, Avatar } from "antd";
 import ruRU from "antd/locale/ru_RU";
+import { values } from "lodash";
+
+
+const { Option } = Select;
+
 
 export default function Post() {
   const navigate = useNavigate();
@@ -73,6 +80,9 @@ export default function Post() {
   const refUpdate = useRef(null);
 
   const [open, setOpen] = useState(false);
+
+  const [inputValue, setInputValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
 
   const steps = [
     {
@@ -226,9 +236,8 @@ export default function Post() {
       setSelectedPolicyName(selectedPolicyNameInPost);
     }
     if (currentPost?.role != null) {
-      setUserRole(currentPost?.role);
+      setUserRole(currentPost?.role?.id);
     }
-    console.log(currentPost.role)
   }, [currentPost.id]);
 
   const saveUpdatePost = async () => {
@@ -401,6 +410,19 @@ export default function Post() {
       });
   };
 
+
+  const handleSearch = (value) => {
+    setInputValue(value);
+  };
+
+  const handleBlur = () => {
+    if (inputValue && !allPosts.some(post => post.postName === inputValue)) {
+      // Если введено новое значение, которого нет в options
+      setPostName(inputValue);
+      setSelectedValue(inputValue);
+    }
+  };
+
   return (
     <div className={classes.dialog}>
       <Headers name={"посты"} funcActiveHint={() => setOpen(true)}>
@@ -410,52 +432,123 @@ export default function Post() {
           refCreate={refCreate}
           refUpdate={refUpdate}
         >
-          <Input
-            refInput={refPostName}
-            name={"Название поста"}
-            value={postName}
-            onChange={setPostName}
-          >
-            <Lupa
-              refLupa={refLupa}
-              setIsOpenSearch={methodForLupa}
-              isOpenSearch={isOpenSearch}
-              select={selectPost}
-              array={allPosts}
-              arrayItem={"postName"}
-            ></Lupa>
-          </Input>
+          <div className={classes.rowContainer}>
+            {/* Название поста */}
+            <div className={classes.item} ref={refPostName}>
+              <div className={classes.itemName}>
+                <span>Название поста</span>
+              </div>
+              <SelectAnt
+                className={classes.selectAnt}
+                loading={isLoadingGetPosts}
+                showSearch
+                onSearch={handleSearch}
+                onBlur={handleBlur}
+                placeholder="Выберите пост"
+                optionFilterProp="label"
+                value={selectedValue || postName}
+                onChange={(option) => {
+                  setPostName(option);
+                  selectPost(option);
+                  setInputValue(undefined)
+                  setSelectedValue(option)
+                }}
+                options={allPosts.map((post) => ({
+                  label: post.postName,
+                  value: post.id,
+                }))}
+              />
+            </div>
 
-          {currentPost.id && (
-            <>
-              <Input
-                refInput={refDivisionName}
-                name={"Название подразделения"}
-                value={divisionName}
-                onChange={setDivisionName}
-                disabledPole={disabledDivisionName}
-              ></Input>
-              <Select
-                refSelect={refParentPostId}
-                name={"Руководитель"}
-                value={parentPostId}
-                onChange={setParentPostId}
-                array={posts}
-                arrayItem={"postName"}
-              >
-                <option value=""> — </option>
-              </Select>
-              <Select
-                refSelect={refWorker}
-                name={"Сотрудник"}
-                value={worker}
-                onChange={setWorker}
-                array={workers}
-                arrayItem={"lastName"}
-                arrayItemTwo={"firstName"}
-              ></Select>
-            </>
-          )}
+            {currentPost.id && (
+              <>
+                <div className={classes.item} ref={refDivisionName}>
+                  <div className={classes.itemName}>
+                    <span>Название подразделения</span>
+                  </div>
+                  <Tooltip
+                    title={divisionName}
+                    placement="topLeft"
+                    mouseEnterDelay={0.5}
+                    className={classes.tooltipOverlay}
+                    trigger={['hover', 'focus']}
+                  >
+                    <InputAnt
+                      className={classes.inputAnt}
+                      value={divisionName}
+                      onChange={(e) => setDivisionName(e.target.value)}
+                      disabled={disabledDivisionName}
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}
+                    />
+                  </Tooltip>
+                </div>
+                <div className={classes.item} ref={refParentPostId}>
+                  <div className={classes.itemName}>
+                    <span>
+                      Руководитель
+                    </span>
+                  </div>
+                  <SelectAnt
+                    style={{ width: '100%' }}
+                    value={parentPostId || undefined} // Antd Select не принимает пустую строку
+                    onChange={setParentPostId}
+                    placeholder="Выберите руководителя"
+                    optionFilterProp="label"
+                    options={[{ label: '-', value: null }, ...posts.map((post) => ({
+                      label: post.postName,
+                      value: post.id,
+                    })).sort((a, b) => a.label.localeCompare(b.label))]}
+                  >
+                  </SelectAnt>
+                </div>
+                <div className={classes.item} ref={refWorker}>
+                  <div className={classes.itemName}>
+                    <span>
+                      Сотрудник
+                    </span>
+                  </div>
+                  <SelectAnt
+                    ref={refWorker}
+                    style={{ width: '100%' }}
+                    value={worker}
+                    onChange={setWorker}
+                    placeholder="Выберите сотрудника"
+                    showSearch
+                    optionFilterProp="label"
+                    dropdownStyle={{
+                      minWidth: '300px' // Или минимальная ширина
+                    }}
+                    optionRender={(option) => (
+                      <div className={classes.optionItem}>
+                        <Avatar
+                          src={option.data.avatar_url ? `${baseUrl}${option.data.avatar_url}` : avatar}
+                          size="small"
+                          className={classes.avatar}
+                          alt='avatar'
+                        >
+                          {option.data.avatar_url}
+                        </Avatar>
+                        <span>{option.label}</span>
+                      </div>
+                    )}
+                    options={workers.map((worker) => ({
+                      label: `${worker.lastName} ${worker.firstName}`,
+                      value: worker.id,
+                      avatar_url: worker.avatar_url
+                    }))
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                  }
+                  >
+                  </SelectAnt>
+                </div>
+              </>
+            )}
+          </div>
+
         </BottomHeaders>
       </Headers>
 
@@ -488,7 +581,7 @@ export default function Post() {
                         <div className={classes.productTeaxtaera}>
                           <div className={classes.backgroundBorder}>
                             <div className={classes.productHeader}>
-                              Продукт поста *
+                              Продукт поста
                             </div>
                           </div>
                           <textarea
@@ -509,7 +602,7 @@ export default function Post() {
                         <div className={classes.destinyTeaxtaera}>
                           <div className={classes.backgroundBorder}>
                             <div className={classes.destinyHeader}>
-                              Предназначение поста *
+                              Предназначение поста
                             </div>
                           </div>
 
@@ -528,23 +621,30 @@ export default function Post() {
                           />
                         </div>
 
-                        <div
-                          className={classes.post}
-                          onClick={() => setOpenModalPolicy(true)}
+                        <Tooltip
+                          title={selectedPolicyName || "Прикрепить политику"}
+                          placement="topLeft"
+                          mouseEnterDelay={0.3}
+                          overlayClassName={classes.customTooltip}
                         >
-                          <img src={greyPolicy} alt="greyPolicy" />
-                          <div className={classes.postNested}>
-                            {selectedPolicyName ? (
-                              <span className={classes.nameButton}>
-                                Политика: {selectedPolicyName}
-                              </span>
-                            ) : (
-                              <span className={classes.nameButton}>
-                                Прикрепить политику
-                              </span>
-                            )}
+                          <div
+                            className={classes.post}
+                            onClick={() => setOpenModalPolicy(true)}
+                          >
+                            <img src={greyPolicy} alt="greyPolicy" />
+                            <div className={classes.postNested}>
+                              {selectedPolicyName ? (
+                                <span className={classes.nameButton}>
+                                  Политика: {selectedPolicyName}
+                                </span>
+                              ) : (
+                                <span className={classes.nameButton}>
+                                  Прикрепить политику
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        </Tooltip>
 
                         <div
                           className={classes.post}
@@ -583,7 +683,7 @@ export default function Post() {
 
                         {openModalPolicy && (
                           <ModalSelectRadio
-                            nameTable={"Название политики"}
+                            nameTable={"Выбор политики"}
                             handleSearchValue={inputSearchModal}
                             handleSearchOnChange={handleInputChangeModalSearch}
                             handleRadioChange={handleRadioChange}
