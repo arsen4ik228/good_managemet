@@ -3,6 +3,7 @@ import "@mdxeditor/editor/style.css";
 import {
   MDXEditor,
   toolbarPlugin,
+  headingsPlugin,
   UndoRedo,
   BoldItalicUnderlineToggles,
   ListsToggle,
@@ -14,6 +15,7 @@ import {
   CreateLink,
   linkDialogPlugin,
   linkPlugin,
+  BlockTypeSelect,
   Separator,
 } from "@mdxeditor/editor";
 import i18n from "./i18n";
@@ -80,6 +82,7 @@ export default function Mdxeditor({
           readOnly={readOnly}
           onChange={updateEditorContent}
           plugins={[
+            headingsPlugin(),
             linkPlugin(),
             linkDialogPlugin(),
             imagePlugin({ imageUploadHandler }),
@@ -89,7 +92,7 @@ export default function Mdxeditor({
               toolbarClassName: classes["toolbar-custom"],
               toolbarContents: () => (
                 <>
-                  <div style={{ marginRight: "20px" }}>
+                   <div style={{ marginRight: "20px" }}>
                     <UndoRedo />
                   </div>
                   <div style={{ marginRight: "20px" }}>
@@ -102,7 +105,8 @@ export default function Mdxeditor({
                   <Separator />
                   <InsertTable />
                   <Separator />
-                  <CreateLink />
+                  <CreateLink /> 
+                  <BlockTypeSelect />
                 </>
               ),
             }),
@@ -112,3 +116,18 @@ export default function Mdxeditor({
     </div>
   );
 }
+
+/* <div style={{ marginRight: "20px" }}>
+  <UndoRedo />
+</div>
+<div style={{ marginRight: "20px" }}>
+  <BoldItalicUnderlineToggles />
+</div>
+<div style={{ marginRight: "20px" }}>
+  <ListsToggle />
+</div>
+<InsertImage />
+<Separator />
+<InsertTable />
+<Separator />
+<CreateLink /> */
