@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import classes from './OrderModal.module.css'
 import ModalContainer from '@Custom/ModalContainer/ModalContainer'
 import { usePostsHook } from '@hooks'
+import { Modal, Input, Radio, Space, Button, List } from 'antd';
 
-export default function OrderModal({ setModalOpen, setTheme, selectedPost, setReciverPost, buttonFunc }) {
+export default function OrderModal({ setModalOpen, setTheme, selectedPost, convertTheme, setReciverPost, buttonFunc }) {
 
     const {
         postsForWorkingPlan,
@@ -20,33 +21,67 @@ export default function OrderModal({ setModalOpen, setTheme, selectedPost, setRe
         setSelectedRecieverPost(value)
         setReciverPost(value)
     }
-    console.log(selectedPost, postsForWorkingPlan)
     return (
-        <ModalContainer
-            buttonText={'Отправить'}
-            setOpenModal={setModalOpen}
-            clickFunction={buttonClick}
+        <Modal
+            title={
+                <div className={classes.titleContainer}>
+                    <span>Создание приказа</span>
+                </div>}
+            open={true}
+            onCancel={() => setModalOpen(false)}
+            style={{
+                padding: '16px 24px'
+            }}
+            footer={[
+                <Button
+                    className={classes.cancelButton} key="back" onClick={() => setModalOpen(false)}>
+                    Отмена
+                </Button>,
+                <Button
+                    key="submit"
+                    type="primary"
+                    className={classes.saveButton}
+                    onClick={buttonClick}
+                    disabled={!convertTheme || !selectedReceiverPost}
+                >
+                    Отправить
+                </Button>
+            ]}
+            width={700}
+   bodyStyle={{height: 650}}
         >
-            <div className={classes.content}>
-                <input
-                    type="text"
-                    placeholder='Тема приказа'
-                    onChange={(e) => setTheme(e.target.value)}
-                />
-                <div className={classes.selectPostContainer}>
-                    <div className={classes.left}>
-                        Пост:
-                    </div>
-                    <div className={classes.right}>
-                        {postsForWorkingPlan?.map((item, index) => (
-                            <div key={index} onClick={() => selectPost(item.id)}>
-                                <input type="radio" checked={item.id === selectedReceiverPost} />
-                                <span>{item.postName}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+            <div className={`${classes.validationMessage} ${!convertTheme ? classes.show : ''}`}>
+                <span> Укажите тему приказа</span>
             </div>
-        </ModalContainer>
-    )
+            <Input
+                placeholder="Тема приказа"
+                onChange={(e) => setTheme(e.target.value)}
+                size="large"
+                style={{ marginBottom: 24 }}
+                rules={[{ required: true, message: 'Введите описание задачи' }]}
+            />
+
+            <div className={classes.sectionTitle}>Выберите пост:</div>
+            <List
+                bordered
+                className={classes.list}
+                dataSource={postsForWorkingPlan}
+                renderItem={(item) => (
+                    <List.Item
+                        style={{ marginBottom: '5px', marginTop: '5px' }}
+                        className={`${classes.listItem} ${selectedReceiverPost === item.id ? classes.selectedItem : ''
+                            }`}
+                        onClick={() => {
+                            console.log('Selected post:', item.id);
+                            selectPost(item.id);
+                        }}
+                    >
+                        <div className={classes.itemContent}>
+                            <span>{item.postName}</span>
+                        </div>
+                    </List.Item>
+                )}
+            />
+        </Modal>
+    );
 }

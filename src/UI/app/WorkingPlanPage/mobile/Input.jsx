@@ -4,7 +4,7 @@ import { useTargetsHook, useConvertsHook } from '@hooks';
 import { deleteDraft, loadDraft, saveDraft } from '@helpers/indexedDB';
 import OrderModal from '@Custom/OrderModal/OrderModal';
 import {
-  message,
+    message,
 } from 'antd';
 
 
@@ -86,7 +86,6 @@ const Input = ({ userPosts }) => {
             setUnpinFiles([]);
         } catch (error) {
             message.error(`Произошла ошибка при создании задачи: ${error?.data?.message || ""}`);
-            console.error(error.data);
         } finally {
             setIsUpdating(false);
 
@@ -95,7 +94,9 @@ const Input = ({ userPosts }) => {
 
     const createOrder = async () => {
 
-        if (!contentInput) return
+        if (!contentInput) {
+            message.error(`Вы не заполнили текст для задачи конверта!`);
+        }
 
         let attachmentIds = [];
         if (files) {
@@ -189,6 +190,7 @@ const Input = ({ userPosts }) => {
                     selectedPost={selectedPost}
                     setTheme={setConvertTheme}
                     buttonFunc={createOrder}
+                    convertTheme={convertTheme}
                 />
             )}
         </>

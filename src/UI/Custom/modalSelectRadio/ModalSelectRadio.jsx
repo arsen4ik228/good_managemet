@@ -58,7 +58,7 @@ export function ModalSelectRadio({
         dataSource={dataSource}
         renderItem={(item) => (
           <List.Item
-          style={{marginBottom: '5px', marginTop: '5px'}}
+            style={{ marginBottom: '5px', marginTop: '5px' }}
             className={`${classes.listItem} ${selectedItemID === item.id ? classes.selectedItem : ''
               }`}
             onClick={() => handleRadioChange(item.id, item)}
