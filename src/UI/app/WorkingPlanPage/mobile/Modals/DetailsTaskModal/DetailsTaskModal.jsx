@@ -238,16 +238,22 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                             label="Связанная политика"
                         >
                             <Select placeholder="Выберите политику">
-                                <Option value="null">Не выбрано</Option>
-                                <Select.OptGroup label="Директивы">
-                                    {activeDirectives.map((item) => (
-                                        <Option key={item.id} value={item.id}>{item.policyName}</Option>
-                                    ))}
+                                <Option className={classes.notSelectOption} value="null">Не выбрано</Option>
+                                <Select.OptGroup className={classes.optGroup} label="Директивы">
+                                    {activeDirectives
+                                        .slice()
+                                        .sort((a, b) => a.policyName.localeCompare(b.policyName))
+                                        .map((item) => (
+                                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                                        ))}
                                 </Select.OptGroup>
-                                <Select.OptGroup label="Инструкции">
-                                    {activeInstructions.map((item) => (
-                                        <Option key={item.id} value={item.id}>{item.policyName}</Option>
-                                    ))}
+                                <Select.OptGroup className={classes.optGroup} label="Инструкции">
+                                    {activeInstructions
+                                        .slice()
+                                        .sort((a, b) => a.policyName.localeCompare(b.policyName))
+                                        .map((item) => (
+                                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                                        ))}
                                 </Select.OptGroup>
                             </Select>
                         </Form.Item>
