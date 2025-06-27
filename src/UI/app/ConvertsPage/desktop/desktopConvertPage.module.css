@@ -10,7 +10,7 @@
 
 .main {
     position: relative;
-    flex: 1 0 120px; 
+    flex: 1 0 120px;
     overflow-y: auto;
     background-color: #F0F0F0;
     padding-top: 1%;
@@ -46,13 +46,13 @@
     background-color: white;
     font-size: 14px;
     text-align: center;
-    
+
     /* Эффект "парящего" блока */
     position: relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     transition: all 0.3s ease;
-    
+
     /* Дополнительные улучшения */
     z-index: 1;
     /* margin: 5px 0; */
@@ -69,21 +69,32 @@
     left: 50%;
     top: 0;
     transform: translate(-50%, 0);
-
     width: 99%;
-
     display: flex;
     justify-content: center;
-
     padding: 10px 0;
-
     background-color: #F0F0F0;
-
-    font-style: italic;
-    text-decoration: underline;
-    color: #000000A6;
-
-    
-    cursor: pointer;
     z-index: 10;
+    cursor: default;
+    white-space: nowrap;
+}
+
+.archiveButtonSpan {
+    font-weight: 600;
+    color: #005475;
+    transition: transform 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    background-color: #E1F5FE;
+    padding: 4px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }

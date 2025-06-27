@@ -19,7 +19,7 @@ export default function DesktopConvertPage() {
 
 
     const { contactInfo, seenConverts, unseenConverts, archiveConvaerts } = useConvertsHook({ contactId: contactId })
-
+    console.log(contactInfo)
     const steps = [
         {
             title: "Выбор поста",
@@ -48,8 +48,10 @@ export default function DesktopConvertPage() {
                     <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
                 </ConfigProvider>
                 <div className={classes.body}>
-                    <div className={classes.archiveButton} onClick={() => setIsViewArchive(!isViewArchive)}>
-                        {isViewArchive ? 'Скрыть ' : 'Показать'} завершенные задачи
+                    <div key={'un'} className={classes.archiveButton} >
+                        <span className={classes.archiveButtonSpan} onClick={() => setIsViewArchive(!isViewArchive)}>
+                            Показать {isViewArchive ? 'текущие' : 'архивные'} задачи
+                        </span>
                     </div>
                     {isViewArchive ? (
                         <>
