@@ -72,7 +72,7 @@ export default function HandlerQeury({ Loading, Fetching, Error }) {
             status="error"
             title="Ошибка выполнения"
             subTitle={
-              "Вы не выбрали организацию, или это уже наши проблемы тут мы вам помочь уже не можем"
+              "Не выбрана организация!"
             }
             icon={
               <CloseCircleOutlined

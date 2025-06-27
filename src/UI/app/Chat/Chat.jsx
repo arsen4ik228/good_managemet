@@ -23,6 +23,7 @@ export default function Chat() {
   const [isOrganizationsClosed, setOrganizationsClosed] = useState(false);
   const [isSearchClosed, setSearchClosed] = useState(true);
   const [seacrhInput, setSearchInput] = useState('')
+  const [selectedContactId, setSelectedContactId] = useState('');
 
   const eventNames = useMemo(
     () => ["convertCreationEvent", "messageCountEvent"],
@@ -44,13 +45,13 @@ export default function Chat() {
 
   const handleItemClick = (item) => {
     //dispatch(setSelectedItem(item));
-
-    navigate(`/Chat/${item.id}`)
+    setSelectedContactId(item.id);
+    navigate(`/Chat/${item.id}`);
   }
 
-  const filteredItems = useMemo(() => {   
-    if(!notEmpty(copyChats)) return []
-     
+  const filteredItems = useMemo(() => {
+    if (!notEmpty(copyChats)) return []
+
     const filterUsers = copyChats.filter((item) =>
       item.postName.toLowerCase().includes(seacrhInput.toLowerCase()) ||
       item.user?.firstName.toLowerCase().includes(seacrhInput.toLowerCase()) ||
@@ -153,9 +154,11 @@ export default function Chat() {
           <React.Fragment key={index} >
             <DialogContainer
               postName={item?.postName}
-              userName={item?.user?.firstName + ' ' + item?.user?.lastName}
+              userName={item.user ? item?.user?.firstName + ' ' + item?.user?.lastName : ''}
               avatarUrl={item?.user?.avatar_url}
               unseenMessagesCount={calculateUnseenMessages(item, socketMessagesCount)}
+              selectedContactId={selectedContactId}
+              contactId={item.id}
             ></DialogContainer>
           </React.Fragment>
 
