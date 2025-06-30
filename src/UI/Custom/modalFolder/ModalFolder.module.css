@@ -8,11 +8,13 @@
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 2;
+    z-index: 100;
 }
 
 .modalWindow {
     position: relative;
+    margin-left: 64%;
+    transform: translateX(-50%);
     height: 75vh;
     width: 800px;
     max-width: 90vw;
