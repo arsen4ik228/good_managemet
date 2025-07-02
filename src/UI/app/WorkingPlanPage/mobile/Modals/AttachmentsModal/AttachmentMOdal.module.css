@@ -126,3 +126,36 @@
 .fileItem button:active {
     background-color: #d9363e;
 }
+
+.loadButton {
+    background-color: #E1F5FE;
+    color: #005475;
+    font-weight: 600;
+
+    &:hover {
+        background-color: var(--primary-light) !important;
+        color: #005475 !important;
+    }
+
+    &:active {
+        background-color: var(--primary-light) !important;
+        color: #005475 !important;
+    }
+}
+
+.cancelButton {
+    color: #005475;
+    font-weight: 600;
+
+    &:hover {
+        background-color: rgba(192, 192, 192, 0.329) !important;
+        color: #005475 !important;
+        border-color: rgba(0, 0, 0, 0.116) !important;
+    }
+
+    &:active {
+        background-color: rgba(192, 192, 192, 0.329) !important;
+        color: #005475 !important;
+        border-color: rgba(0, 0, 0, 0.116) !important;
+    }
+}
