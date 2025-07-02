@@ -10,6 +10,7 @@ import {
     message,
     Divider,
     Tag,
+    Image,
     Spin,
     Card
 } from 'antd';
@@ -25,7 +26,7 @@ import AttachmentModal from '../AttachmentsModal/AttachmentModal';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { isMobile } from 'react-device-detect';
-
+import { baseUrl } from '@helpers/constants';
 
 
 const { TextArea } = Input;
@@ -40,6 +41,8 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
     const [attachments, setAttachments] = useState([]);
     const [openAttachmentsModal, setOpenAttachmentsModal] = useState(false);
     const [selectedPolicy, setSelectedPolicy] = useState();
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
 
     const isOrder = taskData.type === 'Приказ';
 
@@ -75,6 +78,16 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
             policy: taskData?.policy?.id || null
         });
     }, [taskData, form, userPosts]);
+
+
+    const handlePreview = async (file) => {
+        if (file.attachment?.attachmentMimetype?.startsWith('image/')) {
+            setPreviewImage(`${baseUrl}${file.attachment.attachmentPath}`);
+            setPreviewTitle(file.attachment.originalName);
+        } else {
+            message.info('Превью доступно только для изображений');
+        }
+    };
 
     const handleUpdateTask = async () => {
         try {
@@ -282,7 +295,11 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                             {attachments.length > 0 ? (
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                                     {attachments.map((att) => (
-                                        <Tag key={att.attachment.id} icon={<PaperClipOutlined />}>
+                                        <Tag
+                                            className={classes.attachmentTag}
+                                            key={att.attachment.id} icon={<PaperClipOutlined />}
+                                            onClick={() => handlePreview(att)}
+                                        >
                                             {att.attachment.originalName}
                                         </Tag>
                                     ))}
@@ -304,6 +321,20 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                 setAttachments={setAttachments}
                 isOrder={isOrder}
             />
+
+            <Modal
+                visible={!!previewImage}
+                title={previewTitle}
+                footer={null}
+                onCancel={() => setPreviewImage('')}
+                width="80%"
+            >
+                <Image
+                    alt={previewTitle}
+                    style={{ width: '100%' }}
+                    src={previewImage}
+                />
+            </Modal>
         </>
     );
 }

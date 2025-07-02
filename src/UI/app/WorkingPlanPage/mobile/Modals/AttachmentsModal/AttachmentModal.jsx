@@ -1,31 +1,32 @@
 import React, { useState } from 'react';
-import { 
-  Modal, 
-  Upload, 
-  Button, 
-  List, 
-  Image, 
-  message, 
+import {
+  Modal,
+  Upload,
+  Button,
+  List,
+  Image,
+  message,
   Card,
   Spin
 } from 'antd';
-import { 
-  UploadOutlined, 
-  DeleteOutlined, 
+import {
+  UploadOutlined,
+  DeleteOutlined,
   EyeOutlined,
   PaperClipOutlined
 } from '@ant-design/icons';
 import { usePostFilesMutation } from '@services';
 import { baseUrl } from '@helpers/constants';
+import classes from './AttachmentMOdal.module.css'
 
 const { Dragger } = Upload;
 
-export default function AttachmentModal({ 
-  open, 
-  setOpen, 
-  attachments, 
-  setAttachments, 
-  isOrder 
+export default function AttachmentModal({
+  open,
+  setOpen,
+  attachments,
+  setAttachments,
+  isOrder
 }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewImage, setPreviewImage] = useState('');
@@ -100,11 +101,11 @@ export default function AttachmentModal({
       const preview = await getBase64(file.originFileObj);
       setPreviewImage(preview);
       setPreviewTitle(file.name);
-    } 
+    }
     // Для уже загруженных файлов
     else if (file.attachment?.attachmentMimetype?.startsWith('image/')) {
       setPreviewImage(`${baseUrl}${file.attachment.attachmentPath}`);
-      setPreviewTitle(file.attachment.attachmentOriginalName);
+      setPreviewTitle(file.attachment.originalName);
     } else {
       message.info('Превью доступно только для изображений');
     }
@@ -131,12 +132,16 @@ export default function AttachmentModal({
         open={open}
         onCancel={handleCancel}
         footer={[
-          <Button key="back" onClick={handleCancel}>
+          <Button
+            className={classes.cancelButton}
+            key="back" onClick={handleCancel}
+          >
             Отмена
           </Button>,
-          <Button 
-            key="submit" 
-            type="primary" 
+          <Button
+            className={isOrder || selectedFiles.length === 0 ? '' : classes.loadButton}
+            key="submit"
+            type="primary"
             onClick={handleUpload}
             loading={uploading}
             disabled={isOrder || selectedFiles.length === 0}
@@ -241,7 +246,7 @@ export default function AttachmentModal({
                   >
                     <List.Item.Meta
                       avatar={<PaperClipOutlined />}
-                      title={file.attachment.attachmentOriginalName}
+                      title={file.attachment.originalName}
                       description={file.attachment.attachmentMimetype}
                     />
                   </List.Item>
