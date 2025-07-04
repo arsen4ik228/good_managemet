@@ -1,13 +1,25 @@
 .wrapper {
-    position: relative;
     height: 70px;
+    width: 100%;
     padding: 5px;
     margin: 10px 0;
+
     background-color: white;
     border-radius: 10px;
     max-width: 700px;
-}
 
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    opacity: 1;
+    transition: all 0.2s ease;
+
+    &:hover {
+        margin-top: 8px;
+        margin-bottom: 12px;
+    }
+
+
+
+}
 .unSeenWrapper {
     position: relative;
     /* Родитель должен быть relative */
@@ -50,15 +62,19 @@
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 } */
 
+
 .body {
-    position: relative;
     width: 100%;
+    /* min-height: 50px;
+    max-height: 70px; */
     height: 60px;
+
+
     display: flex;
     justify-content: center;
     align-items: center;
-}
 
+}
 .body::before {
     position: absolute;
     left: 10px;
@@ -90,11 +106,10 @@
 
 .checkboxContainer {
     margin: auto 0;
-}
-
-.checkboxContainer>input {
     width: 15px;
     height: 15px;
+
+    pointer-events: auto;
 }
 
 .titleContainer {
@@ -102,15 +117,17 @@
     display: flex;
     align-items: center;
     flex: 1;
+
+    cursor: pointer;
+
     height: 50px;
+
     padding: 0 10px;
+
     font-weight: 600;
     color: rgb(58, 58, 58);
-    text-overflow: ellipsis;
 
-    >div {
-        cursor: pointer;
-    }
+    text-overflow: ellipsis;
 }
 
 .titleText {
@@ -126,8 +143,14 @@
 
 .dateContainer {
     padding: 20px 0;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s ease, color 0.2s ease;
+
+    >span {
+        display: block;
+    }
 }
 
-.dateContainer>span {
-    display: block;
-}
+
