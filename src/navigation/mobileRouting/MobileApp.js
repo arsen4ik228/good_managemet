@@ -1,5 +1,5 @@
 import "./MobileApp.css";
-import React from "react";
+
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthorizationPage } from "@app";
 import { MobileMain } from "@app";
@@ -16,11 +16,7 @@ import { MainStrategy } from "@app";
 import { MobileStrategy } from "@app";
 import { MobileGoal } from "@app";
 import { MobileObjective } from "@app";
-import { Projects } from "@app";
-import { MainProject } from "@app";
-import { NewProject } from "@app";
-import { Programs } from "@app";
-import { ProjectArchive } from "@app";
+
 import { MainStatistics } from "@app";
 import { Statistics } from "@app";
 import { MobileMainWorkingPlan } from "@app";
@@ -118,11 +114,11 @@ function MobileApp() {
                       element={<ProjectWithProgramm />}
                     />
 
-                    <Route path="Statistics" element={<MainStatistics />} />
+                    {/* <Route path="Statistics" element={<MainStatistics />} />
                     <Route
                       path="Statistics/:statisticId"
                       element={<Statistics />}
-                    />
+                    /> */}
 
                     <Route
                       path="WorkingPlan"

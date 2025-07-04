@@ -41,6 +41,7 @@ export const useStatisticsHook = ({
     isErrorGetStatisticId,
     isFetchingGetStatisticId,
   } = useGetStatisticsIdQuery(
+
     { statisticId },
     {
       selectFromResult: ({ data, isLoading, isError, isFetching }) => ({

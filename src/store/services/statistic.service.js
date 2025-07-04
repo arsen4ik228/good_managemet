@@ -61,13 +61,13 @@ export const statisticsApi = apiSlice.injectEndpoints({
     }),
 
     getStatisticsId: build.query({
-      query: ({ statisticId }) => ({
-        url: `statistics/${statisticId}/statistic`,
+      query: ({ statisticId, datePoint, viewType  }) => ({
+        url: `statistics/${statisticId}/statistic?datePoint=${datePoint}&viewType=${viewType}`,
       }),
       transformResponse: (response) => {
         return {
-          currentStatistic: response || {},
-          statisticDatas: response.statisticDatas || [],
+          currentStatistic: response.statistic || {},
+          statisticData: response.statisticData || [],
         };
       },
       providesTags: (result, err, arg) => [{ type: 'Statistic', id: arg.statisticId }],

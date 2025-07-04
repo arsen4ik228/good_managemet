@@ -4,8 +4,7 @@ import classes from "./SettingsPage.module.css";
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
 
-import { Button, List, FloatButton } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
+import { Button, List } from "antd";
 
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
@@ -156,6 +155,8 @@ export default function SettingsPage() {
         );
         throw error;
       }
+    }else{
+       Data.avatar_url = null;
     }
 
     if (!notEmpty(Data)) return;

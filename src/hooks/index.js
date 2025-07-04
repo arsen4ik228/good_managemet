@@ -28,9 +28,15 @@ export { useCreatePost } from "./Post/useCreatePost";
 export { useGetSinglePost } from "./Post/useGetSinglePost";
 export { useUpdateSinglePost } from "./Post/useUpdateSinglePost";
 export { useGetDataCreatePost } from "./Post/useGetDataCreatePost";
+
 //Организации
 export { useAllOrganizations } from "./Organization/useAllOrganizations";
 export { useGetSingleOrganization } from "./Organization/useGetSingleOrganization";
 export { useUpdateSingleOrganization } from "./Organization/useUpdateSingleOrganization";
 export { useCreateOrganization } from "./Organization/useCreateOrganization";
 
+// Статистика
+export { useAllStatistics } from "./Statistics/useAllStatistics";
+export { useCreateStatistic } from "./Statistics/useCreateStatistic";
+export { useGetSingleStatistic } from "./Statistics/useGetSingleStatistic";
+export { useUpdateSingleStatistic } from "./Statistics/useUpdateSingleStatistic";

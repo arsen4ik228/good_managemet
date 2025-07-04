@@ -203,7 +203,7 @@ export default function Goal() {
 
                             <TextArea
                               key={index}
-                              value={item}
+                              value={item} 
                               onChange={(newState) => {
                                 const updatedState = [...editorState];
                                 updatedState[index] = newState;
