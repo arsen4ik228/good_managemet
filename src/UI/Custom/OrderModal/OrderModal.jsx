@@ -4,7 +4,7 @@ import ModalContainer from '@Custom/ModalContainer/ModalContainer'
 import { usePostsHook } from '@hooks'
 import { Modal, Input, Radio, Space, Button, List } from 'antd';
 
-export default function OrderModal({ setModalOpen, setTheme, selectedPost, convertTheme, setReciverPost, buttonFunc }) {
+export default function OrderModal({ setModalOpen, setTheme, convertTheme, setReciverPost, buttonFunc }) {
 
     const {
         postsForWorkingPlan,

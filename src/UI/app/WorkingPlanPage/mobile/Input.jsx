@@ -82,7 +82,7 @@ const Input = ({ userPosts }) => {
                     console.error("Ошибка:", JSON.stringify(error, null, 2));
                 });
 
-            setFiles([]);
+            setFiles();
             setUnpinFiles([]);
         } catch (error) {
             message.error(`Произошла ошибка при создании задачи: ${error?.data?.message || ""}`);
@@ -145,6 +145,7 @@ const Input = ({ userPosts }) => {
             setSelectedPostOrganizationId(userPosts[0].organization);
         }
     }, [userPosts]);
+
     useEffect(() => {
         loadDraft('DraftDB', 'drafts', idTextarea, setContentInput);
     }, []);
@@ -182,6 +183,7 @@ const Input = ({ userPosts }) => {
                 sendClick={createTargets}
                 shareClick={() => setOpenOrderModal(true)}
                 idTextarea={idTextarea}
+                loadingRequestStatus={isLoadingPostTargetsMutation || isLoadingPostPoliciesMutation}
             />
 
             {openOrderModal && (

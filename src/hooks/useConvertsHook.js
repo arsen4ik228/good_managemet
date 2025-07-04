@@ -52,10 +52,10 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
     const [
         postConvert,
         {
-            isLoading: isLoadingPostPoliciesMutation,
-            isSuccess: isSuccessPostPoliciesMutation,
-            isError: isErrorPostPoliciesMutation,
-            error: ErrorPostPoliciesMutation,
+            isLoading: isLoadingPostConvertMutation,
+            isSuccess: isSuccessPostConvertMutation,
+            isError: isErrorPostConvertMutation,
+            error: ErrorPostConvertMutation,
         }
     ] = usePostConvertMutation()
 
@@ -111,6 +111,10 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         sendMessage,
 
         postConvert,
+        isLoadingPostConvertMutation,
+        isSuccessPostConvertMutation,
+        isErrorPostConvertMutation,
+        ErrorPostConvertMutation,
 
         updateConvert,
 

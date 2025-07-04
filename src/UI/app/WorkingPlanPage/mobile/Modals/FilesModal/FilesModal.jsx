@@ -32,7 +32,7 @@ export default function FilesModal({
   const [isUploading, setIsUploading] = useState(false);
 
 
-  const { activeDirectives, activeInstructions } = usePolicyHook({
+  const { activeDirectives, activeInstructions, disposalsActive } = usePolicyHook({
     organizationId: postOrganizationId
   });
 
@@ -90,6 +90,7 @@ export default function FilesModal({
         handleUpload={handleUpload}
         activeDirectives={activeDirectives}
         activeInstructions={activeInstructions}
+        disposalsActive={disposalsActive}
         fileInputRef={fileInputRef}
         handleFileChange={handleFileChange}
         selectedFiles={selectedFiles}

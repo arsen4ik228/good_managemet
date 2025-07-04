@@ -1,17 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import classes from "./Chat.module.css";
 import iconHeader from "@image/iconHeader.svg";
-import burger from "@image/burger.svg";
 import Section from "./section/Section";
 import { useNavigate } from "react-router-dom";
 import { usePostsHook } from '@hooks'
 import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js";
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
-import { FloatButton } from "antd";
 import dropdown from '../../image/drop-down.svg';
 import search from '../../image/search.svg'
-import arrowBack from "@image/back_white.svg";
 
 export default function Chat() {
   const navigate = useNavigate();

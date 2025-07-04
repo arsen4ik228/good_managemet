@@ -10,14 +10,11 @@ import Input from './mobile/Input';
 import icon from "@image/iconHeader.svg";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
-
 export default function MainWorkingPlan() {
 
 
     const [isViewArchive, setIsViewArchive] = useState(false)
     const [open, setOpen] = useState(false)
-
-
 
     const steps = [
         {
@@ -65,7 +62,6 @@ export default function MainWorkingPlan() {
 
     } = useTargetsHook()
 
-
     return (
         <div className={classes.dialog}>
             <Headers name={"Рабочий План"} funcActiveHint={() => setOpen(true)}>
@@ -82,7 +78,6 @@ export default function MainWorkingPlan() {
                             Показать {isViewArchive ? 'текущие' : 'архивные'} задачи
                         </span>
                     </div>
-
 
                     {isErrorGetArchiveTargets || isErrorGetTargets ?
                         (
@@ -112,20 +107,6 @@ export default function MainWorkingPlan() {
                                                 ))}
                                             </>
                                         ))}
-                                        {/* {otherPersonalTargets.map((elem, elemIndex) => (
-                                    <>
-                                        <div key={elemIndex} className={classes.dayContainer}>
-                                            <span>Начать {elem.date}</span>
-                                        </div>
-                                        {elem?.items?.map((item, index) => (
-                                            <Task
-                                                key={index}
-                                                taskData={item}
-                                                userPosts={userPosts}
-                                            ></Task>
-                                        ))}
-                                    </>
-                                ))} */}
                                         <div className={classes.dayContainer}>
                                             <span>Текущие</span>
                                         </div>
@@ -158,7 +139,8 @@ export default function MainWorkingPlan() {
                                         ))}
                                     </>
                                 )}
-                            </div>)}
+                            </div>
+                        )}
 
                 </div>
             </div>
