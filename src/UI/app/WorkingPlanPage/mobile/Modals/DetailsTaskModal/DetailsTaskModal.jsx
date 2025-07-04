@@ -229,6 +229,7 @@ export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) 
                             rules={[{ required: true, message: 'Введите описание задачи' }]}
                         >
                             <TextArea
+                                style={{resize: 'none'}}
                                 rows={4}
                                 placeholder="Опишите задачу..."
                                 maxLength={1000}
