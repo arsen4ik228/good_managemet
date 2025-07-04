@@ -3,7 +3,7 @@ import classes from "./BlockSchema.module.css";
 import palette from "@image/color_palette.svg";
 import { Popover } from "antd";
 import _ from "lodash";
-import { Button } from "antd";
+import { Button, Tooltip } from "antd";
 import DrawerUpdatePost from "../../drawer/drawerForPost/DrawerUpdatePost";
 import { lightenColor, ColorPickerModal } from "../../constants/contsants.js";
 
@@ -15,6 +15,8 @@ const PodSchema = ({
   setViewChildrenPost,
   setHeader,
 }) => {
+  const [hoveredPostId, setHoveredPostId] = useState(null);
+
   const backgroundColor = lightenColor(baseColor, level * 0.2);
 
   const handleOpenPostButtonClick = (event, element) => {
@@ -33,19 +35,50 @@ const PodSchema = ({
     setViewChildrenPost(true);
   };
 
+  const handleMouseEnter = (e) => {
+    setHoveredPostId(post.id);
+  };
+
+  const handleMouseLeave = (e) => {
+    setHoveredPostId(null);
+  };
+
   return (
-    <div className={classes.childBlock} style={{ backgroundColor }}>
-      
+    <div
+      className={classes.childBlock}
+      style={{ backgroundColor }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className={classes.nameBlock}>
-      <DrawerUpdatePost postId={post.id}></DrawerUpdatePost>
-        <Button
-          type="link"
-          onClick={(event) => {
-            handleOpenPostButtonClick(event, post);
-          }}
+        {hoveredPostId === post.id && (
+          <div className={classes.controlsBlock}>
+            <DrawerUpdatePost postId={post.id} />
+          </div>
+        )}
+
+        <Tooltip
+          title={post.divisionName}
+          placement="top"
+          mouseEnterDelay={0.3}
         >
-          {post.divisionName}
-        </Button>
+          <Button
+            type="link"
+            onClick={(event) => {
+              handleOpenPostButtonClick(event, post);
+            }}
+            style={{
+              display: "inline-block",
+              maxWidth: "340px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {post.divisionName}
+          </Button>
+        </Tooltip>
+
         <h2>{post.postName}</h2>
         {post.user ? (
           <h3>
@@ -55,6 +88,7 @@ const PodSchema = ({
           <h3>Пост свободен</h3>
         )}
       </div>
+
       {post.children.length > 0 && (
         <div className={classes.childBlock}>
           {post.children.map((child) => (
@@ -82,10 +116,11 @@ export default function BlockSchema({
   setViewChildrenPost,
   setHeader,
 }) {
+  let colorPostFromBD = arrayColors?.get(post.id);
 
-  let colorPostFromBD = arrayColors.get(post.id);
-
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(
+    colorPostFromBD || "#BFCFE7"
+  );
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
@@ -98,7 +133,7 @@ export default function BlockSchema({
 
   const handleOpenPostButtonClick = (element) => {
     const newElement = _.cloneDeep(element);
-    newElement.color = selectedColor || colorPostFromBD;
+    newElement.color = colorPostFromBD || selectedColor;
     console.log(newElement);
     setOnePost([newElement]);
     setHeader({
@@ -114,45 +149,71 @@ export default function BlockSchema({
   return (
     <div
       className={classes.wrapper}
-      style={{ backgroundColor: selectedColor || colorPostFromBD }}
+      style={{ backgroundColor: colorPostFromBD || selectedColor }}
     >
       <div
         className={classes.block}
-        style={{ backgroundColor: selectedColor || colorPostFromBD }}
+        style={{ backgroundColor: colorPostFromBD || selectedColor }}
       >
         <div
+          className={classes.controlsBlock}
           style={{
-            display: "flex",
+            display: "none", // По умолчанию скрыт
             justifyContent: "space-between",
             cursor: "pointer",
           }}
         >
-          <Popover
-            placement="topLeft"
-            content={<ColorPickerModal onColorSelect={handleColorSelect} selectedColor = {selectedColor} colorFromBD = {colorPostFromBD}/>}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
+          {arrayColors !== null ? (
+            <Popover
+              placement="topLeft"
+              content={
+                <ColorPickerModal
+                  onColorSelect={handleColorSelect}
+                  selectedColor={selectedColor}
+                  colorFromBD={colorPostFromBD}
+                />
+              }
             >
-              <img  data-tour="color-palette" src={palette} alt="palette" width="30px" height="30px" />
-            </div>
-          </Popover>
+              <div className={classes.controlItem}>
+                <img
+                  data-tour="color-palette"
+                  src={palette}
+                  alt="palette"
+                  width="30px"
+                  height="30px"
+                />
+              </div>
+            </Popover>
+          ) :(null)}
+
           <DrawerUpdatePost postId={post.id}></DrawerUpdatePost>
         </div>
 
         <div className={classes.nameBlock}>
-          <Button
-            type="link"
-            onClick={() => {
-              handleOpenPostButtonClick(post);
-            }}
+          <Tooltip
+            title={post.divisionName}
+            placement="top"
+            mouseEnterDelay={0.3}
           >
-            {post.divisionName}
-          </Button>
+            <Button
+              type="link"
+              onClick={() => {
+                handleOpenPostButtonClick(post);
+              }}
+              style={{
+                display: "inline-block",
+                maxWidth: "340px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {post.divisionName}
+            </Button>
+          </Tooltip>
+
           <h2>{post.postName}</h2>
+
           {post.user && (
             <h3>
               {post.user.firstName} {post.user.lastName}
@@ -166,7 +227,7 @@ export default function BlockSchema({
               <PodSchema
                 key={child.id}
                 post={child}
-                baseColor={selectedColor || colorPostFromBD}
+                baseColor={colorPostFromBD || selectedColor}
                 setOnePost={setOnePost}
                 setViewChildrenPost={setViewChildrenPost}
                 setHeader={setHeader}

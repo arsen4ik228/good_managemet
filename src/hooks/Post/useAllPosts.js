@@ -1,7 +1,7 @@
 import { useGetPostsQuery } from "@services/index";
 import useGetReduxOrganization from "@hooks/useGetReduxOrganization";
 
-export const useAllPosts = ({organizationId = null, structure = false}) => {
+export const useAllPosts = ({organizationId = null, structure = false} = {}) => {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
   const {

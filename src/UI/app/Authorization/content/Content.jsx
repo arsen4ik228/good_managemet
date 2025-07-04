@@ -5,22 +5,19 @@ import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { isMobile } from "react-device-detect";
 import { socketUrl, baseUrl } from "@helpers/constants";
-import telegram from '@Custom/icon/telegram.svg'
-import logo from '@Custom/icon/logo.svg'
+import telegram from "@Custom/icon/telegram.svg";
+import logo from "@Custom/icon/logo.svg";
 import icon from "@image/iconHeader.svg";
 
-
 const socket = io(`${socketUrl}auth`, {
-
   cors: {
     credentials: true,
   },
   transports: ["websocket"],
-  reconnection: false
+  reconnection: false,
 }); // Подключение к сокету
 
 export default function Content() {
-
   const [data, setData] = useState({
     accessToken: "",
     refreshTokenId: "",
@@ -63,7 +60,7 @@ export default function Content() {
             headers: {
               "User-Agent": userAgent,
             },
-            credentials: "include" // Максик
+            credentials: "include", // Максик
           }
         );
         const serverData = await response.json();
@@ -103,42 +100,45 @@ export default function Content() {
 
   // Эффект для отправки данных после того, как все зависимости будут установлены
   useEffect(() => {
-    if (!fingerprint || !tokenForTG || !ip || !userAgent || !socket) return
+    if (!fingerprint || !tokenForTG || !ip || !userAgent || !socket) return;
     const handleRequestInfo = (data) => {
-      localStorage.setItem("fingerprint", fingerprint)
+      localStorage.setItem("fingerprint", fingerprint);
       socket.emit("responseFromClient", {
         fingerprint: fingerprint,
         userAgent: userAgent,
         ip: ip,
         token: tokenForTG,
-      })
-    }
-    const handleAuthInfo = (authData) => {
-      console.log(authData)
-      setData(authData)
-    }
-    const handleDisconnect = () => {
-      console.log('Disconnected')
+      });
     };
-    socket.on("requestInfo", handleRequestInfo)
-    socket.on("receiveAuthInfo", handleAuthInfo)
-    socket.on('disconnect', handleDisconnect)
+    const handleAuthInfo = (authData) => {
+      console.log(authData);
+      setData(authData);
+    };
+    const handleDisconnect = () => {
+      console.log("Disconnected");
+    };
+    socket.on("requestInfo", handleRequestInfo);
+    socket.on("receiveAuthInfo", handleAuthInfo);
+    socket.on("disconnect", handleDisconnect);
     return () => {
       socket.off("requestInfo", handleRequestInfo);
       socket.off("receiveAuthInfo", handleAuthInfo);
       socket.disconnect();
-    }
-  }, [fingerprint, tokenForTG, ip])
+    };
+  }, [fingerprint, tokenForTG, ip]);
 
   // Перенаправление на другую страницу при наличии userId
   useEffect(() => {
     if (data.userId && data.userId !== "false") {
       // Сохраняем accessToken в localStorage
       localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("userId", data.userId)
+      localStorage.setItem("userId", data.userId);
       fetch(`${baseUrl}auth/set-cookie`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${data.accessToken}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.accessToken}`,
+        },
         body: JSON.stringify({ refreshTokenId: data.refreshTokenId }),
         credentials: "include", // Включение отправки куки
       })
@@ -161,66 +161,70 @@ export default function Content() {
   // Установка QR-кода при наличии tokenForTG и socketId
   useEffect(() => {
     if (tokenForTG && socketId) {
+      // setQrUrl(
+      //   `tg://resolve?domain=GMAuthBot&start=${encodeURIComponent(
+      //     tokenForTG
+      //   )}-${encodeURIComponent(socketId)}`
+      // );
+
       setQrUrl(
-        `tg://resolve?domain=gm_ilyxa_bot&start=${encodeURIComponent(
+        `tg://resolve?domain=gm_valera_bot&start=${encodeURIComponent(
+
           tokenForTG
         )}-${encodeURIComponent(socketId)}`
       );
     }
   }, [socketId, tokenForTG]);
 
-  return (
-    isMobile ? (
-      <div className={classes.Container}>
-        <div className={classes.logoContainer}>
-          <img src={logo} alt='logo' />
-        </div>
-        <div className={classes.textContainer}>
-          <img src={telegram} alt="Telegram" />
-          <a
-            href={qrUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={classes.linkMobile}
-            aria-disabled={!tokenForTG}
-            onClick={(e) => {
-              if (!tokenForTG) {
-                e.preventDefault(); // Отменяем действие ссылки
-              }
-            }}
-          >
-            Войти через Telegram
-          </a>
-        </div>
+  return isMobile ? (
+    <div className={classes.Container}>
+      <div className={classes.logoContainer}>
+        <img src={logo} alt="logo" />
       </div>
-    ) : (
-      <div className={classes.body}>
-        <span className={classes.text}>Для входа отсканируйте QR-код</span>
-        <div className={classes.QR}>
-          {!socketId || !tokenForTG ? (
-            <span className={classes.loader}>
-              <img
-                src={icon}
-                alt="icon"
-              />
-            </span>
-          ) : tokenForTG && qrUrl ? (
-            <div className={classes.telegram}>
-              <QRCode errorLevel="H" value={qrUrl} />
-              <a href={qrUrl} target="_blank" rel="noopener noreferrer" className={classes.link}>
-                Или перейдите по ссылке
-              </a>
-            </div>
-          ) : (
-            <span className={classes.loader}>
-              <img
-                src={icon}
-                alt="icon"
-              />
-            </span>
-          )}
-        </div>
+      <div className={classes.textContainer}>
+        <img src={telegram} alt="Telegram" />
+        <a
+          href={qrUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={classes.linkMobile}
+          aria-disabled={!tokenForTG}
+          onClick={(e) => {
+            if (!tokenForTG) {
+              e.preventDefault(); // Отменяем действие ссылки
+            }
+          }}
+        >
+          Войти через Telegram
+        </a>
       </div>
-    )
+    </div>
+  ) : (
+    <div className={classes.body}>
+      <span className={classes.text}>Для входа отсканируйте QR-код</span>
+      <div className={classes.QR}>
+        {!socketId || !tokenForTG ? (
+          <span className={classes.loader}>
+            <img src={icon} alt="icon" />
+          </span>
+        ) : tokenForTG && qrUrl ? (
+          <div className={classes.telegram}>
+            <QRCode errorLevel="H" value={qrUrl} />
+            <a
+              href={qrUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.link}
+            >
+              Или перейдите по ссылке
+            </a>
+          </div>
+        ) : (
+          <span className={classes.loader}>
+            <img src={icon} alt="icon" />
+          </span>
+        )}
+      </div>
+    </div>
   );
 }

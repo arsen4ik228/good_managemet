@@ -130,7 +130,7 @@ export default function PostNew() {
 
     if (userRole) {
       Data.roleId = userRole;
-    } else Data.roleId = roles.find((item) => item.roleName === "Сотрудник").id;
+    } else Data.roleId = roles.find((item) => item.roleName === "Сотрудник")?.id;
 
     await postPosts({
       postName: postName,
