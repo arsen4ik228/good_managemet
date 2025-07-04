@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classes from "./DesktopLayout.module.css";
 import {
-  Modal, 
+  Modal,
   Popconfirm,
   Flex,
   Select,
@@ -35,6 +35,7 @@ export default function DesktopLayout({
   handleUpload,
   activeDirectives,
   activeInstructions,
+  disposalsActive,
   fileInputRef,
   handleFileChange,
   selectedFiles,
@@ -114,24 +115,39 @@ export default function DesktopLayout({
                     onChange={handlePolicySelect}
                   >
                     <Option className={classes.notSelectOption} value="null">Не выбрано</Option>
+                    {activeDirectives.length > 0 && (
+                      <Select.OptGroup className={classes.optGroup} label="Директивы">
+                        {activeDirectives
+                          .slice()
+                          .sort((a, b) => a.policyName.localeCompare(b.policyName))
+                          .map((item) => (
+                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                          ))}
+                      </Select.OptGroup>
+                    )}
 
-                    <Select.OptGroup className={classes.optGroup} label="Директивы">
-                      {activeDirectives
-                        .slice()
-                        .sort((a, b) => a.policyName.localeCompare(b.policyName))
-                        .map((item) => (
-                          <Option key={item.id} value={item.id}>{item.policyName}</Option>
-                        ))}
-                    </Select.OptGroup>
+                    {activeInstructions.length > 0 && (
+                      <Select.OptGroup className={classes.optGroup} label="Инструкции">
 
-                    <Select.OptGroup className={classes.optGroup} label="Инструкции">
-                      {activeInstructions
-                        .slice() // создаем копию массива чтобы не мутировать оригинал
-                        .sort((a, b) => a.policyName.localeCompare(b.policyName)) // сортировка по алфавиту
-                        .map((item) => (
-                          <Option key={item.id} value={item.id}>{item.policyName}</Option>
-                        ))}
-                    </Select.OptGroup>
+                        {activeInstructions.slice() // создаем копию массива чтобы не мутировать оригинал
+                          .sort((a, b) => a.policyName.localeCompare(b.policyName)) // сортировка по алфавиту
+                          .map((item) => (
+                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                          ))}
+                      </Select.OptGroup>
+                    )}
+
+                    {disposalsActive.length > 0 && (
+                      <Select.OptGroup className={classes.optGroup} label="Распоряжения">
+                        {disposalsActive
+                          .slice() // создаем копию массива чтобы не мутировать оригинал
+                          .sort((a, b) => a.policyName.localeCompare(b.policyName)) // сортировка по алфавиту
+                          .map((item) => (
+                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                          ))}
+                      </Select.OptGroup>
+                    )}
+
                   </Select>
                 </Form.Item>
               </Form>
