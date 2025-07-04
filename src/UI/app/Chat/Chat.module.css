@@ -7,10 +7,63 @@
 
     display: flex;
     flex-direction: column;
-
     border-radius: 8px 0 0 8px;
     background-color: #fff;
     box-shadow: 0 0 3px 0 rgba(0, 0, 0, .5);
+}
+
+.orgHeader {
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+
+    padding: 5px 5px 5px 11px;
+    position: sticky;
+    top: 50px;
+    z-index: 20;
+    border-radius: 8px 0 0 0;
+    background-color: #005475;
+}
+
+.orgHeaderName {
+    font-family: 'Montserrat';
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+
+}
+
+.dropdown {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border-color: #333;
+    cursor: pointer;
+    display: flex;
+    transition: all 0.1s ease;
+    margin-right: 10px;
+    margin-left: auto;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.collapseIcon {
+    transition: transform 0.3s ease;
+
+    &.collapsed {
+        transform: rotate(-90deg);
+    }
 }
 
 .header {
@@ -23,6 +76,9 @@
     flex-direction: row;
     justify-content: space-between;
 
+    position: sticky;
+    top: 50px;
+    z-index: 20;
     padding: 5px 5px 5px 11px;
 
     border-radius: 8px 0 0 0;
@@ -36,6 +92,22 @@
     color: #fff;
 }
 
+.searchIcon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
 .search {
     height: 50px;
     min-height: 50px;
@@ -45,8 +117,27 @@
     align-items: center;
     flex-direction: row;
     justify-content: center;
-
+    position: sticky;
+    top: 82px;
+    z-index: 20;
     padding: 18px 25px 5px;
+    transform: translateY(-30%);
+    opacity: 0;
+    animation: slideIn 0.5s forwards;
+    padding-bottom: 10px;
+    background-color: #fff;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .search input {
@@ -54,6 +145,7 @@
     width: 100%;
     height: 35px;
     min-height: 30px;
+    margin-bottom: 5px;
 }
 
 .search input[type='search'] {
@@ -111,26 +203,30 @@ input[type='search']::-webkit-search-cancel-button {
 
 
 .main {
-    height: calc(100% - 45px - 50px);
-    min-height: calc(100% - 45px - 50px);
-    max-height: calc(100% - 45px - 50px);
-
     display: flex;
     flex-direction: column;
-    row-gap: 12px;
+    width: 24%;
+    min-width: 24%;
+    max-width: 24%;
 
-    margin-top: 10px;
+    height: calc(100vh - 25px);
+
+    border-radius: 8px 0 0 8px;
+    background-color: #fff;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, .5);
+
 
     overflow-y: auto;
 
-    border-radius: 0 0 0 8px;
 }
 
 .btnPomoshnik {
     height: 50px;
     min-height: 50px;
     max-height: 50px;
-
+    position: sticky;
+    top: 0;
+    z-index: 30;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -138,19 +234,20 @@ input[type='search']::-webkit-search-cancel-button {
     column-gap: 12.5px;
 
     padding-left: 12.5px;
-
     font-family: 'Montserrat';
     font-size: 14px;
     font-weight: 600;
 
 
     color: rgb(0, 84, 117);
+    transition: all 0.3s;
     background-color: #cfdee5;
 
 }
 
 .btnAddUser {
     height: 50px;
+    width: 100%;
     min-height: 50px;
     max-height: 50px;
 
@@ -158,17 +255,23 @@ input[type='search']::-webkit-search-cancel-button {
     justify-content: center;
     align-items: center;
 
+    position: sticky;
+    top: 82px;
     font-family: 'Montserrat';
     font-size: 14px;
     font-weight: 600;
 
-
     color: rgb(0, 84, 117);
+    transition: all 0.3s;
     background-color: #cfdee5;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.btnAddUserWithSearch {
+    top: 132px;
 }
 
 .btnAddUser:hover,
 .btnPomoshnik:hover {
-    transition: all 0.3s;
     background-color: var(--primary-light);
 }

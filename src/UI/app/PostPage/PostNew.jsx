@@ -20,8 +20,10 @@ import { useModalSelectRadio } from "@hooks/useModalSelectRadio";
 import { usePostsHook } from "@hooks";
 import ButtonAttach from "@Custom/buttonAttach/ButtonAttach";
 import RoleContainer from "./RoleContainer";
+import avatar from '@Custom/icon/icon _ GM.svg'
+import { baseUrl } from "@helpers/constants.js"; // Импорт базового URL
 
-import { ConfigProvider, Tour } from "antd";
+import { ConfigProvider, Tour, Select as SelectAnt, Input as InputAnt, Tooltip, Avatar } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
 export default function PostNew() {
@@ -166,6 +168,13 @@ export default function PostNew() {
 
   console.log(`worker = ${userRole}`);
 
+
+  const parentPostsWithDefault = [{ label: '-', value: null }, ...parentPosts.map((post) => ({
+    label: post.postName,
+    value: post.id,
+  })).sort((a, b) => a.label.localeCompare(b.label))]
+  console.log(parentPostsWithDefault[1]?.value)
+
   return (
     <div className={classes.dialog}>
       <Headers
@@ -174,42 +183,111 @@ export default function PostNew() {
         funcActiveHint={() => setOpen(true)}
       >
         <BottomHeaders update={savePosts} refUpdate={refUpdate}>
-          <Input
-            refInput={refPostName}
-            name={"Название поста"}
-            value={postName}
-            onChange={setPostName}
-          ></Input>
-          <Input
-            refInput={refDivisionName}
-            name={"Название подразделения"}
-            value={divisionName}
-            onChange={setDivisionName}
-          ></Input>
-          <Select
-            refSelect={refParentPostId}
-            name={"Руководитель"}
-            value={parentId}
-            onChange={setParentId}
-            array={parentPosts}
-            arrayItem={"postName"}
-          >
-            <option value="null"> — </option>
-          </Select>
-          <Select
-            refSelect={refWorker}
-            name={"Сотрудник"}
-            value={worker}
-            onChange={setWorker}
-            array={staff}
-            arrayItem={"lastName"}
-            arrayItemTwo={"firstName"}
-          >
-            <option value="null" disabled>
-              {" "}
-              —{" "}
-            </option>
-          </Select>
+
+
+          <div className={classes.item} ref={refPostName}>
+            <div className={classes.itemName}>
+              <span>
+                Название поста <span style={{ color: "red" }}>*</span>
+              </span>
+            </div>
+            <Tooltip
+              title={postName}
+              placement="topLeft"
+              mouseEnterDelay={0.5}
+              className={classes.tooltipOverlay}
+              trigger={['hover', 'focus']}
+            >
+              <InputAnt
+                className={classes.inputAnt}
+                value={postName}
+                onChange={(e) => setPostName(e.target.value)}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
+              />
+            </Tooltip>
+          </div>
+
+          <div className={classes.item} ref={refDivisionName}>
+            <div className={classes.itemName}>
+              <span>
+                Название подразделения <span style={{ color: "red" }}>*</span>
+              </span>
+            </div>
+            <Tooltip
+              title={divisionName}
+              placement="topLeft"
+              mouseEnterDelay={0.5}
+              className={classes.tooltipOverlay}
+              trigger={['hover', 'focus']}
+            >
+              <InputAnt
+                className={classes.inputAnt}
+                value={divisionName}
+                onChange={(e) => setDivisionName(e.target.value)}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
+              />
+            </Tooltip>
+          </div>
+          <div className={classes.item} ref={refParentPostId}>
+            <div className={classes.itemName}>
+              <span>
+                Руководитель <span style={{ color: "red" }}>*</span>
+              </span>
+            </div>
+            <SelectAnt
+              style={{ width: '100%' }}
+              onChange={setParentId}
+              placeholder="Выберите руководителя"
+              optionFilterProp="label"
+              options={parentPostsWithDefault}
+            >
+            </SelectAnt>
+          </div>
+          <div className={classes.item} ref={refWorker}>
+            <div className={classes.itemName}>
+              <span>
+                Сотрудник
+              </span>
+            </div>
+            <SelectAnt
+              ref={refWorker}
+              style={{ width: '100%' }}
+              onChange={setWorker}
+              placeholder="Выберите сотрудника"
+              showSearch
+              optionFilterProp="label"
+              dropdownStyle={{
+                minWidth: '300px' // Или минимальная ширина
+              }}
+              optionRender={(option) => (
+                <div className={classes.optionItem}>
+                  <Avatar
+                    src={option.data.avatar_url ? `${baseUrl}${option.data.avatar_url}` : avatar}
+                    size="small"
+                    className={classes.avatar}
+                    alt='avatar'
+                  >
+                    {option.data.avatar_url}
+                  </Avatar>
+                  <span>{option.label}</span>
+                </div>
+              )}
+              options={staff.map((worker) => ({
+                label: `${worker.lastName} ${worker.firstName}`,
+                value: worker.id,
+                avatar_url: worker.avatar_url
+              })).sort((a, b) => a.label.localeCompare(b.label))}
+            >
+            </SelectAnt>
+          </div>
         </BottomHeaders>
       </Headers>
 
@@ -227,6 +305,11 @@ export default function PostNew() {
             ) : (
               <>
                 <div className={classes.productTeaxtaera}>
+                  <div className={classes.backgroundBorder}>
+                    <div className={classes.productHeader}>
+                      Продукт поста *
+                    </div>
+                  </div>
                   <textarea
                     className={classes.Teaxtaera}
                     placeholder="описание продукта поста"
@@ -238,6 +321,11 @@ export default function PostNew() {
                 </div>
 
                 <div className={classes.destinyTeaxtaera}>
+                  <div className={classes.backgroundBorder}>
+                    <div className={classes.destinyHeader}>
+                      Предназначение поста *
+                    </div>
+                  </div>
                   <textarea
                     className={classes.Teaxtaera}
                     placeholder="описнаие предназначения поста"

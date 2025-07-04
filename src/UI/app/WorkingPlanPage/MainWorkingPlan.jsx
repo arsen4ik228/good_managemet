@@ -7,6 +7,9 @@ import { useTargetsHook } from '@hooks';
 import { ConfigProvider, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Input from './mobile/Input';
+import icon from "@image/iconHeader.svg";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+
 
 export default function MainWorkingPlan() {
 
@@ -17,32 +20,32 @@ export default function MainWorkingPlan() {
 
 
     const steps = [
-    {
-      title: "Выбор поста",
-      description: "Выберите Пост отправителя",
-      target: () => document.querySelector('[data-tour="current-post"]'),
-    },
-    {
-      title: "Выбор даты",
-      description: "Выберите дату начала и завершения задачи",
-      target: () => document.querySelector('[data-tour="date-for-task"]'),
-    },
-    {
-      title: "Вложения",
-      description: "Прикрепите файлы к задаче",
-      target: () => document.querySelector('[data-tour="files-attachment"]'),
-    },
-    {
-      title: "Отправить задачу",
-      description: "Нажмите для создания личной задачи",
-      target: () => document.querySelector('[data-tour="send-message"]'),
-    },
-    {
-      title: "Создать приказ",
-      description: "Нажмите для отправки приказа",
-      target: () => document.querySelector('[data-tour="share-icon"]'),
-    },
-  ].filter((step) => !step.disabled);
+        {
+            title: "Выбор поста",
+            description: "Выберите Пост отправителя",
+            target: () => document.querySelector('[data-tour="current-post"]'),
+        },
+        {
+            title: "Выбор даты",
+            description: "Выберите дату начала и завершения задачи",
+            target: () => document.querySelector('[data-tour="date-for-task"]'),
+        },
+        {
+            title: "Вложения",
+            description: "Прикрепите файлы к задаче",
+            target: () => document.querySelector('[data-tour="files-attachment"]'),
+        },
+        {
+            title: "Отправить задачу",
+            description: "Нажмите для создания личной задачи",
+            target: () => document.querySelector('[data-tour="send-message"]'),
+        },
+        {
+            title: "Создать приказ",
+            description: "Нажмите для отправки приказа",
+            target: () => document.querySelector('[data-tour="share-icon"]'),
+        },
+    ].filter((step) => !step.disabled);
 
     const {
         personalTargets,
@@ -74,27 +77,42 @@ export default function MainWorkingPlan() {
                     <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
                 </ConfigProvider>
                 <div className={classes.body}>
-                    <div key={'un'} className={classes.archiveButton} onClick={() => setIsViewArchive(!isViewArchive)}>
-                        {isViewArchive ? 'Скрыть ' : 'Показать'} завершенные задачи
+                    <div key={'un'} className={classes.archiveButton} >
+                        <span className={classes.archiveButtonSpan} onClick={() => setIsViewArchive(!isViewArchive)}>
+                            Показать {isViewArchive ? 'текущие' : 'архивные'} задачи
+                        </span>
                     </div>
-                    <div className={classes.tasksContainer}>
-                        {!isViewArchive ? (
+
+
+                    {isErrorGetArchiveTargets || isErrorGetTargets ?
+                        (
                             <>
-                                {futureTargets.map((elem, elemIndex) => (
+                                <HandlerQeury Error={isErrorGetArchiveTargets || isErrorGetTargets}></HandlerQeury>
+                            </>
+                        ) :
+                        (
+
+                            <div className={classes.tasksContainer}>
+                                <HandlerQeury
+                                    Loading={isLoadingGetArchiveTargets || isLoadingGetTargets}
+                                ></HandlerQeury>
+                                {!isViewArchive ? (
                                     <>
-                                        <div key={elemIndex} className={classes.dayContainer}>
-                                            <span>Начать {elem.date}</span>
-                                        </div>
-                                        {elem?.items?.map((item, index) => (
-                                            <Task
-                                                key={index}
-                                                taskData={item}
-                                                userPosts={userPosts}
-                                            ></Task>
+                                        {futureTargets.map((elem, elemIndex) => (
+                                            <>
+                                                <div key={elemIndex} className={classes.dayContainer}>
+                                                    <span>Начать {elem.date}</span>
+                                                </div>
+                                                {elem?.items?.map((item, index) => (
+                                                    <Task
+                                                        key={index}
+                                                        taskData={item}
+                                                        userPosts={userPosts}
+                                                    ></Task>
+                                                ))}
+                                            </>
                                         ))}
-                                    </>
-                                ))}
-                                {/* {otherPersonalTargets.map((elem, elemIndex) => (
+                                        {/* {otherPersonalTargets.map((elem, elemIndex) => (
                                     <>
                                         <div key={elemIndex} className={classes.dayContainer}>
                                             <span>Начать {elem.date}</span>
@@ -108,39 +126,39 @@ export default function MainWorkingPlan() {
                                         ))}
                                     </>
                                 ))} */}
-                                <div className={classes.dayContainer}>
-                                    <span>Текущие</span>
-                                </div>
-                                {orderTargets.map((item, index) => (
-                                    <Task
-                                        key={index}
-                                        taskData={item}
-                                        userPosts={userPosts}
-                                    ></Task>
-                                ))}
+                                        <div className={classes.dayContainer}>
+                                            <span>Текущие</span>
+                                        </div>
+                                        {orderTargets.map((item, index) => (
+                                            <Task
+                                                key={index}
+                                                taskData={item}
+                                                userPosts={userPosts}
+                                            ></Task>
+                                        ))}
 
-                                {personalTargets.map((item, index) => (
-                                    <Task
-                                        key={index}
-                                        taskData={item}
-                                        userPosts={userPosts}
-                                    ></Task>
-                                ))}
+                                        {personalTargets.map((item, index) => (
+                                            <Task
+                                                key={index}
+                                                taskData={item}
+                                                userPosts={userPosts}
+                                            ></Task>
+                                        ))}
 
-                            </>
-                        ) : (
-                            <>
-                                {archivePersonalTargets?.map((item, index) => (
-                                    <Task
-                                        key={index}
-                                        taskData={item}
-                                        userPosts={userPosts}
-                                        isArchive={true}
-                                    ></Task>
-                                ))}
-                            </>
-                        )}
-                    </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {archivePersonalTargets?.map((item, index) => (
+                                            <Task
+                                                key={index}
+                                                taskData={item}
+                                                userPosts={userPosts}
+                                                isArchive={true}
+                                            ></Task>
+                                        ))}
+                                    </>
+                                )}
+                            </div>)}
 
                 </div>
             </div>

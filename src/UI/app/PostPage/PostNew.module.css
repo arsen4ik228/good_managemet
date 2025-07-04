@@ -92,38 +92,35 @@
     row-gap: 10px;
 }
 
-.item{
-    width:170px;
-    max-width:170px;
-    overflow: hidden;         
+.item {
+    width: 170px;
+    max-width: 170px;
+    overflow: hidden;
 }
 
 .itemName span {
-    max-width:100%;
-    white-space: nowrap;
-    font-style: italic;
     font-size: 12px !important;
     font-family: 'Montserrat';
-    font-weight: 400;
+    font-weight: 600;
 }
 
 .select {
-    width:100%;
-    max-width:100%;
+    width: 100%;
+    max-width: 100%;
     position: relative;
     font-family: 'Montserrat';
-    overflow: hidden;         
-    text-overflow: ellipsis;          
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .div {
-    max-width:100%;
-    position: relative;    
+    max-width: 100%;
+    position: relative;
     z-index: 100;
 }
 
 .div:before {
-    max-width:100%;
+    max-width: 100%;
     content: '';
     position: absolute;
     bottom: 0;
@@ -134,7 +131,7 @@
     z-index: 100;
 }
 
-.iconSave{
+.iconSave {
     position: relative;
     margin-left: auto;
 }
@@ -170,7 +167,7 @@
 
 .main {
     position: relative;
-    flex: 1 0 120px; 
+    flex: 1 0 120px;
     flex-grow: 1;
     flex-shrink: 1;
     overflow-y: auto;
@@ -185,51 +182,79 @@
 
 .productTeaxtaera {
     width: 100%;
+    height: 30%;
     position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-.productTeaxtaera:before {
-    top:10px;
-    content: 'Продукт поста *';
+.productHeader {
+    top: 10px;
     position: absolute;
     color: black;
     font-weight: 600;
     font-family: 'Montserrat';
-    font-size: 12px;
-    left: 26.5%;
+    font-size: 14px;
+    border: 1px dashed #005475e0;
+    background: #0054754f;
+    padding: 4px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
+
 .destinyTeaxtaera {
     width: 100%;
+    height: 30%;
     position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-.destinyTeaxtaera:before {
-    top:10px;
-    content: 'Предназначение поста *';
+.destinyHeader {
+    top: 10px;
     position: absolute;
     color: black;
     font-weight: 600;
     font-family: 'Montserrat';
-    font-size: 12px;
-    left: 26.5%;
+    font-size: 14px;
+    border: 1px dashed #005475e0;
+    background: #0054754f;
+    padding: 4px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
+
+.backgroundBorder {
+    left: 26.5%;
+    height: 40px;
+    width: 48%;
+    position: absolute;
+    background-color: white;
+}
+
 
 .Teaxtaera {
     width: 50%;
     min-height: 10vh;
     background-color: #FFFFFF;
-    padding: 25px;
+    padding: 45px 25px 25px 25px;
     resize: none;
     font-family: "Montserrat";
     font-size: 12px;
-    border-radius: 10px;
+    border-radius: 8px 8px 8px 8px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    line-height: 1.5;
+    transition: all 0.3s;
+
+    &:hover {
+        border-radius: 8px;
+        box-shadow: 0px 0px 15px 2px #005475;
+
+    }
 }
 
 textarea::placeholder {
@@ -242,8 +267,9 @@ textarea::placeholder {
 }
 
 .post {
-    height: 5vh;
-    width: 30%;
+    height: 40px;
+    width: 400px;
+    max-width: 800px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -252,7 +278,7 @@ textarea::placeholder {
     border-radius: 10px;
     padding-left: 5px;
     column-gap: 5px;
-    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
     cursor: pointer;
     transition: all 0.5s ease;
 }
@@ -273,4 +299,74 @@ textarea::placeholder {
     font-weight: 400;
 }
 
+.customTooltip {
+    max-width: 500px;
+}
 
+.customTooltip .ant-tooltip-inner {
+    word-wrap: break-word;
+    white-space: normal;
+    background-color: #333;
+    color: white;
+    font-size: 12px;
+    font-family: 'Montserrat';
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+
+
+/* Добавьте в ваш Input.module.css */
+.rowContainer {
+    display: flex;
+    gap: 16px;
+    /* Отступ между элементами */
+    /* Выравнивание по верху */
+    width: 100%;
+    overflow: hidden;
+}
+
+.item {
+    flex: 1;
+    /* Равномерное распределение пространства */
+    min-width: 180px;
+    max-width: 360px;
+    /* Минимальная ширина для Select */
+}
+
+.inputAnt {
+    width: 100%;
+    /* Эти стили добавят троеточие если текст не помещается */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &:hover {
+
+        overflow: visible;
+        white-space: normal;
+    }
+}
+
+.selectAnt {
+    width: 100% !important;
+    /* Полная ширина внутри item */
+}
+
+.tooltipOverlay {
+    max-width: 500px;
+    /* Максимальная ширина тултипа */
+    word-wrap: break-word;
+}
+
+.optionItem {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 24px;
+}

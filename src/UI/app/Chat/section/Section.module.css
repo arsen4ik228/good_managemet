@@ -1,30 +1,3 @@
-.section {
-    position: relative;
-
-    width: auto;
-
-    height: 25px;
-    min-height: 25px;
-    max-height: 25px;
-
-    z-index: 0;
-}
-
-.section::after {
-    position: absolute;
-
-    content: '';
-
-    width: 100%;
-    height: 2px;
-
-    top: 80%;
-
-    z-index: -1;
-
-    background-color: var(--primary);
-}
-
 .name {
     position: absolute;
 
@@ -57,13 +30,16 @@
     /* height: calc(50% - 207px);
     min-height: calc(50% - 207px);
     max-height: calc(50% - 207px); */
-
+    cursor: pointer;
     display: flex;
     flex-direction: column;
 
     background-color: var(--white);
 
     /* overflow-y: auto; */
+    margin-bottom: 3px;
+
+    cursor: pointer;
 
     :hover {
         background-color: var(--primary-light);
@@ -76,33 +52,51 @@
             fill: var(--primary);
         }
     }
-}
 
-.icon {
-    fill: var(--grey);
 }
 
 .row {
     padding-left: 12.5px;
-
     height: 50px;
     min-height: 50px;
     max-height: 50px;
-
     width: 100%;
-
+    
+    /* Используем flex вместо inline-block */
     display: flex;
     flex-direction: row;
     align-items: center;
-    column-gap: 12.5px;
+    gap: 12.5px; /* Заменяет column-gap для flex */
     transition: background 0.2s;
+    overflow: hidden; /* Для корректного обрезания текста */
+}
 
-    & span {
-        font-weight: 600;
+.icon {
+    width: 30px;
+    height: 25px;
+    fill: var(--grey);
+    flex-shrink: 0; /* Запрещаем сжатие иконки */
+}
 
-        color: var(--grey);
+.row span {
+    font-weight: 600;
+    color: var(--grey);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1; /* Занимает всё доступное пространство */
+    min-width: 0; /* Ключевое свойство для обрезки в flex-контейнере */
+
+        &:hover {
+        position: relative;
+        white-space: normal;
+        overflow: visible;
     }
+}
 
+.row.collapsed {
+    max-height: 0;
+    opacity: 0;
 }
 
 .row_active {
@@ -129,19 +123,37 @@
     background-color: var(--grey-light);
 
     transition: background 0.2s;
+    transform: translateY(-30%);
+    opacity: 0;
+    animation: slideIn 0.5s forwards;
+
     & svg {
         width: 24px;
         height: 24px;
-
+        margin-left: 35px;
         fill: var(--grey);
         fill-opacity: 1;
+        transition: all 0.2s;
     }
 
     & span {
         color: var(--grey);
         font-weight: 600;
+        transition: all 0.2s;
     }
 
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .line {

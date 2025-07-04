@@ -10,7 +10,7 @@
 
 .main {
     position: relative;
-    flex: 1 0 120px; 
+    flex: 1 0 120px;
     overflow-y: auto;
     background-color: #F0F0F0;
     padding-top: 1%;
@@ -40,22 +40,36 @@
     left: 50%;
     top: 0;
     transform: translate(-50%, 0);
-
     width: 99%;
-
     display: flex;
     justify-content: center;
-
     padding: 10px 0;
-
     background-color: #F0F0F0;
-
-    font-style: italic;
-    text-decoration: underline;
-    color: #000000A6;
-
     z-index: 10;
+    cursor: default;
+    white-space: nowrap;
 }
+
+.archiveButtonSpan {
+    font-weight: 600;
+    color: #005475;
+    transition: transform 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    background-color: #E1F5FE;
+    padding: 4px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
 
 .tasksContainer {
     overflow: auto;
@@ -66,17 +80,18 @@
     flex-direction: column;
     align-items: center;
 
-
-    padding: 35px 10px 0 10px;
+    padding: 55px 10px 0 10px;
 }
+
+
 
 .dayContainer {
     display: inline-block;
 
-
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     padding: 5px 20px;
-    margin: 0 auto;
-
+    margin: 15px auto;
+    font-weight: 600;
     border-radius: 5px;
     background-color: white;
 

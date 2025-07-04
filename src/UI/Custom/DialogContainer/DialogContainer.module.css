@@ -3,14 +3,26 @@
     height: 50px;
 
     padding: 5px 10px;
-    background-color: #f5f5f5;  /*  #f9f9f9; */
+    background-color: white;
+    /*  #f9f9f9; */
     border-bottom: 1px solid #eee;
 
+    transition: background 0.2s;
     cursor: pointer;
+
+    &:hover {
+        background-color: var(--primary-light);
+    }
+
 }
 
 .dialogContainer:last-child {
-    border-bottom: none; /* Убираем границу у последнего элемента */
+    border-bottom: none;
+    /* Убираем границу у последнего элемента */
+}
+
+.selectedContact {
+    background-color: var(--primary-light);
 }
 
 .content {
@@ -19,7 +31,6 @@
 
     height: 100%;
     width: 100%;
-
 
 }
 
@@ -55,14 +66,14 @@
     width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
     color: #333;
     cursor: pointer;
 }
 
 .name .userName {
-    font-size: 14px;
+    font-size: 12px;
     color: #666;
     font-style: italic;
 }

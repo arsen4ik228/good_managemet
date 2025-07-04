@@ -3,6 +3,9 @@ import InputTextContainer from '@Custom/ContainerForInputText/InputTextContainer
 import { useTargetsHook, useConvertsHook } from '@hooks';
 import { deleteDraft, loadDraft, saveDraft } from '@helpers/indexedDB';
 import OrderModal from '@Custom/OrderModal/OrderModal';
+import {
+    message,
+} from 'antd';
 
 
 const Input = ({ userPosts }) => {
@@ -17,6 +20,7 @@ const Input = ({ userPosts }) => {
     const [unpinFiles, setUnpinFiles] = useState([]);
     const [convertTheme, setConvertTheme] = useState('');
     const [reciverPostId, setReciverPostId] = useState();
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const idTextarea = 1001
 
@@ -46,42 +50,53 @@ const Input = ({ userPosts }) => {
 
     const createTargets = async () => {
 
-        if (!contentInput) return
+        try {
+            if (!contentInput) return
 
-        const Data = {}
+            const Data = {}
 
-        Data.type = 'Личная'
-        Data.orderNumber = 1
-        Data.content = contentInput
-        Data.holderPostId = selectedPost
-        Data.dateStart = startDate
-        Data.deadline = deadlineDate
-        if (selectedPolicy)
-            Data.policyId = selectedPolicy
-        if (files) {
-            Data.attachmentIds = files
-                .filter(item => !unpinFiles.includes(item.id))
-                .map(element => element.id)
-        }
+            Data.type = 'Личная'
+            Data.orderNumber = 1
+            Data.content = contentInput
+            Data.holderPostId = selectedPost
+            Data.dateStart = startDate
+            Data.deadline = deadlineDate
+            if (selectedPolicy)
+                Data.policyId = selectedPolicy
+            if (files) {
+                Data.attachmentIds = files
+                    .filter(item => !unpinFiles.includes(item.id))
+                    .map(element => element.id)
+            }
 
+            console.log(Data)
 
-        console.log(Data)
-
-        await postTargets({
-            ...Data
-        })
-            .unwrap()
-            .then(() => {
-                reset()
+            await postTargets({
+                ...Data
             })
-            .catch((error) => {
-                console.error("Ошибка:", JSON.stringify(error, null, 2));
-            });
+                .unwrap()
+                .then(() => {
+                    reset()
+                })
+                .catch((error) => {
+                    console.error("Ошибка:", JSON.stringify(error, null, 2));
+                });
+
+            setFiles([]);
+            setUnpinFiles([]);
+        } catch (error) {
+            message.error(`Произошла ошибка при создании задачи: ${error?.data?.message || ""}`);
+        } finally {
+            setIsUpdating(false);
+
+        }
     }
 
     const createOrder = async () => {
 
-        if (!contentInput) return
+        if (!contentInput) {
+            message.error(`Вы не заполнили текст для задачи конверта!`);
+        }
 
         let attachmentIds = [];
         if (files) {
@@ -129,7 +144,6 @@ const Input = ({ userPosts }) => {
             setSelectedPostOrganizationId(userPosts[0].organization);
         }
     }, [userPosts]);
-
     useEffect(() => {
         loadDraft('DraftDB', 'drafts', idTextarea, setContentInput);
     }, []);
@@ -176,6 +190,7 @@ const Input = ({ userPosts }) => {
                     selectedPost={selectedPost}
                     setTheme={setConvertTheme}
                     buttonFunc={createOrder}
+                    convertTheme={convertTheme}
                 />
             )}
         </>

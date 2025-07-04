@@ -128,3 +128,11 @@ export const getPostIdRecipientSocketMessage = (host, recepient) => {
   if(userId === hostUserID)
     return recepient.id
 }
+
+export const transformToString = (arr) => {
+  let string = '' 
+  arr.forEach(element => {
+    string += `${element} \n\n`
+  });
+  return string
+}

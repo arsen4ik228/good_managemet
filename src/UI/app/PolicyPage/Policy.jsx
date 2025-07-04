@@ -16,9 +16,10 @@ import ModalWindow from "@Custom/ModalWindow";
 import { usePolicyHook, useGetReduxOrganization } from "@hooks";
 import { useDirectories } from "./hooks/Directories";
 import { useParams } from "react-router-dom";
-
-import { Tour } from "antd";
+import { Card, Drawer, Table, Tabs, Tour } from "antd";
 import dayjs from "dayjs";
+import { MenuOutlined, VerticalRightOutlined, RollbackOutlined } from "@ant-design/icons"
+import { PolicyNavigationBar } from './components/PolicyNavigationBar.jsx'
 
 import { Menu, Input, Tooltip, DatePicker, Button, Dropdown } from "antd";
 import {
@@ -35,6 +36,7 @@ import PolicyInputDropdown from "./components/PolicyInputDropdown";
 
 export default function Policy() {
   const { policyId } = useParams();
+  const [drawerOpen, setDrawerOpen] = useState(true)
 
   useEffect(() => {
     if (policyId) {
@@ -347,6 +349,7 @@ export default function Policy() {
     setOpenModalDeleteDirectory(false);
   };
 
+  console.warn(foldersSort)
   return (
     <div className={classes.dialog}>
       <Headers name={"политика"} funcActiveHint={() => setOpen(true)}>
@@ -356,8 +359,7 @@ export default function Policy() {
           refCreate={refCreate}
           refUpdate={refUpdate}
         >
-          <PolicyInputDropdown
-            // Основные параметры
+          {/* <PolicyInputDropdown
             policyName={policyName}
             setPolicyName={setPolicyName}
             disabledArchive={disabledArchive}
@@ -377,10 +379,23 @@ export default function Policy() {
             disposalsDraft={disposalsDraft}
             disposalsCompleted={disposalsCompleted}
             foldersSort={foldersSort}
+          /> */}
+          <Button
+            type="text"
+            icon={drawerOpen ? <MenuOutlined /> : <MenuOutlined />}
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            className={classes.toggleButton}
           />
 
           {currentPolicy.id && (
             <>
+              <Input
+                value={policyName}
+                onChange={(e) => setPolicyName(e.target.value)}
+                disabled={disabledArchive}
+                style={{ width: '300px' }}
+              ></Input>
+
               <Select
                 refSelect={refType}
                 name={"Тип"}
@@ -418,9 +433,29 @@ export default function Policy() {
 
       <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
 
+      <PolicyNavigationBar
+        directivesDraft={directivesDraft}
+        instructionsDraft={instructionsDraft}
+        disposalsDraft={disposalsDraft}
+        directivesActive={directivesActive}
+        instructionsActive={instructionsActive}
+        disposalsActive={disposalsActive}
+        directivesCompleted={directivesCompleted}
+        instructionsCompleted={instructionsCompleted}
+        disposalsCompleted={disposalsCompleted}
+        foldersSort={foldersSort}
+
+        policyId={selectedPolicyId}
+        setPolicyId={setSelectedPolicyId}
+        updateDirectory={updateDirectory}
+
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      ></PolicyNavigationBar>
+
       <div className={classes.main}>
         {isErrorPostPoliciesMutation ||
-        (isErrorGetPolicies && isErrorGetPolicyDirectories) ? (
+          (isErrorGetPolicies && isErrorGetPolicyDirectories) ? (
           <>
             <HandlerQeury
               Error={
@@ -477,7 +512,7 @@ export default function Policy() {
                             ErrorPostPoliciesMutation?.data?.errors?.[0]
                               ?.errors?.[0]
                               ? ErrorPostPoliciesMutation.data.errors[0]
-                                  .errors[0]
+                                .errors[0]
                               : ErrorPostPoliciesMutation?.data?.message
                           }
                         ></HandlerMutation>
@@ -497,7 +532,7 @@ export default function Policy() {
                             ErrorUpdatePoliciesMutation?.data?.errors?.[0]
                               ?.errors?.[0]
                               ? ErrorUpdatePoliciesMutation.data.errors[0]
-                                  .errors[0]
+                                .errors[0]
                               : ErrorUpdatePoliciesMutation?.data?.message
                           }
                         ></HandlerMutation>
@@ -525,7 +560,7 @@ export default function Policy() {
                         ErrorPostPoliciesDirectoriesMutation?.data?.errors?.[0]
                           ?.errors?.[0]
                           ? ErrorPostPoliciesDirectoriesMutation.data.errors[0]
-                              .errors[0]
+                            .errors[0]
                           : ErrorPostPoliciesDirectoriesMutation?.data?.message
                       }
                     ></HandlerMutation>
@@ -636,6 +671,6 @@ export default function Policy() {
           </>
         )}
       </div>
-    </div>
+    </div >
   );
 }

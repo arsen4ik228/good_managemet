@@ -2,25 +2,89 @@
     padding: 1%;
 }
 
+/* Стили для DatePicker с кнопкой очистки */
+.custom-date-picker-with-clear .ant-picker-clear {
+    right: auto;
+    /* Отключаем стандартное позиционирование справа */
+    left: 32px;
+    /* Сдвигаем левее (подбирайте значение под ваш дизайн) */
+    margin-right: 8px;
+}
+
+/* Делаем иконку календаря всегда видимой */
+.custom-date-picker-with-clear .ant-picker-suffix {
+    opacity: 1 !important;
+}
+
+/* Дополнительные стили для лучшего отображения */
+.custom-date-picker-with-clear .ant-picker-input {
+    display: flex;
+    align-items: center;
+}
+
+.custom-date-picker-with-clear .ant-picker-input>input {
+    padding-right: 8px;
+}
+
 .titleContainer {
-    >input {
-        display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        width: 95%;
-
-        margin: 0 auto;
-
-        border-bottom: 1px solid #bfbfbf;
-
-        font-size: 1rem;
+    >span {
+        background-color: #cfdee5;
+        border-radius: 8px;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        padding: 5px;
     }
 }
 
-.postContainer{
+
+.saveButton {
+    background-color: #E1F5FE;
+    color: #005475;
+    font-weight: 600;
+
+    &:hover {
+        background-color: var(--primary-light) !important;
+        color: #005475 !important;
+    }
+
+    &:active {
+        background-color: var(--primary-light) !important;
+        color: #005475 !important;
+    }
+}
+
+
+
+.cancelButton {
+    color: #005475;
+    font-weight: 600;
+
+    &:hover {
+        background-color: rgba(192, 192, 192, 0.329) !important;
+        color: #005475 !important;
+        border-color: rgba(0, 0, 0, 0.116) !important;
+    }
+
+    &:active {
+        background-color: rgba(192, 192, 192, 0.329) !important;
+        color: #005475 !important;
+        border-color: rgba(0, 0, 0, 0.116) !important;
+    }
+}
+
+.statusTag {
+    margin-right: 35px;
+}
+
+.postContainer {
     position: relative;
     max-width: 95%;
     margin: 0 auto 10px auto;
     border: 1px solid white;
+
     >select {
         display: block;
 
@@ -34,7 +98,14 @@
     }
 }
 
-.postContainer::before{
+.requiredBlock {
+    background: #0054754f;
+    padding: 4px 8px;
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.postContainer::before {
     content: "Пост";
     color: rgb(58, 58, 58);
     position: absolute;
@@ -104,7 +175,7 @@
     }
 }
 
-.stateContainer{
+.stateContainer {
     position: relative;
 
     max-width: 95%;
@@ -123,7 +194,7 @@
     }
 }
 
-.stateContainer::before{
+.stateContainer::before {
     content: "Статус";
     color: rgb(58, 58, 58);
     position: absolute;
@@ -166,7 +237,7 @@
     }
 }
 
-.attachContainer::before{
+.attachContainer::before {
     content: "Политика";
     color: rgb(58, 58, 58);
     position: absolute;
@@ -258,7 +329,7 @@
         -ms-transform: translateY(-5px);
         transform: translateY(-5px);
     }
-    
+
     .customFileButton:hover:before {
         opacity: 1;
         -webkit-transform: translateY(5px);
@@ -267,13 +338,13 @@
     }
 }
 
-@media(hover: none){
+@media(hover: none) {
     .customFileButton:active {
         -webkit-transform: translateY(-5px);
         -ms-transform: translateY(-5px);
         transform: translateY(-5px);
     }
-    
+
     .customFileButton:active:before {
         opacity: 1;
         -webkit-transform: translateY(5px);
@@ -309,11 +380,16 @@
 }
 
 .imagePreview {
-    max-width: 100px; /* Максимальная ширина превью */
-    max-height: 100px; /* Максимальная высота превью */
-    border-radius: 4px; /* Скругление углов */
-    object-fit: cover; /* Сохраняет пропорции изображения */
-    margin-right: 8px; /* Отступ от текста или кнопки */
+    max-width: 100px;
+    /* Максимальная ширина превью */
+    max-height: 100px;
+    /* Максимальная высота превью */
+    border-radius: 4px;
+    /* Скругление углов */
+    object-fit: cover;
+    /* Сохраняет пропорции изображения */
+    margin-right: 8px;
+    /* Отступ от текста или кнопки */
 }
 
 /* Стили для текста с именем файла */
@@ -348,4 +424,25 @@
 /* Эффект при нажатии на кнопку удаления */
 .fileItem button:active {
     background-color: #d9363e;
+}
+
+.optGroup {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    background-color: #E1F5FE !important;
+    color: black !important;
+    border-top: 2px solid #005475e0;
+}
+
+.notSelectOption {
+    color: black !important;
+}
+
+
+.attachmentTag {
+    cursor: pointer;
+    &:hover {
+        background-color: var(--primary-light) !important;
+        color: #005475 !important;
+    }
 }

@@ -4,7 +4,6 @@ import React from 'react'
 
 export default function RoleContainer({ rolesArray, role, setRole }) {
     const employeeRole = rolesArray?.find(item => item.roleName === 'Сотрудник')
-    console.log(setRole)
     return (
         <div>
             <Select

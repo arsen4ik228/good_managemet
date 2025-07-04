@@ -9,12 +9,12 @@ import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import TextArea from 'antd/es/input/TextArea';
-
+import { Select } from 'antd';
 
 import dayjs from "dayjs";
 import "dayjs/locale/ru";
 dayjs.locale("ru"); // Устанавливаем русский язык для dayjs
-
+const { Option } = Select;
 export default function InputTextContainer({
   userPosts,
   selectedPost,
@@ -48,17 +48,31 @@ export default function InputTextContainer({
 
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openFilesModal, setOpenFilesModal] = useState(false);
+  const [defaultPost, setDefaultPost] = useState(undefined)
+  const [selectedValue, setSelectedValue] = useState(null);
+  // Инициализация дефолтного значения
+  useEffect(() => {
+    if (senderPostName) {
+      setSelectedValue(senderPostName);
+    } else if (userPosts?.length) {
+      const defaultPost = userPosts.find(post => post.isDefault);
+      if (defaultPost) {
+        const value = `${defaultPost.id} ${defaultPost.organization}`;
+        setSelectedValue(value);
+        setSelectedPost(defaultPost.id);
+        setSelectedPostOrganizationId(defaultPost.organization);
+      }
+    }
+  }, [userPosts, senderPostName]);
 
-
-  const selectPost = (e) => {
-    const value = e.target.value;
+  const selectPost = (value) => {
+    setSelectedValue(value); // Сохраняем выбранное значение
     if (value) {
       const [postId, organization] = value.split(' ');
       setSelectedPost(postId);
       setSelectedPostOrganizationId(organization);
     }
   };
-
 
   const handleChangeContentTextarea = (e) => {
     const value = e.target.value;
@@ -86,21 +100,34 @@ export default function InputTextContainer({
       <div className={classes.wrapper}>
         <div className={classes.body}>
           <div className={classes.choosePostContainer}>
-            <select name="choosePost" onChange={selectPost} data-tour="current-post">
+            <Select
+              name="choosePost"
+              onChange={selectPost} // Теперь передаем value напрямую
+              data-tour="current-post"
+              className={classes.antdSelectOverride}
+              placeholder="Выберите пост"
+              value={selectedValue}
+              dropdownMatchSelectWidth={false}
+              style={{ width: '100%' }}
+            >
               {senderPostName ? (
-                <option>{senderPostName}</option>
+                <Option value={senderPostName}>{senderPostName}</Option>
               ) : (
                 userPosts?.map((item, index) => (
-                  <option key={index} value={`${item.id} ${item.organization}`}>
+                  <Option
+                    key={index}
+                    value={`${item.id} ${item.organization}`}
+                  >
                     {item.postName}
-                  </option>
+                    {item.isDefault && " (ваш пост по умолчанию)"}
+                  </Option>
                 ))
               )}
-            </select>
+            </Select>
           </div>
           <div className={classes.inputTextContainer}>
             <div className={classes.buttonSection}>
-              <div data-tour="files-attachment">
+              <div className={classes.dialogButton} data-tour="files-attachment">
                 {!offAttachIcon && (
                   <FilesModal
                     openModal={openFilesModal}
@@ -118,7 +145,7 @@ export default function InputTextContainer({
                   />
                 )}
               </div>
-              <div data-tour="date-for-task">
+              <div className={classes.dialogButton} data-tour="date-for-task">
                 {!offSetDate && (
                   <CalendarModal
                     openModal={openCalendarModal}
@@ -140,12 +167,12 @@ export default function InputTextContainer({
               />
             </div>
             <div className={classes.buttonSection}>
-              <div data-tour="share-icon">
+              <div className={classes.dialogButton} data-tour="share-icon">
                 {!offShareIcon && (
                   <img src={shareIcon} alt="shareIcon" onClick={shareClick} />
                 )}
               </div>
-              <div data-tour="send-message">
+              <div className={classes.dialogButton} data-tour="send-message">
                 <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
               </div>
             </div>

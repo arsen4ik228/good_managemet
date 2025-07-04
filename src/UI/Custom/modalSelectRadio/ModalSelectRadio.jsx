@@ -1,8 +1,16 @@
 import React from "react";
+import {
+  Modal,
+  Input,
+  Button,
+  List,
+  Avatar
+} from "antd";
+import {
+  CloseOutlined,
+  SaveOutlined
+} from '@ant-design/icons';
 import classes from "./ModalSelectRadio.module.css";
-import exitModal from "@image/exitModal.svg";
-import Blacksavetmp from "@image/Blacksavetmp.svg";
-import ButtonImage from "@Custom/buttonImage/ButtonImage";
 
 export function ModalSelectRadio({
   nameTable,
@@ -16,88 +24,51 @@ export function ModalSelectRadio({
   handleRadioChange,
   save,
 }) {
+  const dataSource = filterArray.length > 0 ? filterArray : array;
+
   return (
-    <div className={classes.modal}>
-      <div className={classes.modalWindow}>
-        <img
-          src={exitModal}
-          alt="exitModal"
-          onClick={() => exit()}
-          className={classes.exit}
-        />
-
-        <div className={classes.header}>
-          <div className={classes.item1}>
-            <input
-              type="search"
-              placeholder="Найти"
-              value={handleSearchValue}
-              onChange={handleSearchOnChange}
-              className={classes.search}
-            />
-          </div>
-
-          {save && (
-            <div className={classes.item2}>
-              <ButtonImage
-                name={"сохранить"}
-                icon={Blacksavetmp}
-                onClick={save}
-              ></ButtonImage>
-            </div>
-          )}
+    <Modal
+      title={
+        <div className={classes.titleContainer}>
+          <span>{nameTable}</span>
         </div>
-
-        <table className={classes.table}>
-          <thead>
-            <tr>
-              <th>{nameTable}</th>
-            </tr>
-          </thead>
-
-          {filterArray.length > 0 ? (
-            <tbody>
-              <tr>
-                <td>
-                  {filterArray?.map((item) => (
-                    <div
-                      key={item.id}
-                      className={classes.row}
-                      onClick={() => handleRadioChange(item.id, item)}
-                    >
-                      <input
-                        type="radio"
-                        checked={selectedItemID === item.id}
-                      />
-                      {item[arrayItem]}
-                    </div>
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-          ) : (
-            <tbody>
-              <tr>
-                <td>
-                  {array?.map((item) => (
-                    <div
-                      key={item.id}
-                      className={classes.row}
-                      onClick={() => handleRadioChange(item.id, item)}
-                    >
-                      <input
-                        type="radio"
-                        checked={selectedItemID === item.id}
-                      />
-                      {item[arrayItem]}
-                    </div>
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-          )}
-        </table>
+      }
+      visible={true}
+      onCancel={exit}
+      footer={null}
+      style={{
+        padding: '16px 24px'
+      }}
+      width={700}
+      closeIcon={<CloseOutlined />}
+    >
+      <div className={classes.searchContainer}>
+        <Input.Search
+          placeholder="Найти"
+          value={handleSearchValue}
+          onChange={handleSearchOnChange}
+          allowClear
+          enterButton
+        />
       </div>
-    </div>
+
+      <List
+        bordered
+        className={classes.list}
+        dataSource={dataSource}
+        renderItem={(item) => (
+          <List.Item
+            style={{ marginBottom: '5px', marginTop: '5px' }}
+            className={`${classes.listItem} ${selectedItemID === item.id ? classes.selectedItem : ''
+              }`}
+            onClick={() => handleRadioChange(item.id, item)}
+          >
+            <div className={classes.itemContent}>
+              {item[arrayItem]}
+            </div>
+          </List.Item>
+        )}
+      />
+    </Modal>
   );
 }

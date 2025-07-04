@@ -1,253 +1,340 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react';
+import {
+    Modal,
+    Form,
+    Input,
+    DatePicker,
+    Select,
+    Button,
+    Upload,
+    message,
+    Divider,
+    Tag,
+    Image,
+    Spin,
+    Card
+} from 'antd';
+import {
+    UploadOutlined,
+    PaperClipOutlined,
+    CheckOutlined,
+    CloseOutlined
+} from '@ant-design/icons';
+import { useTargetsHook, usePolicyHook } from '@hooks';
 import classes from './DetailsTaskModal.module.css'
-import ModalContainer from '@Custom/ModalContainer/ModalContainer'
-import { notEmpty, resizeTextarea } from '@helpers/helpers';
-import { useTargetsHook } from '@hooks'
-import { usePolicyHook } from '@hooks'
-import AttachmentModal from '../AttachmentsModal/AttachmentModal'
+import AttachmentModal from '../AttachmentsModal/AttachmentModal';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 import { isMobile } from 'react-device-detect';
+import { baseUrl } from '@helpers/constants';
+
+
+const { TextArea } = Input;
+const { Option } = Select;
 
 export default function DetailsTaskModal({ setOpenModal, taskData, userPosts }) {
-
-    const [startDate, setStartDate] = useState()
-    const [deadlineDate, setDeadlineDate] = useState()
-    const [contentInput, setContentInput] = useState()
-    const [taskStatus, setTaskStatus] = useState()
-    const [holderPost, setHolderPost] = useState()
-    const [selectedPolicy, setSelectedPolicy] = useState()
-    const [isArchive, setIsArchive] = useState(false)
-    const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState()
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const [taskStatus, setTaskStatus] = useState('Активная');
+    const [isArchive, setIsArchive] = useState(false);
+    const [selectedPostOrganizationId, setSelectedPostOrganizationId] = useState();
     const [attachments, setAttachments] = useState([]);
-    const fileInputRef = useRef(null);
-    const [selectedFiles, setSelectedFiles] = useState([])
-    const [openAttachmentsModal, setOpenAttachmentsModal] = useState(false)
+    const [openAttachmentsModal, setOpenAttachmentsModal] = useState(false);
+    const [selectedPolicy, setSelectedPolicy] = useState();
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
 
-
-
-    const isOrder = taskData.type === 'Приказ'
-    console.log(taskData)
+    const isOrder = taskData.type === 'Приказ';
 
     const {
         updateTargets,
         isLoadingUpdateTargetsMutation,
-        isSuccessUpdateTargetsMutation,
-        isErrorUpdateTargetsMutation,
-        ErrorUpdateTargetsMutation,
-
         deleteTarget,
-
-    } = useTargetsHook()
+    } = useTargetsHook();
 
     const {
         activeDirectives,
         activeInstructions,
-    } = usePolicyHook({ organizationId: selectedPostOrganizationId })
+    } = usePolicyHook({ organizationId: selectedPostOrganizationId });
 
-    const transformAttachmentsForRequest = (array) => {
+    useEffect(() => {
+        if (!taskData) return;
 
-        if (!notEmpty(array)) return null
+        setIsArchive(taskData?.targetState === 'Завершена');
+        setTaskStatus(taskData?.targetState);
+        setSelectedPolicy(taskData?.policy?.id || null);
 
-        const result = []
-        array.forEach(item =>
-            result.push(item.attachment.id)
-        )
-        return result
-    }
+        const orgId = userPosts?.find(item => item.id === taskData.holderPostId)?.organization;
+        setSelectedPostOrganizationId(orgId);
 
-    const updateTask = async () => {
+        setAttachments(taskData?.attachmentToTargets || []);
 
-        if (taskStatus === 'Удалена') {
-            await deleteTarget({
-                targetId: taskData.id,
-            })
-                .unwrap()
-                .then(() => {
-                })
-                .catch((error) => {
-                    console.error("Ошибка:", JSON.stringify(error, null, 2));
-                });
+        form.setFieldsValue({
+            holderPost: taskData?.holderPostId,
+            startDate: dayjs(taskData?.dateStart),
+            deadlineDate: dayjs(taskData?.deadline),
+            content: taskData.content,
+            status: taskData?.targetState,
+            policy: taskData?.policy?.id || null
+        });
+    }, [taskData, form, userPosts]);
+
+
+    const handlePreview = async (file) => {
+        if (file.attachment?.attachmentMimetype?.startsWith('image/')) {
+            setPreviewImage(`${baseUrl}${file.attachment.attachmentPath}`);
+            setPreviewTitle(file.attachment.originalName);
+        } else {
+            message.info('Превью доступно только для изображений');
         }
-        else {
+    };
 
+    const handleUpdateTask = async () => {
+        try {
+            setLoading(true);
+            const values = await form.validateFields();
 
-            const Data = {}
-
-            if (contentInput !== taskData.content) Data.content = contentInput
-            if (holderPost !== taskData.holderPostId) Data.holderPostId = holderPost
-            if (taskStatus !== taskData.targetState) Data.targetState = taskStatus
-            if (startDate !== taskData.dateStart.split('T')[0]) Data.dateStart = startDate
-            if (deadlineDate !== taskData.deadline.split('T')[0]) Data.deadline = deadlineDate
-            if (selectedPolicy === 'null')
-                Data.policyId = null
-            else if (selectedPolicy && selectedPolicy !== taskData.policy?.id)
-                Data.policyId = selectedPolicy
-
-            // if (!notEmpty(Data)) return
-
-            Data.attachmentIds = transformAttachmentsForRequest(attachments)
-
-
-            await updateTargets({
+            const updateData = {
                 _id: taskData.id,
                 type: taskData.type,
-                ...Data
-            })
-                .unwrap()
-                .then(() => {
-                })
-                .catch((error) => {
-                    console.error("Ошибка:", JSON.stringify(error, null, 2));
-                });
+                content: values.content,
+                holderPostId: values.holderPost,
+                targetState: values.status,
+                dateStart: values.startDate.format('YYYY-MM-DD'),
+                deadline: values.deadlineDate.format('YYYY-MM-DD'),
+                policyId: values.policy === 'null' ? null : values.policy,
+                attachmentIds: attachments.map(att => att.attachment.id)
+            };
+
+            await updateTargets(updateData).unwrap();
+            message.success('Задача успешно обновлена');
+            setOpenModal(false);
+        } catch (error) {
+            console.error("Ошибка:", error);
+            message.error('Произошла ошибка при обновлении задачи');
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
-    const setHolderPostId = (value) => {
-        setHolderPost(value)
-        setSelectedPostOrganizationId(prevState => {
+    const handleHolderPostChange = (value) => {
+        const orgId = userPosts.find(item => item.id === value)?.organization;
+        setSelectedPostOrganizationId(orgId);
+        setSelectedPolicy(null);
+        form.setFieldValue('policy', null);
+    };
 
-            const _selectedPostOrganizationId = userPosts?.find(item => item.id === value)?.organization
-
-            if (prevState !== _selectedPostOrganizationId)
-                setSelectedPolicy('null')
-
-            return _selectedPostOrganizationId
-        })
-    }
-
-    const handleCustomButtonClick = () => {
-        fileInputRef.current.click(); // Программно вызываем клик по input
-    }
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files); // Преобразуем FileList в массив
-        if (files) {
-            setSelectedFiles(files); // Сохраняем выбранные файлы в состоянии
-        }
-    }
-
-    useEffect(() => {
-
-        if (!notEmpty(taskData)) return;
-        console.warn('bam')
-        setIsArchive(taskData?.targetState === 'Завершена' ? true : false);
-        setStartDate(taskData?.dateStart.split('T')[0]);
-        setDeadlineDate(taskData?.deadline.split('T')[0]);
-        setContentInput(taskData.content);
-        setTaskStatus(taskData?.targetState);
-        setHolderPost(taskData?.holderPostId);
-        setSelectedPolicy(taskData?.policy?.id || false);
-        setSelectedPostOrganizationId(userPosts?.find(item => item.id === taskData.holderPostId)?.organization);
-
-        // Загрузка информации о прикрепленных файлах
-        const loadedAttachments = taskData?.attachmentToTargets || [];
-        console.warn('loadedAttachments', loadedAttachments)
-        setAttachments(loadedAttachments);
-    }, [taskData]);
-
-    console.log(attachments)
-    useEffect(() => {
-        resizeTextarea(taskData?.id)
-    }, [contentInput])
-
-    const clickFunction = () => {
-        updateTask()
-        setOpenModal(false)
-    }
-
-    const handleClickOpenFilesModal = () => {
-        if (isOrder) return
-
-        setOpenAttachmentsModal(true)
-    }
+    const statusTag = (
+        <Tag
+            color={taskStatus === 'Завершена' ? 'green' : taskStatus === 'Активная' ? 'blue' : 'gray'}
+            icon={taskStatus === 'Завершена' ? <CheckOutlined /> : null}
+            className={classes.statusTag}
+        >
+            {taskStatus}
+        </Tag>
+    );
 
     return (
         <>
-            <ModalContainer
-                setOpenModal={setOpenModal}
-                clickFunction={clickFunction}
-                disabledButton={isArchive}
-                buttonText={isOrder ? 'К диалогу' : 'Сохранить'}
-                style={isMobile ? { 'width': '95%' } : {}}                 
-            >
-                <div className={classes.content}>
-                    {/* {taskData.type === 'Приказ' && (
+            <Modal
+                title={
                     <div className={classes.titleContainer}>
-                        <input type="text" placeholder='Название приказа' />
+                        <span>{isOrder ? 'Детали приказа' : 'Редактирование задачи'}</span>
+                        {statusTag}
                     </div>
-                )} */}
-                    <div className={classes.postContainer}>
-                        <select
-                            name="stateSelect"
-                            disabled={isArchive || isOrder}
-                            value={holderPost}
-                            onChange={(e) => setHolderPostId(e.target.value)}
+                }
+                open={true}
+                onCancel={() => setOpenModal(false)}
+                footer={[
+                    <Button
+                        key="back"
+                        className={classes.cancelButton}
+                        onClick={() => setOpenModal(false)}
+
+                    >
+                        Отмена
+                    </Button>,
+                    <Button
+                        className={classes.saveButton}
+                        key="submit"
+                        type="primary"
+                        loading={loading}
+                        onClick={handleUpdateTask}
+                        disabled={isArchive || isOrder}
+                    >
+                        Сохранить
+                    </Button>,
+                ]}
+                width={isMobile ? '90%' : 700}
+                bodyStyle={{ padding: '24px' }}
+            >
+                <Spin spinning={isLoadingUpdateTargetsMutation}>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        disabled={isArchive || isOrder}
+                    >
+                        <Form.Item
+                            name="holderPost"
+                            className={classes.requiredBlock}
+                            label="Ответственный пост"
+                            rules={[{ required: true, message: 'Выберите ответственный пост' }]}
                         >
-                            {userPosts?.map((item, index) => (
-                                <option key={index} value={item.id}>{item.postName}</option>
-                            ))}
+                            <Select
+                                placeholder="Выберите пост"
+                                onChange={handleHolderPostChange}
+                                optionLabelProp="label"
+                            >
+                                {userPosts?.map((item) => (
+                                    <Option key={item.id} value={item.id} label={item.postName}>
+                                        {item.postName}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
 
-                        </select>
-                    </div>
-                    <div className={classes.dateContainer}>
-                        <input type="date" disabled={isArchive || isOrder} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                        <input type="date" disabled={isArchive || isOrder} value={isArchive ? taskData.dateComplete.split('T')[0] : deadlineDate} onChange={(e) => setDeadlineDate(e.target.value)} />
-                    </div>
-                    <div className={classes.descriptionContainer}>
-                        <textarea
-                            name="description"
-                            disabled={isArchive || isOrder}
-                            id={taskData.id}
-                            value={contentInput}
-                            onChange={(e) => setContentInput(e.target.value)}
-                        ></textarea>
-                    </div>
-                    <div className={classes.stateContainer}>
-                        <select
-                            name="stateSelect"
-                            disabled={isArchive || isOrder}
-                            value={taskStatus}
-                            onChange={(e) => setTaskStatus(e.target.value)}
+                        <div style={{ display: 'flex', gap: 16 }}>
+                            <Form.Item
+                                name="startDate"
+                                className={classes.requiredBlock}
+                                label="Дата начала"
+                                style={{ flex: 1 }}
+                                rules={[{ required: true, message: 'Укажите дату начала' }]}
+                            >
+                                <DatePicker
+                                    style={{ width: '100%' }}
+                                    format="DD.MM.YYYY"
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="deadlineDate"
+                                className={classes.requiredBlock}
+                                label={isArchive ? 'Дата завершения' : 'Срок выполнения'}
+                                style={{ flex: 1 }}
+                                rules={[{ required: true, message: 'Укажите срок выполнения' }]}
+                            >
+                                <DatePicker
+                                    style={{ width: '100%' }}
+                                    format="DD.MM.YYYY"
+                                    disabled={isArchive}
+                                />
+                            </Form.Item>
+                        </div>
+
+                        <Form.Item
+                            name="content"
+                            className={classes.requiredBlock}
+                            label="Описание задачи"
+                            rules={[{ required: true, message: 'Введите описание задачи' }]}
                         >
-                            <option value="Активная">Активная</option>
-                            <option value="Завершена">Завершена</option>
-                            <option value="Удалена">Удалена</option>
-                        </select>
-                    </div>
-                    <div className={classes.attachContainer}>
-                        <select name="policy" disabled={isArchive || isOrder} value={selectedPolicy} onChange={(e) => setSelectedPolicy(e.target.value)}>
-                            <option value={'null'}>Выберите политику</option>
-                            {activeDirectives.map((item, index) => (
-                                <option key={index} value={item.id}>{item.policyName}</option>
-                            ))}
-                            {activeInstructions.map((item, index) => (
-                                <option key={index} value={item.id}>{item.policyName}</option>
-                            ))}
-                        </select>
+                            <TextArea
+                                rows={4}
+                                placeholder="Опишите задачу..."
+                                maxLength={1000}
+                                showCount
+                            />
+                        </Form.Item>
 
-                        <input
-                            type="file"
-                            multiple
-                            ref={fileInputRef}
-                            style={{ display: 'none' }} // Скрываем input
-                            onChange={handleFileChange}
-                        />
-                    </div>
+                        <Form.Item
+                            name="status"
+                            label="Статус задачи"
+                        >
+                            <Select>
+                                <Option value="Активная">Активная</Option>
+                                <Option value="Завершена">Завершена</Option>
+                            </Select>
+                        </Form.Item>
 
+                        <Form.Item
+                            name="policy"
+                            label="Связанная политика"
+                        >
+                            <Select placeholder="Выберите политику">
+                                <Option className={classes.notSelectOption} value="null">Не выбрано</Option>
+                                <Select.OptGroup className={classes.optGroup} label="Директивы">
+                                    {activeDirectives
+                                        .slice()
+                                        .sort((a, b) => a.policyName.localeCompare(b.policyName))
+                                        .map((item) => (
+                                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                                        ))}
+                                </Select.OptGroup>
+                                <Select.OptGroup className={classes.optGroup} label="Инструкции">
+                                    {activeInstructions
+                                        .slice()
+                                        .sort((a, b) => a.policyName.localeCompare(b.policyName))
+                                        .map((item) => (
+                                            <Option key={item.id} value={item.id}>{item.policyName}</Option>
+                                        ))}
+                                </Select.OptGroup>
+                            </Select>
+                        </Form.Item>
 
-                    <button onClick={() => handleClickOpenFilesModal()} className={classes.customFileButton}>
-                        {attachments?.length > 0 ? `Вложений: ${attachments?.length}` : isOrder ? 'Файлы отсутствуют' : 'Выберите файлы'}
-                    </button>
-                </div>
-            </ModalContainer>
+                        <Card
+                            size="small"
+                            title={
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <PaperClipOutlined style={{ marginRight: 8 }} />
+                                    <span>Вложения</span>
+                                </div>
+                            }
+                            extra={
+                                !isOrder && (
+                                    <Button
+                                        type="text"
+                                        icon={<UploadOutlined />}
+                                        onClick={() => setOpenAttachmentsModal(true)}
+                                    >
+                                        Добавить
+                                    </Button>
+                                )
+                            }
+                            style={{ marginBottom: 16 }}
+                        >
+                            {attachments.length > 0 ? (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                    {attachments.map((att) => (
+                                        <Tag
+                                            className={classes.attachmentTag}
+                                            key={att.attachment.id} icon={<PaperClipOutlined />}
+                                            onClick={() => handlePreview(att)}
+                                        >
+                                            {att.attachment.originalName}
+                                        </Tag>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div style={{ color: 'rgba(0, 0, 0, 0.25)' }}>
+                                    {isOrder ? 'Файлы отсутствуют' : 'Нет прикрепленных файлов'}
+                                </div>
+                            )}
+                        </Card>
+                    </Form>
+                </Spin>
+            </Modal>
 
-            {openAttachmentsModal && (
-                <AttachmentModal
-                    setOpenModal={setOpenAttachmentsModal}
-                    attachments={attachments}
-                    setAttachments={setAttachments}
-                    isOrder={isOrder} 
-                ></AttachmentModal>
-            )}
+            <AttachmentModal
+                open={openAttachmentsModal}
+                setOpen={setOpenAttachmentsModal}
+                attachments={attachments}
+                setAttachments={setAttachments}
+                isOrder={isOrder}
+            />
+
+            <Modal
+                visible={!!previewImage}
+                title={previewTitle}
+                footer={null}
+                onCancel={() => setPreviewImage('')}
+                width="80%"
+            >
+                <Image
+                    alt={previewTitle}
+                    style={{ width: '100%' }}
+                    src={previewImage}
+                />
+            </Modal>
         </>
-    )
+    );
 }

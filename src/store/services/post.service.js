@@ -110,11 +110,12 @@ export const postApi = apiSlice.injectEndpoints({
     }),
 
     getAllChats: build.query({
-      query: () => ({
-        url: 'posts/contacts'
+      query: ({organizationId}) => ({
+        url: `posts/${organizationId}/contacts`
       }),
       transformResponse: (response) => {
-        return response.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
+        console.log(response)
+        return response?.postsWithConverts.concat(response?.postsWithoutConverts) //.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
       },
     }),
 

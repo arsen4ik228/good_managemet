@@ -55,13 +55,14 @@ export default function Task({ taskData, userPosts, isArchive }) {
         isErrorUpdateTargetsMutation,
         ErrorUpdateTargetsMutation,
 
+        deleteTarget,
+
     } = useTargetsHook()
 
     const completeTask = () => {
         if (isArchive) return
 
         if (isOrder) setOpenDetailsTaskModal(true)
-
         updateTask()
     }
 
@@ -88,14 +89,30 @@ export default function Task({ taskData, userPosts, isArchive }) {
         setCheckboxStatus(taskData?.targetState === 'Завершена' ? true : false)
     }, [taskData])
 
+
+    const handleDeletionTarget = async () => {
+        await deleteTarget({
+            targetId: taskData.id,
+        })
+            .unwrap()
+            .then(() => {
+            })
+            .catch((error) => {
+                console.error("Ошибка:", JSON.stringify(error, null, 2));
+            });
+    }
+
     return (
         <>
-            <div className={classes.wrapper}>
+            <div className={`${classes.wrapper} ${taskData.targetState === 'Завершена' && !isArchive ? classes.completed : ''} ${taskData.targetState === 'Черновик' ? classes.draft : ''}`}>
 
                 <div className={isOrder ? classes._body : classes.body}>
-                    <div className={classes.checkboxContainer} onClick={() => completeTask()}>
-                        <input type="checkbox" checked={checkboxStatus} disabled={isArchive} readOnly />
-                    </div>
+                    {taskData.targetState !== 'Черновик' && (<div className={classes.checkboxContainer} onClick={() => completeTask()} style={{
+                        pointerEvents: isArchive || taskData.targetState === 'Завершена' ? 'none' : 'auto',
+                        cursor: isArchive || taskData.targetState === 'Завершена' ? 'default' : 'pointer'
+                    }}>
+                        <input type="checkbox" checked={checkboxStatus} readOnly />
+                    </div>)}
                     <div className={classes.titleContainer} onClick={() => setOpenDetailsTaskModal(true)}>
                         <div
                             className={classes.titleText}
@@ -104,12 +121,20 @@ export default function Task({ taskData, userPosts, isArchive }) {
                             {taskData.content}
                         </div>
                     </div>
+
                     <div className={classes.dateContainer} onClick={() => setOpenDetailsTaskModal(true)}>
-                        {checkboxStatus ? 'Завершено' : 'Завершить:'}
                         <span>
                             {checkboxStatus ? transformDate(taskData.dateComplete) : transformDate(taskData.deadline)}
                         </span>
                     </div>
+                    {taskData.targetState !== 'Завершена' && !isArchive && (
+                        <div
+                            className={classes.deleteButton}
+                            onClick={() => handleDeletionTarget()}
+                        >
+                            ×
+                        </div>
+                    )}
                 </div>
             </div>
 

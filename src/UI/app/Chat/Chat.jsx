@@ -9,6 +9,8 @@ import { DialogContainer } from '@Custom/DialogContainer/DialogContainer.jsx'
 import { useSocket } from "@helpers/SocketContext.js";
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { FloatButton } from "antd";
+import dropdown from '../../image/drop-down.svg';
+import search from '../../image/search.svg'
 import arrowBack from "@image/back_white.svg";
 
 export default function Chat() {
@@ -18,6 +20,10 @@ export default function Chat() {
 
   const [copyChats, setCopyChats] = useState()
   const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
+  const [isOrganizationsClosed, setOrganizationsClosed] = useState(false);
+  const [isSearchClosed, setSearchClosed] = useState(true);
+  const [seacrhInput, setSearchInput] = useState('')
+  const [selectedContactId, setSelectedContactId] = useState('');
 
   const eventNames = useMemo(
     () => ["convertCreationEvent", "messageCountEvent"],
@@ -39,9 +45,22 @@ export default function Chat() {
 
   const handleItemClick = (item) => {
     //dispatch(setSelectedItem(item));
-
-    navigate(`/Chat/${item.id}`)
+    setSelectedContactId(item.id);
+    navigate(`/Chat/${item.id}`);
   }
+
+  const filteredItems = useMemo(() => {
+    if (!notEmpty(copyChats)) return []
+
+    const filterUsers = copyChats.filter((item) =>
+      item.postName.toLowerCase().includes(seacrhInput.toLowerCase()) ||
+      item.user?.firstName.toLowerCase().includes(seacrhInput.toLowerCase()) ||
+      item.user?.lastName.toLowerCase().includes(seacrhInput.toLowerCase())
+    );
+    return [
+      ...filterUsers
+    ]
+  }, [copyChats, seacrhInput]);
 
   useEffect(() => {
     if (!notEmpty(socketResponse?.convertCreationEvent)) return
@@ -73,62 +92,80 @@ export default function Chat() {
     setCopyChats([...allChats])
   }, [allChats])
 
+
+  console.warn(allChats)
   return (
-    <div className={classes.contact}>
+
+    <div className={classes.main}>
+      <button
+        className={classes.btnPomoshnik}
+        onClick={handleStartButtonClick}
+      >
+        <img src={iconHeader} alt="iconHeader" />
+        <span>Личный помощник</span>
+      </button>
+      <div className={classes.orgHeader}>
+        <div className={classes.orgHeaderName}>организации</div>
+        <div className={classes.dropdown}
+          onClick={() => setOrganizationsClosed(!isOrganizationsClosed)}
+        >
+          <img
+            src={dropdown}
+            alt="dropdown"
+            className={`${classes.collapseIcon} ${isOrganizationsClosed ? classes.collapsed : ''
+              }`}
+          />
+        </div>
+      </div>
+      <Section isOrganizationsClosed={isOrganizationsClosed}></Section>
+
       <div className={classes.header}>
         <div className={classes.headerName}>контакты</div>
-        <img src={burger} alt="burger" />
+        <img className={classes.searchIcon} src={search} alt="search" onClick={() => setSearchClosed(!isSearchClosed)} />
       </div>
-      <div className={classes.search}>
-        <input type="search" placeholder="поиск"></input>
-      </div>
-      <div className={classes.main}>
-        <button
-          className={classes.btnPomoshnik}
-          onClick={handleStartButtonClick}
-        >
-          <img src={iconHeader} alt="iconHeader" />
-          <span>Личный помощник</span>
-        </button>
-        <Section></Section>
+      {!isSearchClosed && (
+        <>
 
-        <div>
+          <div className={classes.search}>
+            <input type="search" placeholder="поиск" value={seacrhInput} onChange={(e) => setSearchInput(e.target.value)}></input>
+          </div>
 
-          {copyChats?.map((item, index) => (
-            <div onClick={() => handleItemClick(item)}>
-              <React.Fragment key={index} >
-                <DialogContainer
-                  postName={item?.postName}
-                  userName={item?.userFirstName + ' ' + item?.userLastName}
-                  avatarUrl={item?.userAvatar}
-                  unseenMessagesCount={
-                    (+item?.unseenMessagesCount) +
-                    (+item?.watcherUnseenCount) +
-                    (+socketMessagesCount.get(item?.id) || 0)
-                  }
-                ></DialogContainer>
-              </React.Fragment>
-            </div>
-          ))}
+          {/* <div className={classes.resultSeacrh}>
+            {filteredItems?.map((item, index) => (
+              <div onClick={() => handleItemClick(item)}>
+                <React.Fragment key={index} >
+                  <DialogContainer
+                    postName={item?.postName}
+                    userName={item?.user?.firstName + ' ' + item?.user?.lastName}
+                    avatarUrl={item?.user?.avatar_url}
+                  ></DialogContainer>
+                </React.Fragment>
+              </div>
+            ))}
+          </div> */}
+        </>
+      )}
+
+      <button onClick={handleUserButtonClick} className={`${classes.btnAddUser} ${!isSearchClosed ? classes['btnAddUserWithSearch'] : ''}`}>
+        <span> Добавить пользователя </span>
+      </button>
+      {filteredItems?.map((item, index) => (
+        <div onClick={() => handleItemClick(item)}>
+          <React.Fragment key={index} >
+            <DialogContainer
+              postName={item?.postName}
+              userName={item.user ? item?.user?.firstName + ' ' + item?.user?.lastName : ''}
+              avatarUrl={item?.user?.avatar_url}
+              unseenMessagesCount={calculateUnseenMessages(item, socketMessagesCount)}
+              selectedContactId={selectedContactId}
+              contactId={item.id}
+            ></DialogContainer>
+          </React.Fragment>
+
         </div>
-
-        <button onClick={handleUserButtonClick} className={classes.btnAddUser}>
-          <span> Добавить пользователя </span>
-        </button>
-
-        {/* <FloatButton
-          icon={
-            <img src={arrowBack} alt="back" style={{ width: 20, height: 20 }} />
-          }
-          type="primary"
-          tooltip="Добавить пользователя"
-          onClick={handleUserButtonClick}
-          style={{
-            insetInlineStart: 380,
-          }}
-        /> */}
-      </div>
-    </div>
+      ))
+      }
+    </div >
   );
 }
 
@@ -154,4 +191,16 @@ const getChatsWithTimeOfSocketMessage = (chatsArray, id) => {
   );
   console.warn(sortedChats)
   return sortedChats;
+};
+
+
+
+const calculateUnseenMessages = (item, socketMessagesCount) => {
+  if (!item?.unseenMessagesCount) return null;
+
+  return (
+    (+item.unseenMessagesCount || 0) +
+    (+item.watcherUnseenCount || 0) +
+    (+(socketMessagesCount.get(item.id)) || 0)
+  );
 };
