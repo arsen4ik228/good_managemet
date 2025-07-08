@@ -14,7 +14,6 @@ const socket = io(`${socketUrl}auth`, {
     credentials: true,
   },
   transports: ["websocket"],
-  reconnection: false,
 }); // Подключение к сокету
 
 export default function Content() {
