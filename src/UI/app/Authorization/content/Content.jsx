@@ -168,8 +168,7 @@ export default function Content() {
       // );
 
       setQrUrl(
-        `tg://resolve?domain=gm_valera_bot&start=${encodeURIComponent(
-
+        `tg://resolve?domain=${process.env.REACT_APP_TG_BOT_URL}&start=${encodeURIComponent(
           tokenForTG
         )}-${encodeURIComponent(socketId)}`
       );

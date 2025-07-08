@@ -27,6 +27,8 @@ export default function HandlerMutation({
 
   useEffect(() => {
     setShowSuccessMutation(Success);
+
+    setTimeout(() => (setShowSuccessMutation(false)), 1500)
   }, [Success]);
 
   useEffect(() => {
@@ -35,7 +37,6 @@ export default function HandlerMutation({
       setVisibleTextError(textError);
     }
   }, [Error]);
-
   return (
     <>
     

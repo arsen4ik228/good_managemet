@@ -9,7 +9,7 @@ import { notEmpty, resizeTextarea } from '@helpers/helpers';
 import CalendarModal from '../../app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import FilesModal from '../../app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import TextArea from 'antd/es/input/TextArea';
-import { Select } from 'antd';
+import { Select, Spin } from 'antd';
 
 import dayjs from "dayjs";
 import "dayjs/locale/ru";
@@ -44,6 +44,7 @@ export default function InputTextContainer({
   disableDateStart,
   organizationId,
   setContentInputPolicyId,
+  loadingRequestStatus
 }) {
 
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
@@ -164,7 +165,13 @@ export default function InputTextContainer({
                 id={idTextarea}
                 value={contentInput}
                 onChange={(e) => handleChangeContentTextarea(e)}
+                disabled={loadingRequestStatus}
               />
+              {loadingRequestStatus && (
+                <div className={classes.spin}>
+                  <Spin size="big" />
+                </div>
+              )}
             </div>
             <div className={classes.buttonSection}>
               <div className={classes.dialogButton} data-tour="share-icon">
@@ -173,7 +180,12 @@ export default function InputTextContainer({
                 )}
               </div>
               <div className={classes.dialogButton} data-tour="send-message">
-                <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
+                {loadingRequestStatus ? (
+                  <Spin size="small" />
+                ) : (
+                  <img src={sendIcon} alt="sendIcon" onClick={sendClick} />
+                )}
+
               </div>
             </div>
           </div>
