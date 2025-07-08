@@ -9,8 +9,12 @@ import ButtonImage from "@Custom/buttonImage/ButtonImage";
 export default function ModalFolder({
   searchArrayDirectives,
   searchArrayInstructions,
+  searchArrayDisposals,
+
   arrayDirectives,
   arrayInstructions,
+  arrayDisposals,
+
   inputSearchModalDirectory,
   handleInputChangeModalSearch,
   handleCheckboxChange,
@@ -22,19 +26,46 @@ export default function ModalFolder({
   buttonDelete,
 }) {
   const renderDirectives = () => {
-    const directivesToRender = searchArrayDirectives.length > 0 
-      ? searchArrayDirectives 
-      : arrayDirectives;
-    
-    return directivesToRender?.map((item) => (
+    const directivesToRender =
+      searchArrayDirectives.length > 0
+        ? searchArrayDirectives
+        : arrayDirectives;
+
+    return directivesToRender?.map((item) => {
+         console.log("item", item);
+      return(
       <div
         key={item.id}
         className={classes.row}
         onClick={() => handleCheckboxChange(item.id, "directives")}
       >
-        <input 
-          type="checkbox" 
-          checked={item.checked} 
+        <input
+          type="checkbox"
+          checked={item.checked}
+          onChange={(e) => e.stopPropagation()}
+        />
+        <span>{item.policyName}</span>
+      </div>
+    )
+    }
+    );
+  };
+
+  const renderInstructions = () => {
+    const instructionsToRender =
+      searchArrayInstructions.length > 0
+        ? searchArrayInstructions
+        : arrayInstructions;
+
+    return instructionsToRender?.map((item) => (
+      <div
+        key={item.id}
+        className={classes.row}
+        onClick={() => handleCheckboxChange(item.id, "instructions")}
+      >
+        <input
+          type="checkbox"
+          checked={item.checked}
           onChange={(e) => e.stopPropagation()}
         />
         <span>{item.policyName}</span>
@@ -42,20 +73,19 @@ export default function ModalFolder({
     ));
   };
 
-  const renderInstructions = () => {
-    const instructionsToRender = searchArrayInstructions.length > 0 
-      ? searchArrayInstructions 
-      : arrayInstructions;
-    
-    return instructionsToRender?.map((item) => (
+  const renderDisposals = () => {
+    const disposalsToRender =
+      searchArrayDisposals.length > 0 ? searchArrayDisposals : arrayDisposals;
+
+    return disposalsToRender?.map((item) => (
       <div
         key={item.id}
         className={classes.row}
-        onClick={() => handleCheckboxChange(item.id, "instructions")}
+        onClick={() => handleCheckboxChange(item.id, "disposals")}
       >
-        <input 
-          type="checkbox" 
-          checked={item.checked} 
+        <input
+          type="checkbox"
+          checked={item.checked}
           onChange={(e) => e.stopPropagation()}
         />
         <span>{item.policyName}</span>
@@ -113,9 +143,7 @@ export default function ModalFolder({
           <div className={classes.tableWrapper}>
             <div className={classes.tableHeader}>Директивы</div>
             <div className={classes.tableContent}>
-              <div className={classes.scrollContent}>
-                {renderDirectives()}
-              </div>
+              <div className={classes.scrollContent}>{renderDirectives()}</div>
             </div>
           </div>
 
@@ -125,6 +153,16 @@ export default function ModalFolder({
             <div className={classes.tableContent}>
               <div className={classes.scrollContent}>
                 {renderInstructions()}
+              </div>
+            </div>
+          </div>
+
+          {/* Таблица распоряжения */}
+          <div className={classes.tableWrapper}>
+            <div className={classes.tableHeader}>Распоряжения</div>
+            <div className={classes.tableContent}>
+              <div className={classes.scrollContent}>
+                {renderDisposals()}
               </div>
             </div>
           </div>

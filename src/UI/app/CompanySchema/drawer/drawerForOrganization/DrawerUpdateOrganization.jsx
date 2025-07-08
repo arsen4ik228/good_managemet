@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import ButtonImage from "@Custom/buttonImage/ButtonImage";
-import edit from "@image/edit.svg";
 import {
   Space,
   Button,
@@ -10,7 +8,9 @@ import {
   Flex,
   Popover,
   Drawer as DrawerAnt,
+  Tooltip,
 } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import { isMobile } from "react-device-detect";
 
@@ -116,16 +116,21 @@ export default function DrawerUpdateOrganization({
 
   return (
     <div style={{ display: "flex", justifyContent: "flex-end" }}>
-      <ButtonImage
-        dataTour="setting-button"
-        name={"редактировать"}
-        icon={edit}
-        onClick={showLoading}
-      ></ButtonImage>
+      <Tooltip title={"редактировать"}>
+        <Button
+          dataTour="setting-button"
+          shape="round"
+          icon={<EditOutlined />}
+          onClick={showLoading}
+        />
+      </Tooltip>
+
       <DrawerAnt
         closable
         destroyOnClose2
-        title={<div style={{whiteSpace: "nowrap"}}>Обновление организации</div>}
+        title={
+          <div style={{ whiteSpace: "nowrap" }}>Обновление организации</div>
+        }
         placement="right"
         open={open}
         loading={isLoadingOrganizationId || isFetchingOrganizationId}

@@ -136,6 +136,7 @@ const Input = ({ userPosts }) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2));
             });
 
+            message.success(`Конверт отправлен!`);
     }
 
     useEffect(() => {

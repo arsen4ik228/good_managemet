@@ -63,7 +63,7 @@ export default function SchemeСompanies() {
   const [openCreateOrganization, setOpenCreateOrganization] = useState(false);
 
   const [openHint, setOpenHint] = useState(false);
-  const refCreate = useRef(null); 
+  const refCreate = useRef(null);
   const steps = [
     {
       title: "Создать",
@@ -101,11 +101,8 @@ export default function SchemeСompanies() {
 
   return (
     <div className={classes.dialog}>
-      <Headers
-        name={"схема компании"}
-        funcActiveHint={() => setOpenHint(true)}
-      >
-        <BottomHeaders create={createOrganization}  refCreate={refCreate}/>
+      <Headers name={"схема компании"} funcActiveHint={() => setOpenHint(true)}>
+        <BottomHeaders create={createOrganization} refCreate={refCreate} />
       </Headers>
 
       <ConfigProvider locale={ruRU}>
@@ -128,24 +125,11 @@ export default function SchemeСompanies() {
           lineColor={"#ccc"}
           lineBorderRadius={"10px"}
           label={
-            <Card
-              loading={false}
-              style={{
-                display: "inline-block",
-                width: "300px",
-                height: "175px",
-                // boxShadow: "0px 0px 4px 0px rgba(0, 0, 0, 0.25)",
-                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-              }}
-            >
-              <p>МОЙ БИЗНЕС</p>
-              <p>СОБСТВЕННИК</p>
-              <p>Иванов Иван</p>
-            </Card>
+            <OrganizationTree
+              organizations={getOrganizations}
+            ></OrganizationTree>
           }
-        >
-          <OrganizationTree organizations={getOrganizations}></OrganizationTree>
-        </Tree>
+        />
       </div>
     </div>
   );
