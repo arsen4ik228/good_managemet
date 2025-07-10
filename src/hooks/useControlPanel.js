@@ -1,14 +1,13 @@
 import {
     useDeleteControlPanelMutation,
     useGetAllControlPanelQuery,
-    useGetControlPanelIdQuery,
     usePostControlPanelMutation,
     useUpdateControlPanelMutation,
   } from "@services";
   import useGetReduxOrganization from "./useGetReduxOrganization";
   import { useMutationHandler } from "./useMutationHandler";
 
-  export default function useControlPanel({selectedControlPanelId}) {
+  export default function useControlPanel() {
     const { reduxSelectedOrganizationId, reduxSelectedOrganizationReportDay } = useGetReduxOrganization();
   
     const {
@@ -28,27 +27,6 @@ import {
       }
     );
   
-    const {
-      currentControlPanel = {},
-      statisticsIdsInPanel = [],
-      statisticsPoints = [],
-      isLoadingGetontrolPanelId,
-      isFetchingGetontrolPanelId,
-      isErrorGetontrolPanelId,
-    } = useGetControlPanelIdQuery(
-      { controlPanelId: selectedControlPanelId },
-      {
-        selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-          currentControlPanel: data?.response || {},
-          statisticsIdsInPanel: data?.statisticsIdsInPanel || [],
-          statisticsPoints: data?.statisticsPoints || [],
-          isLoadingGetontrolPanelId: isLoading,
-          isErrorGetontrolPanelId: isError,
-          isFetchingGetontrolPanelId: isFetching,
-        }),
-        skip: !selectedControlPanelId,
-      }
-    );
   
     const [
       postControlPanel,
@@ -111,14 +89,6 @@ import {
     isErrorGetAllControlPanel,
     isLoadingGetAllControlPanel,
     isFetchingGetAllControlPanel,
-
-    // Получение панели по id
-    currentControlPanel,
-    statisticsIdsInPanel,
-    statisticsPoints,
-    isLoadingGetontrolPanelId,
-    isFetchingGetontrolPanelId,
-    isErrorGetontrolPanelId,
 
     // Создание панели
     postControlPanel,

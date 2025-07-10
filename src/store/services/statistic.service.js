@@ -1,9 +1,8 @@
 import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
-
   endpoints: (build) => ({
     getStatistics: build.query({
-      query: ({organizationId ,statisticData = true }) => ({
+      query: ({ organizationId, statisticData = true }) => ({
         url: `statistics/${organizationId}/?statisticData=${statisticData}`,
       }),
       transformResponse: (response) => {
@@ -14,18 +13,20 @@ export const statisticsApi = apiSlice.injectEndpoints({
           return [];
         }
 
-        const transformData = response?.map((item) => {
-          return {
-            id: item.id || "",
-            name: item.name || "",
-            ...(item.post && {
-              post: {
-                id: item?.post?.id || "",
-                name: item.post?.postName || "",
-              },
-            }),
-          };
-        }).sort((a, b) => a.name.localeCompare(b.name));
+        const transformData = response
+          ?.map((item) => {
+            return {
+              id: item.id || "",
+              name: item.name || "",
+              ...(item.post && {
+                post: {
+                  id: item?.post?.id || "",
+                  name: item.post?.postName || "",
+                },
+              }),
+            };
+          })
+          .sort((a, b) => a.name.localeCompare(b.name));
 
         console.log("Transform Data:  ", transformData);
         return transformData;
@@ -34,12 +35,12 @@ export const statisticsApi = apiSlice.injectEndpoints({
         Array.isArray(result)
           ? [
               ...result?.map(({ id }) => ({
-                type: 'Statistic',
+                type: "Statistic",
                 id,
               })),
-              'Statistic',
+              "Statistic",
             ]
-          : ['Statistic'],
+          : ["Statistic"],
     }),
 
     postStatistics: build.mutation({
@@ -61,7 +62,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
     }),
 
     getStatisticsId: build.query({
-      query: ({ statisticId, datePoint, viewType  }) => ({
+      query: ({ statisticId, datePoint, viewType }) => ({
         url: `statistics/${statisticId}/statistic?datePoint=${datePoint}&viewType=${viewType}`,
       }),
       transformResponse: (response) => {
@@ -70,7 +71,9 @@ export const statisticsApi = apiSlice.injectEndpoints({
           statisticData: response.statisticData || [],
         };
       },
-      providesTags: (result, err, arg) => [{ type: 'Statistic', id: arg.statisticId }],
+      providesTags: (result, err, arg) => [
+        { type: "Statistic", id: arg.statisticId },
+      ],
     }),
 
     updateStatistics: build.mutation({
@@ -79,7 +82,9 @@ export const statisticsApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, err, arg) => [{ type: 'Statistic', id: arg.statisticId }],
+      invalidatesTags: (result, err, arg) => [
+        { type: "Statistic", id: arg.statisticId },
+      ],
     }),
 
     updateStatisticsToPostId: build.mutation({
@@ -88,7 +93,28 @@ export const statisticsApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, err, arg) => [{ type: 'Post', id: arg.postId }],
+      invalidatesTags: (result, err, arg) => [{ type: "Post", id: arg.postId }],
+    }),
+
+    getStatisticsInControlPanel: build.query({
+      query: ({ selectedControlPanelId, pagination = 0, datePoint }) => ({
+        url: `statistics/${selectedControlPanelId}/statisticsInControlPanel?datePoint=${datePoint}`,
+      }),
+
+      providesTags:  [{ type: 'StatisticsInControlPanel', id: 'LIST' }],
+
+      transformResponse: (response) => {
+        const statisticsIdsInPanel = response.map((item) => item.id);
+
+        const _response = response.map(({ panelToStatistics, ...rest }) => ({
+          ...rest,
+          panelToStatisticsId: panelToStatistics[0]?.id,
+        }));
+        return {
+          allStatistics: _response || [],
+          statisticsIdsInPanel: statisticsIdsInPanel,
+        };
+      },
     }),
   }),
 });
@@ -98,5 +124,6 @@ export const {
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
-  useUpdateStatisticsToPostIdMutation
+  useUpdateStatisticsToPostIdMutation,
+  useGetStatisticsInControlPanelQuery,
 } = statisticsApi;

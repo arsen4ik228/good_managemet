@@ -95,10 +95,8 @@ export const StatisticInformationDrawer = ({
       setIsSaving(true);
       const response = await form.validateFields();
       await updateStatistics({
-        // statisticId: currentStatistic?.id,
-        // _id: currentStatistic?.id,
-        statisticId: "76c273da-ed80-4da2-b6ef-72133830a1f3",
-        _id: "76c273da-ed80-4da2-b6ef-72133830a1f3",
+        statisticId: currentStatistic?.id,
+        _id: currentStatistic?.id,
         ...DataArray,
         ...response,
       }).unwrap();

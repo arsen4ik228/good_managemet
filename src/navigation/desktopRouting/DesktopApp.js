@@ -187,7 +187,6 @@ function DesktopApp() {
                       <div className="messages">
                         <Panel />
                         <div className="content">
-                          <Chat />
                           <ControlPanel />
                         </div>
                       </div>
