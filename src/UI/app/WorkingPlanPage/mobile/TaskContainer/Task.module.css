@@ -1,8 +1,39 @@
+.background {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.delegateIcon {
+    position: absolute;
+    right: -6%;
+    top: 50%;
+    transform: translate(0,-50%);
+    opacity: 0;
+    transition: all 0.3s ease; /* Добавляем transition для всех свойств */
+    cursor: pointer;
+    color: #8c8c8c; /* Серый цвет */
+    font-size: 22px !important; /* Увеличенный размер */
+    padding: 4px; /* Для лучшего ховера */
+    border-radius: 4px;
+}
+.delegateIcon:hover {
+    color: #595959; /* Темнее серый при наведении на саму иконку */
+    background: #f0f0f0; /* Легкий фон при наведении */
+    font-size: 24px !important; /* Еще больше при наведении */
+}
+.background:hover .delegateIcon {
+    opacity: 1;
+}
+
 .wrapper {
     height: 70px;
     width: 100%;
     padding: 5px;
     margin: 10px 0;
+
+    position: relative;
 
     background-color: white;
     border-radius: 10px;
@@ -16,7 +47,6 @@
         margin-top: 8px;
         margin-bottom: 12px;
     }
-
 
 
 }

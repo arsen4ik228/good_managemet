@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import classes from './DialogContainer.module.css'
 import avatar from '@Custom/icon/icon _ GM.svg'
 import { baseUrl } from '@helpers/constants'
-import { isMobile } from 'react-device-detect'
 
 
 
 export const DialogContainer = ({ postName, userName, avatarUrl, unseenMessagesCount, selectedContactId, contactId }) => {
+    const localUnseenMessagesCount = (unseenMessagesCount !== 0 && unseenMessagesCount) && true
     return (
         <>
             <div className={`${classes.dialogContainer} ${contactId === selectedContactId ? classes.selectedContact : ''}`} >
@@ -18,7 +18,8 @@ export const DialogContainer = ({ postName, userName, avatarUrl, unseenMessagesC
                         <div className={classes.postName}>{postName.toUpperCase()}</div>
                         <div className={classes.userName}>{userName}</div>
                     </div>
-                    {unseenMessagesCount && (
+
+                    {localUnseenMessagesCount && (
                         <div className={classes.bage}>
                             <div>
                                 <span>{unseenMessagesCount}</span>
@@ -27,7 +28,6 @@ export const DialogContainer = ({ postName, userName, avatarUrl, unseenMessagesC
                     )}
                 </div>
             </div>
-
         </>
     )
 }
