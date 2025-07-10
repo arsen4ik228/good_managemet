@@ -43,7 +43,7 @@ export default function ListStatisticDrawer({
       open={open}
       onClose={() => setOpen(false)}
       mask={false}
-      width={"27vw"}
+      width={"27.5vw"}
       style={{
         position: "absolute",
         height: "100%",

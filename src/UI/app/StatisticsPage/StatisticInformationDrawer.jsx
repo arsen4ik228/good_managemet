@@ -177,7 +177,7 @@ export const StatisticInformationDrawer = ({
       open={openDrawer}
       onClose={() => setOpenDrawer(false)}
       mask={false}
-      width={"500px"}
+      width={"27.5vw"}
       style={{
         position: "absolute",
         height: "100%",
