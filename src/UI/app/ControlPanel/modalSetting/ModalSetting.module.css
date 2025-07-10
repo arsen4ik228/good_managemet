@@ -14,19 +14,17 @@
 
     background-color: rgba(0, 0, 0, 0.5);
 
-    z-index: 2000;
+    z-index: 30;
 }
 
 .modalWindow {
     position: relative;
 
     min-height: 330px;
-    height: 75vh;
+    height: 80vh;
 
     width: 400px;
     max-width: 400px;
-
-    left: 10%;
 
     padding: 10px;
 
@@ -54,7 +52,7 @@
 }
 
 .header{
-    height: 130px;
+    height: 160px;
 
     display: flex;
     flex-direction: column;

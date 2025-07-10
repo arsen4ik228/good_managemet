@@ -1,4 +1,3 @@
-import React from "react";
 import classes from "./Panel.module.css";
 
 import { UserOutlined } from "@ant-design/icons";
@@ -8,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { useUserHook } from "@hooks";
 import { baseUrl } from "@helpers/constants";
 
+import { usePostLogoutMutation } from "../../../store/services/auth.service";
+
+
 export default function Panel() {
   const navigate = useNavigate();
   const userView = () => {
@@ -15,33 +17,49 @@ export default function Panel() {
   };
 
   const { userInfo } = useUserHook();
+  const [postLogout] = usePostLogoutMutation();
+
 
   const handleButtonClickExit = async () => {
     try {
-      const response = await fetch(`${baseUrl}/auth/logout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken: localStorage.getItem('accessToken') }),
-        credentials: "include",
-      });
+      // 1. Получаем fingerprint из localStorage (если он там сохранен)
+      const fingerprint = localStorage.getItem("fingerprint");
 
-      if (!response.ok) {
-        throw new Error('Logout failed');
+      if (!fingerprint) {
+        // Если fingerprint нет, можно получить его (раскомментировать при необходимости)
+        // const fingerprintResponse = await fetch("https://api.ipify.org?format=json");
+        // const fingerprintData = await fingerprintResponse.json();
+        // fingerprint = fingerprintData.ip;
+        throw new Error("Fingerprint not found");
       }
 
-      // Очистка клиентских данных (пример)
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      // 2. Вызываем мутацию logout
+      const result = await postLogout({ fingerprint });
 
-      // Перенаправление на страницу входа
-      window.location.href = '/';
+      // Проверяем, была ли ошибка (альтернативный способ)
+      if ("error" in result) {
+        throw result.error;
+      }
 
+      // 3. Очистка клиентских данных
+      // localStorage.removeItem("accessToken");
+      // localStorage.removeItem("refreshToken");
+      // localStorage.removeItem("fingerprint"); 
+      // sessionStorage.clear();
+
+      // 4. Перенаправление на страницу входа
+      window.location.href = "/";
     } catch (error) {
-      console.error('Logout error:', error);
-      // Можно добавить уведомление пользователю
+      console.error("Logout error:", error);
+
+      // Более продвинутая обработка ошибок
+      const errorMessage =
+        error instanceof Error ? error.message : "Произошла неизвестная ошибка";
+
+      // Можно использовать toast или другое уведомление вместо alert
+      alert(`Ошибка при выходе: ${errorMessage}`);
     }
   };
-
   return (
     <div className={classes.block}>
       <Avatar

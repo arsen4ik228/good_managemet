@@ -9,6 +9,7 @@ const apiSlice = createApi({
   }),
   tagTypes: [
     'ControlPanel',
+    'StatisticsInControlPanel',
     'Convert',
     'File',
     'Goal',

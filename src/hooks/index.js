@@ -28,6 +28,7 @@ export { useCreatePost } from "./Post/useCreatePost";
 export { useGetSinglePost } from "./Post/useGetSinglePost";
 export { useUpdateSinglePost } from "./Post/useUpdateSinglePost";
 export { useGetDataCreatePost } from "./Post/useGetDataCreatePost";
+export { useGetPostsUser } from "./Post/useGetPostsUser";
 
 //Организации
 export { useAllOrganizations } from "./Organization/useAllOrganizations";
@@ -40,3 +41,4 @@ export { useAllStatistics } from "./Statistics/useAllStatistics";
 export { useCreateStatistic } from "./Statistics/useCreateStatistic";
 export { useGetSingleStatistic } from "./Statistics/useGetSingleStatistic";
 export { useUpdateSingleStatistic } from "./Statistics/useUpdateSingleStatistic";
+export { useGetAllStatisticsInControlPanel } from "./Statistics/useGetAllStatisticsInControlPanel";

@@ -1,6 +1,6 @@
 .dialog {
     width: 100%;
-    max-width: 75vw;
+    max-width: calc(100vw - 80px);
 
     display: flex;
     flex-direction: column;
@@ -16,7 +16,7 @@
     position: relative;
 
     width: 100%;
-    max-width: 75vw;
+    max-width: calc(100vw - 80px);
 
     display: flex;
     flex-direction: column;
@@ -63,5 +63,5 @@
 .handler {
     align-self: center;
 
-    margin-right:  25%;
+    margin-right: 25%;
 }

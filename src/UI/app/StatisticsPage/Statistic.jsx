@@ -466,23 +466,3 @@ export default function Statistic() {
     </div>
   );
 }
-
-{
-  /* <Flex gap="middle">
-
-            <Tooltip title="Открытие левой панели">
-              <Button
-                onClick={() => setOpenDrawer(true)}
-                icon={<MenuUnfoldOutlined />}
-              />
-            </Tooltip>
-
-            <Button
-              type="primary"
-              onClick={() => setOpenModalSelectedStatisticID(true)}
-              icon={<EditOutlined />}
-            >
-              Редактировать статистику
-            </Button>
-          </Flex> */
-}

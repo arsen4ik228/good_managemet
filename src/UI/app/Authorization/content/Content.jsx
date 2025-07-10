@@ -14,7 +14,6 @@ const socket = io(`${socketUrl}auth`, {
     credentials: true,
   },
   transports: ["websocket"],
-  reconnection: false,
 }); // Подключение к сокету
 
 export default function Content() {
@@ -161,14 +160,8 @@ export default function Content() {
   // Установка QR-кода при наличии tokenForTG и socketId
   useEffect(() => {
     if (tokenForTG && socketId) {
-      // setQrUrl(
-      //   `tg://resolve?domain=GMAuthBot&start=${encodeURIComponent(
-      //     tokenForTG
-      //   )}-${encodeURIComponent(socketId)}`
-      // );
-
       setQrUrl(
-        `tg://resolve?domain=gm_valera_bot&start=${encodeURIComponent(
+        `tg://resolve?domain=${process.env.REACT_APP_TG_BOT_URL}&start=${encodeURIComponent(
 
           tokenForTG
         )}-${encodeURIComponent(socketId)}`
