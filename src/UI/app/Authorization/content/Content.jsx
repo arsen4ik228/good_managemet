@@ -8,7 +8,6 @@ import { socketUrl, baseUrl } from "@helpers/constants";
 import telegram from "@Custom/icon/telegram.svg";
 import logo from "@Custom/icon/logo.svg";
 import icon from "@image/iconHeader.svg";
-
 const socket = io(`${socketUrl}auth`, {
   cors: {
     credentials: true,
