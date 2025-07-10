@@ -18,15 +18,15 @@ import { notEmpty } from '@helpers/helpers';
 const Chat = () => {
 
     const array = [
-        { id: '1', icon: post, text: 'Посты', link: 'Post' },
+        { id: '9', icon: companySchema, text: 'Схема компании', link: 'companySchema' },
+        { id: '8', icon: star, text: 'Рабочий план', link: 'WorkingPlan' },
         { id: '2', icon: listView, text: 'Проекты', link: 'projectWithProgramm' },
+        { id: '1', icon: post, text: 'Посты', link: 'Post' },
         { id: '3', icon: strategy, text: 'Стратегия', link: 'Strategy' },
         { id: '4', icon: star, text: 'Краткосрочная цель', link: 'Objective', },
         { id: '5', icon: stats, text: 'Статистики', link: 'Statistics', },
         { id: '6', icon: policy, text: 'Политика', link: 'Policy' },
         { id: '7', icon: star, text: 'Цели', link: 'Goal' },
-        { id: '8', icon: star, text: 'Рабочий план', link: 'WorkingPlan' },
-        { id: '9', icon: companySchema, text: 'Схема компании', link: 'companySchema' },
     ]
 
     const navigate = useNavigate()

@@ -162,7 +162,6 @@ export default function Content() {
     if (tokenForTG && socketId) {
       setQrUrl(
         `tg://resolve?domain=${process.env.REACT_APP_TG_BOT_URL}&start=${encodeURIComponent(
-
           tokenForTG
         )}-${encodeURIComponent(socketId)}`
       );
