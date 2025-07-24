@@ -42,7 +42,7 @@ import { debounce, isEqual } from "lodash";
 import { ConfigProvider, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 import { useGetAllStatisticsInControlPanel } from "@hooks";
-import { useGetPostsUser } from "../../../hooks/Post/useGetPostsUser";
+import { useGetPostsUserByOrganization } from "../../../hooks/Post/useGetPostsUserByOrganization";
 
 export default function ControlPanel() {
   const [datePoint, setDatePoint] = useState(null);
@@ -159,7 +159,7 @@ export default function ControlPanel() {
     isLoadingGetPostsUser,
     isFetchingGetPostsUser,
     isErrorGetPostsUser,
-  } = useGetPostsUser();
+  } = useGetPostsUserByOrganization();
 
   const {
     selectedID: selectedPostIdForCreated,
@@ -483,7 +483,9 @@ export default function ControlPanel() {
 
         {isErrorGetStatisticsInControlPanel ? (
           <>
-            <HandlerQeury Error={isErrorGetStatisticsInControlPanel}></HandlerQeury>
+            <HandlerQeury
+              Error={isErrorGetStatisticsInControlPanel}
+            ></HandlerQeury>
           </>
         ) : (
           <>
@@ -561,11 +563,17 @@ export default function ControlPanel() {
             setOpenModal={setOpenModalGraphic}
           ></ModalStatistic>
         )}
+
         <div className={classes.handler}>
           <HandlerQeury
             Loading={isLoadingGetAllControlPanel}
             Fetching={isFetchingGetAllControlPanel}
             Error={isErrorGetAllControlPanel}
+            textError={
+              isErrorGetAllControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? isErrorGetAllControlPanel.data.errors[0].errors[0]
+                : isErrorGetAllControlPanel?.data?.message
+            }
           ></HandlerQeury>
 
           <HandlerMutation

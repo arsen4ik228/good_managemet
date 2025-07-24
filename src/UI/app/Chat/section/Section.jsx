@@ -26,7 +26,7 @@ export default function Section({ isOrganizationsClosed }) {
 
 const handleControlPanelButtonClick = () => {
 
- window.open('/#/controlPanel', '_blank');
+ window.open('#/controlPanel', '_blank');
  
   // // Открываем новую вкладку
   // const newWindow = window.open('/#/controlPanel', '_blank');

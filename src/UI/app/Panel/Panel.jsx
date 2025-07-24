@@ -9,7 +9,6 @@ import { baseUrl } from "@helpers/constants";
 
 import { usePostLogoutMutation } from "../../../store/services/auth.service";
 
-
 export default function Panel() {
   const navigate = useNavigate();
   const userView = () => {
@@ -19,11 +18,11 @@ export default function Panel() {
   const { userInfo } = useUserHook();
   const [postLogout] = usePostLogoutMutation();
 
-
   const handleButtonClickExit = async () => {
     try {
       // 1. Получаем fingerprint из localStorage (если он там сохранен)
       const fingerprint = localStorage.getItem("fingerprint");
+
 
       if (!fingerprint) {
         // Если fingerprint нет, можно получить его (раскомментировать при необходимости)
@@ -44,8 +43,7 @@ export default function Panel() {
       // 3. Очистка клиентских данных
       // localStorage.removeItem("accessToken");
       // localStorage.removeItem("refreshToken");
-      // localStorage.removeItem("fingerprint"); 
-      // sessionStorage.clear();
+      // localStorage.removeItem("fingerprint");
 
       // 4. Перенаправление на страницу входа
       window.location.href = "/";

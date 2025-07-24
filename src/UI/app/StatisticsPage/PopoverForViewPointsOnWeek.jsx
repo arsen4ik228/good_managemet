@@ -42,12 +42,12 @@ export default function PopoverForViewPointsOnWeek({
 
   // Получение статистики по id
   const {
+    currentStatistic,
     statisticData: dataForViewDays,
     isLoadingGetStatisticId,
     isErrorGetStatisticId,
     isFetchingGetStatisticId,
   } = useGetSingleStatistic({
-    // statisticId: "76c273da-ed80-4da2-b6ef-72133830a1f3",
     statisticId: selectedStatisticId,
 
     datePoint: datePointForViewDays,
@@ -171,7 +171,9 @@ export default function PopoverForViewPointsOnWeek({
     setPointsForViewDaysCreate([]);
 
     const baseId = Date.now();
-    const startDate = dayjs(datePointForViewDays);
+    const startDate = dayjs(datePointForViewDays).startOf("day");
+
+    console.log("startDate", startDate);
 
     // Создаем Set для быстрого поиска существующих дат
     const existingDates = new Set(
@@ -179,13 +181,15 @@ export default function PopoverForViewPointsOnWeek({
         ?.filter(
           (item) => !["Неделя", "Месяц", "Год"].includes(item.correlationType)
         )
-        .map((item) => dayjs(item.valueDate).format("YYYY-MM-DD")) || []
+        .map((item) =>
+          dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
+        ) || []
     );
 
     const newData = Array(7)
       .fill()
       .map((_, i) => {
-        const date = startDate.add(i, "day");
+        const date = startDate.subtract(i, "day").startOf("day");
         if (!date || !date.isValid?.()) {
           // Проверка валидности
           console.error("Некорректная дата на шаге", i, date);
@@ -194,13 +198,14 @@ export default function PopoverForViewPointsOnWeek({
         return {
           id: baseId + i,
           value: 0,
-          valueDate: date.toDate().toISOString(), // Преобразуем в JS Date
+          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
           dateStr: date.format("YYYY-MM-DD"),
         };
       })
       .filter(Boolean) // Удаляем возможные null
       .filter((item) => !existingDates.has(item.dateStr))
-      .map(({ dateStr, ...rest }) => rest);
+      .map(({ dateStr, ...rest }) => rest)
+      .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
 
     setPointsForViewDaysCreate([...newData]);
   };
@@ -235,12 +240,8 @@ export default function PopoverForViewPointsOnWeek({
       setIsSaving(true);
 
       await updateStatistics({
-        // statisticId: currentStatistic?.id,
-        // _id: currentStatistic?.id,
-
-        statisticId: "76c273da-ed80-4da2-b6ef-72133830a1f3",
-        _id: "76c273da-ed80-4da2-b6ef-72133830a1f3",
-
+        statisticId: currentStatistic?.id,
+        _id: currentStatistic?.id,
         ...DataArray,
       }).unwrap();
 

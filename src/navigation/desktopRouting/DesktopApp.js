@@ -6,6 +6,7 @@ import ErrorPage from "@app/ErrorPage/ErrorPage";
 
 import { ConfigProvider } from "antd";
 import ruRU from "antd/locale/ru_RU";
+import Effect from "../../UI/app/Test/Effect";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -256,6 +257,7 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+          <Route path="/test" element={<Effect />} />
         </Routes>
       </ConfigProvider>
     </div>

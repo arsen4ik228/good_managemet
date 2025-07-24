@@ -9,7 +9,7 @@ import TextArea from "@Custom/TextArea/TextArea.jsx";
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import { useGoalHook, usePolicyHook } from "@hooks";
-import {transformToString, } from "@helpers/helpers"
+import { transformToString } from "@helpers/helpers";
 import { ConfigProvider, Tour, Button } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
@@ -22,9 +22,7 @@ export default function Goal() {
   const refUpdate = useRef(null);
   const [pressedIndex, setPressedIndex] = useState(null);
 
-
   const [open, setOpen] = useState(false);
-
   const steps = [
     {
       title: "Сохранить",
@@ -82,7 +80,7 @@ export default function Goal() {
     localIsResponsePostPoliciesMutation,
   } = usePolicyHook({
     organizationId: reduxSelectedOrganizationId,
-  })
+  });
 
   const createDirective = async () => {
     try {
@@ -90,20 +88,22 @@ export default function Goal() {
       const day = date.getDate(); // День месяца (1-31)
       const month = date.getMonth() + 1; // Месяц (0-11, поэтому +1)
       const year = date.getFullYear(); // Год (4 цифры)
-      const formattedDate = `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;      
-      
+      const formattedDate = `${day.toString().padStart(2, "0")}.${month
+        .toString()
+        .padStart(2, "0")}.${year}`;
+
       await updateGoal({
         _id: currentGoal.id,
         content: editorState,
       }).unwrap();
-      
+
       const result = await postPolicy({
-        policyName: `Цели Компании ${formattedDate}`,   //${formattedDate(date)
+        policyName: `Цели Компании ${formattedDate}`, //${formattedDate(date)
         organizationId: reduxSelectedOrganizationId,
-        content: transformToString(editorState)
+        content: transformToString(editorState),
       }).unwrap();
-  
-      console.warn(result)
+
+      console.warn(result);
     } catch (error) {
       console.error("Ошибка:", error);
     }
@@ -111,11 +111,10 @@ export default function Goal() {
 
   const shareFunctionList = [
     {
-      title: 'Создать директиву',
-      func: createDirective
-    }
-  ]
-
+      title: "Создать директиву",
+      func: createDirective,
+    },
+  ];
 
   const saveGoal = async () => {
     await postGoal({
@@ -135,7 +134,7 @@ export default function Goal() {
       content: editorState,
     })
       .unwrap()
-      .then(() => { })
+      .then(() => {})
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
@@ -194,8 +193,6 @@ export default function Goal() {
     };
   }, []);
 
-
-  console.log(editorState)
   return (
     <div className={classes.dialog}>
       <Headers name={"цели"} funcActiveHint={() => setOpen(true)}>
@@ -218,7 +215,6 @@ export default function Goal() {
           </>
         ) : (
           <>
-
             <HandlerQeury
               Loading={isLoadingGetGoal}
               Fetching={isFetchingGetGoal}
@@ -232,7 +228,7 @@ export default function Goal() {
                     ref={provided.innerRef}
                     className={classes.droppableContainer}
                   >
-                    {editorState.map((item, index) => (
+                    {editorState?.map((item, index) => (
                       <Draggable
                         key={index}
                         draggableId={`item-${index}`}
@@ -243,7 +239,7 @@ export default function Goal() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             className={classes.editorContainer}
-                          // style={{'height':'150px'}}
+                            // style={{'height':'150px'}}
                           >
                             <div
                               className={classes.dragHandle}
@@ -260,12 +256,12 @@ export default function Goal() {
                               />
                             </div>
 
-
                             <div
                               style={{
-                                padding: '20px',
-                                height: pressedIndex === index ? '100px' : 'auto',
-                                transition: 'height 3.5s ease',
+                                padding: "20px",
+                                height:
+                                  pressedIndex === index ? "100px" : "auto",
+                                transition: "height 3.5s ease",
                               }}
                             >
                               <TextArea

@@ -1,23 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetSingleStatistic } from "@hooks";
 import { Button, Space, Tooltip, Flex, Modal, Typography } from "antd";
 import {
   LeftCircleOutlined,
   RightCircleOutlined,
-  EditOutlined,
   SunOutlined,
   MoonOutlined,
   CalendarOutlined,
-  MenuFoldOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import * as echarts from "echarts";
+
+import Graphic from "../../../Graphic/Graphic";
+
 import _ from "lodash";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import Graphic from "../../../Graphic/Graphic";
-// Extend dayjs with the plugin
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
 dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 const { Title } = Typography;
 
@@ -31,7 +32,6 @@ const typeViewStatistic = [
 ];
 
 const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
-  const chartRef = useRef(null);
 
   const [dataSource, setDataSource] = useState([]);
   const [chartType, setChartType] = useState("thirteen");
@@ -59,20 +59,19 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
     const weeksArray = Array.from({ length: quantity }, (_, i) => {
       const second_to_last_Date = dayjs(modalDatePoint)
         .day(reportDay) // Устанавливаем день недели
-        .subtract(i + 1, "week") // Отступаем i+1 недель назад (исключаем текущую)
+        .subtract(i, "week") // Отступаем i+1 недель назад (исключаем текущую)
         .subtract(1, "day")
         .endOf("day"); // Конец дня
 
       const date_for_view_days_in_week = dayjs(modalDatePoint)
         .day(reportDay) // Устанавливаем день недели
-        .subtract(i + 1, "week") // Отступаем i+1 недель назад (исключаем текущую)
-        .subtract(7, "day")
+        .subtract(i, "week") // Отступаем i+1 недель назад (исключаем текущую)
         .endOf("day") // Конец дня
         .format("YYYY-MM-DD");
 
       const endDate = dayjs(modalDatePoint)
         .day(reportDay) // Устанавливаем день недели
-        .subtract(i + 1, "week") // Отступаем i+1 недель назад (исключаем текущую)
+        .subtract(i, "week") // Отступаем i+1 недель назад (исключаем текущую)
         .endOf("day"); // Конец дня
 
       return {
@@ -88,14 +87,14 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
 
     // Заполняем данные с правильным учетом недельных интервалов
     weeksArray.forEach((week) => {
-      const weekEnd = dayjs(week.valueDate);
-      const weekStart = weekEnd.subtract(7, "day");
+      const weekEnd = dayjs(week.valueDate).endOf("day");
+      const weekStart = weekEnd.subtract(6, "day").startOf("day");
 
       const weekPoints = data.filter((point) => {
         const pointDate = dayjs(point.valueDate);
         return (
           pointDate.isSameOrAfter(weekStart) &&
-          pointDate.isBefore(weekEnd) &&
+          pointDate.isSameOrBefore(weekEnd) &&
           point.correlationType !== "Месяц" &&
           point.correlationType !== "Год"
         );
@@ -156,7 +155,7 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
 
   const countDays = () => {
     const baseId = Date.now();
-    const startDate = dayjs(modalDatePoint); // Или dayjs("2025-05-29")
+    const startDate = dayjs(modalDatePoint).startOf("day");
 
     // Создаем Set для быстрого поиска существующих дат
     const existingDates = new Set(
@@ -164,12 +163,14 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
         ?.filter(
           (item) => !["Неделя", "Месяц", "Год"].includes(item.correlationType)
         )
-        .map((item) => dayjs(item.valueDate).format("YYYY-MM-DD")) || []
+        .map((item) =>
+          dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
+        ) || []
     );
     const newData = Array(7)
       .fill()
       .map((_, i) => {
-        const date = startDate.add(i, "day");
+        const date = startDate.subtract(i, "day").startOf("day");
         if (!date || !date.isValid?.()) {
           // Проверка валидности
           console.error("Некорректная дата на шаге", i, date);
@@ -178,14 +179,15 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
         return {
           id: baseId + i,
           value: 0,
-          valueDate: date.toDate().toISOString(), // Преобразуем в JS Date
+          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
           dateStr: date.format("YYYY-MM-DD"),
         };
       })
       .filter(Boolean) // Удаляем возможные null
       .filter((item) => !existingDates.has(item.dateStr))
-      .map(({ dateStr, ...rest }) => rest);
-
+      .map(({ dateStr, ...rest }) => rest)
+      .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
+      
     setDataSource([...newData]);
   };
 

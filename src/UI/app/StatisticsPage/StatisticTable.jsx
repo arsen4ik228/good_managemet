@@ -12,12 +12,9 @@ import {
   Tooltip,
 } from "antd";
 
-import _ from "lodash"
+import _ from "lodash";
 
-import {
-  DeleteOutlined,
-  AliwangwangOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, AliwangwangOutlined } from "@ant-design/icons";
 
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -42,15 +39,20 @@ export default function StatisticTable({
 
   const handleDateChange = (date) => {
     if (date) {
+      const dateWithoutTZ = dayjs(date).startOf("day");
       const newData = {
         id: Date.now(),
         value: 0,
-        valueDate: date.toISOString(),
+        valueDate: `${dateWithoutTZ.format("YYYY-MM-DD")}T00:00:00.000Z`,
+        correlationType: null,
       };
+
       setCreatePoints((prev) => {
-        const isDateExists = prev.some(
-          (item) => item.valueDate === newData.valueDate
-        );
+        const isDateExists = prev.some((item) => {
+          const itemDate = dayjs(item.valueDate).startOf("day");
+          return itemDate.isSame(dateWithoutTZ, "day");
+        });
+
         if (isDateExists) return prev;
 
         return [...prev, newData].sort(
@@ -58,7 +60,7 @@ export default function StatisticTable({
         );
       });
     }
-    setSelectedDate(null); // Очищаем выбранную дату
+    setSelectedDate(null);
   };
 
   const handleRangeChange = (dates) => {
@@ -81,22 +83,33 @@ export default function StatisticTable({
 
     const newData = Array(daysDiff + 1)
       .fill()
-      .map((_, i) => ({
-        id: `${baseId}-${i}`, // Более надежный ID
-        value: 0,
-        valueDate: dates[0].clone().add(i, "day").toISOString(), // .clone() для безопасности
-      }));
+      .map((_, i) => {
+        const date = dates[0].clone().add(i, "day").startOf("day");
+        return {
+          id: `${baseId}-${i}`,
+          value: 0,
+          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
+          dateStr: date.format("YYYY-MM-DD"), // Для проверки дубликатов
+          correlationType: null,
+        };
+      });
 
     setCreatePoints((prev) => {
-      // Фильтруем возможные дубликаты
-      const existingDates = new Set(prev.map((item) => item.valueDate));
+      const existingDates = new Set(
+        prev.map((item) =>
+          dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
+        )
+      );
+
       return [
-        ...newData.filter((item) => !existingDates.has(item.valueDate)),
         ...prev,
+        ...newData
+          .filter((item) => !existingDates.has(item.dateStr))
+          .map(({ dateStr, ...rest }) => rest),
       ].sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
     });
 
-    setSelectedRange(dates); // Сохраняем выбранный диапазон
+    setSelectedRange(dates);
   };
 
   const handleDelete = (id) => {

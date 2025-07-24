@@ -70,26 +70,41 @@ export const StatisticInformationDrawer = ({
 
   const handleSave = async () => {
     try {
-      const DataArray = {};
+      const DataArray = {
+        // Всегда инициализируем как массив, даже если пустой
+        statisticDataCreateDtos: [],
+        statisticDataUpdateDtos: [],
+      };
 
+      // Обработка createCorellationPoints
       if (createCorellationPoints.length > 0) {
-        DataArray.statisticDataCreateDtos = createCorellationPoints.map(
-          ({ id, ...rest }) => ({ ...rest })
+        DataArray.statisticDataCreateDtos.push(
+          ...createCorellationPoints.map(({ id, ...rest }) => rest)
         );
       }
 
-      const statisticDataUpdateDtos = dataSource.filter(
-        (item) => item.isChanged === true
-      );
-
-      if (statisticDataUpdateDtos.length > 0) {
-        DataArray.statisticDataUpdateDtos = statisticDataUpdateDtos.map(
-          ({ id, value, correlationType, ...rest }) => ({
-            _id: id,
-            value,
-            correlationType,
-          })
+      // Обработка createPoints
+      if (createPoints.length > 0) {
+        DataArray.statisticDataCreateDtos.push(
+          ...createPoints.map(({ id, ...rest }) => rest)
         );
+      }
+
+      // Обработка обновлений
+      DataArray.statisticDataUpdateDtos = dataSource
+        .filter((item) => item.isChanged === true)
+        .map(({ id, value, correlationType }) => ({
+          _id: id,
+          value,
+          correlationType,
+        }));
+
+      // Удаляем пустые массивы
+      if (DataArray.statisticDataCreateDtos.length === 0) {
+        delete DataArray.statisticDataCreateDtos;
+      }
+      if (DataArray.statisticDataUpdateDtos.length === 0) {
+        delete DataArray.statisticDataUpdateDtos;
       }
 
       setIsSaving(true);
@@ -106,11 +121,16 @@ export const StatisticInformationDrawer = ({
       if (error.errorFields) {
         message.error("Пожалуйста, заполните все поля корректно.");
       } else {
-        message.error("Ошибка при обновлении.");
+        message.error(
+          error?.data?.errors?.[0]?.errors?.[0]
+            ? error.data.errors[0].errors[0]
+            : error?.data?.message
+        );
         console.error("Детали ошибки:", JSON.stringify(error, null, 2));
       }
     } finally {
       setCreateCorellationPoints([]);
+      setCreatePoints([]);
       setDataSource((prev) => prev.map(({ isChanged, ...rest }) => rest));
       setIsSaving(false);
     }

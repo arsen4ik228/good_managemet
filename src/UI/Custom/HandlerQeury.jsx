@@ -8,7 +8,7 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 
 import { Spin } from "antd";
 
-export default function HandlerQeury({ Loading, Fetching, Error }) {
+export default function HandlerQeury({ Loading, Fetching, Error, textError }) {
   const [visibleError, setVisibleError] = useState(false);
 
   useEffect(() => {
@@ -73,9 +73,7 @@ export default function HandlerQeury({ Loading, Fetching, Error }) {
           <Result
             status="error"
             title="Ошибка выполнения"
-            subTitle={
-              "Не выбрана организация!"
-            }
+            subTitle={textError}
             icon={
               <CloseCircleOutlined
                 style={{ transform: "scale(2.5)", color: "#ff4d4f" }}
