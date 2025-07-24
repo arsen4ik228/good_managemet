@@ -5,7 +5,7 @@ import {
   usePostPostsMutation,
   useUpdatePostsMutation,
   useGetUnderPostsQuery,
-  useGetPostsUserQuery,
+  useGetPostsUserByOrganizationQuery,
   useGetAllChatsQuery
 } from "../store/services/index";
 import useGetReduxOrganization from "./useGetReduxOrganization";
@@ -115,7 +115,7 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     }
   );
 
-  const { data: userPosts } = useGetPostsUserQuery()
+  const { data: userPosts } = useGetPostsUserByOrganizationQuery()
 
   const { data: allChats, refetch: refetchAllChats} = useGetAllChatsQuery({organizationId: reduxSelectedOrganizationId})
 

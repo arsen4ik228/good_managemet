@@ -1,14 +1,17 @@
-import { useState, useEffect, useRef, useMemo } from "react";
-import * as echarts from "echarts";
+import { useMemo } from "react";
 import _ from "lodash";
-import dayjs from "dayjs";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
 import Graphic from "../../../Graphic/Graphic";
-// Extend dayjs with the plugin
+
+import dayjs from "dayjs";
+
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
 dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 export default function GraphicForCard({ dataStatistics, datePoint }) {
-
   // Мемоизация данных статистики
   const dataSource = useMemo(() => {
     if (!dataStatistics) return [];
@@ -20,20 +23,19 @@ export default function GraphicForCard({ dataStatistics, datePoint }) {
       const weeksArray = Array.from({ length: quantity }, (_, i) => {
         const second_to_last_Date = dayjs(datePoint)
           .day(reportDay)
-          .subtract(i + 1, "week")
+          .subtract(i, "week")
           .subtract(1, "day")
           .endOf("day");
 
         const date_for_view_days_in_week = dayjs(datePoint)
           .day(reportDay)
-          .subtract(i + 1, "week")
-          .subtract(7, "day")
+          .subtract(i, "week")
           .endOf("day")
           .format("YYYY-MM-DD");
 
         const endDate = dayjs(datePoint)
           .day(reportDay)
-          .subtract(i + 1, "week")
+          .subtract(i, "week")
           .endOf("day");
 
         return {
@@ -48,14 +50,14 @@ export default function GraphicForCard({ dataStatistics, datePoint }) {
       }).reverse();
 
       weeksArray.forEach((week) => {
-        const weekEnd = dayjs(week.valueDate);
-        const weekStart = weekEnd.subtract(7, "day");
+        const weekEnd = dayjs(week.valueDate).endOf("day");
+        const weekStart = weekEnd.subtract(6, "day").startOf("day");
 
         const weekPoints = data.filter((point) => {
           const pointDate = dayjs(point.valueDate);
           return (
-            pointDate.isSameOrAfter(weekStart) &&
-            pointDate.isBefore(weekEnd) &&
+          pointDate.isSameOrAfter(weekStart) &&
+          pointDate.isSameOrBefore(weekEnd) &&
             point.correlationType !== "Месяц" &&
             point.correlationType !== "Год"
           );

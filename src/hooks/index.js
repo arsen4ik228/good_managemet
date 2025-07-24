@@ -28,7 +28,7 @@ export { useCreatePost } from "./Post/useCreatePost";
 export { useGetSinglePost } from "./Post/useGetSinglePost";
 export { useUpdateSinglePost } from "./Post/useUpdateSinglePost";
 export { useGetDataCreatePost } from "./Post/useGetDataCreatePost";
-export { useGetPostsUser } from "./Post/useGetPostsUser";
+export { useGetPostsUserByOrganization } from "./Post/useGetPostsUserByOrganization";
 
 //Организации
 export { useAllOrganizations } from "./Organization/useAllOrganizations";
