@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import _ from "lodash";
 
-import Graphic from "../../../Graphic/Graphic";
+import Graphic from "./Graphic";
 
 import dayjs from "dayjs";
 
