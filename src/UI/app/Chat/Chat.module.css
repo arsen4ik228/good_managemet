@@ -275,3 +275,11 @@ input[type='search']::-webkit-search-cancel-button {
 .btnPomoshnik:hover {
     background-color: var(--primary-light);
 }
+
+.errorGetContact{
+    padding: 3px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    text-align: center;
+    line-height: 24px;
+}

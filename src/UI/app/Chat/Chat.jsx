@@ -146,6 +146,11 @@ export default function Chat() {
       <button onClick={handleUserButtonClick} className={`${classes.btnAddUser} ${!isSearchClosed ? classes['btnAddUserWithSearch'] : ''}`}>
         <span> Добавить пользователя </span>
       </button>
+      {filteredItems.length === 0 && (
+        <div className={classes.errorGetContact}>
+          Посты отсутствуют или у вас нет активного поста. Обратитесь к руководителю!
+        </div>
+      )}
       {filteredItems?.map((item, index) => (
         <div onClick={() => handleItemClick(item)}>
           <React.Fragment key={index} >
