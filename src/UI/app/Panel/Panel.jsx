@@ -45,7 +45,7 @@ export default function Panel() {
      indexedDB.deleteDatabase("ControlPanelDB");
      indexedDB.deleteDatabase("DraftDB") ;
       // 4. Перенаправление на страницу входа
-      window.location.href = "/gm";
+      window.location.href = "/gm/";
     } catch (error) {
       console.error("Logout error:", error);
 
