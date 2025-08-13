@@ -41,12 +41,11 @@ export default function Panel() {
       }
 
       // 3. Очистка клиентских данных
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("refreshToken");
-      // localStorage.removeItem("fingerprint");
-
+      localStorage.clear();
+     indexedDB.deleteDatabase("ControlPanelDB");
+     indexedDB.deleteDatabase("DraftDB") ;
       // 4. Перенаправление на страницу входа
-      window.location.href = "/";
+      window.location.href = "/gm";
     } catch (error) {
       console.error("Logout error:", error);
 

@@ -375,7 +375,11 @@ export default function ControlPanel() {
             return allControlPanel
               .map((panel) => {
                 const matchingData = data.find((item) => item.id === panel.id);
+                console.log("matchingData", matchingData);
                 if (matchingData) {
+                  if (matchingData.isActive) {
+                    setSelectedControlPanelId(matchingData.id);
+                  }
                   return {
                     ...panel,
                     orderNumber: matchingData.orderNumber,
@@ -419,6 +423,7 @@ export default function ControlPanel() {
     });
   }, []);
 
+  // console.log("selectedControlPanelId", selectedControlPanelId);
   return (
     <div className={classes.dialog}>
       <Headers

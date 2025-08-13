@@ -1,59 +1,62 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 
+// Функция для определения формата даты
+const detectDateFormat = (dateString) => {
+  if (!dateString) return "year";
+
+  if (typeof dateString === "object") {
+    return dateString.month ? "year-month" : "year";
+  }
+
+  if (typeof dateString === "number") {
+    return "year";
+  }
+
+  const parts = dateString.split("-");
+  if (parts.length === 1) return "year";
+  if (parts.length === 2) return "year-month";
+  return "full";
+};
+
+// Форматирование даты
+const formatDate = (dateValue) => {
+  const formatType = detectDateFormat(dateValue);
+
+  if (typeof dateValue === "object") {
+    if (dateValue.month) {
+      return `${String(dateValue.month).padStart(2, "0")}.${dateValue.year}`;
+    }
+    return dateValue.year.toString();
+  }
+
+  if (formatType === "year") {
+    return typeof dateValue === "number" ? dateValue.toString() : dateValue;
+  }
+
+  if (formatType === "year-month") {
+    const [year, month] = dateValue.split("-");
+    return `${month.padStart(2, "0")}.${year}`;
+  }
+
+  const date = new Date(dateValue);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const shortYear = String(year % 100).padStart(2, "0");
+  return `${day}.${month}.${shortYear}`;
+};
+
+// Функция для форматирования чисел с пробелами
+const formatNumber = (num) => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+};
+
 export default function Graphic({ data }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
-
-    // Функция для определения формата даты
-    const detectDateFormat = (dateString) => {
-      if (!dateString) return "year";
-
-      if (typeof dateString === "object") {
-        return dateString.month ? "year-month" : "year";
-      }
-
-      if (typeof dateString === "number") {
-        return "year";
-      }
-
-      const parts = dateString.split("-");
-      if (parts.length === 1) return "year";
-      if (parts.length === 2) return "year-month";
-      return "full";
-    };
-
-    // Форматирование даты
-    const formatDate = (dateValue) => {
-      const formatType = detectDateFormat(dateValue);
-
-      if (typeof dateValue === "object") {
-        if (dateValue.month) {
-          return `${String(dateValue.month).padStart(2, "0")}.${
-            dateValue.year 
-          }`;
-        }
-        return dateValue.year.toString();
-      }
-
-      if (formatType === "year") {
-        return typeof dateValue === "number" ? dateValue.toString() : dateValue;
-      }
-
-      if (formatType === "year-month") {
-        const [year, month] = dateValue.split("-");
-        return `${month.padStart(2, "0")}.${year}`;
-      }
-
-      const date = new Date(dateValue);
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      const shortYear = String(year % 100).padStart(2, '0');
-      return `${day}.${month}.${shortYear}`;
-    };
 
     // Сортировка данных
     const sortedData = [...data].sort((a, b) => {
@@ -75,6 +78,7 @@ export default function Graphic({ data }) {
       return {
         name: formatDate(item.valueDate),
         value: item.value,
+        formattedValue: formatNumber(item.value),
         date: item.valueDate,
         itemStyle: {
           color: isLowerThanPrevious ? "#ff4d4f" : "#3E7B94",
@@ -91,7 +95,7 @@ export default function Graphic({ data }) {
           return `
             <div>
               <div>Дата: ${params?.data?.name}</div>
-              <div>Значение: ${params?.data?.value}</div>
+              <div>Значение: ${params?.data?.formattedValue}</div>
             </div>
           `;
         },
@@ -122,49 +126,49 @@ export default function Graphic({ data }) {
           // Линия оси X
           show: true,
           lineStyle: {
-            color: "#999", // Цвет линии оси X
+            color: "#C0C0C0", // Цвет линии оси X
             width: 1, // Толщина линии
           },
         },
         axisTick: {
           // Деления на оси X
-          show: true,
+          show: false,
           alignWithLabel: true,
+          interval: 0,
         },
         splitLine: {
           // Линии сетки по оси X
           show: true,
           lineStyle: {
-            color: "#eee", // Цвет линий сетки
-            type: "dashed", // Тип линии (пунктир)
+            color: "#C0C0C0", // Цвет линий сетки
+            type: "solid", // Тип линии (пунктир)
           },
+          interval: 0,
         },
       },
       yAxis: {
         type: "value",
         axisLabel: {
-          formatter: "{value}",
+          show: false,
         },
         axisLine: {
-          // Линия оси Y
           show: true,
           lineStyle: {
-            color: "#999", // Цвет линии оси Y
-            width: 1, // Толщина линии
+            color: "#C0C0C0",
+            width: 1,
           },
         },
         axisTick: {
-          // Деления на оси Y
-          show: true,
+          show: false,
         },
         splitLine: {
-          // Линии сетки по оси Y
           show: true,
           lineStyle: {
-            color: "#eee", // Цвет линий сетки
-            type: "dashed", // Тип линии (пунктир)
+            color: "#C0C0C0",
+            type: "solid",
           },
         },
+        splitNumber: 10, // 10 линий сетки (9 интервалов)
       },
       visualMap: {
         show: false,
@@ -190,7 +194,7 @@ export default function Graphic({ data }) {
           type: "line",
           data: chartData,
           symbol: "circle",
-          symbolSize: 12,
+          symbolSize: 11,
           lineStyle: {
             width: 3,
             type: "solid", // Явно указываем сплошную линию
@@ -239,8 +243,8 @@ export default function Graphic({ data }) {
     <div
       ref={chartRef}
       style={{
-        width: "100%",
-        height: "100%",
+        width: "250px",
+        height: "320px",
       }}
     />
   );
