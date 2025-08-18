@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 
-export default function Graphic({ data }) {
+export default function Graphic({ data, width}) {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -248,5 +248,5 @@ export default function Graphic({ data }) {
     };
   }, [data]);
 
-  return <div ref={chartRef} style={{ width: "100%", height: "90%" }} />;
+  return <div ref={chartRef} style={{ width: width, height: "90%" }} />;
 }
