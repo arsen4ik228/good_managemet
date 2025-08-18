@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 
 // Функция для определения формата даты
@@ -49,11 +49,13 @@ const formatDate = (dateValue) => {
 
 // Функция для форматирования чисел с пробелами
 const formatNumber = (num) => {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
 export default function Graphic({ data }) {
   const chartRef = useRef(null);
+
+  console.log("data =", data);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
@@ -78,14 +80,48 @@ export default function Graphic({ data }) {
       return {
         name: formatDate(item.valueDate),
         value: item.value,
-        formattedValue: formatNumber(item.value),
+        formattedValue: item.value !== null ? formatNumber(item.value) : null,
         date: item.valueDate,
         itemStyle: {
           color: isLowerThanPrevious ? "#ff4d4f" : "#3E7B94",
-          // : "#1890ff",
         },
       };
     });
+
+    console.log("chartData = ", chartData);
+    
+    // Рассчитываем min, max и interval для 10 линий
+    let yMin = 0;
+    let yMax = 100;
+    let yInterval = 10;
+
+    if (data && data.length > 0) {
+      const values = data
+        .map((item) => item.value)
+        .filter((val) => val !== null);
+
+      if (values.length > 0) {
+        yMin = Math.min(...values);
+        yMax = Math.max(...values);
+
+        // Если все значения одинаковые (например, одна точка)
+        if (yMin === yMax) {
+          // Задаём диапазон в ±10% от значения (или фиксированный, если значение 0)
+          const padding = yMin === 0 ? 10 : Math.abs(yMin * 0.1);
+          yMin = yMin - padding;
+          yMax = yMax + padding;
+        }
+
+        // Дальше обычный расчёт интервала
+        const rawInterval = (yMax - yMin) / 9;
+        const exponent = Math.pow(10, Math.floor(Math.log10(rawInterval)));
+        const roundedStep = exponent * Math.ceil(rawInterval / exponent);
+
+        yMin = Math.floor(yMin / roundedStep) * roundedStep;
+        yMax = Math.ceil(yMax / roundedStep) * roundedStep;
+        yInterval = (yMax - yMin) / 9;
+      }
+    }
 
     // Настройки графика
     const option = {
@@ -110,7 +146,7 @@ export default function Graphic({ data }) {
       },
       grid: {
         top: 10, // Убираем отступ сверху
-        right: 20, // Убираем отступ справа
+        right: 10, // Убираем отступ справа
         bottom: 10, // Убираем отступ снизу
         left: 10, // Убираем отступ слева
         containLabel: true, // Разрешаем меткам выходить за границы
@@ -148,6 +184,11 @@ export default function Graphic({ data }) {
       },
       yAxis: {
         type: "value",
+
+        min: yMin, // Минимальное значение
+        max: yMax, // Максимальное значение
+        interval: yInterval, // Шаг между линиями
+
         axisLabel: {
           show: false,
         },
@@ -168,7 +209,6 @@ export default function Graphic({ data }) {
             type: "solid",
           },
         },
-        splitNumber: 10, // 10 линий сетки (9 интервалов)
       },
       visualMap: {
         show: false,
@@ -176,14 +216,31 @@ export default function Graphic({ data }) {
         pieces: (() => {
           const pieces = [];
           for (let i = 1; i < chartData.length; i++) {
-            pieces.push({
-              gt: i - 1,
-              lte: i,
-              color:
-                chartData[i].value < chartData[i - 1].value
-                  ? "#ff4d4f"
-                  : "#3E7B94",
-            });
+            // Пропускаем текущий элемент если он null
+            if (chartData[i].value === null) {
+              continue;
+            }
+
+            // Ищем предыдущее не-null значение
+            let prevNonNullIndex = i - 1;
+            while (
+              prevNonNullIndex >= 0 &&
+              chartData[prevNonNullIndex].value === null
+            ) {
+              prevNonNullIndex--;
+            }
+
+            // Если нашли предыдущее не-null значение
+            if (prevNonNullIndex >= 0) {
+              pieces.push({
+                gt: prevNonNullIndex,
+                lte: i,
+                color:
+                  chartData[i].value < chartData[prevNonNullIndex].value
+                    ? "#ff4d4f" // красный если значение упало
+                    : "#3E7B94", // синий если значение выросло или осталось таким же
+              });
+            }
           }
           return pieces;
         })(),
@@ -195,29 +252,14 @@ export default function Graphic({ data }) {
           data: chartData,
           symbol: "circle",
           symbolSize: 11,
+          connectNulls: true,
           lineStyle: {
             width: 3,
             type: "solid", // Явно указываем сплошную линию
           },
           itemStyle: {
-            color: (params) => {
-              if (params.dataIndex === 0) return "#1890ff";
-              return chartData[params.dataIndex].value <
-                chartData[params.dataIndex - 1].value
-                ? "#ff4d4f"
-                : "#1890ff";
-            },
             borderColor: "#fff",
             borderWidth: 2,
-          },
-          emphasis: {
-            itemStyle: {
-              color: "#fff",
-              borderColor: "#333",
-              borderWidth: 2,
-              shadowColor: "rgba(0, 0, 0, 0.3)",
-              shadowBlur: 10,
-            },
           },
           markPoint: {
             show: false,
@@ -244,7 +286,7 @@ export default function Graphic({ data }) {
       ref={chartRef}
       style={{
         width: "250px",
-        height: "320px",
+        height: "315px",
       }}
     />
   );

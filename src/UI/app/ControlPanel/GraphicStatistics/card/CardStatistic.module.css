@@ -1,6 +1,6 @@
 .graphic {
-  
-    position: relative; 
+
+    position: relative;
 
     width: 250px;
     height: 350px;
@@ -14,11 +14,17 @@
     border-radius: 6px;
     background-color: var(--white);
 
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
     cursor: pointer;
 
     & span {
-        min-height: 25px;
+        height: 35px;
+        max-height: 35px;
+
+        color: grey;
+        font-size: 14px !important;
+
         max-width: 230px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -28,7 +34,7 @@
 
 .graphic:hover {
     transition: all 0.3s;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    box-shadow: rgba(70, 70, 80, 0.3) 0px 10px 35px 3px;
 }
 
 .graphic:active {

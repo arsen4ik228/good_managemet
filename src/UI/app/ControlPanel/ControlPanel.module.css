@@ -27,7 +27,7 @@
 
     padding: 10px;
 
-    background-color: #F0F0F0;
+    background-color: var(--white);
 
     overflow-y: auto;
     overflow-x: hidden;
