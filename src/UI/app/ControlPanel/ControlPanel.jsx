@@ -39,7 +39,8 @@ import {
 import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
 import { debounce, isEqual } from "lodash";
 
-import { ConfigProvider, Tour } from "antd";
+import { Button, ConfigProvider, Tour } from "antd";
+import { PlusCircleOutlined } from '@ant-design/icons';
 import ruRU from "antd/locale/ru_RU";
 import { useGetAllStatisticsInControlPanel } from "@hooks";
 import { useGetPostsUserByOrganization } from "../../../hooks/Post/useGetPostsUserByOrganization";
@@ -375,7 +376,11 @@ export default function ControlPanel() {
             return allControlPanel
               .map((panel) => {
                 const matchingData = data.find((item) => item.id === panel.id);
+                console.log("matchingData", matchingData);
                 if (matchingData) {
+                  if (matchingData.isActive) {
+                    setSelectedControlPanelId(matchingData.id);
+                  }
                   return {
                     ...panel,
                     orderNumber: matchingData.orderNumber,
@@ -419,16 +424,17 @@ export default function ControlPanel() {
     });
   }, []);
 
+  // console.log("selectedControlPanelId", selectedControlPanelId);
   return (
     <div className={classes.dialog}>
       <Headers
         name={"панель управления"}
         funcActiveHint={() => setOpenHint(true)}
       >
-        <BottomHeaders
+        {/* <BottomHeaders
           create={openCreate}
           refCreate={refCreate}
-        ></BottomHeaders>
+        ></BottomHeaders> */}
       </Headers>
 
       <ConfigProvider locale={ruRU}>
@@ -448,6 +454,9 @@ export default function ControlPanel() {
                 ref={provided.innerRef}
                 className={classes.droppableContainer}
               >
+                <Button color="default" variant="outlined" onClick={openCreate}>
+                  Добавить <PlusCircleOutlined />
+                </Button>
                 {arrayAllControlPanel?.map((item, index) => (
                   <Draggable
                     key={index}

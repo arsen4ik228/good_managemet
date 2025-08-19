@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import classes from "./Chat.module.css";
 import iconHeader from "@image/iconHeader.svg";
 import Section from "./section/Section";
@@ -9,15 +9,17 @@ import { useSocket } from "@helpers/SocketContext.js";
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import dropdown from '../../image/drop-down.svg';
 import search from '../../image/search.svg'
+import addIcon from '@image/addCircle.svg'
+import { Skeleton } from 'antd';
 
 export default function Chat() {
   const navigate = useNavigate();
 
-  const { allChats, refetchAllChats } = usePostsHook()
+  const { allChats, loadingAllChats, refetchAllChats } = usePostsHook()
 
   const [copyChats, setCopyChats] = useState()
   const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
-  const [isOrganizationsClosed, setOrganizationsClosed] = useState(false);
+  const [isOrganizationsClosed, setOrganizationsClosed] = useState(true);
   const [isSearchClosed, setSearchClosed] = useState(true);
   const [seacrhInput, setSearchInput] = useState('')
   const [selectedContactId, setSelectedContactId] = useState('');
@@ -43,7 +45,7 @@ export default function Chat() {
   const handleItemClick = (item) => {
     //dispatch(setSelectedItem(item));
     setSelectedContactId(item.id);
-    navigate(`/Chat/${item.id}`);
+    // navigate(`/Chat/${item.id}`); // ВКЛЮЧИТЬ ПРИ ИЗМЕНЕНИИ response jn от сервера
   }
 
   const filteredItems = useMemo(() => {
@@ -83,14 +85,14 @@ export default function Chat() {
     setSocketMessagesCount(newMap);
   }, [socketResponse?.messageCountEvent])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!notEmpty(allChats)) return
 
     setCopyChats([...allChats])
   }, [allChats])
 
 
-  console.warn(allChats)
+  console.warn(loadingAllChats)
   return (
 
     <div className={classes.main}>
@@ -118,7 +120,10 @@ export default function Chat() {
 
       <div className={classes.header}>
         <div className={classes.headerName}>контакты</div>
-        <img className={classes.searchIcon} src={search} alt="search" onClick={() => setSearchClosed(!isSearchClosed)} />
+        <div>
+          <img className={classes.searchIcon} src={addIcon} alt="add" onClick={handleUserButtonClick} />
+          <img className={classes.searchIcon} src={search} alt="search" onClick={() => setSearchClosed(!isSearchClosed)} />
+        </div>
       </div>
       {!isSearchClosed && (
         <>
@@ -143,30 +148,47 @@ export default function Chat() {
         </>
       )}
 
-      <button onClick={handleUserButtonClick} className={`${classes.btnAddUser} ${!isSearchClosed ? classes['btnAddUserWithSearch'] : ''}`}>
+      {/* <button onClick={handleUserButtonClick} className={`${classes.btnAddUser} ${!isSearchClosed ? classes['btnAddUserWithSearch'] : ''}`}>
         <span> Добавить пользователя </span>
-      </button>
-      {filteredItems.length === 0 && (
+      </button> */}
+      {(filteredItems.length === 0 && !loadingAllChats) && (
         <div className={classes.errorGetContact}>
           Посты отсутствуют или у вас нет активного поста. Обратитесь к руководителю!
         </div>
       )}
-      {filteredItems?.map((item, index) => (
-        <div onClick={() => handleItemClick(item)}>
-          <React.Fragment key={index} >
+      {!loadingAllChats ? (
+        filteredItems.map((item, index) => (
+          <div key={index} onClick={() => handleItemClick(item)}>
             <DialogContainer
               postName={item?.postName}
-              userName={item.user ? item?.user?.firstName + ' ' + item?.user?.lastName : ''}
+              userName={item?.userFirstName + ' ' + item?.userLastName}
               avatarUrl={item?.user?.avatar_url}
               unseenMessagesCount={calculateUnseenMessages(item, socketMessagesCount)}
               selectedContactId={selectedContactId}
               contactId={item.id}
-            ></DialogContainer>
-          </React.Fragment>
-
-        </div>
-      ))
-      }
+              postsNames={item.postsNames}
+            />
+          </div>
+        ))
+      ) : (
+        // Skeleton на время загрузки
+        Array.from({ length: 9 }).map((_, index) => (
+          <div key={index} style={{ marginBottom: 16 }}>
+            <Skeleton
+              active
+              avatar
+              paragraph={{ rows: 2 }}
+              title={false}
+              style={{
+                height: '70px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            />
+          </div>
+        ))
+      )}
     </div >
   );
 }

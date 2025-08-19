@@ -31,8 +31,13 @@ const typeViewStatistic = [
   { value: "fifty_two", label: "52", tooltip: "52 недели" },
 ];
 
-const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
+const widthMap = {
+  fifty_two: "100%",
+  twenty_six: "70%",
+  default: "35%",
+};
 
+const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
   const [dataSource, setDataSource] = useState([]);
   const [chartType, setChartType] = useState("thirteen");
   const [clickArrow, setClickArrow] = useState([null, null]);
@@ -187,7 +192,7 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
       .filter((item) => !existingDates.has(item.dateStr))
       .map(({ dateStr, ...rest }) => rest)
       .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
-      
+
     setDataSource([...newData]);
   };
 
@@ -304,7 +309,20 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
       >
         {/* График - теперь первый элемент, растягивается на всё оставшееся пространство */}
 
-        <Graphic data={dataSource} />
+        {/* График - центрируется */}
+        <div
+          style={{
+            flex: 1, // Занимает всё доступное пространство
+            display: "flex",
+            justifyContent: "center", // Центрирует по горизонтали
+            alignItems: "center", // Центрирует по вертикали (опционально)
+          }}
+        >
+          <Graphic
+            data={dataSource}
+            width={widthMap[chartType] || widthMap.default}
+          />
+        </div>
 
         {/* Панель кнопок - сдвигается вправо */}
         <Flex

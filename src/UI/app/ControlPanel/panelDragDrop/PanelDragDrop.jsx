@@ -9,16 +9,17 @@ export default function PanelDragDrop({ name, openSetting, onClick, deletePanel,
       <div className={classes.name}>
         <span>{name}</span>
       </div>
-      <div className={classes.button}>
+      {
+        isActive ? <div className={classes.button}>
         <img data-tour="setting-controlPanel" src={setting} alt="setting" onClick={(e) => {
-          // e.stopPropagation();
           openSetting();
         }} />
         <img data-tour="delete-controlPanel" src={exitModal} alt="exitModal" onClick= {(e) => {
-          // e.stopPropagation();
           deletePanel();
         }}/>
-      </div>
+      </div>: null
+      }
+      
     </div>
   );
 }
