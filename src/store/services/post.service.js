@@ -23,12 +23,12 @@ export const postApi = apiSlice.injectEndpoints({
         Array.isArray(result?.originalPosts) // Проверяем originalPosts вместо result
           ? [
             ...result.originalPosts.map(({ id }) => ({
-              type: 'Post',
+              type: "Post",
               id,
             })),
-            'Post',
+            "Post",
           ]
-          : ['Post'],
+          : ["Post"],
     }),
 
     postPosts: build.mutation({
@@ -61,17 +61,13 @@ export const postApi = apiSlice.injectEndpoints({
       providesTags: ['Post', 'User'],
     }),
 
-    getPostsUser: build.query({
-      query: () => ({
-        url: `posts/myPosts`,
-      }),
-      // transformResponse: (response) => {
-      //   console.log(response); // Отладка ответа
-      //   return {
 
-      //   };
-      // },
-      providesTags: ['Post', 'User'],
+
+    getPostsUserByOrganization: build.query({
+      query: ({ organizationId }) => ({
+        url: `posts/myPostsInOrganization/${organizationId}`,
+      }),
+      providesTags: ["Post", "User"],
     }),
 
     getPostId: build.query({
@@ -114,8 +110,53 @@ export const postApi = apiSlice.injectEndpoints({
         url: `posts/${organizationId}/contacts`
       }),
       transformResponse: (response) => {
-        console.log(response)
-        return response?.postsWithConverts.concat(response?.postsWithoutConverts) //.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
+        console.log('getAllChats  ', response);
+        const result = []
+
+        response?.postsWithConverts.forEach(element => {
+          const userExist = result.find(item => item.userId === element.userId)
+          if (userExist) {
+            userExist.postsNames = [...userExist.postsNames, element.postName]
+            userExist.unseenMessagesCount = userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
+            userExist.watcherUnseenCount = userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
+          }
+          else {
+            result.push({
+              ...element,
+              unseenMessagesCount: element.unseenMessagesCount ?? 0,
+              watcherUnseenCount: element.watcherUnseenCount ?? 0,
+              postsNames: [element.postName]
+            })
+          }
+        });
+
+        response?.postsWithoutConverts.forEach(element => {
+          const userExist = result.find(item => item.userId === element.user.id)
+          if (userExist) {
+            userExist.postsNames = [...userExist.postsNames, element.postName]
+            userExist.unseenMessagesCount = userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
+            userExist.watcherUnseenCount = userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
+          }
+          else {
+            result.push({
+              ...element,
+              unseenMessagesCount: element.unseenMessagesCount ?? 0,
+              watcherUnseenCount: element.watcherUnseenCount ?? 0,
+              postsNames: [element.postName],
+              userId: element?.user.id,
+              userLastName: element?.user.lastName,
+              userFirstName: element?.user.firstName
+            })
+          }
+        });
+
+        console.log(result)
+
+        return result
+        // response?.postsWithConverts.concat(
+        //   response?.postsWithoutConverts
+        // ); 
+        //.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
       },
     }),
 
