@@ -1,8 +1,8 @@
 .dialogContainer {
     width: 100%;
-    height: 50px;
+    height: 70px;
 
-    padding: 5px 10px;
+    padding: 5px;
     background-color: white;
     /*  #f9f9f9; */
     border-bottom: 1px solid #eee;
@@ -13,7 +13,7 @@
     &:hover {
         background-color: var(--primary-light);
     }
-
+    
 }
 
 .dialogContainer:last-child {
@@ -26,35 +26,36 @@
 }
 
 .content {
-
+    
     display: flex;
-
+    
     height: 100%;
     width: 100%;
-
+    
 }
 
 .avatar {
-    width: 32px;
+    max-width: 55px;
 
     margin: auto 0;
 
     >img {
-        width: 30px;
-        height: 30px;
+        width: 55px;
+        height: 55px;
         margin-left: 1px;
         border-radius: 50%;
     }
 }
 
 .name {
+    border-bottom: 1px solid var(--primary-light);
     flex: 1;
     width: 100%;
     overflow: hidden;
-    padding-left: 10px;
+    padding: 2px 0 0 8px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
 
     >div {
         cursor: pointer;
@@ -63,26 +64,32 @@
 
 .name .postName {
     overflow: hidden;
+
+    padding-top: 5px;
+    font-size: 12px;
+    color: #666;
+    /* font-style: italic; */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.name .userName {
+    overflow: hidden;
     width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: #333;
     cursor: pointer;
 }
 
-.name .userName {
-    font-size: 12px;
-    color: #666;
-    font-style: italic;
-}
-
 .bage {
 
     width: 32px;
-
-    margin: auto;
+    border-bottom: 1px solid var(--primary-light);
+    padding-top: 5px;
+    /* margin: auto; */
 
     >div {
         display: flex;
@@ -94,16 +101,17 @@
 
         margin: auto;
 
-        border: 2px solid #005475;
+        /* border: 2px solid #3E7B94; */
+        background-color: #005475;
         border-radius: 50%;
 
         text-align: center;
     }
 
     span {
-        font-size: 14px !important;
-        font-weight: 600;
-        color: #005475;
+        font-size: 12px !important;
+        font-weight: 400;
+        color: white;
     }
 
 }
