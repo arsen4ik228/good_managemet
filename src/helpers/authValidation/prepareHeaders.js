@@ -1,5 +1,5 @@
 import { isTokenValid } from "./tokenValid";
-import { refreshTokens } from "@services";
+import { refreshTokens } from "./refreshTokens";
 import { startRefreshing, stopRefreshing } from "@slices";
 
 let refreshPromise = null; // Локальная переменная для хранения Promise

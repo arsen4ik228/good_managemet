@@ -9,7 +9,7 @@ import { Skeleton } from 'antd';
 import { useGetReduxOrganization, useOrganizationHook } from "@hooks";
 import { useNavigate } from "react-router-dom";
 
-export default function Section({isOrganizationsClosed}) {
+export default function Section({ isOrganizationsClosed }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { organizations, isLoadingOrganization, isErrorOrganization } =
@@ -25,31 +25,36 @@ export default function Section({isOrganizationsClosed}) {
     dispatch(setSelectedOrganizationReportDay(reportDay));
   };
 
-  const handleControlPanelButtonClick = () => {
 
-    window.open('#/controlPanel', '_blank');
+const handleControlPanelButtonClick = () => {
 
-    // // Открываем новую вкладку
-    // const newWindow = window.open('/#/controlPanel', '_blank');
+ window.open('#/controlPanel', '_blank');
+ 
+  // // Открываем новую вкладку
+  // const newWindow = window.open('/#/controlPanel', '_blank');
 
-    // // Ждём, пока вкладка загрузится и запросит токен
-    // window.addEventListener('message', (event) => {
-    //   // Проверяем, что сообщение пришло с нашего домена
-    //   if (event.origin !== window.location.origin) return;
+  // // Ждём, пока вкладка загрузится и запросит токен
+  // window.addEventListener('message', (event) => {
+  //   // Проверяем, что сообщение пришло с нашего домена
+  //   if (event.origin !== window.location.origin) return;
 
-    //   // Если новая вкладка запрашивает токен
-    //   if (event.data === 'requestToken') {
-    //     // Отправляем токен (например, из localStorage)
-    //     newWindow.postMessage(
-    //       { type: 'authToken', token: localStorage.getItem('authToken') },
-    //       window.location.origin // Важно: указываем origin для безопасности
-    //     );
-    //   }
-    // });
-  };
+  //   // Если новая вкладка запрашивает токен
+  //   if (event.data === 'requestToken') {
+  //     // Отправляем токен (например, из localStorage)
+  //     newWindow.postMessage(
+  //       { type: 'authToken', token: localStorage.getItem('authToken') },
+  //       window.location.origin // Важно: указываем origin для безопасности
+  //     );
+  //   }
+  // });
+};
 
   useEffect(() => {
-    if (!isLoadingOrganization && !isErrorOrganization && organizations?.length > 0) {
+    if (
+      !isLoadingOrganization &&
+      !isErrorOrganization &&
+      organizations?.length > 0
+    ) {
       const defaultOrg = organizations[0];
       if (!localStorage.getItem("selectedOrganizationId")) {
         localStorage.setItem("selectedOrganizationId", defaultOrg.id);
@@ -65,8 +70,7 @@ export default function Section({isOrganizationsClosed}) {
 
   return (
     <>
-
-        {/* <div className={classes.header}>
+      {/* <div className={classes.header}>
           <div className={classes.headerName}>организации</div>
           <div className={classes.dropdown}
             onClick={() => setOrganizationsClosed(!isOrganizationsClosed)}
@@ -80,6 +84,7 @@ export default function Section({isOrganizationsClosed}) {
           </div>
         </div> */}
       <div className={classes.block}>
+
         {isLoadingOrganization ? (
           <>
             <Skeleton
@@ -119,6 +124,7 @@ export default function Section({isOrganizationsClosed}) {
                       </svg>
                       <span>{item.organizationName}</span>
                     </div>
+
 
                     {reduxSelectedOrganizationId === item.id && (
                       <div

@@ -1,25 +1,15 @@
-import { baseUrl } from "@helpers/constants.js"; // Импорт базового URL
+import apiSlice from "./api";
 
-// Функция для обновления токенов
-export const refreshTokens = async (fingerprint) => {
-  try {
-    const response = await fetch(`${baseUrl}auth/refresh-tokens`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ fingerprint }),
-      credentials: "include", // Важно для отправки куки
-    });
+export const authApi = apiSlice.injectEndpoints({
+  endpoints: (build) => ({
+    postLogout: build.mutation({
+      query: (body) => ({
+        url: `auth/logout`,
+        method: "POST",
+        body,
+      }),
+    }),
+  }),
+});
 
-    if (!response.ok) {
-      throw new Error(`Ошибка при обновлении токенов: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data; // Вернём данные с сервера (например, новый токен)
-  } catch (error) {
-    console.error("Ошибка в процессе обновления токенов:", error);
-    throw error;
-  }
-};
+export const { usePostLogoutMutation } = authApi;

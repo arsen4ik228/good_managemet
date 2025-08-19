@@ -1,31 +1,33 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { prepareHeaders } from '@helpers/authValidation/prepareHeaders';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { prepareHeaders } from "@helpers/authValidation/prepareHeaders";
 
 const apiSlice = createApi({
-  reducerPath: 'api',
+  reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_BASE_URL,
-    prepareHeaders
+    credentials: "include",
+    prepareHeaders,
   }),
   tagTypes: [
-    'ControlPanel',
-    'Convert',
-    'File',
-    'Goal',
-    'Objective',
-    'Organization',
-    'Directory',
-    'Policy',
-    'Post',
-    'Project',
-    'Program',
-    'Statistic',
-    'Strategy',
-    'Target',
-    'User',
-    'Message'
+    "ControlPanel",
+    "StatisticsInControlPanel",
+    "Convert",
+    "File",
+    "Goal",
+    "Objective",
+    "Organization",
+    "Directory",
+    "Policy",
+    "Post",
+    "Project",
+    "Program",
+    "Statistic",
+    "Strategy",
+    "Target",
+    "User",
+    "Message",
   ],
-  endpoints: builder => ({}),
-})
+  endpoints: (builder) => ({}),
+});
 // keepUnusedDataFor: 0
 export default apiSlice;

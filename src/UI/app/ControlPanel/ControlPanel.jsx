@@ -5,17 +5,16 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useControlPanel } from "@hooks";
-import { usePostsHook } from "@hooks";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks";
 import ModalWindow from "@Custom/ModalWindow";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
-import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
 import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
 import ModalSetting from "./modalSetting/ModalSetting";
 import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
+import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
 
 import {
   DndContext,
@@ -40,23 +39,31 @@ import {
 import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
 import { debounce, isEqual } from "lodash";
 
-import { ConfigProvider, Tour } from "antd";
+import { Button, ConfigProvider, Tour } from "antd";
+import { PlusCircleOutlined } from '@ant-design/icons';
 import ruRU from "antd/locale/ru_RU";
+import { useGetAllStatisticsInControlPanel } from "@hooks";
+import { useGetPostsUserByOrganization } from "../../../hooks/Post/useGetPostsUserByOrganization";
 
 export default function ControlPanel() {
+  const [datePoint, setDatePoint] = useState(null);
+  const [pagination, setPagination] = useState(0);
+
   const [openModalSetting, setOpenModalSetting] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalGraphic, setOpenModalGraphic] = useState(false);
 
-  const [selectedControlPanelId, setSelectedControlPanelId] = useState();
+  const [selectedControlPanelId, setSelectedControlPanelId] = useState(null);
+  const [selectedControlPanelData, setSelectedControlPaneData] = useState(null);
   const [arrayAllControlPanel, setArrayAllControlPanel] = useState([]);
 
-  const [cards, setCards] = useState([]);
+  const [selectedStatistic, setSelectedStatistic] = useState({
+    id: null,
+    name: "",
+  });
 
-  // Для модального окна статистики
-  const [openModalStatistic, setOpenModalStatistic] = useState(false);
-  const [modalStatisticName, setModalStatisticName] = useState("");
-  const [modalStatisticDatas, setModalStatisticDatas] = useState([]);
+  const [cards, setCards] = useState([]);
 
   const refCreate = useRef(null);
   const [openHint, setOpenHint] = useState(false);
@@ -69,14 +76,16 @@ export default function ControlPanel() {
     },
     {
       title: "Панель управления",
-      description: "Нажмите для показа содержимого (зажмите и поменяйте порядок панелей управлений)",
+      description:
+        "Нажмите для показа содержимого (зажмите и поменяйте порядок панелей управлений)",
       target: () => document.querySelector('[data-tour="controlPanel"]'),
       disabled: !document.querySelector('[data-tour="controlPanel"]'),
     },
     {
       title: "Настройки",
       description: "Нажмите и отредактируйте панель управления",
-      target: () => document.querySelector('[data-tour="setting-controlPanel"]'),
+      target: () =>
+        document.querySelector('[data-tour="setting-controlPanel"]'),
       disabled: !document.querySelector('[data-tour="setting-controlPanel"]'),
     },
     {
@@ -87,7 +96,8 @@ export default function ControlPanel() {
     },
     {
       title: "Карточка статистики",
-      description: "Нажмите для показа подробной статистики (зажмите и поменяйте порядок статистик)",
+      description:
+        "Нажмите для показа подробной статистики (зажмите и поменяйте порядок статистик)",
       target: () => document.querySelector('[data-tour="cardStatistics"]'),
       disabled: !document.querySelector('[data-tour="cardStatistics"]'),
     },
@@ -107,14 +117,6 @@ export default function ControlPanel() {
     isLoadingGetAllControlPanel,
     isFetchingGetAllControlPanel,
     isErrorGetAllControlPanel,
-
-    // Получение панели по id
-    currentControlPanel,
-    statisticsIdsInPanel,
-    statisticsPoints,
-    isLoadingGetontrolPanelId,
-    isFetchingGetontrolPanelId,
-    isErrorGetontrolPanelId,
 
     // Создание панели
     postControlPanel,
@@ -139,9 +141,26 @@ export default function ControlPanel() {
     isErrorDeleteControlPanelMutation,
     ErrorDeleteControlPanel,
     localIsResponseDeleteControlPanelMutation,
-  } = useControlPanel({ selectedControlPanelId });
+  } = useControlPanel();
 
-  const { allPosts, isLoadingGetPosts, isErrorGetPosts } = usePostsHook();
+  const {
+    allStatistics,
+    statisticsIdsInPanel,
+    isLoadingGetStatisticsInControlPanel,
+    isErrorGetStatisticsInControlPanel,
+    isFetchingGetStatisticsInControlPanel,
+  } = useGetAllStatisticsInControlPanel({
+    selectedControlPanelId,
+    datePoint,
+  });
+
+  const {
+    userPosts,
+
+    isLoadingGetPostsUser,
+    isFetchingGetPostsUser,
+    isErrorGetPostsUser,
+  } = useGetPostsUserByOrganization();
 
   const {
     selectedID: selectedPostIdForCreated,
@@ -152,7 +171,25 @@ export default function ControlPanel() {
 
     filterArraySearchModal,
     inputSearchModal,
-  } = useModalSelectRadio({ array: allPosts, arrayItem: "postName" });
+  } = useModalSelectRadio({ array: userPosts, arrayItem: "postName" });
+
+  const calculateInitialDate = () => {
+    const currentDate = localStorage.getItem("reportDay");
+    if (currentDate !== null) {
+      const targetDay = parseInt(currentDate, 10);
+      const today = new Date();
+      const todayDay = today.getDay();
+
+      let diff = todayDay - targetDay;
+      if (diff < 0) diff += 7;
+
+      const lastTargetDate = new Date(today);
+      lastTargetDate.setDate(today.getDate() - diff);
+
+      return lastTargetDate.toISOString().split("T")[0];
+    }
+    return datePoint;
+  };
 
   const getControlPanelId = (id) => {
     saveToIndexedDB(
@@ -164,8 +201,11 @@ export default function ControlPanel() {
       })),
       id
     );
-    console.log("getControlPanelId");
     setSelectedControlPanelId(id);
+    setSelectedControlPaneData(() =>
+      allControlPanel.find((item) => item?.id === id)
+    );
+    setPagination(0); // Сбрасываем пагинацию при смене панели
   };
 
   const openCreate = () => {
@@ -291,23 +331,41 @@ export default function ControlPanel() {
   const handleDragEnd_CardStatstic = (event) => {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
-      setCards((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        const newItems = arrayMove(items, oldIndex, newIndex);
-
-        const updatedStatistics = newItems.map((item, index) => ({
-          _id: item.panelToStatisticsId,
-          orderStatisticNumber: index + 1,
-        }));
-
-        debouncedUpdate(updatedStatistics);
-
-        return newItems;
-      });
+    // Если нет активного или целевого элемента, выходим
+    if (!active || !over) {
+      return;
     }
+
+    // Если элементы совпадают, ничего не делаем
+    if (active.id === over.id) {
+      return;
+    }
+
+    setCards((items) => {
+      // Проверяем, что массив существует и не содержит null
+      if (!items || items.some((item) => !item || !item.id)) {
+        return items;
+      }
+
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
+
+      // Если индексы не найдены, возвращаем исходный массив
+      if (oldIndex === -1 || newIndex === -1) {
+        return items;
+      }
+
+      const newItems = arrayMove(items, oldIndex, newIndex);
+
+      const updatedStatistics = newItems.map((item, index) => ({
+        _id: item.panelToStatisticsId,
+        orderStatisticNumber: index + 1,
+      }));
+
+      debouncedUpdate(updatedStatistics);
+
+      return newItems;
+    });
   };
 
   useEffect(() => {
@@ -318,7 +376,11 @@ export default function ControlPanel() {
             return allControlPanel
               .map((panel) => {
                 const matchingData = data.find((item) => item.id === panel.id);
+                console.log("matchingData", matchingData);
                 if (matchingData) {
+                  if (matchingData.isActive) {
+                    setSelectedControlPanelId(matchingData.id);
+                  }
                   return {
                     ...panel,
                     orderNumber: matchingData.orderNumber,
@@ -345,17 +407,35 @@ export default function ControlPanel() {
 
   // Обновление cards при изменении statisticsPoints
   useEffect(() => {
-    if (statisticsPoints && !isEqual(statisticsPoints, cards)) {
-      setCards(statisticsPoints);
+    if (allStatistics) {
+      if (pagination === 0) {
+        // Первая загрузка - полностью заменяем данные
+        setCards(allStatistics);
+      } else {
+        // Подгрузка - добавляем новые данные
+        setCards((prev) => [...prev, ...allStatistics]);
+      }
     }
-  }, [statisticsPoints]);
+  }, [allStatistics, pagination]);
 
+  useEffect(() => {
+    setDatePoint(() => {
+      return calculateInitialDate();
+    });
+  }, []);
+
+  // console.log("selectedControlPanelId", selectedControlPanelId);
   return (
     <div className={classes.dialog}>
-      <Headers name={"панель управления"} funcActiveHint={() => setOpenHint(true)}>
-        <BottomHeaders create={openCreate}  refCreate={refCreate} ></BottomHeaders>
+      <Headers
+        name={"панель управления"}
+        funcActiveHint={() => setOpenHint(true)}
+      >
+        {/* <BottomHeaders
+          create={openCreate}
+          refCreate={refCreate}
+        ></BottomHeaders> */}
       </Headers>
-
 
       <ConfigProvider locale={ruRU}>
         <Tour
@@ -374,6 +454,9 @@ export default function ControlPanel() {
                 ref={provided.innerRef}
                 className={classes.droppableContainer}
               >
+                <Button color="default" variant="outlined" onClick={openCreate}>
+                  Добавить <PlusCircleOutlined />
+                </Button>
                 {arrayAllControlPanel?.map((item, index) => (
                   <Draggable
                     key={index}
@@ -387,7 +470,7 @@ export default function ControlPanel() {
                         {...provided.dragHandleProps}
                       >
                         <PanelDragDrop
-                          isActive={currentControlPanel.id === item.id}
+                          isActive={selectedControlPanelId === item.id}
                           openSetting={() => setOpenModalSetting(true)}
                           name={
                             item.isNameChanged
@@ -407,6 +490,21 @@ export default function ControlPanel() {
           </Droppable>
         </DragDropContext>
 
+        {isErrorGetStatisticsInControlPanel ? (
+          <>
+            <HandlerQeury
+              Error={isErrorGetStatisticsInControlPanel}
+            ></HandlerQeury>
+          </>
+        ) : (
+          <>
+            <HandlerQeury
+              Loading={isLoadingGetStatisticsInControlPanel}
+              Fetching={isFetchingGetStatisticsInControlPanel}
+            ></HandlerQeury>
+          </>
+        )}
+
         {cards.length > 0 && (
           <DndContext
             sensors={sensors}
@@ -420,12 +518,9 @@ export default function ControlPanel() {
                     key={item.id}
                     id={item.id}
                     item={item}
-                    type={"Прямая"}
-                    typeGraphic={currentControlPanel.graphType}
-                    reportDay={reduxSelectedOrganizationReportDay}
-                    setOpenModalStatistic={setOpenModalStatistic}
-                    setModalStatisticName={setModalStatisticName}
-                    setModalStatisticDatas={setModalStatisticDatas}
+                    datePoint={datePoint}
+                    setOpenModal={setOpenModalGraphic}
+                    setSelectedStatistic={setSelectedStatistic}
                   />
                 ))}
               </div>
@@ -433,32 +528,27 @@ export default function ControlPanel() {
           </DndContext>
         )}
 
-        {!isErrorGetontrolPanelId &&
-          !isLoadingGetontrolPanelId &&
-          !isFetchingGetontrolPanelId &&
-          openModalSetting && (
-            <ModalSetting
-              exit={() => setOpenModalSetting(false)}
-              updateControlPanel={updateControlPanel}
-              currentControlPanel={currentControlPanel}
-              statisticsIdsInPanel={statisticsIdsInPanel}
-            ></ModalSetting>
-          )}
-        {!isErrorGetontrolPanelId &&
-          !isLoadingGetontrolPanelId &&
-          !isFetchingGetontrolPanelId &&
-          openModalDelete && (
-            <ModalWindow
-              text={`Вы точно хотите удалить панель управления ${
-                currentControlPanel.isNameChanged
-                  ? currentControlPanel.panelName
-                  : `${currentControlPanel.panelName} ${currentControlPanel.controlPanelNumber}`
-              }`}
-              close={setOpenModalDelete}
-              btnYes={btnYes}
-              btnNo={btnNo}
-            ></ModalWindow>
-          )}
+        {openModalSetting && (
+          <ModalSetting
+            exit={() => setOpenModalSetting(false)}
+            updateControlPanel={updateControlPanel}
+            currentControlPanel={selectedControlPanelData}
+            statisticsIdsInPanel={statisticsIdsInPanel}
+          ></ModalSetting>
+        )}
+
+        {openModalDelete && (
+          <ModalWindow
+            text={`Вы точно хотите удалить панель управления ${
+              selectedControlPanelData.isNameChanged
+                ? selectedControlPanelData.panelName
+                : `${selectedControlPanelData.panelName} ${selectedControlPanelData.controlPanelNumber}`
+            }`}
+            close={setOpenModalDelete}
+            btnYes={btnYes}
+            btnNo={btnNo}
+          ></ModalWindow>
+        )}
         {openModalCreate && (
           <ModalSelectRadio
             nameTable={"Название поста"}
@@ -469,20 +559,17 @@ export default function ControlPanel() {
               setOpenModalCreate(false);
             }}
             filterArray={filterArraySearchModal}
-            array={allPosts}
+            array={userPosts}
             arrayItem={"postName"}
             selectedItemID={selectedPostIdForCreated}
             save={createControlPanel}
           ></ModalSelectRadio>
         )}
-        {openModalStatistic && (
+        {openModalGraphic && (
           <ModalStatistic
-            data={modalStatisticDatas}
-            name={modalStatisticName}
-            graphicTypeBD={currentControlPanel.graphType}
-            type={"Прямая"}
-            exit={() => setOpenModalStatistic(false)}
-            reportDay={reduxSelectedOrganizationReportDay}
+            selectedStatistic={selectedStatistic}
+            openModal={openModalGraphic}
+            setOpenModal={setOpenModalGraphic}
           ></ModalStatistic>
         )}
 
@@ -491,12 +578,11 @@ export default function ControlPanel() {
             Loading={isLoadingGetAllControlPanel}
             Fetching={isFetchingGetAllControlPanel}
             Error={isErrorGetAllControlPanel}
-          ></HandlerQeury>
-
-          <HandlerQeury
-            Loading={isLoadingGetontrolPanelId}
-            Fetching={isFetchingGetontrolPanelId}
-            Error={isErrorGetontrolPanelId}
+            textError={
+              isErrorGetAllControlPanel?.data?.errors?.[0]?.errors?.[0]
+                ? isErrorGetAllControlPanel.data.errors[0].errors[0]
+                : isErrorGetAllControlPanel?.data?.message
+            }
           ></HandlerQeury>
 
           <HandlerMutation

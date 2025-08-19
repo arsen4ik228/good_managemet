@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 
-export default function Graphic({ data }) {
+export default function Graphic({ data, width}) {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -76,7 +76,8 @@ export default function Graphic({ data }) {
         value: item.value,
         date: item.valueDate,
         itemStyle: {
-          color: isLowerThanPrevious ? "#ff4d4f" : "#1890ff",
+          color: isLowerThanPrevious ? "#ff4d4f" : "#3E7B94",
+               // : "#1890ff",
         },
       };
     });
@@ -102,14 +103,14 @@ export default function Graphic({ data }) {
         },
         extraCssText: "box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);",
       },
-      toolbox: {
-        show: true,
-        feature: {
-          saveAsImage: {
-            title: "Сохранить как изображение",
-          },
-        },
-      },
+      // toolbox: {
+      //   show: true,
+      //   feature: {
+      //     saveAsImage: {
+      //       title: "Сохранить как изображение",
+      //     },
+      //   },
+      // },
 
       xAxis: {
         type: "category",
@@ -180,7 +181,8 @@ export default function Graphic({ data }) {
               color:
                 chartData[i].value < chartData[i - 1].value
                   ? "#ff4d4f"
-                  : "#1890ff",
+                  : "#3E7B94",
+                  // : "#1890ff",
             });
           }
           return pieces;
@@ -246,5 +248,5 @@ export default function Graphic({ data }) {
     };
   }, [data]);
 
-  return <div ref={chartRef} style={{ width: "100%", height: "90%" }} />;
+  return <div ref={chartRef} style={{ width: width, height: "90%" }} />;
 }

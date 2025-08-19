@@ -159,12 +159,6 @@ export default function Content() {
   // Установка QR-кода при наличии tokenForTG и socketId
   useEffect(() => {
     if (tokenForTG && socketId) {
-      // setQrUrl(
-      //   `tg://resolve?domain=GMAuthBot&start=${encodeURIComponent(
-      //     tokenForTG
-      //   )}-${encodeURIComponent(socketId)}`
-      // );
-
       setQrUrl(
         `tg://resolve?domain=${process.env.REACT_APP_TG_BOT_URL}&start=${encodeURIComponent(
           tokenForTG

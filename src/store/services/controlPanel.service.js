@@ -10,40 +10,12 @@ export const controlPanelApi = apiSlice.injectEndpoints({
         Array.isArray(result)
           ? [
               ...result?.map(({ id }) => ({
-                type: 'ControlPanel',
+                type: "ControlPanel",
                 id,
               })),
-              'ControlPanel',
+              "ControlPanel",
             ]
-          : ['ControlPanel'],
-    }),
-
-    getControlPanelId: build.query({
-      query: ({ controlPanelId }) => ({
-        url: `controlPanels/${controlPanelId}/controlPanel`,
-      }),
-
-      transformResponse: (response) => {
-        const statisticsIdsInPanel =
-          response?.panelToStatistics?.map((item) => item.statistic.id) || [];
-        const statisticsPoints =
-          response?.panelToStatistics
-            ?.map((item) => ({
-              panelToStatisticsId: item.id,
-              orderStatisticNumber: item.orderStatisticNumber,
-              id: item.statistic.id,
-              name: item.statistic.name,
-              statisticDatas: item.statistic.statisticDatas,
-            }))
-            .sort((a, b) => a.orderStatisticNumber - b.orderStatisticNumber) ||
-          [];
-        return {
-          response: response,
-          statisticsIdsInPanel: statisticsIdsInPanel,
-          statisticsPoints: statisticsPoints,
-        };
-      },
-      providesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.controlPanelId }],
+          : ["ControlPanel"],
     }),
 
     postControlPanel: build.mutation({
@@ -69,14 +41,16 @@ export const controlPanelApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, err, arg) => [{ type: 'ControlPanel', id: arg.id }],
+      invalidatesTags: (result, err, arg) => [
+        { type: "ControlPanel", id: arg.id },
+         { type: 'StatisticsInControlPanel', id: 'LIST' },
+      ],
     }),
   }),
 });
 
 export const {
   useGetAllControlPanelQuery,
-  useGetControlPanelIdQuery,
   useDeleteControlPanelMutation,
   usePostControlPanelMutation,
   useUpdateControlPanelMutation,

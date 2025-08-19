@@ -9,7 +9,8 @@ export default function ListStatisticDrawer({
   setOpen,
   statisticId,
   setStatisticId,
-}) {
+}) {  
+  const [hoveredItem, setHoveredItem] = useState(null);
   const [searchText, setSearchText] = useState("");
 
   // Получение всех статистик
@@ -35,7 +36,7 @@ export default function ListStatisticDrawer({
     });
   }, [statistics, searchText]);
 
-  const [hoveredItem, setHoveredItem] = useState(null);
+
   return (
     <Drawer
       title="Статистики"
@@ -43,7 +44,7 @@ export default function ListStatisticDrawer({
       open={open}
       onClose={() => setOpen(false)}
       mask={false}
-      width={"27vw"}
+      width={"27.5vw"}
       style={{
         position: "absolute",
         height: "100%",
@@ -102,7 +103,7 @@ export default function ListStatisticDrawer({
               description={
                 <>
                   <Avatar
-                    ize={64}
+                    size={64}
                     src={
                       <svg
                         width="20.000000"
@@ -110,7 +111,6 @@ export default function ListStatisticDrawer({
                         viewBox="0 0 20 20"
                         fill="none"
                       >
-                        <desc>Created with Pixso.</desc>
                         <defs />
                         <path
                           id="Vector"

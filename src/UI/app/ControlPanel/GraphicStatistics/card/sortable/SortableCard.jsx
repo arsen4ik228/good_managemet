@@ -3,16 +3,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import CardStatistic from "../CardStatistic";
 
-export default function SortableCard({
-    id,
-    item,
-    type,
-    typeGraphic,
-    reportDay,
-    setOpenModalStatistic,
-    setModalStatisticName,
-    setModalStatisticDatas,
-  }) {
+const SortableCard = React.memo(({
+  id,
+  item,
+  datePoint,
+  setSelectedStatistic,
+  setOpenModal,
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -20,18 +17,19 @@ export default function SortableCard({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <CardStatistic
         name={item.name}
+        idStatistic={item.id}
         data={[...item.statisticDatas]}
-        type={type}
-        typeGraphic={typeGraphic}
-        reportDay={reportDay}
-        setOpenModalStatistic={setOpenModalStatistic}
-        setModalStatisticName={setModalStatisticName}
-        setModalStatisticDatas={setModalStatisticDatas}
+        datePoint={datePoint}
+        setOpenModal={setOpenModal}
+        setSelectedStatistic={setSelectedStatistic}
       />
     </div>
   );
-}
+});
+
+export default SortableCard;
