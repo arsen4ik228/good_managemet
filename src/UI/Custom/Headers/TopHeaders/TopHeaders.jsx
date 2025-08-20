@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { baseUrl } from "@helpers/constants";
 import hint from "@image/hint.svg";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 
 export default function TopHeaders({
   back,
@@ -14,14 +14,14 @@ export default function TopHeaders({
   speedGoal,
   sectionName,
   avatar,
-  funcActiveHint
+  funcActiveHint,
 }) {
   const navigate = useNavigate();
 
   const handleBack = back || (() => navigate(`/pomoshnik/start`));
 
   const handleHintClick = () => {
-    if (funcActiveHint && typeof funcActiveHint === 'function') {
+    if (funcActiveHint && typeof funcActiveHint === "function") {
       funcActiveHint();
     }
   };
@@ -30,7 +30,7 @@ export default function TopHeaders({
     <>
       <div className={classes.fon}></div>
       <div className={`${classes.pomoshnikSearch} ${classes[speedGoal]}`}>
-        <div className={classes.pomoshnik}>
+        <div className={classes.icons}>
           <img
             src={iconBack}
             alt="iconBack"
@@ -41,19 +41,26 @@ export default function TopHeaders({
             src={avatar ? `${baseUrl}${avatar}` : iconHeader}
             alt="iconHeader"
           />
-          <div className={classes.spanPomoshnik} data-name={name}>
-            <span>{sectionName}</span>
-          </div>
         </div>
 
-        <Tooltip placement="bottom" title={"Нажмите для подсказки по разделу"} overlayStyle={{ maxWidth: "200px", textAlign: "center" }}>
-          <img
-            className={classes.buttonHealper}
-            src={hint}
-            alt="Подсказка"
-            onClick={handleHintClick}
-          />
-        </Tooltip>
+        <div className={classes.title}>
+          <span>{name}</span>
+        </div>
+
+        <div className={classes.hint}>
+          <Tooltip
+            placement="bottom"
+            title={"Нажмите для подсказки по разделу"}
+            overlayStyle={{ maxWidth: "200px", textAlign: "center" }}
+          >
+            <img
+              className={classes.buttonHealper}
+              src={hint}
+              alt="Подсказка"
+              onClick={handleHintClick}
+            />
+          </Tooltip>
+        </div>
       </div>
     </>
   );
@@ -76,3 +83,4 @@ TopHeaders.defaultProps = {
   avatar: null,
   funcActiveHint: null,
 };
+
