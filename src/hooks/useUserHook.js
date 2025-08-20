@@ -20,7 +20,7 @@ export function useUserHook() {
     }
   );
 
-  const { data: userInfo = {} } = useGetUserIdQuery();
+  const { data: userInfo = {}, refetch: refetchUserInfo } = useGetUserIdQuery();
 
 
   const [
@@ -35,13 +35,26 @@ export function useUserHook() {
   ] = usePostUserMutation();
 
   const [
-    updateUser
+    updateUser,
+    {
+      isLoading: isLoadingUpdateUserMutation,
+      isSuccess: isSuccessUpdateUserMutation,
+      isError: isErrorUpdateUserMutation,
+      error: ErrorUpdateUserMutation,
+      reset: resetUpdateUserMutation,
+    }
   ] = useUpdateUserMutation()
 
   const localIsResponseUserMutation = useMutationHandler(
     isSuccessUserMutation,
     isErrorUserMutation,
     resetUserMutation
+  );
+
+  const localIsResponseUpdateUserMutation = useMutationHandler(
+    isSuccessUpdateUserMutation,
+    isErrorUpdateUserMutation,
+    resetUpdateUserMutation
   );
 
   return {
@@ -61,7 +74,14 @@ export function useUserHook() {
     isErrorGetUserNew,
 
     userInfo,
+    refetchUserInfo,
 
-    updateUser
+    updateUser,
+    isLoadingUpdateUserMutation,
+    isSuccessUpdateUserMutation,
+    isErrorUpdateUserMutation,
+    ErrorUpdateUserMutation,
+
+    localIsResponseUpdateUserMutation
   }
 }

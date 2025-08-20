@@ -8,6 +8,7 @@ import { socketUrl, baseUrl } from "@helpers/constants";
 import telegram from "@Custom/icon/telegram.svg";
 import logo from "@Custom/icon/logo.svg";
 import icon from "@image/iconHeader.svg";
+
 const socket = io(`${socketUrl}auth`, {
   cors: {
     credentials: true,
@@ -77,14 +78,22 @@ export default function Content() {
     fetchData();
 
     // Подключение к сокету
-    console.log("Попытка подключения к сокету...");
-    socket.on("connect", () => {
-      console.log("Сокет подключен, socket.id:", socket.id);
+    if (socket.connected) {
       setSocketId(socket.id);
-    });
+    } else {
+      console.log("Сокет уже подключен, socket.id:", socket.id);
+      socket.on("connect", () => {
+        console.log("Сокет подключен, socket.id:", socket.id);
+        setSocketId(socket.id);
+      });
+    }
 
     socket.on("disconnect", () => {
       console.log("Сокет отключен.");
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error('Socket connection error:', error);
     });
 
     // Очистка при размонтировании компонента
@@ -158,6 +167,7 @@ export default function Content() {
 
   // Установка QR-кода при наличии tokenForTG и socketId
   useEffect(() => {
+    console.log('цстановка qr кода socketId - ', socketId, ' token - ', tokenForTG)
     if (tokenForTG && socketId) {
       setQrUrl(
         `tg://resolve?domain=${process.env.REACT_APP_TG_BOT_URL}&start=${encodeURIComponent(
@@ -166,7 +176,7 @@ export default function Content() {
       );
     }
   }, [socketId, tokenForTG]);
-
+  console.warn(tokenForTG, ' ----', socket)
   return isMobile ? (
     <div className={classes.Container}>
       <div className={classes.logoContainer}>
@@ -194,7 +204,7 @@ export default function Content() {
     <div className={classes.body}>
       <span className={classes.text}>Для входа отсканируйте QR-код</span>
       <div className={classes.QR}>
-        {!socketId || !tokenForTG ? (
+        {!tokenForTG ? (   //!socketId ||
           <span className={classes.loader}>
             <img src={icon} alt="icon" />
           </span>

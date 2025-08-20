@@ -8,6 +8,7 @@ import { useUserHook } from "@hooks";
 import { baseUrl } from "@helpers/constants";
 
 import { usePostLogoutMutation } from "../../../store/services/auth.service";
+import { useEffect } from "react";
 
 export default function Panel() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Panel() {
     navigate("/account");
   };
 
-  const { userInfo } = useUserHook();
+  const { userInfo, refetchUserInfo } = useUserHook();
   const [postLogout] = usePostLogoutMutation();
 
   const handleButtonClickExit = async () => {
@@ -42,8 +43,8 @@ export default function Panel() {
 
       // 3. Очистка клиентских данных
       localStorage.clear();
-     indexedDB.deleteDatabase("ControlPanelDB");
-     indexedDB.deleteDatabase("DraftDB") ;
+      indexedDB.deleteDatabase("ControlPanelDB");
+      indexedDB.deleteDatabase("DraftDB");
       // 4. Перенаправление на страницу входа
       window.location.href = "/gm/";
     } catch (error) {
@@ -57,12 +58,17 @@ export default function Panel() {
       alert(`Ошибка при выходе: ${errorMessage}`);
     }
   };
+
+  useEffect(() => {
+    refetchUserInfo()
+  }, [])
+
   return (
     <div className={classes.block}>
       <Avatar
         className={classes.avatar}
-        icon={!userInfo?.avatar_url ? <UserOutlined /> : undefined}
-        src={baseUrl + userInfo?.avatar_url}
+        // icon={userInfo?.avatar_url ? <UserOutlined /> : undefined}
+        src={userInfo?.avatar_url ? (baseUrl + userInfo?.avatar_url) : <UserOutlined />}
         onClick={userView}
       />
 

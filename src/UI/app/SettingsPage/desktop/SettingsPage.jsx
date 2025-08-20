@@ -62,7 +62,7 @@ export default function SettingsPage() {
       description: "Распологаются все посты закрепленные за пользователем",
       target: () => document.querySelector('[data-tour="data-post"]'),
     },
-        {
+    {
       title: "Пост",
       description: "Нажмите на название поста и перейдите к этому посту",
       target: () => document.querySelector('[data-tour="data-postItem"]'),
@@ -115,7 +115,7 @@ export default function SettingsPage() {
     isErrorUserMutation,
     ErrorUserMutation,
 
-    localIsResponseUserMutation,
+    localIsResponseUpdateUserMutation,
 
     // Получит информацию для создания user
     postsWithoutUser,
@@ -123,8 +123,13 @@ export default function SettingsPage() {
     isErrorGetUserNew,
 
     userInfo,
+    refetchUserInfo,
 
     updateUser,
+    isLoadingUpdateUserMutation,
+    isSuccessUpdateUserMutation,
+    isErrorUpdateUserMutation,
+    ErrorUpdateUserMutation,
   } = useUserHook();
 
   // Для картинки
@@ -155,8 +160,8 @@ export default function SettingsPage() {
         );
         throw error;
       }
-    }else{
-       Data.avatar_url = null;
+    } else {
+      Data.avatar_url = null;
     }
 
     if (!notEmpty(Data)) return;
@@ -165,7 +170,7 @@ export default function SettingsPage() {
       ...Data,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => {refetchUserInfo()})
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
@@ -334,7 +339,7 @@ export default function SettingsPage() {
                   }
                   title={
                     <Button
-                    data-tour="data-postItem"
+                      data-tour="data-postItem"
                       style={{ padding: 0 }}
                       color="default"
                       variant="link"
@@ -361,14 +366,14 @@ export default function SettingsPage() {
         /> */}
 
         <HandlerMutation
-          Loading={isLoadingUserMutation}
-          Error={isErrorUserMutation && localIsResponseUserMutation}
-          Success={isSuccessUserMutation && localIsResponseUserMutation}
-          textSuccess={`Пользователь ${firstName} ${lastName} ${middleName} создан`}
+          Loading={isLoadingUpdateUserMutation}
+          Error={isErrorUpdateUserMutation && localIsResponseUpdateUserMutation}
+          Success={isSuccessUpdateUserMutation && localIsResponseUpdateUserMutation}
+          textSuccess={`Пользователь ${firstName} ${lastName}, обновлён`}
           textError={
-            ErrorUserMutation?.data?.errors?.[0]?.errors?.[0]
-              ? ErrorUserMutation.data.errors[0].errors[0]
-              : ErrorUserMutation?.data?.message
+            ErrorUpdateUserMutation?.data?.errors?.[0]?.errors?.[0]
+              ? ErrorUpdateUserMutation.data.errors[0].errors[0]
+              : ErrorUpdateUserMutation?.data?.message
           }
         ></HandlerMutation>
       </div>
