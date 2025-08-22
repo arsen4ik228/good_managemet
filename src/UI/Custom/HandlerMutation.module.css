@@ -1,57 +1,95 @@
+/* HandlerMutation.module.css */
 .load {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
     display: flex;
-    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    top: 25%;
-    column-gap: 15px;
-    z-index: 10000;
-}
-
-.loadImage {
-    width: 33px;
-    height: 33px;
-    animation: rotate 1.2s linear infinite;
-    /* Анимация вращения */
-}
-
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-        /* Начальное положение */
-    }
-
-    to {
-        transform: rotate(360deg);
-        /* Конечное положение */
-    }
-}
-
-.wave {
-    -webkit-box-reflect: below 0 linear-gradient(transparent, rgba(0, 84, 117, 0.5));
-}
-
-.wave span {
-    display: inline-block;
-    font-weight: 600;
-    font-family: 'Montserrat';
-    color: #005475;
-    font-size: 14px;
-    animation: wave 1s infinite calc(0.1s * var(--i));
-}
-
-@keyframes wave {
-
-    0%,
-    40%,
-    100% {
-        transform: translateY(0);
-    }
-
-    20% {
-        transform: translateY(-10px)
-    }
-}
-
+    z-index: 9999;
+  }
   
+  .loadContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .loadImage {
+    width: 80px;
+    height: 80px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  .progressContainer {
+    width: 200px;
+    height: 4px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  
+  .progressBar {
+    height: 100%;
+    background-color: #005475; /* Фирменный синий цвет Ant Design */
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .errorContainer {
+    max-width: 400px;
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    background-color: white;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .closeErrorIcon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    color: #ff4d4f;
+    cursor: pointer;
+  }
+  
+  .successContainer {
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    background-color: white;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+  }
