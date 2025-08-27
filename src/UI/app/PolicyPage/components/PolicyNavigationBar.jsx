@@ -222,15 +222,6 @@ export const PolicyNavigationBar = ({
     // Конфигурация статусов
     const statuses = [
         {
-            key: 'drafts',
-            label: 'Черновики',
-            getData: (type) => ({
-                directives: directivesDraft,
-                instructions: instructionsDraft,
-                disposals: disposalsDraft
-            }[type])
-        },
-        {
             key: 'active',
             label: 'Активные',
             getData: (type) => ({
@@ -241,8 +232,17 @@ export const PolicyNavigationBar = ({
             extraItems: foldersSort
         },
         {
+            key: 'drafts',
+            label: 'Черновики',
+            getData: (type) => ({
+                directives: directivesDraft,
+                instructions: instructionsDraft,
+                disposals: disposalsDraft
+            }[type])
+        },
+        {
             key: 'finish',
-            label: 'Завершенные',
+            label: 'Архивные',
             getData: (type) => ({
                 directives: directivesCompleted,
                 instructions: instructionsCompleted,

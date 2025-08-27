@@ -14,20 +14,34 @@ export default function HandlerMutation({
   textError,
 }) {
   const [showSuccessMutation, setShowSuccessMutation] = useState(false);
- 
-
   const [visibleError, setVisibleError] = useState(false);
   const [visibleTextError, setVisibleTextError] = useState("");
-
+  const [progress, setProgress] = useState(5);
 
   const handerErrorButtonClick = () => {
     setVisibleError(false);
     setVisibleTextError("");
   };
 
+  // Анимация прогресс-бара
+  useEffect(() => {
+    let interval;
+    if (Loading) {
+      interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 90) return 90; // Останавливаемся на 85% для имитации незавершенной загрузки
+          return prev + 4;
+        });
+      }, 40);
+    } else {
+      setProgress(0);
+    }
+    
+    return () => clearInterval(interval);
+  }, [Loading]);
+
   useEffect(() => {
     setShowSuccessMutation(Success);
-
     setTimeout(() => (setShowSuccessMutation(false)), 1500)
   }, [Success]);
 
@@ -37,49 +51,27 @@ export default function HandlerMutation({
       setVisibleTextError(textError);
     }
   }, [Error]);
+
   return (
     <>
-    
-    {Loading && (
+      {Loading && (
         <div className={classes.load}>
-          <img src={icon} alt="Loading..." className={classes.loadImage} />
-          <div className={classes.wave}>
-            {["З", "А", "Г", "Р", "У", "З", "К", "А", ".", ".", "."].map(
-              (char, index) => (
-                <span key={index} style={{ "--i": index + 1 }}>
-                  {char}
-                </span>
-              )
-            )}
+          <div className={classes.loadContent}>
+            <img src={icon} alt="Loading..." className={classes.loadImage} />
+            <div className={classes.progressContainer}>
+              <div 
+                className={classes.progressBar}
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
           </div>
         </div>
       )}
 
       {visibleError && (
-        <div
-          style={{
-            position: "fixed",
-            top: "5%",
-            zIndex: 10000,
-            backgroundColor: "white",
-            border: "1px solid #d9d9d9",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            padding: "16px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+        <div className={classes.errorContainer}>
           <CloseCircleOutlined
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              fontSize: "18px",
-              color: "#ff4d4f",
-              cursor: "pointer",
-            }}
+            className={classes.closeErrorIcon}
             onClick={handerErrorButtonClick}
           />
           <Result
@@ -96,25 +88,18 @@ export default function HandlerMutation({
       )}
 
       {showSuccessMutation && (
-        <Result
-          style={{
-            position: "fixed",
-            top: "5%",
-            zIndex: 10000,
-            backgroundColor: "white",
-            border: "1px solid #d9d9d9",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-          }}
-          status="success"
-          title="Успешно выполнено!"
-          subTitle={textSuccess}
-          icon={
-            <CheckCircleOutlined
-              style={{ transform: "scale(2.5)", color: "#52c41a" }}
-            />
-          }
-        />
+        <div className={classes.successContainer}>
+          <Result
+            status="success"
+            title="Успешно выполнено!"
+            subTitle={textSuccess}
+            icon={
+              <CheckCircleOutlined
+                style={{ transform: "scale(2.5)", color: "#52c41a" }}
+              />
+            }
+          />
+        </div>
       )}
     </>
   );
