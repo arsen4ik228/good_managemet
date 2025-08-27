@@ -6,7 +6,7 @@ import ErrorPage from "@app/ErrorPage/ErrorPage";
 
 import { ConfigProvider } from "antd";
 import ruRU from "antd/locale/ru_RU";
-import Effect from "../../UI/app/Test/Effect";
+
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -41,9 +41,7 @@ const SchemeСompanies = React.lazy(() =>
 const DesktopConvertsPage = React.lazy(() =>
   import("@app/ConvertsPage/desktop/DesktopConvertPage.jsx")
 );
-const DesktopDoalogPage = React.lazy(() =>
-  import("@app/DialogPage/desktop/DesktopDoalogPage.jsx")
-);
+
 const DialogPage = React.lazy(() => import("@app/DialogPage/DialogPage.jsx"));
 
 const SettingsPage = React.lazy(() =>
@@ -256,7 +254,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-          <Route path="/test" element={<Effect />} />
         </Routes>
       </ConfigProvider>
     </div>

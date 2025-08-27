@@ -15,9 +15,9 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 const countWeeks = [
-  { label: "квартал 95", value: 13 },
+  { label: "квартал", value: 13 },
   { label: "полгода", value: 26 },
-  { label: "полгода - пол", value: 52 },
+  { label: "год", value: 52 },
 ];
 
 export default function Svodka() {
