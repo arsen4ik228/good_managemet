@@ -45,7 +45,7 @@ export default function Chat() {
   const handleItemClick = (item) => {
     //dispatch(setSelectedItem(item));
     setSelectedContactId(item.id);
-    // navigate(`/Chat/${item.id}`); // ВКЛЮЧИТЬ ПРИ ИЗМЕНЕНИИ response jn от сервера
+     navigate(`/Chat/${item.id}`); // ВКЛЮЧИТЬ ПРИ ИЗМЕНЕНИИ response jn от сервера
   }
 
   const filteredItems = useMemo(() => {

@@ -65,6 +65,7 @@ export default function Policy() {
   const refUpdate = useRef(null);
 
   const [open, setOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false)
 
   const steps = [
     {
@@ -278,6 +279,10 @@ export default function Policy() {
     }
     if (currentPolicy.state) {
       setState(currentPolicy.state);
+      if (currentPolicy.state === 'Отменён')
+        setDisabledArchive(true);
+      else
+        setDisabledArchive(false);
     }
     if (currentPolicy.deadline) {
       setDeadline(dayjs(currentPolicy.deadline));
@@ -286,7 +291,6 @@ export default function Policy() {
       setEditorState(currentPolicy.content);
     }
 
-    setDisabledArchive(false);
   }, [currentPolicy.id]);
 
   useEffect(() => {
@@ -349,7 +353,7 @@ export default function Policy() {
     setOpenModalDeleteDirectory(false);
   };
 
-  console.warn(foldersSort)
+  console.warn(disabledArchive)
   return (
     <div className={classes.dialog}>
       <Headers name={"политика"} funcActiveHint={() => setOpen(true)}>
@@ -490,11 +494,29 @@ export default function Policy() {
                   <>
                     {currentPolicy.content ? (
                       <>
+                        {!disabledArchive && (
+                          <div className={classes.editButton}>
+                            <Button
+                              type="primary"
+                              icon={<EditOutlined />}
+                              iconPosition={'end'}
+                              onClick={() => setIsEdit(prev => !prev)}
+                              style={{
+                                backgroundColor: '#005475',
+                                borderColor: '#005475',
+                              }}
+                            >
+                              Редактировать
+                            </Button>
+                          </div>
+                        )}
                         <Mdxeditor
                           key={currentPolicy.id}
                           editorState={currentPolicy.content}
                           setEditorState={setEditorState}
-                          readOnly={disabledArchive}
+                          readOnly={!isEdit || disabledArchive}
+                          policyName={currentPolicy.policyName}
+                          policyNumber={currentPolicy.policyNumber}
                         ></Mdxeditor>
 
                         <HandlerMutation
@@ -539,9 +561,7 @@ export default function Policy() {
                       </>
                     ) : (
                       <>
-                        <WaveLetters
-                          letters={"Выберите политику"}
-                        ></WaveLetters>
+
                       </>
                     )}
 
