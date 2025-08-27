@@ -28,6 +28,8 @@ export default function Mdxeditor({
   setEditorState,
   userId,
   readOnly,
+  policyName,
+  policyNumber
 }) {
   const editorRef = useRef(null); // Ссылка на редактор
 
@@ -71,6 +73,12 @@ export default function Mdxeditor({
   return (
     <div className={classes.wrapper}>
       <div className={classes.editorContainer}>
+        {readOnly && (
+          <div className={classes.title}>
+            Политика №{policyNumber}
+            <br /> {policyName}
+          </div>
+        )}
         <MDXEditor
           contentEditableClassName={classes.par}
           ref={editorRef}
@@ -89,10 +97,10 @@ export default function Mdxeditor({
             tablePlugin(),
             listsPlugin(),
             toolbarPlugin({
-              toolbarClassName: classes["toolbar-custom"],
+              toolbarClassName: `${classes["toolbar-custom"]} ${readOnly ? classes["toolbar-hidden"] : ""}`,
               toolbarContents: () => (
                 <>
-                   <div style={{ marginRight: "20px" }}>
+                  <div style={{ marginRight: "20px" }}>
                     <UndoRedo />
                   </div>
                   <div style={{ marginRight: "20px" }}>
@@ -105,11 +113,11 @@ export default function Mdxeditor({
                   <Separator />
                   <InsertTable />
                   <Separator />
-                  <CreateLink /> 
+                  <CreateLink />
                   <BlockTypeSelect />
                 </>
               ),
-            }),
+            })
           ]}
         />
       </div>

@@ -6,15 +6,32 @@ import error from "../image/error.svg";
 import { Result } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 
-
 export default function HandlerQeury({ Loading, Fetching, Error, textError }) {
   const [visibleError, setVisibleError] = useState(false);
+  const [progress, setProgress] = useState(5);
 
   useEffect(() => {
     if (Error) {
       setVisibleError(true);
     }
   }, [Error]);
+
+  // Анимация прогресс-бара
+  useEffect(() => {
+    let interval;
+    if (Loading || Fetching) {
+      interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 90) return 90; // Останавливаемся на 85% для имитации незавершенной загрузки
+          return prev + 4;
+        });
+      }, 40);
+    } else {
+      setProgress(0);
+    }
+
+    return () => clearInterval(interval);
+  }, [Loading, Fetching]);
 
   const handerErrorButtonClick = () => {
     setVisibleError(false);
@@ -24,19 +41,14 @@ export default function HandlerQeury({ Loading, Fetching, Error, textError }) {
     <>
       {(Fetching || Loading) && (
         <div className={classes.load}>
-          <img src={icon} alt="Loading..." className={classes.loadImage} />
-          <div className={classes.wave}>
-            <span style={{ "--i": 1 }}>З</span>
-            <span style={{ "--i": 2 }}>А</span>
-            <span style={{ "--i": 3 }}>Г</span>
-            <span style={{ "--i": 4 }}>Р</span>
-            <span style={{ "--i": 5 }}>У</span>
-            <span style={{ "--i": 6 }}>З</span>
-            <span style={{ "--i": 7 }}>К</span>
-            <span style={{ "--i": 8 }}>А</span>
-            <span style={{ "--i": 9 }}>.</span>
-            <span style={{ "--i": 10 }}>.</span>
-            <span style={{ "--i": 11 }}>.</span>
+          <div className={classes.loadContent}>
+            <img src={icon} alt="Loading..." className={classes.loadImage} />
+            <div className={classes.progressContainer}>
+              <div
+                className={classes.progressBar}
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
           </div>
         </div>
       )}
@@ -46,7 +58,9 @@ export default function HandlerQeury({ Loading, Fetching, Error, textError }) {
           style={{
             maxWidth: "400px",
             position: "fixed",
-            top: "5%",
+            top: "15%",
+            left: "50%",
+            transform: "translate(-50%, 0)",
             zIndex: 10000,
             backgroundColor: "white",
             border: "1px solid #d9d9d9",
@@ -81,13 +95,6 @@ export default function HandlerQeury({ Loading, Fetching, Error, textError }) {
           />
         </div>
       )}
-
-      {/* {Error && (
-        <div className={classes.error}>
-          <img src={error} alt="Error" className={classes.errorImage} />
-          <span className={classes.spanError}>Ошибка</span>
-        </div>
-      )} */}
     </>
   );
 }
