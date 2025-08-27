@@ -3,13 +3,11 @@ import classes from "./Pomoshnik.module.css";
 import icon from "@image/iconHeader.svg";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Pomoshnik() {
   const navigate = useNavigate();
-  
+
   const [inputValue, setInputValue] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
-
 
   const goal = () => {
     navigate(`/pomoshnik/goal`);
@@ -26,15 +24,18 @@ export default function Pomoshnik() {
   const statistics = () => {
     navigate(`/pomoshnik/statistic`);
   };
+  const svodka = () => {
+    navigate(`/pomoshnik/svodka`);
+  };
   const project = () => {
     navigate(`/pomoshnik/projectWithProgramm`);
   };
-  const workingPlan =() => {
-    navigate(`/pomoshnik/workingPlan`)
-  }
-  const companySchema =() => {
-    navigate(`/pomoshnik/companySchema`)
-  }
+  const workingPlan = () => {
+    navigate(`/pomoshnik/workingPlan`);
+  };
+  const companySchema = () => {
+    navigate(`/pomoshnik/companySchema`);
+  };
   const menuItems = [
     {
       title: "ЦЕЛИ",
@@ -166,6 +167,47 @@ export default function Pomoshnik() {
         </svg>
       ),
       onClick: statistics,
+    },
+    {
+      title: "СВОДКА",
+      icon: (
+        <svg
+          width="24.000000"
+          height="24.000000"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <desc>Created with Pixso.</desc>
+          <defs>
+            <clipPath id="clip26_1363">
+              <rect
+                id=" icon / stats"
+                width="24.000000"
+                height="24.000000"
+                fill="white"
+                fill-opacity="0"
+              />
+            </clipPath>
+          </defs>
+          <rect
+            id=" icon / stats"
+            width="24.000000"
+            height="24.000000"
+            fill="#FFFFFF"
+            fill-opacity="0"
+          />
+          <g clip-path="url(#clip26_1363)">
+            <path
+              id="Vector"
+              d="M14.33 11.39L13.93 10.52L13.07 10.13C12.6 9.91 12.6 9.25 13.07 9.03L13.93 8.64L14.33 7.79C14.54 7.32 15.2 7.32 15.42 7.79L15.81 8.65L16.67 9.05C17.13 9.26 17.13 9.92 16.67 10.14L15.8 10.53L15.41 11.39C15.2 11.85 14.53 11.85 14.33 11.39ZM4.61 13.79L5 12.92L5.87 12.53C6.33 12.31 6.33 11.65 5.87 11.43L5 11.05L4.61 10.19C4.4 9.72 3.73 9.72 3.53 10.19L3.13 11.05L2.27 11.45C1.8 11.65 1.8 12.32 2.27 12.53L3.13 12.92L3.53 13.79C3.73 14.25 4.4 14.25 4.61 13.79ZM8.81 8.99L9.39 7.71L10.67 7.13C11.13 6.91 11.13 6.25 10.67 6.03L9.39 5.46L8.81 4.19C8.6 3.72 7.93 3.72 7.73 4.19L7.14 5.46L5.87 6.05C5.4 6.25 5.4 6.92 5.87 7.13L7.14 7.71L7.73 8.99C7.93 9.45 8.6 9.45 8.81 8.99ZM21.99 8.99C21.62 8.65 21.06 8.69 20.72 9.06L14.59 15.96L11.52 12.89C11.05 12.42 10.29 12.42 9.83 12.89L4.11 18.61C3.77 18.96 3.77 19.53 4.11 19.88C4.46 20.23 5.04 20.23 5.39 19.88L10.67 14.59L13.76 17.69C14.25 18.18 15.05 18.15 15.5 17.64L22.07 10.26C22.4 9.89 22.37 9.31 21.99 8.99Z"
+              fill="#FFFFFF"
+              fill-opacity="0.901961"
+              fill-rule="nonzero"
+            />
+          </g>
+        </svg>
+      ),
+      onClick: svodka,
     },
     // {
     //   title: "СТРАТЕГИЯ",
@@ -321,7 +363,7 @@ export default function Pomoshnik() {
     //       <path id="Vector" d="M14.37 10.93L14.37 11.56L11.87 11.56L11.87 10.93C11.87 10.25 11.31 9.68 10.62 9.68L9.37 9.68L9.37 8.12L10.62 8.12C11.31 8.12 11.87 7.56 11.87 6.87L11.87 3.75C11.87 3.06 11.31 2.5 10.62 2.5L6.25 2.5C5.56 2.5 5 3.06 5 3.75L5 6.87C5 7.56 5.56 8.12 6.25 8.12L7.5 8.12L7.5 9.68L6.25 9.68C5.56 9.68 5 10.25 5 10.93L5 14.06C5 14.75 5.56 15.31 6.25 15.31L7.5 15.31L7.5 17.5L6.25 17.5C5.56 17.5 5 18.06 5 18.75L5 21.87C5 22.56 5.56 23.12 6.25 23.12L10.62 23.12C11.31 23.12 11.87 22.56 11.87 21.87L11.87 18.75C11.87 18.06 11.31 17.5 10.62 17.5L9.37 17.5L9.37 15.31L10.62 15.31C11.31 15.31 11.87 14.75 11.87 14.06L11.87 13.43L14.37 13.43L14.37 14.06C14.37 14.75 14.93 15.31 15.62 15.31L20 15.31C20.68 15.31 21.25 14.75 21.25 14.06L21.25 10.93C21.25 10.25 20.68 9.68 20 9.68L15.62 9.68C14.93 9.68 14.37 10.25 14.37 10.93Z" fill="#FFFFFF" fill-rule="nonzero"/>
     //     </g>
     //   </svg>
-      
+
     //   ),
     //   onClick: companySchema,
     // },

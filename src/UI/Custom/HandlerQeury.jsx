@@ -6,7 +6,6 @@ import error from "../image/error.svg";
 import { Result } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 
-import { Spin } from "antd";
 
 export default function HandlerQeury({ Loading, Fetching, Error, textError }) {
   const [visibleError, setVisibleError] = useState(false);
