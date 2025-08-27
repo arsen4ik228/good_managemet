@@ -2,10 +2,10 @@ import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getStatistics: build.query({
-      query: ({ organizationId, statisticData = true }) => ({
+      query: ({ organizationId, statisticData }) => ({
         url: `statistics/${organizationId}/?statisticData=${statisticData}`,
       }),
-      transformResponse: (response) => {
+      transformResponse: (response, meta, arg) => {
         console.log("getStatistics:  ", response);
 
         if (!Array.isArray(response)) {
@@ -23,6 +23,10 @@ export const statisticsApi = apiSlice.injectEndpoints({
                   id: item?.post?.id || "",
                   name: item.post?.postName || "",
                 },
+              }),
+
+              ...(arg.statisticData && {
+                statisticDatas: item.statisticDatas,
               }),
             };
           })
@@ -101,7 +105,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         url: `statistics/${selectedControlPanelId}/statisticsInControlPanel?datePoint=${datePoint}`,
       }),
 
-      providesTags:  [{ type: 'StatisticsInControlPanel', id: 'LIST' }],
+      providesTags: [{ type: "StatisticsInControlPanel", id: "LIST" }],
 
       transformResponse: (response) => {
         const statisticsIdsInPanel = response.map((item) => item.id);

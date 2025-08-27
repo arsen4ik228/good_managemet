@@ -230,13 +230,28 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
 
       switch (chartType) {
         case "daily":
+          newDate =
+            clickArrow[0] === "right"
+              ? currentDate.add(1, "day")
+              : currentDate.subtract(1, "day");
+          break;
         case "thirteen":
-        case "twenty_six":
-        case "fifty_two":
           newDate =
             clickArrow[0] === "right"
               ? currentDate.add(7, "day")
               : currentDate.subtract(7, "day");
+          break;
+        case "twenty_six":
+          newDate =
+            clickArrow[0] === "right"
+              ? currentDate.add(42, "day")
+              : currentDate.subtract(42, "day");
+          break;
+        case "fifty_two":
+          newDate =
+            clickArrow[0] === "right"
+              ? currentDate.add(91, "day")
+              : currentDate.subtract(91, "day");
           break;
         case "monthly":
           newDate =
@@ -296,7 +311,7 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
         top: "2vh",
       }}
     >
-      <Title level={4} style={{ color: "#1890ff", textAlign: "center" }}>
+      <Title level={4} style={{ color: "#3E7B94", textAlign: "center" }}>
         {selectedStatistic?.name}
       </Title>
 

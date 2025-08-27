@@ -23,7 +23,7 @@ const typeStatistic = [
   { value: "Обратная", label: "Обратная" },
 ];
 
-export const StatisticInformationDrawer = ({
+export const DrawerStatisticTable = ({
   openDrawer,
   setOpenDrawer,
   statisticId,
@@ -192,7 +192,7 @@ export const StatisticInformationDrawer = ({
 
   return (
     <Drawer
-      title="Редактировать статистику"
+      title="Внести данные"
       placement="left"
       open={openDrawer}
       onClose={() => setOpenDrawer(false)}
@@ -211,82 +211,16 @@ export const StatisticInformationDrawer = ({
       loading={isFetchingGetStatisticId || isLoadingGetStatisticId}
     >
       <div style={{ padding: "16px", flex: 1, overflow: "auto" }}>
-        <div style={{ overflowX: "hidden" }}>
-          <Form
-            form={form}
-            onValuesChange={handlePostValuesChange}
-            layout="vertical"
-          >
-            <Row>
-              <Col span={24}>
-                {/* Название статистики */}
-                <Form.Item
-                  name="name"
-                  label="Название статистики"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Пожалуйста, введите название",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Введите название" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={24}>
-                {/* Пост статистики*/}
-                <Form.Item
-                  name="postId"
-                  label="Пост статистики"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Пожалуйста, выберите пост",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder="Выберите пост"
-                    allowClear
-                    showSearch
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                      option?.label.toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={allPosts?.map((item) => ({
-                      label: item.postName,
-                      value: item.id,
-                    }))}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={24}>
-                {/* Тип статистики*/}
-                <Form.Item name="type" label="Тип статистики">
-                  <Select placeholder="Выберите тип" options={typeStatistic} />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            {/* Описание статистики*/}
-            <Form.Item
-              name="description"
-              label="Описание статистики"
-              rules={[
-                {
-                  required: true,
-                  message: "Пожалуйста, введите описание статистики",
-                },
-              ]}
-            >
-              <TextArea rows={4} placeholder="Введите описание" />
-            </Form.Item>
-          </Form>
-        </div>
+        <StatisticTable
+          selectedStatisticId={currentStatistic?.id}
+          dataSource={dataSource}
+          setDataSource={setDataSource}
+          createPoints={createPoints}
+          setCreatePoints={setCreatePoints}
+          chartType={chartType}
+          createCorellationPoints={createCorellationPoints}
+          setCreateCorellationPoints={setCreateCorellationPoints}
+        ></StatisticTable>
       </div>
 
       <div style={{ padding: "16px", borderTop: "1px solid #f0f0f0" }}>

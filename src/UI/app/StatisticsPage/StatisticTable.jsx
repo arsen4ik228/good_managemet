@@ -817,21 +817,25 @@ export default function StatisticTable({
         </Space>
       </Space>
 
-      <Table
-        columns={columnsCreatePoints}
-        dataSource={createPoints}
-        pagination={false}
-        size="small"
-        rowKey="id"
-      />
+      {createPoints?.length > 0 ? (
+        <Table
+          columns={columnsCreatePoints}
+          dataSource={createPoints}
+          pagination={false}
+          size="small"
+          rowKey="id"
+        />
+      ) : null}
 
-      <Table
-        columns={getColumnsByChartType(chartType)}
-        dataSource={dataSource}
-        pagination={false}
-        size="small"
-        rowKey="id"
-      />
+      {dataSource?.length > 0 ? (
+        <Table
+          columns={getColumnsByChartType(chartType)}
+          dataSource={dataSource}
+          pagination={false}
+          size="small"
+          rowKey="id"
+        />
+      ) : null}
     </div>
   );
 }
