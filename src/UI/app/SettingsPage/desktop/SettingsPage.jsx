@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import 'react-image-crop/dist/ReactCrop.css';
 import classes from "./SettingsPage.module.css";
 
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
 
-import { Button, List } from "antd";
+import { Button, List, Modal } from "antd";
 
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
@@ -23,6 +25,22 @@ import { usePostImageMutation } from "@services";
 import { ConfigProvider, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
+function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
+  return centerCrop(
+    makeAspectCrop(
+      {
+        unit: '%',
+        width: 90,
+      },
+      aspect,
+      mediaWidth,
+      mediaHeight,
+    ),
+    mediaWidth,
+    mediaHeight,
+  );
+}
+
 export default function SettingsPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -32,6 +50,15 @@ export default function SettingsPage() {
 
   const [avatarLocal, setAvatarLocal] = useState("");
   const [file, setFile] = useState("");
+
+  // Состояния для обрезки изображения
+  const [cropModalVisible, setCropModalVisible] = useState(false);
+  const [imgSrc, setImgSrc] = useState("");
+  const [crop, setCrop] = useState();
+  const [completedCrop, setCompletedCrop] = useState();
+  const imgRef = useRef(null);
+  const previewCanvasRef = useRef(null);
+
 
   const refUpdate = useRef(null);
   const [openHint, setOpenHint] = useState(false);
@@ -139,11 +166,8 @@ export default function SettingsPage() {
     const Data = {};
 
     if (firstName !== userInfo?.firstName) Data.firstName = firstName;
-
     if (lastName !== userInfo?.lastName) Data.lastName = lastName;
-
     if (middleName !== userInfo?.middleName) Data.middleName = middleName;
-
     if (telephoneNumber !== userInfo?.telephoneNumber)
       Data.telephoneNumber = telephoneNumber;
 
@@ -154,10 +178,7 @@ export default function SettingsPage() {
         const result = await postImage(formData).unwrap();
         Data.avatar_url = result.filePath;
       } catch (error) {
-        console.error(
-          "Ошибка загрузки изображения:",
-          JSON.stringify(error, null, 2)
-        );
+        console.error("Ошибка загрузки изображения:", JSON.stringify(error, null, 2));
         throw error;
       }
     } else {
@@ -170,7 +191,7 @@ export default function SettingsPage() {
       ...Data,
     })
       .unwrap()
-      .then(() => {refetchUserInfo()})
+      .then(() => { refetchUserInfo() })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
@@ -182,22 +203,79 @@ export default function SettingsPage() {
     fileInputRef.current.click();
   };
 
-  //Загрузка картинки локально
-  const imageUploadHandlerLocal = (e) => {
-    const fileInput = e.target;
-    const file = e.target.files[0];
-    if (file) {
-      setFile(file);
-      const imageUrl = URL.createObjectURL(file);
-      setAvatarLocal(imageUrl);
+  // Функция для загрузки и отображения изображения для обрезки
+  const onSelectFile = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setCrop(undefined);
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        setImgSrc(reader.result?.toString() || '');
+        setCropModalVisible(true);
+      });
+      reader.readAsDataURL(e.target.files[0]);
     }
-    // Сбрасываем значение инпута, чтобы можно было выбрать тот же файл
-    fileInput.value = "";
+    e.target.value = "";
   };
+
+  // Функция для установки начального кадрирования
+  function onImageLoad(e) {
+    const { width, height } = e.currentTarget;
+    setCrop(centerAspectCrop(width, height, 1));
+  }
+
+  // Функция для применения обрезки и создания файла
+  const applyCrop = async () => {
+    if (imgRef.current && previewCanvasRef.current && completedCrop) {
+      const canvas = previewCanvasRef.current;
+      const croppedImage = canvas.toDataURL('image/jpeg');
+      
+      // Конвертируем DataURL в Blob
+      const blob = await fetch(croppedImage).then(res => res.blob());
+      
+      // Создаем File из Blob
+      const croppedFile = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+      
+      setFile(croppedFile);
+      setAvatarLocal(croppedImage);
+      setCropModalVisible(false);
+    }
+  };
+
+  // Эффект для отрисовки preview обрезанного изображения
+  useEffect(() => {
+    if (completedCrop?.width && completedCrop?.height && imgRef.current && previewCanvasRef.current) {
+      const image = imgRef.current;
+      const canvas = previewCanvasRef.current;
+      const crop = completedCrop;
+
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+      const ctx = canvas.getContext('2d');
+      const pixelRatio = window.devicePixelRatio;
+
+      canvas.width = crop.width * pixelRatio;
+      canvas.height = crop.height * pixelRatio;
+
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      ctx.imageSmoothingQuality = 'high';
+
+      ctx.drawImage(
+        image,
+        crop.x * scaleX,
+        crop.y * scaleY,
+        crop.width * scaleX,
+        crop.height * scaleY,
+        0,
+        0,
+        crop.width,
+        crop.height
+      );
+    }
+  }, [completedCrop]);
 
   const deleteImage = () => {
     if (avatarLocal) {
-      URL.revokeObjectURL(avatarLocal); // Очищаем URL из памяти
+      URL.revokeObjectURL(avatarLocal);
     }
     setFile("");
     setAvatarLocal("");
@@ -249,10 +327,50 @@ export default function SettingsPage() {
         />
       </ConfigProvider>
 
+      <Modal
+        title="Обрезка аватарки"
+        open={cropModalVisible}
+        onCancel={() => setCropModalVisible(false)}
+        onOk={applyCrop}
+        okText="Применить"
+        cancelText="Отмена"
+        width={600}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {imgSrc && (
+            <ReactCrop
+              crop={crop}
+              onChange={(_, percentCrop) => setCrop(percentCrop)}
+              onComplete={(c) => setCompletedCrop(c)}
+              aspect={1}
+              circularCrop
+            >
+              <img
+                ref={imgRef}
+                alt="Crop me"
+                src={imgSrc}
+                style={{ maxWidth: '100%', maxHeight: '400px' }}
+                onLoad={onImageLoad}
+              />
+            </ReactCrop>
+          )}
+          <div style={{ display: 'none' }}>
+            <canvas
+              ref={previewCanvasRef}
+              style={{
+                display: 'none',
+                width: completedCrop?.width,
+                height: completedCrop?.height
+              }}
+            />
+          </div>
+        </div>
+      </Modal>
+
       <div className={classes.main}>
         <div className={classes.wrapper}>
           <div className={classes.block}>
-            <div className={classes.avatarContainer} data-tour="data-avatar">
+          <div className={classes.avatarContainer} data-tour="data-avatar">
               <img
                 src={avatarLocal || addCircle}
                 alt="avatar"
@@ -264,15 +382,16 @@ export default function SettingsPage() {
                 accept="image/*"
                 ref={fileInputRef}
                 className={classes.hiddenInput}
-                onChange={imageUploadHandlerLocal}
+                onChange={onSelectFile}
               />
               <img
                 src={exitHeader}
                 alt="удалить картинку"
                 title={"удалить картинку"}
+                className={classes.deleteImg}
                 onClick={deleteImage}
                 style={{ width: "12px", height: "12px" }}
-              ></img>
+              />
             </div>
 
             <div className={classes.column2} data-tour="data-form">
