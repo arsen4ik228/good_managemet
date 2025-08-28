@@ -6,7 +6,7 @@ import ErrorPage from "@app/ErrorPage/ErrorPage";
 
 import { ConfigProvider } from "antd";
 import ruRU from "antd/locale/ru_RU";
-import Effect from "../../UI/app/Test/Effect";
+
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -21,6 +21,7 @@ const User = React.lazy(() => import("@app/UserPage/User"));
 const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
 const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
 const Statistic = React.lazy(() => import("@app/StatisticsPage/Statistic"));
+const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
 const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
 const ProjectWithProgramm = React.lazy(() =>
@@ -40,13 +41,9 @@ const SchemeСompanies = React.lazy(() =>
 const DesktopConvertsPage = React.lazy(() =>
   import("@app/ConvertsPage/desktop/DesktopConvertPage.jsx")
 );
-const DesktopDoalogPage = React.lazy(() =>
-  import("@app/DialogPage/desktop/DesktopDoalogPage.jsx")
-);
+
 const DialogPage = React.lazy(() => import("@app/DialogPage/DialogPage.jsx"));
-const CardProject = React.lazy(() =>
-  import("@app/CardProject/CardProject.jsx")
-);
+
 const SettingsPage = React.lazy(() =>
   import("@app/SettingsPage/desktop/SettingsPage.jsx")
 );
@@ -203,7 +200,6 @@ function DesktopApp() {
                         <div className="content">
                           <Chat />
                           <Routes>
-                            <Route path="card" element={<CardProject />} />
 
                             <Route path="start" element={<Pomoshnik />} />
                             <Route path="goal" element={<Goal />} />
@@ -212,6 +208,7 @@ function DesktopApp() {
                               element={<Policy />}
                             />
                             <Route path="statistic" element={<Statistic />} />
+                            <Route path="svodka" element={<Svodka />} />
                             <Route path="objective" element={<Objective />} />
                             <Route path="strategy" element={<Strategy />} />
                             <Route
@@ -257,7 +254,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-          <Route path="/test" element={<Effect />} />
         </Routes>
       </ConfigProvider>
     </div>

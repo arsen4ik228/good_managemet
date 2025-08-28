@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
+import { DrawerStatisticTable } from "./DrawerStatisticTable";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -47,6 +48,9 @@ export default function Statistic() {
 
   const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
   const [openStatisticInformationDrawer, setOpenStatisticInformationDrawer] =
+    useState(false);
+
+  const [openDrawerStatisticTable, setOpenDrawerStatisticTable] =
     useState(false);
 
   const [statisticId, setStatisticId] = useState(null);
@@ -341,6 +345,16 @@ export default function Statistic() {
               onClick={() => setOpenListStatisticDrawer((prev) => !prev)}
             />
           </Tooltip>
+          <Button
+            onClick={() => setOpenStatisticInformationDrawer((prev) => !prev)}
+          >
+            Редактировать статистику
+          </Button>
+          <Button
+            onClick={() => setOpenDrawerStatisticTable((prev) => !prev)}
+          >
+            Внести данные
+          </Button>
         </BottomHeaders>
       </Headers>
 
@@ -348,16 +362,7 @@ export default function Statistic() {
         <>
           {statisticId ? (
             <>
-              <Button
-                onClick={() =>
-                  setOpenStatisticInformationDrawer((prev) => !prev)
-                }
-                icon={<EditOutlined />}
-              >
-                Редактировать статистику
-              </Button>
-
-              <Title level={4} style={{ color: "#1890ff" }}>
+              <Title level={4} style={{ color: "#3E7B94" }}>
                 {currentStatistic.name}
               </Title>
 
@@ -437,6 +442,23 @@ export default function Statistic() {
               <StatisticInformationDrawer
                 openDrawer={openStatisticInformationDrawer}
                 setOpenDrawer={setOpenStatisticInformationDrawer}
+                statisticId={statisticId}
+                dataSource={dataSource}
+                setDataSource={setDataSource}
+                createPoints={createPoints}
+                setCreatePoints={setCreatePoints}
+                setDatePoint={setDatePoint}
+                chartType={chartType}
+                currentStatistic={currentStatistic}
+                isLoadingGetStatisticId={isLoadingGetStatisticId}
+                statisticData={statisticData}
+                isFetchingGetStatisticId={isFetchingGetStatisticId}
+                handleResetTable={handleResetTable}
+              />
+
+              <DrawerStatisticTable
+                openDrawer={openDrawerStatisticTable}
+                setOpenDrawer={setOpenDrawerStatisticTable}
                 statisticId={statisticId}
                 dataSource={dataSource}
                 setDataSource={setDataSource}
