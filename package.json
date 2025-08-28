@@ -34,6 +34,7 @@
     "react-draggable": "^4.4.6",
     "react-hotkeys-hook": "^4.5.0",
     "react-i18next": "^15.1.4",
+    "react-image-crop": "^11.0.10",
     "react-input-mask": "^2.0.4",
     "react-keydown": "^1.9.12",
     "react-organizational-chart": "^2.2.1",

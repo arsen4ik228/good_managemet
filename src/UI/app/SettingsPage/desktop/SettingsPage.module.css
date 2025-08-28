@@ -31,15 +31,15 @@
     overflow-x: hidden;
 }
 
-.wrapper{
+.wrapper {
     min-width: 450px;
     width: auto;
     height: auto;
 
-    
+
     display: flex;
     flex-direction: column;
-    
+
     background-color: #ffff;
     border-radius: 10px;
 
@@ -64,18 +64,38 @@
 
 
 .avatarContainer {
+    position: relative;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
 .avatar {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    cursor: pointer;
     object-fit: cover;
-    border: 2px solid #ccc;
+    cursor: pointer;
+    border: 2px solid #f0f0f0;
+}
+
+.deleteImg {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
 }
 
 .hiddenInput {
     display: none;
+}
+
+/* Стили для модального окна обрезки */
+.ReactCrop__crop-selection {
+    border: 2px solid #1890ff;
+    border-radius: 50%;
+}
+
+.ReactCrop__drag-handle::after {
+    background: #1890ff;
 }
