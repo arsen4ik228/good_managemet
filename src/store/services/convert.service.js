@@ -98,7 +98,7 @@ export const convertApi = apiSlice.injectEndpoints({
 
     getArchiveConverts: build.query({
       query: ({ contactId }) => ({
-        url: `converts/${contactId}/converts/archive`
+        url: `converts/${contactId}/converts/archive/?pagination=${1000}`
       }),
       keepUnusedDataFor: 0, // данные удаляются сразу после unmount
       //cacheTime: 0,
