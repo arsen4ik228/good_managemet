@@ -398,3 +398,36 @@ mark {
 .select {
     font-family: 'Montserrat';
 }
+
+.saveButton {
+    position: sticky;
+    bottom: 10px;
+    align-self: flex-end;
+    margin-right: 35px;
+}
+
+.saveButton button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: none;
+    background: #3E7B94;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.saveButton button:hover {
+    background: #40a9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.saveButton img {
+    width: 16px;
+    height: 16px;
+}
