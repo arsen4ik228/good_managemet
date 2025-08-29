@@ -80,7 +80,7 @@ export default function PopoverForViewPointsOnWeek({
                   ? {
                       ...item,
                       isChanged: true,
-                      value: value !== null ? value : 0,
+                      value: value,
                     }
                   : item
               )
@@ -88,15 +88,19 @@ export default function PopoverForViewPointsOnWeek({
           }}
           style={{ width: "100%" }}
           min={undefined}
-          step={0.01}
           decimalSeparator="."
           formatter={(value) => {
             if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
           }}
           parser={(value) => {
-            if (value === undefined || value === null) return null;
-            return parseFloat(value.replace(/(,*)/g, "")) || 0;
+            if (value == null || value === "") return null;
+
+            const cleanValue = value.toString().replace(/[\s,]/g, "");
+            if (cleanValue === "") return null;
+
+            const numericValue = parseFloat(cleanValue);
+            return isNaN(numericValue) ? null : numericValue;
           }}
         />
       ),
@@ -130,8 +134,8 @@ export default function PopoverForViewPointsOnWeek({
                 item.id === record.id
                   ? {
                       ...item,
-                      isChanged: true,
-                      value: value !== null ? value : 0,
+                      ...(value !== record.value ? { isChanged: true } : {}),
+                      value: value,
                     }
                   : item
               )
@@ -139,15 +143,19 @@ export default function PopoverForViewPointsOnWeek({
           }}
           style={{ width: "100%" }}
           min={undefined}
-          step={1}
           decimalSeparator="."
           formatter={(value) => {
             if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
           }}
           parser={(value) => {
-            if (value === undefined || value === null) return null;
-            return parseFloat(value.replace(/(,*)/g, "")) || 0;
+            if (value == null || value === "") return null;
+
+            const cleanValue = value.toString().replace(/[\s,]/g, "");
+            if (cleanValue === "") return null;
+
+            const numericValue = parseFloat(cleanValue);
+            return isNaN(numericValue) ? null : numericValue;
           }}
         />
       ),
@@ -173,8 +181,6 @@ export default function PopoverForViewPointsOnWeek({
     const baseId = Date.now();
     const startDate = dayjs(datePointForViewDays).startOf("day");
 
-    console.log("startDate", startDate);
-
     // Создаем Set для быстрого поиска существующих дат
     const existingDates = new Set(
       dataForViewDays
@@ -197,7 +203,7 @@ export default function PopoverForViewPointsOnWeek({
         }
         return {
           id: baseId + i,
-          value: 0,
+          value: null,
           valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
           dateStr: date.format("YYYY-MM-DD"),
         };
@@ -205,7 +211,7 @@ export default function PopoverForViewPointsOnWeek({
       .filter(Boolean) // Удаляем возможные null
       .filter((item) => !existingDates.has(item.dateStr))
       .map(({ dateStr, ...rest }) => rest)
-      .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
     setPointsForViewDaysCreate([...newData]);
   };
@@ -289,23 +295,28 @@ export default function PopoverForViewPointsOnWeek({
       }
       content={
         <>
-          <Table
-            columns={columnspointsForViewDaysCreate}
-            dataSource={pointsForViewDaysCreate}
-            pagination={false}
-            size="small"
-            rowKey="id"
-            loading={isFetchingGetStatisticId}
-          />
+          {pointsForViewDaysCreate.length > 0 ? (
+            <Table
+              columns={columnspointsForViewDaysCreate}
+              dataSource={pointsForViewDaysCreate}
+              pagination={false}
+              size="small"
+              rowKey="id"
+              loading={isFetchingGetStatisticId}
+            />
+          ) : null}
 
-          <Table
-            columns={columnsDataSourceDaily}
-            dataSource={pointsForViewDaysBD}
-            pagination={false}
-            size="small"
-            rowKey="id"
-            loading={isFetchingGetStatisticId}
-          />
+          {pointsForViewDaysBD.length > 0 ? (
+            <Table
+              columns={columnsDataSourceDaily}
+              dataSource={pointsForViewDaysBD}
+              pagination={false}
+              size="small"
+              rowKey="id"
+              loading={isFetchingGetStatisticId}
+            />
+          ) : null}
+
           <Flex justify="flex-end" gap="middle" style={{ marginTop: "10px" }}>
             <Button type="primary" onClick={handleSave} loading={isSaving}>
               Сохранить

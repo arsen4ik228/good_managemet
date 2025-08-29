@@ -42,7 +42,7 @@ export default function StatisticTable({
       const dateWithoutTZ = dayjs(date).startOf("day");
       const newData = {
         id: Date.now(),
-        value: 0,
+        value: null,
         valueDate: `${dateWithoutTZ.format("YYYY-MM-DD")}T00:00:00.000Z`,
         correlationType: null,
       };
@@ -87,7 +87,7 @@ export default function StatisticTable({
         const date = dates[0].clone().add(i, "day").startOf("day");
         return {
           id: `${baseId}-${i}`,
-          value: 0,
+          value: null,
           valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
           dateStr: date.format("YYYY-MM-DD"), // Для проверки дубликатов
           correlationType: null,
@@ -127,23 +127,25 @@ export default function StatisticTable({
           onChange={(value) => {
             setCreatePoints((prevData) =>
               prevData.map((item) =>
-                item.id === record.id
-                  ? { ...item, value: value !== null ? value : 0 }
-                  : item
+                item.id === record.id ? { ...item, value: value } : item
               )
             );
           }}
           style={{ width: "100%" }}
           min={undefined}
-          step={0.01}
           decimalSeparator="."
           formatter={(value) => {
             if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
           }}
           parser={(value) => {
-            if (value === undefined || value === null) return null;
-            return parseFloat(value.replace(/(,*)/g, "")) || 0;
+            if (value == null || value === "") return null;
+
+            const cleanValue = value.toString().replace(/[\s,]/g, "");
+            if (cleanValue === "") return null;
+
+            const numericValue = parseFloat(cleanValue);
+            return isNaN(numericValue) ? null : numericValue;
           }}
         />
       ),
@@ -190,6 +192,7 @@ export default function StatisticTable({
 
   const columnsDataSourceDaily = [
     {
+      title: "Значение",
       dataIndex: "value",
       key: "value",
       render: (text, record) => (
@@ -199,28 +202,37 @@ export default function StatisticTable({
             setDataSource((prevData) =>
               prevData.map((item) =>
                 item.id === record.id
-                  ? { ...item, value: value !== null ? value : 0 }
+                  ? {
+                      ...item,
+                      value: value,
+                      ...(value !== record.value ? { isChanged: true } : {}),
+                    }
                   : item
               )
             );
           }}
           style={{ width: "100%" }}
           min={undefined}
-          step={1}
           decimalSeparator="."
           formatter={(value) => {
             if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
           }}
           parser={(value) => {
-            if (value === undefined || value === null) return null;
-            return parseFloat(value.replace(/(,*)/g, "")) || 0;
+            if (value == null || value === "") return null;
+
+            const cleanValue = value.toString().replace(/[\s,]/g, "");
+            if (cleanValue === "") return null;
+
+            const numericValue = parseFloat(cleanValue);
+            return isNaN(numericValue) ? null : numericValue;
           }}
         />
       ),
     },
 
     {
+      title: "Дата",
       dataIndex: "valueDate",
       key: "valueDate",
       render: (text, record) => (
@@ -247,13 +259,23 @@ export default function StatisticTable({
 
   const columnsDataSourceWeek = [
     {
+      title: "Значение",
       dataIndex: "value",
       render: (text, record) => (
-        <InputNumber value={text} disabled style={{ width: "100%" }} />
+        <InputNumber
+          value={text}
+          disabled
+          style={{ width: "100%" }}
+          formatter={(value) => {
+            if (value === undefined || value === null) return "";
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+          }}
+        />
       ),
     },
 
     {
+      title: "Неделя",
       dataIndex: "valueDate",
       render: (text, record) => (
         <DatePicker
@@ -286,7 +308,7 @@ export default function StatisticTable({
           {record.correlationType ? (
             <Popover
               placement="rightBottom"
-              title="Коррекционное число"
+              title="Установленно коррекционное число"
               content={
                 <Flex gap="small" justify="center" align="center">
                   <InputNumber
@@ -297,7 +319,7 @@ export default function StatisticTable({
                           item.id === record.id
                             ? {
                                 ...item,
-                                value: value !== null ? value : 0,
+                                value: value,
                                 ...(value !== record.value
                                   ? { isChanged: true }
                                   : {}),
@@ -308,15 +330,19 @@ export default function StatisticTable({
                     }}
                     style={{ width: "100%" }}
                     min={undefined}
-                    step={1}
                     decimalSeparator="."
                     formatter={(value) => {
                       if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
                     }}
                     parser={(value) => {
-                      if (value === undefined || value === null) return null;
-                      return parseFloat(value.replace(/(,*)/g, "")) || 0;
+                      if (value == null || value === "") return null;
+
+                      const cleanValue = value.toString().replace(/[\s,]/g, "");
+                      if (cleanValue === "") return null;
+
+                      const numericValue = parseFloat(cleanValue);
+                      return isNaN(numericValue) ? null : numericValue;
                     }}
                   />
                   <Tooltip
@@ -333,7 +359,7 @@ export default function StatisticTable({
                             item.id === record.id
                               ? {
                                   ...item,
-                                  value: 0,
+                                  value: null,
                                   correlationType: null,
                                   isChanged: true,
                                 }
@@ -359,7 +385,7 @@ export default function StatisticTable({
                     value={
                       createCorellationPoints.find(
                         (item) => item.id === record.id
-                      )?.value || 0
+                      )?.value || null
                     }
                     onChange={(value) => {
                       setCreateCorellationPoints((prevData) => {
@@ -369,7 +395,10 @@ export default function StatisticTable({
                         if (exists) {
                           return prevData.map((item) =>
                             item.id === record.id
-                              ? { ...item, value: value !== null ? value : 0 }
+                              ? {
+                                  ...item,
+                                  value: value,
+                                }
                               : item
                           );
                         }
@@ -377,7 +406,7 @@ export default function StatisticTable({
                           ...prevData,
                           {
                             id: record.id,
-                            value: value !== null ? value : 0,
+                            value: value,
                             valueDate: record.valueDateForCreate,
                             correlationType: "Неделя",
                           },
@@ -386,6 +415,20 @@ export default function StatisticTable({
                     }}
                     min={undefined}
                     precision={2}
+                    decimalSeparator="."
+                    formatter={(value) => {
+                      if (value === undefined || value === null) return "";
+                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                    }}
+                    parser={(value) => {
+                      if (value == null || value === "") return null;
+
+                      const cleanValue = value.toString().replace(/[\s,]/g, "");
+                      if (cleanValue === "") return null;
+
+                      const numericValue = parseFloat(cleanValue);
+                      return isNaN(numericValue) ? null : numericValue;
+                    }}
                   />
 
                   {createCorellationPoints.find(
@@ -429,13 +472,23 @@ export default function StatisticTable({
 
   const columnsDataSourceMonth = [
     {
+      title: "Значение",
       dataIndex: "value",
       render: (text, record) => (
-        <InputNumber value={text} disabled style={{ width: "100%" }} />
+        <InputNumber
+          value={text}
+          disabled
+          style={{ width: "100%" }}
+          formatter={(value) => {
+            if (value === undefined || value === null) return "";
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+          }}
+        />
       ),
     },
 
     {
+      title: "Месяц",
       dataIndex: "valueDate",
       render: (text, record) => (
         <DatePicker
@@ -448,6 +501,7 @@ export default function StatisticTable({
     },
 
     {
+      title: "Кор.число",
       dataIndex: "correlationType",
       align: "center",
       render: (_, record) => (
@@ -466,7 +520,7 @@ export default function StatisticTable({
                           item.id === record.id
                             ? {
                                 ...item,
-                                value: value !== null ? value : 0,
+                                value: value,
                                 ...(value !== record.value
                                   ? { isChanged: true }
                                   : {}),
@@ -477,15 +531,19 @@ export default function StatisticTable({
                     }}
                     style={{ width: "100%" }}
                     min={undefined}
-                    step={1}
                     decimalSeparator="."
                     formatter={(value) => {
                       if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
                     }}
                     parser={(value) => {
-                      if (value === undefined || value === null) return null;
-                      return parseFloat(value.replace(/(,*)/g, "")) || 0;
+                      if (value == null || value === "") return null;
+
+                      const cleanValue = value.toString().replace(/[\s,]/g, "");
+                      if (cleanValue === "") return null;
+
+                      const numericValue = parseFloat(cleanValue);
+                      return isNaN(numericValue) ? null : numericValue;
                     }}
                   />
                   <Tooltip
@@ -502,7 +560,7 @@ export default function StatisticTable({
                             item.id === record.id
                               ? {
                                   ...item,
-                                  value: 0,
+                                  value: null,
                                   correlationType: null,
                                   isChanged: true,
                                 }
@@ -532,7 +590,7 @@ export default function StatisticTable({
                     value={
                       createCorellationPoints.find(
                         (item) => item.id === record.id
-                      )?.value || 0
+                      )?.value || null
                     }
                     onChange={(value) => {
                       setCreateCorellationPoints((prevData) => {
@@ -542,7 +600,10 @@ export default function StatisticTable({
                         if (exists) {
                           return prevData.map((item) =>
                             item.id === record.id
-                              ? { ...item, value: value !== null ? value : 0 }
+                              ? {
+                                  ...item,
+                                  value: value,
+                                }
                               : item
                           );
                         }
@@ -550,7 +611,7 @@ export default function StatisticTable({
                           ...prevData,
                           {
                             id: record.id,
-                            value: value !== null ? value : 0,
+                            value: value,
                             valueDate: record.valueDateForCreate,
                             correlationType: "Месяц",
                           },
@@ -559,6 +620,20 @@ export default function StatisticTable({
                     }}
                     min={undefined}
                     precision={2}
+                    decimalSeparator="."
+                    formatter={(value) => {
+                      if (value === undefined || value === null) return "";
+                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                    }}
+                    parser={(value) => {
+                      if (value == null || value === "") return null;
+
+                      const cleanValue = value.toString().replace(/[\s,]/g, "");
+                      if (cleanValue === "") return null;
+
+                      const numericValue = parseFloat(cleanValue);
+                      return isNaN(numericValue) ? null : numericValue;
+                    }}
                   />
 
                   {createCorellationPoints.find(
@@ -602,13 +677,23 @@ export default function StatisticTable({
 
   const columnsDataSourceYear = [
     {
+      title: "Значение",
       dataIndex: "value",
       render: (text, record) => (
-        <InputNumber value={text} disabled style={{ width: "100%" }} />
+        <InputNumber
+          value={text}
+          disabled
+          style={{ width: "100%" }}
+          formatter={(value) => {
+            if (value === undefined || value === null) return "";
+            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+          }}
+        />
       ),
     },
 
     {
+      title: "Год",
       dataIndex: "valueDate",
       render: (text, record) => (
         <DatePicker
@@ -621,6 +706,7 @@ export default function StatisticTable({
     },
 
     {
+      title: "Кор.число",
       dataIndex: "correlationType",
       align: "center",
       render: (_, record) => (
@@ -628,7 +714,7 @@ export default function StatisticTable({
           {record.correlationType ? (
             <Popover
               placement="rightBottom"
-              title="Коррекционное число"
+              title="Установленно коррекционное число"
               content={
                 <Flex gap="small" justify="center" align="center">
                   <InputNumber
@@ -639,7 +725,7 @@ export default function StatisticTable({
                           item.id === record.id
                             ? {
                                 ...item,
-                                value: value !== null ? value : 0,
+                                value: value,
                                 ...(value !== record.value
                                   ? { isChanged: true }
                                   : {}),
@@ -650,15 +736,19 @@ export default function StatisticTable({
                     }}
                     style={{ width: "100%" }}
                     min={undefined}
-                    step={1}
                     decimalSeparator="."
                     formatter={(value) => {
                       if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
                     }}
                     parser={(value) => {
-                      if (value === undefined || value === null) return null;
-                      return parseFloat(value.replace(/(,*)/g, "")) || 0;
+                      if (value == null || value === "") return null;
+
+                      const cleanValue = value.toString().replace(/[\s,]/g, "");
+                      if (cleanValue === "") return null;
+
+                      const numericValue = parseFloat(cleanValue);
+                      return isNaN(numericValue) ? null : numericValue;
                     }}
                   />
                   <Tooltip
@@ -675,7 +765,7 @@ export default function StatisticTable({
                             item.id === record.id
                               ? {
                                   ...item,
-                                  value: 0,
+                                  value: null,
                                   correlationType: null,
                                   isChanged: true,
                                 }
@@ -701,7 +791,7 @@ export default function StatisticTable({
                     value={
                       createCorellationPoints.find(
                         (item) => item.id === record.id
-                      )?.value || 0
+                      )?.value || null
                     }
                     onChange={(value) => {
                       setCreateCorellationPoints((prevData) => {
@@ -711,7 +801,10 @@ export default function StatisticTable({
                         if (exists) {
                           return prevData.map((item) =>
                             item.id === record.id
-                              ? { ...item, value: value !== null ? value : 0 }
+                              ? {
+                                  ...item,
+                                  value: value,
+                                }
                               : item
                           );
                         }
@@ -719,7 +812,7 @@ export default function StatisticTable({
                           ...prevData,
                           {
                             id: record.id,
-                            value: value !== null ? value : 0,
+                            value: value,
                             valueDate: record.valueDateForCreate,
                             correlationType: "Год",
                           },
@@ -728,6 +821,20 @@ export default function StatisticTable({
                     }}
                     min={undefined}
                     precision={2}
+                    decimalSeparator="."
+                    formatter={(value) => {
+                      if (value === undefined || value === null) return "";
+                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                    }}
+                    parser={(value) => {
+                      if (value == null || value === "") return null;
+
+                      const cleanValue = value.toString().replace(/[\s,]/g, "");
+                      if (cleanValue === "") return null;
+
+                      const numericValue = parseFloat(cleanValue);
+                      return isNaN(numericValue) ? null : numericValue;
+                    }}
                   />
                   {createCorellationPoints.find(
                     (item) => item.id === record.id
@@ -787,6 +894,7 @@ export default function StatisticTable({
     }
   };
 
+  console.log("dataSource = ", dataSource);
   return (
     <div style={{ overflowX: "hidden", marginTop: "10px" }}>
       <Space

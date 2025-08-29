@@ -5,7 +5,6 @@ import {
   Form,
   Input,
   Select,
-  Splitter,
   Row,
   Col,
   Flex,
@@ -14,7 +13,6 @@ import {
 
 import { useAllPosts, useUpdateSingleStatistic } from "@hooks";
 
-import StatisticTable from "./StatisticTable";
 
 const { TextArea } = Input;
 
@@ -26,24 +24,17 @@ const typeStatistic = [
 export const StatisticInformationDrawer = ({
   openDrawer,
   setOpenDrawer,
+
   statisticId,
-  dataSource,
-  setDataSource,
-  createPoints,
-  setCreatePoints,
-  setDatePoint,
-  chartType,
 
   currentStatistic,
+  
   isLoadingGetStatisticId,
   isFetchingGetStatisticId,
 
-  handleResetTable,
 }) => {
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
-
-  const [createCorellationPoints, setCreateCorellationPoints] = useState([]);
 
   const { allPosts, isLoadingGetPosts, isFetchingGetPosts, isErrorGetPosts } =
     useAllPosts();
@@ -70,49 +61,11 @@ export const StatisticInformationDrawer = ({
 
   const handleSave = async () => {
     try {
-      const DataArray = {
-        // Всегда инициализируем как массив, даже если пустой
-        statisticDataCreateDtos: [],
-        statisticDataUpdateDtos: [],
-      };
-
-      // Обработка createCorellationPoints
-      if (createCorellationPoints.length > 0) {
-        DataArray.statisticDataCreateDtos.push(
-          ...createCorellationPoints.map(({ id, ...rest }) => rest)
-        );
-      }
-
-      // Обработка createPoints
-      if (createPoints.length > 0) {
-        DataArray.statisticDataCreateDtos.push(
-          ...createPoints.map(({ id, ...rest }) => rest)
-        );
-      }
-
-      // Обработка обновлений
-      DataArray.statisticDataUpdateDtos = dataSource
-        .filter((item) => item.isChanged === true)
-        .map(({ id, value, correlationType }) => ({
-          _id: id,
-          value,
-          correlationType,
-        }));
-
-      // Удаляем пустые массивы
-      if (DataArray.statisticDataCreateDtos.length === 0) {
-        delete DataArray.statisticDataCreateDtos;
-      }
-      if (DataArray.statisticDataUpdateDtos.length === 0) {
-        delete DataArray.statisticDataUpdateDtos;
-      }
-
       setIsSaving(true);
       const response = await form.validateFields();
       await updateStatistics({
         statisticId: currentStatistic?.id,
         _id: currentStatistic?.id,
-        ...DataArray,
         ...response,
       }).unwrap();
 
@@ -129,16 +82,11 @@ export const StatisticInformationDrawer = ({
         console.error("Детали ошибки:", JSON.stringify(error, null, 2));
       }
     } finally {
-      setCreateCorellationPoints([]);
-      setCreatePoints([]);
-      setDataSource((prev) => prev.map(({ isChanged, ...rest }) => rest));
       setIsSaving(false);
     }
   };
 
   const handleReset = () => {
-    handleResetTable();
-    setCreateCorellationPoints([]);
     form.setFieldsValue({
       name: currentStatistic?.name ?? null,
       description: currentStatistic?.description ?? null,
@@ -165,30 +113,7 @@ export const StatisticInformationDrawer = ({
     };
 
     form.setFieldsValue(initialValues);
-  }, [currentStatistic, isLoadingGetStatisticId, isFetchingGetStatisticId]);
-
-  // 1. Первоначальная установка даты при монтировании
-  useEffect(() => {
-    const calculateInitialDate = () => {
-      const currentDate = localStorage.getItem("reportDay");
-      if (currentDate !== null) {
-        const targetDay = parseInt(currentDate, 10);
-        const today = new Date();
-        const todayDay = today.getDay();
-
-        let diff = todayDay - targetDay;
-        if (diff < 0) diff += 7;
-
-        const lastTargetDate = new Date(today);
-        lastTargetDate.setDate(today.getDate() - diff);
-
-        return lastTargetDate.toISOString().split("T")[0];
-      }
-      return null;
-    };
-
-    setDatePoint(calculateInitialDate());
-  }, []);
+  }, [statisticId, currentStatistic, isLoadingGetStatisticId, isFetchingGetStatisticId]);
 
   return (
     <Drawer
