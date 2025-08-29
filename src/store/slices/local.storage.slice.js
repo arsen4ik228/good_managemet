@@ -5,6 +5,7 @@ const localStorageSlice = createSlice({
   initialState: {
     reduxSelectedOrganizationId: localStorage.getItem('selectedOrganizationId') || null,
     reduxSelectedOrganizationReportDay: localStorage.getItem('reportDay') || null,
+    reduxUserId: localStorage.getItem('userId') || null,
   },
   reducers: {
     setSelectedOrganizationId: (state, action) => {
@@ -13,8 +14,11 @@ const localStorageSlice = createSlice({
     setSelectedOrganizationReportDay: (state, action) => {
       state.reduxSelectedOrganizationReportDay = action.payload;
     },
+    setUserId: (state, action) => {
+      state.reduxUserId = action.payload
+    }
   },
 });
 
-export const {setSelectedOrganizationId, setSelectedOrganizationReportDay } = localStorageSlice.actions;
+export const {setSelectedOrganizationId, setSelectedOrganizationReportDay, setUserId } = localStorageSlice.actions;
 export default localStorageSlice.reducer;

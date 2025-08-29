@@ -1,10 +1,12 @@
 import { useGetUserNewQuery, usePostUserMutation, useGetUserIdQuery, useUpdateUserMutation } from "@services";
 import { useMutationHandler } from "./useMutationHandler";
 import useGetReduxOrganization from "./useGetReduxOrganization";
+import useGetUserId from "./useGetUserId";
 
 export function useUserHook() {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
-
+  const { reduxUserId } = useGetUserId()
+  console.log(reduxSelectedOrganizationId, reduxUserId)
   const {
     postsWithoutUser = [],
     isLoadingGetUserNew,
@@ -20,7 +22,7 @@ export function useUserHook() {
     }
   );
 
-  const { data: userInfo = {}, refetch: refetchUserInfo } = useGetUserIdQuery();
+  const { data: userInfo, refetch: refetchUserInfo } = useGetUserIdQuery(reduxUserId);
 
 
   const [

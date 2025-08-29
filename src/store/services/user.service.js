@@ -13,8 +13,8 @@ export const userApi = apiSlice.injectEndpoints({
     }),
 
     getUserId: build.query({
-      query: () => ({
-        url: `users/${userId}`
+      query: (_userId) => ({
+        url: `users/${_userId}`
       })
     }),
 
