@@ -5,6 +5,7 @@
     flex-direction: column;
     background-color: #ffff;
     box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.5);
+    position: relative;
 }
 
 
@@ -40,7 +41,7 @@
     z-index: 100;
 }
 
-.five{
+.five {
     width: 165px;
     max-width: 165px;
     overflow: hidden;
@@ -252,7 +253,7 @@
 .main {
     position: relative;
     flex: 1 0 120px;
-    overflow-y: auto;
+    overflow-x: auto;
     background-color: #F0F0F0;
     padding-top: 1%;
     padding-bottom: 1%;
@@ -260,4 +261,37 @@
     flex-direction: column;
     align-items: center;
     row-gap: 1%;
+}
+
+.saveButton {
+    position: sticky;
+    bottom: 10px;
+    align-self: flex-end;
+    margin-right: 30px;
+}
+
+.saveButton button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: none;
+    background: #3E7B94;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.saveButton button:hover {
+    background: #40a9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.saveButton img {
+    width: 16px;
+    height: 16px;
 }

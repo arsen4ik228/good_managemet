@@ -75,8 +75,8 @@ export default function Mdxeditor({
       <div className={classes.editorContainer}>
         {readOnly && (
           <div className={classes.title}>
-            Политика №{policyNumber}
-            <br /> {policyName}
+              Политика №{policyNumber}
+              <br /> {policyName}
           </div>
         )}
         <MDXEditor

@@ -20,6 +20,8 @@ import { Card, Drawer, Table, Tabs, Tour } from "antd";
 import dayjs from "dayjs";
 import { MenuOutlined, VerticalRightOutlined, RollbackOutlined } from "@ant-design/icons"
 import { PolicyNavigationBar } from './components/PolicyNavigationBar.jsx'
+import { Modal, notification } from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { Menu, Input, Tooltip, DatePicker, Button, Dropdown } from "antd";
 import {
@@ -270,6 +272,36 @@ export default function Policy() {
     setSelectedPolicyId(id);
   };
 
+  const handlerEdit = () => {
+    if (currentPolicy.content !== editorState) {
+      // Показываем модальное окно подтверждения
+      Modal.confirm({
+        title: 'Есть несохранённые изменения',
+        icon: <ExclamationCircleFilled />,
+        content: 'Вы хотите сохранить изменения перед выходом из режима редактирования?',
+        okText: 'Сохранить',
+        cancelText: 'Не сохранять',
+        onOk() {
+          // Здесь вызываем функцию сохранения
+          saveUpdatePolicy();
+          setIsEdit(prev => !prev);
+        },
+        onCancel() {
+          // Просто выходим из режима редактирования без сохранения
+          setIsEdit(prev => !prev);
+          setEditorState(currentPolicy.content)
+          notification.info({
+            message: 'Изменения не сохранены',
+            description: 'Редактирование отменено, изменения не были сохранены.',
+            placement: 'topRight',
+          });
+        },
+      });
+    } else {
+      setIsEdit(prev => !prev);
+    }
+  };
+
   useEffect(() => {
     if (currentPolicy.policyName) {
       setPolicyName(currentPolicy.policyName);
@@ -359,9 +391,9 @@ export default function Policy() {
       <Headers name={"политика"} funcActiveHint={() => setOpen(true)}>
         <BottomHeaders
           create={savePostPolicy}
-          update={saveUpdatePolicy}
+          // update={saveUpdatePolicy}
           refCreate={refCreate}
-          refUpdate={refUpdate}
+        // refUpdate={refUpdate}
         >
           {/* <PolicyInputDropdown
             policyName={policyName}
@@ -430,6 +462,20 @@ export default function Policy() {
                   />
                 </div>
               )}
+              {!disabledArchive && (
+                <Button
+                  // type="primary"
+                  icon={<EditOutlined />}
+                  iconPosition={'end'}
+                  onClick={() => handlerEdit()}
+                // style={{
+                //   backgroundColor: '#005475',
+                //   borderColor: '#005475',
+                // }}
+                >
+                  Редактировать
+                </Button>
+              )}
             </>
           )}
         </BottomHeaders>
@@ -494,7 +540,7 @@ export default function Policy() {
                   <>
                     {currentPolicy.content ? (
                       <>
-                        {!disabledArchive && (
+                        {/* {!disabledArchive && (
                           <div className={classes.editButton}>
                             <Button
                               type="primary"
@@ -509,7 +555,7 @@ export default function Policy() {
                               Редактировать
                             </Button>
                           </div>
-                        )}
+                        )} */}
                         <Mdxeditor
                           key={currentPolicy.id}
                           editorState={currentPolicy.content}
@@ -690,6 +736,18 @@ export default function Policy() {
             )}
           </>
         )}
+        {isEdit && (
+
+          <div className={classes.saveButton}>
+            <button
+              onClick={() => saveUpdatePolicy()}
+            >
+              Сохранить
+            </button>
+            {/* <img src={iconSublist} alt="iconSublist" /> */}
+          </div>
+        )}
+
       </div>
     </div >
   );
