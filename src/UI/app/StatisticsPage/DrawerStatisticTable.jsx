@@ -1,52 +1,34 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Splitter,
-  Row,
-  Col,
-  Flex,
-  message,
-} from "antd";
+import  { useState, useEffect } from "react";
+import { Button, Drawer, Flex, message } from "antd";
 
-import { useAllPosts, useUpdateSingleStatistic } from "@hooks";
+import { useUpdateSingleStatistic } from "@hooks";
 
 import StatisticTable from "./StatisticTable";
-
-const { TextArea } = Input;
-
-const typeStatistic = [
-  { value: "Прямая", label: "Прямая" },
-  { value: "Обратная", label: "Обратная" },
-];
 
 export const DrawerStatisticTable = ({
   openDrawer,
   setOpenDrawer,
-  statisticId,
+
   dataSource,
   setDataSource,
+
   createPoints,
   setCreatePoints,
+
   setDatePoint,
+
   chartType,
 
   currentStatistic,
+
   isLoadingGetStatisticId,
   isFetchingGetStatisticId,
 
   handleResetTable,
 }) => {
-  const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
 
   const [createCorellationPoints, setCreateCorellationPoints] = useState([]);
-
-  const { allPosts, isLoadingGetPosts, isFetchingGetPosts, isErrorGetPosts } =
-    useAllPosts();
 
   // Обновление статистики
   const {
@@ -57,16 +39,6 @@ export const DrawerStatisticTable = ({
     ErrorUpdateStatisticMutation,
     localIsResponseUpdateStatisticsMutation,
   } = useUpdateSingleStatistic();
-
-  const handlePostValuesChange = (changedValues, allValues) => {
-    const cleanedValues = Object.fromEntries(
-      Object.entries(allValues).map(([key, value]) => [
-        key,
-        value === undefined ? null : value,
-      ])
-    );
-    form.setFieldsValue(cleanedValues);
-  };
 
   const handleSave = async () => {
     try {
@@ -84,9 +56,12 @@ export const DrawerStatisticTable = ({
       }
 
       // Обработка createPoints
+      const arrayNotNullCreatePoints = createPoints.filter(
+        (item) => item.value !== null
+      );
       if (createPoints.length > 0) {
         DataArray.statisticDataCreateDtos.push(
-          ...createPoints.map(({ id, ...rest }) => rest)
+          ...arrayNotNullCreatePoints.map(({ id, ...rest }) => rest)
         );
       }
 
@@ -108,12 +83,10 @@ export const DrawerStatisticTable = ({
       }
 
       setIsSaving(true);
-      const response = await form.validateFields();
       await updateStatistics({
         statisticId: currentStatistic?.id,
         _id: currentStatistic?.id,
         ...DataArray,
-        ...response,
       }).unwrap();
 
       message.success("Данные успешно обновлены!");
@@ -139,33 +112,7 @@ export const DrawerStatisticTable = ({
   const handleReset = () => {
     handleResetTable();
     setCreateCorellationPoints([]);
-    form.setFieldsValue({
-      name: currentStatistic?.name ?? null,
-      description: currentStatistic?.description ?? null,
-      postId: currentStatistic?.post?.id ?? null,
-      type: currentStatistic?.type ?? null,
-    });
   };
-
-  useEffect(() => {
-    if (
-      !statisticId ||
-      !currentStatistic?.id ||
-      isLoadingGetStatisticId ||
-      isFetchingGetStatisticId
-    ) {
-      return;
-    }
-
-    const initialValues = {
-      name: currentStatistic?.name ?? null,
-      description: currentStatistic?.description ?? null,
-      postId: currentStatistic?.post?.id ?? null,
-      type: currentStatistic?.type ?? null,
-    };
-
-    form.setFieldsValue(initialValues);
-  }, [currentStatistic, isLoadingGetStatisticId, isFetchingGetStatisticId]);
 
   // 1. Первоначальная установка даты при монтировании
   useEffect(() => {

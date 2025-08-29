@@ -43,6 +43,12 @@ const typeViewStatistic = [
   { value: "fifty_two", label: "52", tooltip: "52 недели" },
 ];
 
+const widthMap = {
+  fifty_two: "100%",
+  twenty_six: "70%",
+  default: "35%",
+};
+
 export default function Statistic() {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
@@ -126,11 +132,11 @@ export default function Statistic() {
         valueDate: endDate.format("YYYY-MM-DD"),
         valueDateForCreate: second_to_last_Date,
         dateForViewDaysInWeek: date_for_view_days_in_week,
-        value: 0,
+        value: null,
         isViewDays: false,
         correlationType: null,
       };
-    }).reverse();
+    });
 
     // Заполняем данные с правильным учетом недельных интервалов
     weeksArray.forEach((week) => {
@@ -152,53 +158,68 @@ export default function Statistic() {
       );
 
       if (weekTotalPoint) {
-        week.value = parseFloat(weekTotalPoint.value) || 0;
+        week.value = parseFloat(weekTotalPoint.value) || null;
         week.id = weekTotalPoint.id;
         week.correlationType = "Неделя";
       } else {
-        week.value = weekPoints.reduce(
-          (sum, point) => sum + (parseFloat(point.value) || 0),
-          0
-        );
+        week.value = weekPoints.reduce((sum, point) => {
+          const pointValue = parseFloat(point.value);
+
+          if (isNaN(pointValue)) {
+            return sum; // пропускаем нечисловые значения
+          }
+
+          return sum === null ? pointValue : sum + pointValue;
+        }, null);
       }
     });
 
-    setDataSource(weeksArray);
+    setDataSource(
+      weeksArray.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate))
+    );
   };
 
   const countMonths = () => {
-    const monthsArray = _.cloneDeep(statisticData).map((item, index) => {
-      const dateObj = dayjs(new Date(item.year, item.month - 1, 15));
+    const monthsArray = _.cloneDeep(statisticData)
+      .map((item, index) => {
+        const dateObj = dayjs(new Date(item.year, item.month - 1, 15));
 
-      return {
-        id: item?.id ?? `month-${index}-${dateObj.format("YYYY-MM")}`,
-        value: item.total,
-        correlationType: item.correlationType,
-        valueDate: dateObj.format("YYYY-MM"), // форматируем как строку
-        valueDateForCreate: dateObj, // оставляем как объект Day.js
-      };
-    });
+        return {
+          id: item?.id ?? `month-${index}-${dateObj.format("YYYY-MM")}`,
+          value: item.total,
+          correlationType: item.correlationType,
+          valueDate: dateObj.format("YYYY-MM"), // форматируем как строку
+          valueDateForCreate: dateObj, // оставляем как объект Day.js
+        };
+      })
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
     setDataSource(monthsArray);
   };
 
   const countYears = () => {
-    const yearsArray = _.cloneDeep(statisticData).map((item, index) => {
-      const dateObj = dayjs(new Date(item.year, 6, 15));
+    const yearsArray = _.cloneDeep(statisticData)
+      .map((item, index) => {
+        const dateObj = dayjs(new Date(item.year, 6, 15));
 
-      return {
-        id: item?.id ?? `year-${index}-${dateObj.format("YYYY")}`,
-        value: item.total,
-        correlationType: item.correlationType,
-        valueDate: dateObj.format("YYYY"),
-        valueDateForCreate: dateObj,
-      };
-    });
+        return {
+          id: item?.id ?? `year-${index}-${dateObj.format("YYYY")}`,
+          value: item.total,
+          correlationType: item.correlationType,
+          valueDate: dateObj.format("YYYY"),
+          valueDateForCreate: dateObj,
+        };
+      })
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
     setDataSource(yearsArray);
   };
 
   const countDays = () => {
-    setDataSource(_.cloneDeep(statisticData));
+    setDataSource(
+      _.cloneDeep(statisticData).sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      )
+    );
 
     const baseId = Date.now();
     const startDate = dayjs(datePoint).startOf("day");
@@ -226,7 +247,7 @@ export default function Statistic() {
 
         return {
           id: baseId + i,
-          value: 0,
+          value: null,
           valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
           dateStr: date.format("YYYY-MM-DD"),
         };
@@ -234,7 +255,7 @@ export default function Statistic() {
       .filter(Boolean)
       .filter((item) => !existingDates.has(item.dateStr))
       .map(({ dateStr, ...rest }) => rest)
-      .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
     setCreatePoints([...newData]);
   };
@@ -280,13 +301,28 @@ export default function Statistic() {
 
       switch (chartType) {
         case "daily":
+          newDate =
+            clickArrow[0] === "right"
+              ? currentDate.add(1, "day")
+              : currentDate.subtract(1, "day");
+          break;
         case "thirteen":
-        case "twenty_six":
-        case "fifty_two":
           newDate =
             clickArrow[0] === "right"
               ? currentDate.add(7, "day")
               : currentDate.subtract(7, "day");
+          break;
+        case "twenty_six":
+          newDate =
+            clickArrow[0] === "right"
+              ? currentDate.add(42, "day")
+              : currentDate.subtract(42, "day");
+          break;
+        case "fifty_two":
+          newDate =
+            clickArrow[0] === "right"
+              ? currentDate.add(91, "day")
+              : currentDate.subtract(91, "day");
           break;
         case "monthly":
           newDate =
@@ -311,7 +347,6 @@ export default function Statistic() {
   useEffect(() => {
     if (!statisticId || !datePoint) return;
 
-    console.log("useEffect");
     const handlers = {
       daily: countDays,
       monthly: countMonths,
@@ -338,23 +373,38 @@ export default function Statistic() {
     <div className={classes.dialog}>
       <Headers name={"статистика"}>
         <BottomHeaders create={() => setOpenCreateStatistic(true)}>
-          <Tooltip title="Выбор статистик" placement="bottom">
-            <Button
-              type="primary"
-              icon={<MenuFoldOutlined />}
-              onClick={() => setOpenListStatisticDrawer((prev) => !prev)}
-            />
-          </Tooltip>
           <Button
-            onClick={() => setOpenStatisticInformationDrawer((prev) => !prev)}
+            onClick={() => {
+              setOpenListStatisticDrawer((prev) => !prev);
+              setOpenDrawerStatisticTable(false);
+              setOpenStatisticInformationDrawer(false);
+            }}
           >
-            Редактировать статистику
+            Выбрать статистику
           </Button>
-          <Button
-            onClick={() => setOpenDrawerStatisticTable((prev) => !prev)}
-          >
-            Внести данные
-          </Button>
+
+          {statisticId ? (
+            <>
+              <Button
+                onClick={() => {
+                  setOpenStatisticInformationDrawer((prev) => !prev);
+                  setOpenDrawerStatisticTable(false);
+                  setOpenListStatisticDrawer(false);
+                }}
+              >
+                Редактировать статистику
+              </Button>
+              <Button
+                onClick={() => {
+                  setOpenDrawerStatisticTable((prev) => !prev);
+                  setOpenStatisticInformationDrawer(false);
+                  setOpenListStatisticDrawer(false);
+                }}
+              >
+                Внести данные
+              </Button>
+            </>
+          ) : null}
         </BottomHeaders>
       </Headers>
 
@@ -375,8 +425,18 @@ export default function Statistic() {
               >
                 {/* График - теперь первый элемент, растягивается на всё оставшееся пространство */}
 
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <Graphic data={[...createPoints, ...dataSource]} />
+                <div
+                  style={{
+                    flex: 1, // Занимает всё доступное пространство
+                    display: "flex",
+                    justifyContent: "center", // Центрирует по горизонтали
+                    alignItems: "center", // Центрирует по вертикали (опционально)
+                  }}
+                >
+                  <Graphic
+                    data={[...createPoints, ...dataSource]}
+                    width={widthMap[chartType] || widthMap.default}
+                  />
                 </div>
 
                 {/* Панель кнопок - сдвигается вправо */}
@@ -443,23 +503,14 @@ export default function Statistic() {
                 openDrawer={openStatisticInformationDrawer}
                 setOpenDrawer={setOpenStatisticInformationDrawer}
                 statisticId={statisticId}
-                dataSource={dataSource}
-                setDataSource={setDataSource}
-                createPoints={createPoints}
-                setCreatePoints={setCreatePoints}
-                setDatePoint={setDatePoint}
-                chartType={chartType}
                 currentStatistic={currentStatistic}
                 isLoadingGetStatisticId={isLoadingGetStatisticId}
-                statisticData={statisticData}
                 isFetchingGetStatisticId={isFetchingGetStatisticId}
-                handleResetTable={handleResetTable}
               />
 
               <DrawerStatisticTable
                 openDrawer={openDrawerStatisticTable}
                 setOpenDrawer={setOpenDrawerStatisticTable}
-                statisticId={statisticId}
                 dataSource={dataSource}
                 setDataSource={setDataSource}
                 createPoints={createPoints}
@@ -468,7 +519,6 @@ export default function Statistic() {
                 chartType={chartType}
                 currentStatistic={currentStatistic}
                 isLoadingGetStatisticId={isLoadingGetStatisticId}
-                statisticData={statisticData}
                 isFetchingGetStatisticId={isFetchingGetStatisticId}
                 handleResetTable={handleResetTable}
               />
