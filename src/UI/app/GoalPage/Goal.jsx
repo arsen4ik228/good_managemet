@@ -11,7 +11,12 @@ import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import { useGoalHook, usePolicyHook } from "@hooks";
 import { transformToString } from "@helpers/helpers";
 import { ConfigProvider, Tour, Button } from "antd";
+import { Modal, notification } from 'antd';
+import { ExclamationCircleFilled, EditOutlined } from '@ant-design/icons';
+
 import ruRU from "antd/locale/ru_RU";
+import { ViewingGoal } from "./ViewingGoal";
+import { compareStringArray } from "../../../helpers/helpers";
 
 export default function Goal() {
   const [editorState, setEditorState] = useState([]);
@@ -23,6 +28,8 @@ export default function Goal() {
   const [pressedIndex, setPressedIndex] = useState(null);
 
   const [open, setOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false)
+
   const steps = [
     {
       title: "Сохранить",
@@ -134,10 +141,40 @@ export default function Goal() {
       content: editorState,
     })
       .unwrap()
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
       });
+  };
+
+  const handlerEdit = () => {
+    if (compareStringArray(currentGoal.content, editorState)) {
+      // Показываем модальное окно подтверждения
+      Modal.confirm({
+        title: 'Есть несохранённые изменения',
+        icon: <ExclamationCircleFilled />,
+        content: 'Вы хотите сохранить изменения перед выходом из режима редактирования?',
+        okText: 'Сохранить',
+        cancelText: 'Не сохранять',
+        onOk() {
+          // Здесь вызываем функцию сохранения
+          saveUpdateGoal();
+          setIsEdit(prev => !prev);
+        },
+        onCancel() {
+          // Просто выходим из режима редактирования без сохранения
+          setIsEdit(prev => !prev);
+          setEditorState(currentGoal.content)
+          notification.info({
+            message: 'Изменения не сохранены',
+            description: 'Редактирование отменено, изменения не были сохранены.',
+            placement: 'topRight',
+          });
+        },
+      });
+    } else {
+      setIsEdit(prev => !prev);
+    }
   };
 
   const addEditor = () => {
@@ -193,15 +230,22 @@ export default function Goal() {
     };
   }, []);
 
+
+  console.log(currentGoal.content)
   return (
     <div className={classes.dialog}>
       <Headers name={"цели"} funcActiveHint={() => setOpen(true)}>
         <BottomHeaders
-          // share={}
-          update={saveUpdateGoal}
-          refUpdate={refUpdate}
           shareFunctionList={shareFunctionList}
-        ></BottomHeaders>
+        >
+          <Button
+            icon={<EditOutlined />}
+            iconPosition={'end'}
+            onClick={() => handlerEdit()}
+          >
+            Редактировать
+          </Button>
+        </BottomHeaders>
       </Headers>
 
       <div className={classes.main}>
@@ -209,148 +253,154 @@ export default function Goal() {
           <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
         </ConfigProvider>
 
-        {isErrorGetGoal ? (
+        {isEdit ? (
           <>
-            <HandlerQeury Error={isErrorGetGoal}></HandlerQeury>
+            {!isErrorGetGoal && (
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="editorList">
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className={classes.droppableContainer}
+                    >
+                      {editorState?.map((item, index) => (
+                        <Draggable
+                          key={index}
+                          draggableId={`item-${index}`}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={classes.editorContainer}
+                            >
+                              <div
+                                className={classes.dragHandle}
+                                onMouseDown={() => setPressedIndex(index)}
+                                onMouseUp={() => setPressedIndex(null)}
+                                onMouseLeave={() => setPressedIndex(null)}
+                              >
+                                <img
+                                  {...provided.dragHandleProps}
+                                  className={classes.drag}
+                                  ref={ref1}
+                                  src={drag}
+                                  alt="drag"
+                                />
+                              </div>
+
+                              <div
+                                style={{
+                                  padding: "20px",
+                                  height: pressedIndex === index ? "100px" : "auto",
+                                  transition: "height 3.5s ease",
+                                }}
+                              >
+                                <TextArea
+                                  key={index}
+                                  value={item}
+                                  onChange={(newState) => {
+                                    const updatedState = [...editorState];
+                                    updatedState[index] = newState;
+                                    setEditorState(updatedState);
+                                  }}
+                                />
+                              </div>
+
+                              <img
+                                ref={ref2}
+                                src={deleteImage}
+                                alt="deleteImage"
+                                className={classes.deleteIcon}
+                                onClick={() => deleteEditor(index)}
+                              />
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            )}
+
+            {!isErrorGetGoal && (
+              <button
+                ref={ref3}
+                className={classes.add}
+                onClick={() => addEditor()}
+              >
+                <svg
+                  width="19.998047"
+                  height="20.000000"
+                  viewBox="0 0 19.998 20"
+                  fill="none"
+                >
+                  <path
+                    id="Vector"
+                    d="M10 20C4.47 19.99 0 15.52 0 10L0 9.8C0.1 4.3 4.63 -0.08 10.13 0C15.62 0.07 20.03 4.56 19.99 10.06C19.96 15.56 15.49 19.99 10 20ZM5 9L5 11L9 11L9 15L11 15L11 11L15 11L15 9L11 9L11 5L9 5L9 9L5 9Z"
+                    fill="#B4B4B4"
+                    fillOpacity="1.000000"
+                    fillRule="nonzero"
+                  />
+                </svg>
+
+                <div>
+                  <span className={classes.nameButton}>
+                    Добавить еще одну часть цели (Ctrl+Enter)
+                  </span>
+                </div>
+              </button>
+            )}
+
+
+            <div className={classes.saveButton}>
+              <button onClick={() => saveUpdateGoal()}>
+                Сохранить
+              </button>
+            </div>
           </>
         ) : (
           <>
-            <HandlerQeury
-              Loading={isLoadingGetGoal}
-              Fetching={isFetchingGetGoal}
-            ></HandlerQeury>
-
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="editorList">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={classes.droppableContainer}
-                  >
-                    {editorState?.map((item, index) => (
-                      <Draggable
-                        key={index}
-                        draggableId={`item-${index}`}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={classes.editorContainer}
-                            // style={{'height':'150px'}}
-                          >
-                            <div
-                              className={classes.dragHandle}
-                              onMouseDown={() => setPressedIndex(index)}
-                              onMouseUp={() => setPressedIndex(null)}
-                              onMouseLeave={() => setPressedIndex(null)}
-                            >
-                              <img
-                                {...provided.dragHandleProps}
-                                className={classes.drag}
-                                ref={ref1}
-                                src={drag}
-                                alt="drag"
-                              />
-                            </div>
-
-                            <div
-                              style={{
-                                padding: "20px",
-                                height:
-                                  pressedIndex === index ? "100px" : "auto",
-                                transition: "height 3.5s ease",
-                              }}
-                            >
-                              <TextArea
-                                key={index}
-                                value={item}
-                                onChange={(newState) => {
-                                  const updatedState = [...editorState];
-                                  updatedState[index] = newState;
-                                  setEditorState(updatedState);
-                                }}
-                              ></TextArea>
-                            </div>
-
-                            <img
-                              ref={ref2}
-                              src={deleteImage}
-                              alt="deleteImage"
-                              className={classes.deleteIcon}
-                              onClick={() => deleteEditor(index)}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-
-            <button
-              ref={ref3}
-              className={classes.add}
-              onClick={() => addEditor()}
-            >
-              <svg
-                width="19.998047"
-                height="20.000000"
-                viewBox="0 0 19.998 20"
-                fill="none"
-              >
-                <defs />
-                <path
-                  id="Vector"
-                  d="M10 20C4.47 19.99 0 15.52 0 10L0 9.8C0.1 4.3 4.63 -0.08 10.13 0C15.62 0.07 20.03 4.56 19.99 10.06C19.96 15.56 15.49 19.99 10 20ZM5 9L5 11L9 11L9 15L11 15L11 11L15 11L15 9L11 9L11 5L9 5L9 9L5 9Z"
-                  fill="#B4B4B4"
-                  fill-opacity="1.000000"
-                  fill-rule="nonzero"
-                />
-              </svg>
-
-              <div>
-                <span className={classes.nameButton}>
-                  Добавить еще одну часть цели (Ctrl+Enter)
-                </span>
-              </div>
-            </button>
-
-            <HandlerMutation
-              Loading={isLoadingUpdateGoalMutation}
-              Error={
-                isErrorUpdateGoalMutation && localIsResponseUpdateGoalMutation
-              }
-              Success={
-                isSuccessUpdateGoalMutation && localIsResponseUpdateGoalMutation
-              }
-              textSuccess={"Цель обновлена"}
-              textError={
-                ErrorUpdateGoalMutation?.data?.errors?.[0]?.errors?.[0]
-                  ? ErrorUpdateGoalMutation.data.errors[0].errors[0]
-                  : ErrorUpdateGoalMutation?.data?.message
-              }
-            ></HandlerMutation>
-
-            <HandlerMutation
-              Loading={isLoadingPostGoalMutation}
-              Error={isErrorPostGoalMutation && localIsResponsePostGoalMutation}
-              Success={
-                isSuccessPostGoalMutation && localIsResponsePostGoalMutation
-              }
-              textSuccess={"Цель создана"}
-              textError={
-                ErrorPostGoalMutation?.data?.errors?.[0]?.errors?.[0]
-                  ? ErrorPostGoalMutation.data.errors[0].errors[0]
-                  : ErrorPostGoalMutation?.data?.message
-              }
-            ></HandlerMutation>
+            <ViewingGoal
+              arrGoals={currentGoal.content}
+            ></ViewingGoal>
           </>
         )}
+
+        {/* Обработчики состояний - теперь внизу */}
+        <HandlerQeury
+          Error={isErrorGetGoal}
+          Loading={isLoadingGetGoal}
+          Fetching={isFetchingGetGoal}
+        />
+
+        <HandlerMutation
+          Loading={isLoadingUpdateGoalMutation}
+          Error={isErrorUpdateGoalMutation && localIsResponseUpdateGoalMutation}
+          Success={isSuccessUpdateGoalMutation && localIsResponseUpdateGoalMutation}
+          textSuccess={"Цель обновлена"}
+          textError={
+            ErrorUpdateGoalMutation?.data?.errors?.[0]?.errors?.[0]
+              ? ErrorUpdateGoalMutation.data.errors[0].errors[0]
+              : ErrorUpdateGoalMutation?.data?.message
+          }
+        />
+
+        <HandlerMutation
+          Loading={isLoadingPostGoalMutation}
+          Error={isErrorPostGoalMutation && localIsResponsePostGoalMutation}
+          Success={isSuccessPostGoalMutation && localIsResponsePostGoalMutation}
+          textSuccess={"Цель создана"}
+          textError={
+            ErrorPostGoalMutation?.data?.errors?.[0]?.errors?.[0]
+              ? ErrorPostGoalMutation.data.errors[0].errors[0]
+              : ErrorPostGoalMutation?.data?.message
+          }
+        />
       </div>
     </div>
   );

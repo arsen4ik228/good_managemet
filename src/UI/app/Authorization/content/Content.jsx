@@ -8,6 +8,8 @@ import { socketUrl, baseUrl } from "@helpers/constants";
 import telegram from "@Custom/icon/telegram.svg";
 import logo from "@Custom/icon/logo.svg";
 import icon from "@image/iconHeader.svg";
+import { useDispatch } from "react-redux";
+import { setUserId } from "../../../../store/slices/local.storage.slice";
 
 const socket = io(`${socketUrl}auth`, {
   cors: {
@@ -29,6 +31,8 @@ export default function Content() {
   const [ip, setIp] = useState("");
   const [fingerprint, setFingerprint] = useState("");
   const userAgent = navigator.userAgent; // Получение User-Agent
+
+  const dispatch = useDispatch()
 
   const a = { _ip: "", _fingerprint: "" };
 
@@ -140,6 +144,7 @@ export default function Content() {
       // Сохраняем accessToken в localStorage
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("userId", data.userId);
+      dispatch(setUserId(data.userId))
       fetch(`${baseUrl}auth/set-cookie`, {
         method: "POST",
         headers: {

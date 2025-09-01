@@ -1,6 +1,5 @@
 .wrapper {
   width: 820px;
-  height: 100%;
   background-color: #ffff;
   padding: 10px;
   box-sizing: border-box;
@@ -12,10 +11,10 @@
 
 .editorContainer {
   position: relative;
-  width: 700px;
-  max-width: 700px;
+  width: 710px;
+  max-width: 710px;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   line-height: 1.5;
   cursor: text;
   padding-left: 5px;
@@ -96,10 +95,11 @@
 
 
 .title {
-  margin-bottom: 50px;
+  margin-top: 10px;
+  margin-bottom: 25px;
 
   font-size: 32px;
   font-weight: 600;
   text-align: center;
-  line-height: 66px;
+  /* line-height: 66px; */
 }

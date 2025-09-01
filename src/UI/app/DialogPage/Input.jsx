@@ -18,6 +18,7 @@ const Input = ({
   finishConvert,
   isLoadingGetConvertId,
   organizationId,
+  loadingRequestStatus
 }) => {
   const [contentInputPolicyId, setContentInputPolicyId] = useState("");
   const navigate = useNavigate()
@@ -159,8 +160,10 @@ const Input = ({
         senderPostId={senderPostId}
         senderPostName={senderPostName}
         offSetDate={true}
+        offShareIcon={true}
         organizationId={organizationId}
         setContentInputPolicyId={setContentInputPolicyId}
+        loadingRequestStatus={loadingRequestStatus}
       />
     </>
   );

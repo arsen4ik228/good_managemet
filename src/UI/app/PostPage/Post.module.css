@@ -277,9 +277,18 @@
     transition: all 0.3s;
 
     &:hover {
-        border-radius: 8px;
-        box-shadow: 0px 0px 15px 2px #005475;
+        border-color: 1px solid #3E7B94;
+        /* Тень при hover с акцентом на сине-зеленый */
+        box-shadow: 0 3px 10px rgba(62, 123, 148, 0.12),
+                    0 1px 6px rgba(62, 123, 148, 0.08);
+    }
 
+    &:focus {
+        border-color: #3E7B94;
+        outline: 0;
+        /* Тень при focus с мягким свечением цвета #3E7B94 */
+        box-shadow: 0 0 0 3px rgba(62, 123, 148, 0.15),
+                    0 2px 8px rgba(62, 123, 148, 0.1);
     }
 }
 

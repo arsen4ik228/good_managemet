@@ -11,6 +11,8 @@ import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 import AdaptiveLayoutContainer from './adaptive.container/AdaptiveLayoutContainer';
 import AddedWatcherContainer from '../../Custom/AddedWatcherContainer/AddedWatcherContainer';
 import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+
 
 
 export default function DialogPage() {
@@ -27,15 +29,18 @@ export default function DialogPage() {
     const {
         currentConvert,
         senderPostId,
-        userIsHost,
         userInfo,
-        organizationId,
         senderPostName,
-        pathOfUsers,
         senderPostForSocket,
         sendMessage,
+        isLoadingSendMessages,
         refetchGetConvertId,
-        isLoadingGetConvertId
+        isLoadingGetConvertId,
+        isFetchingGetConvartId,
+        isErrorGetConvertId,
+        organizationId,
+        pathOfUsers,
+        userIsHost
     } = useConvertsHook({ convertId });
 
     const {
@@ -290,9 +295,16 @@ export default function DialogPage() {
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
                         organizationId={organizationId}
+                        loadingRequestStatus={isLoadingSendMessages}
                     />
                 </footer>
             </AdaptiveLayoutContainer>
+
+            <HandlerQeury
+                Error={isErrorGetConvertId}
+                Loading={isLoadingGetConvertId}
+                Fetching={isFetchingGetConvartId}
+            />
         </>
     );
 };

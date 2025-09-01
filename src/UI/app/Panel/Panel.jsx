@@ -59,10 +59,8 @@ export default function Panel() {
     }
   };
 
-  useEffect(() => {
-    refetchUserInfo()
-  }, [])
 
+  console.log(userInfo)
   return (
     <div className={classes.block}>
       <Avatar
