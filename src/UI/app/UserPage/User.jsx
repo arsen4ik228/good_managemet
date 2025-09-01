@@ -358,7 +358,7 @@ export default function User() {
               onClick={() => setOpenModalSelectPosts(true)}
               selectArray={arrayCheckedPostsNames}
               prefix={"Посты: "}
-              btnName={"Пикрепить посты"}
+              btnName={"Прикрепить посты"}
               disabled={!isValid}
             ></ButtonAttach>
 
