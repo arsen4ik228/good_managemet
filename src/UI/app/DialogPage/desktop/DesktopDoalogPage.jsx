@@ -8,6 +8,8 @@ import Input from '../Input';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+
 
 export default function DesktopDialogPage() {
     const { convertId } = useParams();
@@ -20,7 +22,19 @@ export default function DesktopDialogPage() {
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
 
-    const { currentConvert, senderPostId, userInfo, senderPostName, senderPostForSocket, sendMessage, refetchGetConvertId, isLoadingGetConvertId, organizationId } = useConvertsHook({convertId});
+    const { currentConvert,
+        senderPostId,
+        userInfo,
+        senderPostName,
+        senderPostForSocket,
+        sendMessage,
+        refetchGetConvertId,
+        isLoadingGetConvertId,
+        isFetchingGetConvartId,
+        isErrorGetConvertId,
+        organizationId 
+    } = useConvertsHook({ convertId });
+    
     const {
         seenMessages,
         unSeenMessageExist,
@@ -191,7 +205,7 @@ export default function DesktopDialogPage() {
         };
     }, [unSeenMessages, socketMessages]);
 
-    console.warn(messagesArray, unSeenMessages)
+    console.warn(messagesArray, unSeenMessages, 'ffdgdfgdf')
 
     return (
         <>
@@ -262,6 +276,13 @@ export default function DesktopDialogPage() {
                     />
                 </footer>
             </div>
+
+
+            <HandlerQeury
+                Error={isErrorGetConvertId}
+                Loading={isLoadingGetConvertId}
+                Fetching={isFetchingGetConvartId}
+            />
         </>
     );
 };

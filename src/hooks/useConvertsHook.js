@@ -8,6 +8,7 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         isLoading: isLoadingGetConverts,
         isError: isErrorGetConverts,
         isFetching: isFetchingGetConvert,
+        error: ErrorGetConverts, 
         refetch: refetchGetConverts,
     } = useGetConvertsQuery({ contactId }, { skip: !contactId });
 
@@ -30,7 +31,9 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         pathOfUsers = [],
         organizationId,
         refetch: refetchGetConvertId,
-        isLoadingGetConvertId
+        isLoadingGetConvertId,
+        isFetchingGetConvartId,
+        isErrorGetConvertId,
     } = useGetConvertIdQuery({ convertId }, {
         selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
             currentConvert: data?.currentConvert || {},
@@ -71,6 +74,9 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
 
     const [
         sendMessage,
+        {
+            isLoading: isLoadingSendMessages
+        }
     ] = useSendMessageMutation()
 
     const [
@@ -88,6 +94,7 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         isErrorGetConverts,
         isLoadingGetConverts,
         isFetchingGetConvert,
+        ErrorGetConverts,
         refetchGetConverts,
 
         archiveConvaerts,
@@ -107,8 +114,11 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         refetchGetConvertId,
         watcherPostForSocket,
         isLoadingGetConvertId,
+        isFetchingGetConvartId,
+        isErrorGetConvertId,
 
         sendMessage,
+        isLoadingSendMessages,
 
         postConvert,
         isLoadingPostConvertMutation,

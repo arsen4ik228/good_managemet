@@ -9,7 +9,7 @@ import { useConvertsHook } from '@hooks/useConvertsHook';
 import { ConfigProvider, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 import Input from '../Input';
-
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 
 export default function DesktopConvertPage() {
@@ -18,8 +18,16 @@ export default function DesktopConvertPage() {
     const [open, setOpen] = useState(false)
 
 
-    const { contactInfo, seenConverts, unseenConverts, archiveConvaerts } = useConvertsHook({ contactId: contactId })
-    console.log(contactInfo)
+    const { contactInfo,
+        seenConverts,
+        unseenConverts,
+        archiveConvaerts,
+        isErrorGetConverts,
+        isLoadingGetConverts,
+        isFetchingGetConvert,
+        ErrorGetConverts,
+    } = useConvertsHook({ contactId: contactId })
+
     const steps = [
         {
             title: "Выбор поста",
@@ -82,6 +90,12 @@ export default function DesktopConvertPage() {
             </div>
             <Input reciverPostId={contactInfo?.postId}></Input>
 
+
+            <HandlerQeury
+                Error={isErrorGetConverts}
+                Loading={isLoadingGetConverts}
+                Fetching={isFetchingGetConvert}
+            />
         </div>
     )
 }
