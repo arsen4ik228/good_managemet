@@ -563,6 +563,7 @@ export default function Policy() {
                           readOnly={!isEdit || disabledArchive}
                           policyName={currentPolicy.policyName}
                           policyNumber={currentPolicy.policyNumber}
+                          policyDate={currentPolicy.createdAt}
                         ></Mdxeditor>
 
                         <HandlerMutation

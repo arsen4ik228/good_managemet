@@ -229,3 +229,14 @@ p.currentPolicy {
     padding: 8px;
   }
 */
+
+
+/* Только активная вкладка */
+.tabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
+    color: #3E7B94 !important;
+  }
+
+  .tabs :global(.ant-tabs-tab:hover) {
+    color: #005475 !important;
+  }
+  

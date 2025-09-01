@@ -379,7 +379,9 @@ export const PolicyNavigationBar = ({
                 {searchResults ? (
                     renderSearchResults()
                 ) : (
-                    <Tabs items={items} type="card" className={classes.tabs} />
+                    <Tabs items={items} type="card" className={classes.tabs}   tabBarStyle={{
+    color: '#3E7B94'
+  }}/>
                 )}
             </div>
         </Drawer>
