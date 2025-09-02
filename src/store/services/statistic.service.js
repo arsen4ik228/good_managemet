@@ -2,8 +2,8 @@ import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getStatistics: build.query({
-      query: ({ organizationId, statisticData }) => ({
-        url: `statistics/${organizationId}/?statisticData=${statisticData}`,
+      query: ({ organizationId, statisticData, isActive }) => ({
+        url: `statistics/${organizationId}/?statisticData=${statisticData}&isActive=${isActive}`,
       }),
       transformResponse: (response, meta, arg) => {
         console.log("getStatistics:  ", response);

@@ -204,13 +204,11 @@ export default function PopoverForViewPointsOnWeek({
         return {
           id: baseId + i,
           value: null,
-          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
-          dateStr: date.format("YYYY-MM-DD"),
+          valueDate: date.format("YYYY-MM-DD"),
         };
       })
       .filter(Boolean) // Удаляем возможные null
-      .filter((item) => !existingDates.has(item.dateStr))
-      .map(({ dateStr, ...rest }) => rest)
+      .filter((item) => !existingDates.has(item.valueDate))
       .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
     setPointsForViewDaysCreate([...newData]);
@@ -265,7 +263,11 @@ export default function PopoverForViewPointsOnWeek({
   };
 
   const handleReset = () => {
-    setPointsForViewDaysBD(_.cloneDeep(dataForViewDays));
+    setPointsForViewDaysBD(
+      _.cloneDeep(dataForViewDays).sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      )
+    );
     countDays();
   };
 
@@ -273,7 +275,11 @@ export default function PopoverForViewPointsOnWeek({
     if (!dataForViewDays) return;
 
     if (datePointForViewDays) {
-      setPointsForViewDaysBD(_.cloneDeep(dataForViewDays));
+      setPointsForViewDaysBD(
+        _.cloneDeep(dataForViewDays).sort(
+          (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+        )
+      );
       countDays();
     }
   }, [dataForViewDays, datePointForViewDays]);
@@ -327,6 +333,7 @@ export default function PopoverForViewPointsOnWeek({
       }
     >
       <Button
+        disabled={false}
         type="text"
         icon={record.isViewDays ? <EyeOutlined /> : <EyeInvisibleOutlined />}
         onClick={() => setDatePointForViewDays(record.dateForViewDaysInWeek)}

@@ -1,5 +1,5 @@
-import  { useState, useEffect } from "react";
-import { Button, Drawer, Flex, message } from "antd";
+import { useState, useEffect } from "react";
+import { Button, Drawer, Flex, message, ConfigProvider } from "antd";
 
 import { useUpdateSingleStatistic } from "@hooks";
 
@@ -138,46 +138,59 @@ export const DrawerStatisticTable = ({
   }, []);
 
   return (
-    <Drawer
-      title="Внести данные"
-      placement="left"
-      open={openDrawer}
-      onClose={() => setOpenDrawer(false)}
-      mask={false}
-      width={"27.5vw"}
-      style={{
-        position: "absolute",
-        height: "100%",
-      }}
-      bodyStyle={{
-        padding: 0,
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-      loading={isFetchingGetStatisticId || isLoadingGetStatisticId}
-    >
-      <div style={{ padding: "16px", flex: 1, overflow: "auto" }}>
-        <StatisticTable
-          selectedStatisticId={currentStatistic?.id}
-          dataSource={dataSource}
-          setDataSource={setDataSource}
-          createPoints={createPoints}
-          setCreatePoints={setCreatePoints}
-          chartType={chartType}
-          createCorellationPoints={createCorellationPoints}
-          setCreateCorellationPoints={setCreateCorellationPoints}
-        ></StatisticTable>
-      </div>
+    <ConfigProvider componentDisabled={!currentStatistic?.isActive}>
+      <Drawer
+        title="Внести данные"
+        placement="left"
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        mask={false}
+        width={"27.5vw"}
+        style={{
+          position: "absolute",
+          height: "100%",
+        }}
+        bodyStyle={{
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+        loading={isFetchingGetStatisticId || isLoadingGetStatisticId}
+      >
+        <div style={{ padding: "16px", flex: 1, overflow: "auto" }}>
+          <StatisticTable
+            selectedStatisticId={currentStatistic?.id}
+            isActive={currentStatistic?.isActive}
+            dataSource={dataSource}
+            setDataSource={setDataSource}
+            createPoints={createPoints}
+            setCreatePoints={setCreatePoints}
+            chartType={chartType}
+            createCorellationPoints={createCorellationPoints}
+            setCreateCorellationPoints={setCreateCorellationPoints}
+          ></StatisticTable>
+        </div>
 
-      <div style={{ padding: "16px", borderTop: "1px solid #f0f0f0" }}>
-        <Flex justify="flex-end" gap="middle">
-          <Button type="primary" onClick={handleSave} loading={isSaving}>
-            Сохранить
-          </Button>
-          <Button onClick={handleReset}>Отменить</Button>
-        </Flex>
-      </div>
-    </Drawer>
+        <div style={{ padding: "16px", borderTop: "1px solid #f0f0f0" }}>
+          <Flex justify="flex-end" gap="middle">
+            <Button
+              type="primary"
+              onClick={handleSave}
+              loading={isSaving}
+       
+            >
+              Сохранить
+            </Button>
+            <Button
+              onClick={handleReset}
+            
+            >
+              Отменить
+            </Button>
+          </Flex>
+        </div>
+      </Drawer>
+    </ConfigProvider>
   );
 };

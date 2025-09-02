@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import classes from "./StatisticTable.module.css";
 
 import {
@@ -10,6 +10,7 @@ import {
   Popover,
   Flex,
   Tooltip,
+  ConfigProvider,
 } from "antd";
 
 import _ from "lodash";
@@ -26,6 +27,7 @@ const { RangePicker } = DatePicker;
 
 export default function StatisticTable({
   selectedStatisticId,
+  isActive,
   dataSource,
   setDataSource,
   createPoints,
@@ -894,56 +896,59 @@ export default function StatisticTable({
     }
   };
 
-  console.log("dataSource = ", dataSource);
   return (
-    <div style={{ overflowX: "hidden", marginTop: "10px" }}>
-      <Space
-        size="large"
-        align="center"
-        style={{
-          marginBottom: 16,
-          width: "100%",
-          justifyContent: "center", // Добавлено для центрирования
-        }}
-      >
-        <Space direction="vertical" size={4}>
-          <div style={{ fontWeight: 500 }}>Создать точку</div>
-          <DatePicker
-            value={selectedDate}
-            onChange={handleDateChange}
-            format="DD.MM.YYYY"
+   
+      <div style={{ overflowX: "hidden", marginTop: "10px" }}>
+        {isActive && (
+          <Space
+            size="large"
+            align="center"
+            style={{
+              marginBottom: 16,
+              width: "100%",
+              justifyContent: "center", // Добавлено для центрирования
+            }}
+          >
+            <Space direction="vertical" size={4}>
+              <div style={{ fontWeight: 500 }}>Создать точку</div>
+              <DatePicker
+                value={selectedDate}
+                onChange={handleDateChange}
+                format="DD.MM.YYYY"
+              />
+            </Space>
+
+            <Space direction="vertical" size={4}>
+              <div style={{ fontWeight: 500 }}>Создать интервал точек</div>
+              <RangePicker
+                value={selectedRange}
+                onChange={handleRangeChange}
+                format="DD.MM.YYYY"
+              />
+            </Space>
+          </Space>
+        )}
+
+        {createPoints?.length > 0 ? (
+          <Table
+            columns={columnsCreatePoints}
+            dataSource={createPoints}
+            pagination={false}
+            size="small"
+            rowKey="id"
           />
-        </Space>
+        ) : null}
 
-        <Space direction="vertical" size={4}>
-          <div style={{ fontWeight: 500 }}>Создать интервал точек</div>
-          <RangePicker
-            value={selectedRange}
-            onChange={handleRangeChange}
-            format="DD.MM.YYYY"
+        {dataSource?.length > 0 ? (
+          <Table
+            columns={getColumnsByChartType(chartType)}
+            dataSource={dataSource}
+            pagination={false}
+            size="small"
+            rowKey="id"
           />
-        </Space>
-      </Space>
+        ) : null}
+      </div>
 
-      {createPoints?.length > 0 ? (
-        <Table
-          columns={columnsCreatePoints}
-          dataSource={createPoints}
-          pagination={false}
-          size="small"
-          rowKey="id"
-        />
-      ) : null}
-
-      {dataSource?.length > 0 ? (
-        <Table
-          columns={getColumnsByChartType(chartType)}
-          dataSource={dataSource}
-          pagination={false}
-          size="small"
-          rowKey="id"
-        />
-      ) : null}
-    </div>
   );
 }

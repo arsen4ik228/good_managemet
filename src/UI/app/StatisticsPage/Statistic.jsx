@@ -3,6 +3,7 @@ import classes from "./Statistic.module.css";
 
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import Graphic from "../Graphic/Graphic";
 import ListStatisticDrawer from "./ListStatisticDrawer";
@@ -244,17 +245,14 @@ export default function Statistic() {
           console.error("Некорректная дата на шаге", i, date);
           return null;
         }
-
         return {
           id: baseId + i,
           value: null,
-          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
-          dateStr: date.format("YYYY-MM-DD"),
+          valueDate: date.format("YYYY-MM-DD"),
         };
       })
       .filter(Boolean)
-      .filter((item) => !existingDates.has(item.dateStr))
-      .map(({ dateStr, ...rest }) => rest)
+      .filter((item) => !existingDates.has(item.valueDate))
       .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
     setCreatePoints([...newData]);
@@ -394,6 +392,7 @@ export default function Statistic() {
               >
                 Редактировать статистику
               </Button>
+
               <Button
                 onClick={() => {
                   setOpenDrawerStatisticTable((prev) => !prev);
@@ -410,6 +409,12 @@ export default function Statistic() {
 
       <div className={classes.main}>
         <>
+          <HandlerQeury
+            Error={isErrorGetStatisticId}
+            Loading={isLoadingGetStatisticId}
+            Fetching={isFetchingGetStatisticId}
+          ></HandlerQeury>
+
           {statisticId ? (
             <>
               <Title level={4} style={{ color: "#3E7B94" }}>

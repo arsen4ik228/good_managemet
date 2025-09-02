@@ -13,12 +13,16 @@ import {
 
 import { useAllPosts, useUpdateSingleStatistic } from "@hooks";
 
-
 const { TextArea } = Input;
 
-const typeStatistic = [
+const viewStatistic = [
   { value: "Прямая", label: "Прямая" },
   { value: "Обратная", label: "Обратная" },
+];
+
+const typeStatistic = [
+  { value: true, label: "Активная" },
+  { value: false, label: "Архивная" },
 ];
 
 export const StatisticInformationDrawer = ({
@@ -28,10 +32,9 @@ export const StatisticInformationDrawer = ({
   statisticId,
 
   currentStatistic,
-  
+
   isLoadingGetStatisticId,
   isFetchingGetStatisticId,
-
 }) => {
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
@@ -92,6 +95,7 @@ export const StatisticInformationDrawer = ({
       description: currentStatistic?.description ?? null,
       postId: currentStatistic?.post?.id ?? null,
       type: currentStatistic?.type ?? null,
+      isActive: currentStatistic?.isActive ?? false,
     });
   };
 
@@ -110,10 +114,18 @@ export const StatisticInformationDrawer = ({
       description: currentStatistic?.description ?? null,
       postId: currentStatistic?.post?.id ?? null,
       type: currentStatistic?.type ?? null,
+      isActive: currentStatistic?.isActive ?? false,
     };
 
     form.setFieldsValue(initialValues);
-  }, [statisticId, currentStatistic, isLoadingGetStatisticId, isFetchingGetStatisticId]);
+  }, [
+    statisticId,
+    currentStatistic,
+    isLoadingGetStatisticId,
+    isFetchingGetStatisticId,
+  ]);
+
+  console.log("currentStatistic = ", currentStatistic);
 
   return (
     <Drawer
@@ -141,6 +153,7 @@ export const StatisticInformationDrawer = ({
             form={form}
             onValuesChange={handlePostValuesChange}
             layout="vertical"
+            disabled={!currentStatistic?.isActive}
           >
             <Row>
               <Col span={24}>
@@ -191,8 +204,20 @@ export const StatisticInformationDrawer = ({
 
               <Col span={24}>
                 {/* Тип статистики*/}
-                <Form.Item name="type" label="Тип статистики">
-                  <Select placeholder="Выберите тип" options={typeStatistic} />
+                <Form.Item name="type" label="Отображение статистики">
+                  <Select
+                    placeholder="Выберите тип отображения"
+                    options={viewStatistic}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="isActive" label="Состояние статистики">
+                  <Select
+                    disabled={false}
+                    placeholder="Выберите тип"
+                    options={typeStatistic}
+                  />
                 </Form.Item>
               </Col>
             </Row>

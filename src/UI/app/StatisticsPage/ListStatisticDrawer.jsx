@@ -1,8 +1,19 @@
 import React, { useState, useMemo } from "react";
 
-import { Drawer, List, Input, Avatar } from "antd";
+import { Drawer, List, Input, Tabs } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
+
+const typeStatistics = [
+  {
+    label: "Активные",
+    key: "Активные",
+  },
+  {
+    label: "Архивные",
+    key: "Архивные",
+  },
+];
 
 export default function ListStatisticDrawer({
   open,
@@ -12,6 +23,7 @@ export default function ListStatisticDrawer({
 }) {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [isActive, setIsActive] = useState(true);
 
   // Получение всех статистик
   const {
@@ -21,6 +33,7 @@ export default function ListStatisticDrawer({
     isErrorGetStatistics,
   } = useAllStatistics({
     statisticData: false,
+    isActive: isActive,
   });
 
   // Фильтрация статистик по поисковому запросу
@@ -35,6 +48,10 @@ export default function ListStatisticDrawer({
       );
     });
   }, [statistics, searchText]);
+
+  const handleTabChange = (key) => {
+    setIsActive(key === "Активные");
+  };
 
   return (
     <Drawer
@@ -54,7 +71,7 @@ export default function ListStatisticDrawer({
         flexDirection: "column",
         height: "100%",
       }}
-      loading={isLoadingGetStatistics}
+      loading={isLoadingGetStatistics || isFetchingGetStatistics}
     >
       {/* Поле поиска */}
       <div style={{ padding: "16px 16px 0" }}>
@@ -65,6 +82,14 @@ export default function ListStatisticDrawer({
           value={searchText}
         />
       </div>
+
+      <Tabs
+        type="card"
+        items={typeStatistics}
+        onChange={handleTabChange}
+        defaultActiveKey={isActive ? "Активные" : "Архивные"}
+      />
+
       {/* Список с фильтрацией */}
       <List
         itemLayout="horizontal"
