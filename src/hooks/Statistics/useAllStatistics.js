@@ -13,7 +13,7 @@ export const useAllStatistics = ({  statisticData = false, isActive } = {}) => {
     {
       organizationId: reduxSelectedOrganizationId,
       statisticData: statisticData,
-      isActive: isActive
+     ...(isActive !== undefined && { isActive })
     },
     {
       selectFromResult: ({ data, isError, isFetching, isLoading }) => ({
