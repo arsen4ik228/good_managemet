@@ -90,6 +90,9 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
   );
 };
 
+const formatNumber = (num) => {
+  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+};
 // --- Компонент ---
 export default function Svodka() {
   const [allStatistics, setAllStatistics] = useState([]);
@@ -284,14 +287,17 @@ export default function Svodka() {
                 })
               }
               style={{
+                width: "100%",
+                height: "100%",
+                minHeight:"32px",
                 cursor: "pointer",
-                minHeight: "32px",
+                flex: 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              {cellValue == null ? "" : cellValue}
+              {cellValue == null ? "" : formatNumber(cellValue)}
             </div>
           );
         },
