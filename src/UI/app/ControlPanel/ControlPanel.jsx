@@ -324,7 +324,7 @@ export default function ControlPanel() {
   const debouncedUpdate = useCallback(
     debounce((updatedStatistics) => {
       updatePanelToStatisticsUpdateOrderNumbers(updatedStatistics);
-    }, 5000),
+    }, 1000),
     []
   );
 
@@ -424,17 +424,12 @@ export default function ControlPanel() {
     });
   }, []);
 
-  // console.log("selectedControlPanelId", selectedControlPanelId);
   return (
     <div className={classes.dialog}>
       <Headers
         name={"панель управления"}
         funcActiveHint={() => setOpenHint(true)}
       >
-        {/* <BottomHeaders
-          create={openCreate}
-          refCreate={refCreate}
-        ></BottomHeaders> */}
       </Headers>
 
       <ConfigProvider locale={ruRU}>

@@ -182,12 +182,11 @@ function DesktopApp() {
                   <Route
                     path="controlPanel"
                     element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
+                
+                        <div className="content1">
                           <ControlPanel />
                         </div>
-                      </div>
+                     
                     }
                   />
 

@@ -34,37 +34,40 @@ export default function GraphicForCard({ dataStatistics, datePoint }) {
         };
       }).reverse();
 
-      weeksArray
-        .forEach((week) => {
-          const weekEnd = dayjs(week.valueDate).endOf("day");
-          const weekStart = weekEnd.subtract(6, "day").startOf("day");
+      weeksArray.forEach((week) => {
+        const weekEnd = dayjs(week.valueDate).endOf("day");
+        const weekStart = weekEnd.subtract(6, "day").startOf("day");
 
-          const weekPoints = data.filter((point) => {
-            const pointDate = dayjs(point.valueDate);
-            return (
-              pointDate.isSameOrAfter(weekStart) &&
-              pointDate.isSameOrBefore(weekEnd) &&
-              point.correlationType !== "Месяц" &&
-              point.correlationType !== "Год"
-            );
-          });
-
-          const weekTotalPoint = weekPoints.find(
-            (p) => p.correlationType === "Неделя"
+        const weekPoints = data.filter((point) => {
+          const pointDate = dayjs(point.valueDate);
+          return (
+            pointDate.isSameOrAfter(weekStart) &&
+            pointDate.isSameOrBefore(weekEnd) &&
+            point.correlationType !== "Месяц" &&
+            point.correlationType !== "Год"
           );
-
-          if (weekTotalPoint) {
-            week.value = parseFloat(weekTotalPoint.value) || null;
-            week.id = weekTotalPoint.id;
-            week.correlationType = "Неделя";
-          } else if (weekPoints.length > 0) {
-            // Только если есть какие-то данные за неделю
-            week.value = weekPoints.reduce(
-              (sum, point) => sum + (parseFloat(point.value) || 0),
-              0
-            );
-          }
         });
+
+        const weekTotalPoint = weekPoints.find(
+          (p) => p.correlationType === "Неделя"
+        );
+
+        if (weekTotalPoint) {
+          week.value = parseFloat(weekTotalPoint.value) || null;
+          week.id = weekTotalPoint.id;
+          week.correlationType = "Неделя";
+        } else{
+          week.value = weekPoints.reduce((sum, point) => {
+            const pointValue = parseFloat(point.value);
+
+            if (isNaN(pointValue)) {
+              return sum; // пропускаем нечисловые значения
+            }
+
+            return sum === null ? pointValue : sum + pointValue;
+          }, null);
+        }
+      });
 
       return weeksArray;
     };

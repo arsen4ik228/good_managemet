@@ -4,7 +4,7 @@ import exitModal from "@image/exitModal.svg";
 import Blacksavetmp from "@image/Blacksavetmp.svg";
 import ButtonImage from "@Custom/buttonImage/ButtonImage";
 import TableCheckBox from "@Custom/tableCheckBox/TableCheckBox";
-import { useStatisticsHook } from "@hooks";
+import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
 import { Input, Select, Typography } from "antd";
 
 const panelTypes = [
@@ -28,12 +28,14 @@ export default function ModalSetting({
     isLoadingGetStatistics,
     isFetchingGetStatistics,
     isErrorGetStatistics,
-  } = useStatisticsHook({ statisticData: false });
+  } = useAllStatistics({
+    statisticData: false,
+  });
 
   const saveUpdateControlPanel = async () => {
     const Data = {};
 
-    Data.statisticIds = statisticsChecked;
+    // Data.statisticIds = statisticsChecked;
 
     if (oldPanelName !== panelName) {
       Data.panelName = panelName;
