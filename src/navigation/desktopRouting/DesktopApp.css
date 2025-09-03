@@ -32,6 +32,19 @@
     column-gap: 25px;
 }
 
+.content1{
+    height: 100vh;
+
+    width: calc(100vw);
+    max-width: calc(100vw);
+
+    grid-area: content;
+    background: url('@image/background.png');
+
+    display: flex;
+
+}
+
 .lazy {
    display: flex;
    justify-content: center;

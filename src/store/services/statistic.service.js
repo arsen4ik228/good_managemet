@@ -2,9 +2,18 @@ import apiSlice from "./api";
 export const statisticsApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getStatistics: build.query({
-      query: ({ organizationId, statisticData }) => ({
-        url: `statistics/${organizationId}/?statisticData=${statisticData}`,
-      }),
+      query: ({ organizationId, statisticData, isActive }) => {
+        const params = new URLSearchParams();
+        params.append("statisticData", statisticData);
+
+        if (isActive !== undefined) {
+          params.append("isActive", isActive);
+        }
+
+        return {
+          url: `statistics/${organizationId}/?${params.toString()}`,
+        };
+      },
       transformResponse: (response, meta, arg) => {
         console.log("getStatistics:  ", response);
 
@@ -45,6 +54,9 @@ export const statisticsApi = apiSlice.injectEndpoints({
               "Statistic",
             ]
           : ["Statistic"],
+
+      keepUnusedDataFor: 0, // сразу очищает данные при размонтировании
+      refetchOnMountOrArgChange: true, // всегда делает запрос при монтировании или изменении аргументов
     }),
 
     postStatistics: build.mutation({
@@ -91,6 +103,14 @@ export const statisticsApi = apiSlice.injectEndpoints({
       ],
     }),
 
+     updateSvodka: build.mutation({
+      query: ({ statisticId, ...body }) => ({
+        url: `/statistics/${statisticId}/update`,
+        method: "PATCH",
+        body,
+      }),
+    }),
+
     updateStatisticsToPostId: build.mutation({
       query: ({ postId, ...body }) => ({
         url: `statistics/${postId}/updateBulk`,
@@ -128,6 +148,7 @@ export const {
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
   useUpdateStatisticsMutation,
+  useUpdateSvodkaMutation,
   useUpdateStatisticsToPostIdMutation,
   useGetStatisticsInControlPanelQuery,
 } = statisticsApi;

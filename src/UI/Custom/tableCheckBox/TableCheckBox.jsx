@@ -1,4 +1,3 @@
-import React from "react";
 import classes from "./TableCheckBox.module.css";
 
 export default function TableCheckBox({
@@ -9,6 +8,20 @@ export default function TableCheckBox({
   arrayCheked,
   handleChecboxChange,
 }) {
+
+  const sortedArray = array ? [...array].sort((a, b) => {
+    const aIsChecked = arrayCheked.includes(a.id);
+    const bIsChecked = arrayCheked.includes(b.id);
+    
+    if (aIsChecked && !bIsChecked) return -1;
+    if (!aIsChecked && bIsChecked) return 1;
+    
+    const aValue = a[arrayItem] || "";
+    const bValue = b[arrayItem] || "";
+    
+    return aValue.localeCompare(bValue);
+  }) : [];
+
   return (
     <table className={classes.table}>
       <thead>
@@ -20,7 +33,7 @@ export default function TableCheckBox({
       <tbody>
         <tr>
           <td>
-            {array?.map((item) => (
+            {sortedArray.map((item) => (
               <div
                 key={item.id}
                 className={classes.row}
@@ -30,6 +43,7 @@ export default function TableCheckBox({
                   <input
                     type="checkbox"
                     checked={arrayCheked.includes(item.id)}
+                    readOnly
                   />
                 )}
 

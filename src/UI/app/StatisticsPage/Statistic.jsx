@@ -3,6 +3,7 @@ import classes from "./Statistic.module.css";
 
 import Headers from "@Custom/Headers/Headers";
 import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import Graphic from "../Graphic/Graphic";
 import ListStatisticDrawer from "./ListStatisticDrawer";
@@ -28,6 +29,7 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
 import { DrawerStatisticTable } from "./DrawerStatisticTable";
+import ReportDay from "./components/ReportDay";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -60,6 +62,7 @@ export default function Statistic() {
     useState(false);
 
   const [statisticId, setStatisticId] = useState(null);
+  const [chartDirection, setChartDirection] = useState(null);
   const [openListStatisticDrawer, setOpenListStatisticDrawer] = useState(true);
 
   const [chartType, setChartType] = useState("daily");
@@ -244,17 +247,14 @@ export default function Statistic() {
           console.error("Некорректная дата на шаге", i, date);
           return null;
         }
-
         return {
           id: baseId + i,
           value: null,
-          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
-          dateStr: date.format("YYYY-MM-DD"),
+          valueDate: date.format("YYYY-MM-DD"),
         };
       })
       .filter(Boolean)
-      .filter((item) => !existingDates.has(item.dateStr))
-      .map(({ dateStr, ...rest }) => rest)
+      .filter((item) => !existingDates.has(item.valueDate))
       .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
     setCreatePoints([...newData]);
@@ -382,7 +382,6 @@ export default function Statistic() {
           >
             Выбрать статистику
           </Button>
-
           {statisticId ? (
             <>
               <Button
@@ -394,6 +393,7 @@ export default function Statistic() {
               >
                 Редактировать статистику
               </Button>
+
               <Button
                 onClick={() => {
                   setOpenDrawerStatisticTable((prev) => !prev);
@@ -405,11 +405,20 @@ export default function Statistic() {
               </Button>
             </>
           ) : null}
+
+          <ReportDay />
+          
         </BottomHeaders>
       </Headers>
 
       <div className={classes.main}>
         <>
+          <HandlerQeury
+            Error={isErrorGetStatisticId}
+            Loading={isLoadingGetStatisticId}
+            Fetching={isFetchingGetStatisticId}
+          ></HandlerQeury>
+
           {statisticId ? (
             <>
               <Title level={4} style={{ color: "#3E7B94" }}>
@@ -436,6 +445,7 @@ export default function Statistic() {
                   <Graphic
                     data={[...createPoints, ...dataSource]}
                     width={widthMap[chartType] || widthMap.default}
+                    type={chartDirection || currentStatistic?.type}
                   />
                 </div>
 
@@ -502,6 +512,7 @@ export default function Statistic() {
               <StatisticInformationDrawer
                 openDrawer={openStatisticInformationDrawer}
                 setOpenDrawer={setOpenStatisticInformationDrawer}
+                setChartDirection={setChartDirection}
                 statisticId={statisticId}
                 currentStatistic={currentStatistic}
                 isLoadingGetStatisticId={isLoadingGetStatisticId}

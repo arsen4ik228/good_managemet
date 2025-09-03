@@ -1,7 +1,7 @@
 .dialog {
 
     width: 100%;
-    max-width: calc(100vw - 80px);
+    max-width: calc(100vw );
 
     display: flex;
     flex-direction: column;
@@ -18,7 +18,7 @@
 
     height: 100%;
     width: 100%;
-    max-width: calc(100vw - 80px);
+    max-width: calc(100vw );
 
     display: flex;
     flex-direction: column;
@@ -59,6 +59,7 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    
     column-gap: 20px;
     row-gap: 10px;
 

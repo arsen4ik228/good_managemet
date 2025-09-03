@@ -1,11 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import classes from "./Svodka.module.css";
 import Headers from "@Custom/Headers/Headers";
-
 import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
-
-import { Table, Flex, Button } from "antd";
-
+import { useUpdateSvodka } from "@hooks";
+import { Table, Flex, Button, InputNumber, message } from "antd";
 import _ from "lodash";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -20,141 +18,288 @@ const countWeeks = [
   { label: "год", value: 52 },
 ];
 
+// --- Вспомогательные функции ---
+const calculateInitialDate = () => {
+  const currentDate = localStorage.getItem("reportDay");
+  if (currentDate) {
+    const targetDay = parseInt(currentDate, 10);
+    const today = new Date();
+    const todayDay = today.getDay();
+    let diff = todayDay - targetDay;
+    if (diff < 0) diff += 7;
+    const lastTargetDate = new Date(today);
+    lastTargetDate.setDate(today.getDate() - diff);
+    return lastTargetDate.toISOString().split("T")[0];
+  }
+  return null;
+};
+
+const generateWeeklyData = (statisticData, quantity, baseDate) => {
+  const reportDay = parseInt(localStorage.getItem("reportDay"), 10) || 0;
+  const data = _.cloneDeep(statisticData);
+
+  const weeksArray = Array.from({ length: quantity }, (_, i) => {
+    const endDate = dayjs(baseDate)
+      .day(reportDay)
+      .subtract(i, "week")
+      .endOf("day");
+
+    return {
+      date: endDate.format("DD.MM.YY"),
+      valueDate: endDate.format("YYYY-MM-DD"),
+      value: null,
+      correlationType: null,
+      _id: null,
+    };
+  });
+
+  weeksArray.forEach((week) => {
+    const weekEnd = dayjs(week.valueDate).endOf("day");
+    const weekStart = weekEnd.subtract(6, "day").startOf("day");
+
+    const weekPoints = data.filter((point) => {
+      const pointDate = dayjs(point.valueDate);
+      return (
+        pointDate.isSameOrAfter(weekStart) &&
+        pointDate.isSameOrBefore(weekEnd) &&
+        point.correlationType !== "Месяц" &&
+        point.correlationType !== "Год"
+      );
+    });
+
+    const weekTotalPoint = weekPoints.find(
+      (p) => p.correlationType === "Неделя"
+    );
+
+    if (weekTotalPoint) {
+      week.value = parseFloat(weekTotalPoint.value) || null;
+      week._id = weekTotalPoint.id;
+      week.correlationType = "Неделя";
+    } else {
+      week.value = weekPoints.reduce((sum, point) => {
+        const pointValue = parseFloat(point.value);
+        if (isNaN(pointValue)) return sum;
+        return sum === null ? pointValue : sum + pointValue;
+      }, null);
+      week._id = null;
+    }
+  });
+
+  return weeksArray.sort(
+    (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+  );
+};
+
+// --- Компонент ---
 export default function Svodka() {
   const [allStatistics, setAllStatistics] = useState([]);
   const [datePoint, setDatePoint] = useState(null);
   const [week, setWeek] = useState(13);
+  const [editingCell, setEditingCell] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  const {
-    statistics,
-    isLoadingGetStatistics,
-    isFetchingGetStatistics,
-    isErrorGetStatistics,
-  } = useAllStatistics({
-    statisticData: true,
-  });
+  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
+    useAllStatistics({ statisticData: true });
 
-  const calculateInitialDate = () => {
-    const currentDate = localStorage.getItem("reportDay");
-    if (currentDate !== null) {
-      const targetDay = parseInt(currentDate, 10);
-      const today = new Date();
-      const todayDay = today.getDay();
+  const { updateSvodka } = useUpdateSvodka();
 
-      let diff = todayDay - targetDay;
-      if (diff < 0) diff += 7;
+  const [messageApi, contextHolder] = message.useMessage();
 
-      const lastTargetDate = new Date(today);
-      lastTargetDate.setDate(today.getDate() - diff);
-
-      return lastTargetDate.toISOString().split("T")[0];
+  // --- Функция сохранения значения ячейки ---
+  const handleSaveCellValue = async ({
+    rowId,
+    colId,
+    value,
+    originalValue,
+  }) => {
+    if (value === originalValue) {
+      setEditingCell(null);
+      return;
     }
-    return null;
-  };
 
-  // Функция для генерации недельных данных (аналогично countWeeks)
-  const generateWeeklyData = (statisticData, quantity, baseDate) => {
-    const reportDay = parseInt(localStorage.getItem("reportDay"), 10) || 0;
-    const data = _.cloneDeep(statisticData);
+    const weeklyData = generateWeeklyData(
+      allStatistics.find((item) => item.id === rowId)?.statisticDatas || [],
+      week,
+      datePoint
+    );
 
-    // Создаем массив 13 предыдущих недель
-    const weeksArray = Array.from({ length: quantity }, (_, i) => {
-      const endDate = dayjs(baseDate)
-        .day(reportDay)
-        .subtract(i, "week")
-        .endOf("day");
+    const cell = weeklyData[colId];
+    const valueDate = dayjs(cell.valueDate).toISOString();
 
-      return {
-        date: endDate.format("DD.MM.YY"),
-        valueDate: endDate.format("YYYY-MM-DD"),
-        value: 0,
-        isViewDays: false,
-        correlationType: null,
-      };
-    }).reverse();
+    try {
+      setSaving(true);
 
-    // Заполняем данные для каждой недели
-    weeksArray.forEach((week) => {
-      const weekEnd = dayjs(week.valueDate).endOf("day");
-      const weekStart = weekEnd.subtract(6, "day").startOf("day");
+      if (cell._id) {
+        await updateSvodka({
+          statisticId: rowId,
+          _id: rowId,
+          statisticDataUpdateDtos: [
+            {
+              _id: cell._id,
+              value: value === "" ? null : value,
+              correlationType: "Неделя",
+            },
+          ],
+        }).unwrap();
+      } else {
+        await updateSvodka({
+          statisticId: rowId,
+          _id: rowId,
+          statisticDataCreateDtos: [
+            {
+              valueDate,
+              value: value === "" ? null : value,
+              correlationType: "Неделя",
+            },
+          ],
+        }).unwrap();
+      }
 
-      const weekPoints = data.filter((point) => {
-        const pointDate = dayjs(point.valueDate);
-        return (
-          pointDate.isSameOrAfter(weekStart) &&
-          pointDate.isSameOrBefore(weekEnd) &&
-          point.correlationType !== "Месяц" &&
-          point.correlationType !== "Год"
-        );
-      });
-
-      const weekTotalPoint = weekPoints.find(
-        (p) => p.correlationType === "Неделя"
+      setAllStatistics((prev) =>
+        prev.map((item) => {
+          if (item.id !== rowId) return item;
+          const statisticDatas = _.cloneDeep(item.statisticDatas) || [];
+          if (cell._id) {
+            const existingPoint = statisticDatas.find((p) => p.id === cell._id);
+            if (existingPoint)
+              existingPoint.value = value === "" ? null : value;
+          } else {
+            statisticDatas.push({
+              value: value === "" ? null : value,
+              correlationType: "Неделя",
+              valueDate,
+            });
+          }
+          return { ...item, statisticDatas };
+        })
       );
 
-      if (weekTotalPoint) {
-        week.value = parseFloat(weekTotalPoint.value) || 0;
-      } else {
-        week.value = weekPoints.reduce(
-          (sum, point) => sum + (parseFloat(point.value) || 0),
-          0
-        );
-      }
-    });
-
-    return weeksArray.reverse();
+      messageApi.success("Значение сохранено");
+    } catch (err) {
+      console.error("Ошибка при обновлении статистики:", err);
+      messageApi.error("Ошибка при сохранении");
+    } finally {
+      setSaving(false);
+      setEditingCell(null);
+    }
   };
 
-  // Функция для генерации колонок
-  const generateWeekColumns = useMemo(() => {
+  // --- Колонки таблицы ---
+  const columns = useMemo(() => {
     if (!datePoint) return [];
 
     const weeklyData = generateWeeklyData([], week, datePoint);
-    const columns = [];
 
-    weeklyData.forEach((week, index) => {
-      columns.push({
+    return [
+      {
+        title: "Статистика",
+        dataIndex: "name",
+        key: "name",
+        fixed: "left",
+        width: 150,
+        ellipsis: true,
+        render: (text) => (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "250px",
+              wordWrap: "break-word",
+              whiteSpace: "normal",
+              lineHeight: "1.2",
+              padding: "8px 4px",
+              overflow: "hidden",
+              display: "block",
+            }}
+            title={text}
+          >
+            {text}
+          </div>
+        ),
+      },
+      ...weeklyData.map((w, index) => ({
         title: (
           <div style={{ textAlign: "center", fontWeight: "bold" }}>
-            {week.date}
+            {w.date}
           </div>
         ),
         dataIndex: `week_${index}`,
         key: `week_${index}`,
-        width: 120,
+        width: 160,
         align: "center",
-        render: (value) => <span>{value ?? "0"}</span>,
-      });
-    });
+        render: (cellData, record) => {
+          const cellValue = cellData?.value ?? null;
+          const isEditing =
+            editingCell?.rowId === record.id && editingCell?.colId === index;
 
-    return columns;
-  }, [datePoint, week]);
+          if (isEditing) {
+            const hasChanged = editingCell.value !== (cellValue ?? "");
 
-  // Базовые колонки
-  const baseColumns = [
-    // {
-    //   title: "ID",
-    //   dataIndex: "id",
-    //   key: "id",
-    //   render: (text) => <span>{text}</span>,
-    //   width: 80,
-    //   fixed: "left",
-    // },
-    {
-      title: "Название статистики",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <span>{text}</span>,
-      maxWidth: 100,
-      fixed: "left",
-      ellipsis: true,
-    },
-  ];
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <InputNumber
+                  autoFocus
+                  value={editingCell.value === "" ? null : editingCell.value}
+                  style={{ width: "100%" }}
+                  decimalSeparator="."
+                  onChange={(newVal) =>
+                    setEditingCell((prev) => ({
+                      ...prev,
+                      value: newVal ?? "",
+                    }))
+                  }
+                  onPressEnter={() =>
+                    hasChanged &&
+                    handleSaveCellValue({
+                      ...editingCell,
+                      originalValue: cellValue ?? "",
+                    })
+                  }
+                />
+                {hasChanged && (
+                  <Button
+                    type="primary"
+                    size="small"
+                    loading={saving}
+                    onClick={() =>
+                      handleSaveCellValue({
+                        ...editingCell,
+                        originalValue: cellValue ?? "",
+                      })
+                    }
+                  >
+                    Сохранить
+                  </Button>
+                )}
+              </div>
+            );
+          }
 
-  // Объединяем колонки
-  const columns = [...baseColumns, ...generateWeekColumns];
+          return (
+            <div
+              onClick={() =>
+                setEditingCell({
+                  rowId: record.id,
+                  colId: index,
+                  value: cellValue ?? "",
+                })
+              }
+              style={{
+                cursor: "pointer",
+                minHeight: "32px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {cellValue == null ? "" : cellValue}
+            </div>
+          );
+        },
+      })),
+    ];
+  }, [datePoint, week, editingCell, saving]);
 
-  // Подготовка данных для таблицы (аналогично countWeeks)
+  // --- Данные таблицы ---
   const tableData = useMemo(() => {
     if (!allStatistics.length || !datePoint) return [];
 
@@ -165,50 +310,48 @@ export default function Svodka() {
         key: statisticItem.id,
       };
 
-      // Генерируем недельные данные для каждой статистики
       const weeklyData = generateWeeklyData(
         statisticItem.statisticDatas || [],
         week,
         datePoint
       );
 
-      // Добавляем данные для каждой недели в строку
-      weeklyData.forEach((week, index) => {
-        rowData[`week_${index}`] = week.value;
+      weeklyData.forEach((w, index) => {
+        const cellObj = { value: w.value, statisticId: statisticItem.id };
+        if (w._id) cellObj._id = w._id;
+        rowData[`week_${index}`] = cellObj;
       });
 
       return rowData;
     });
   }, [allStatistics, datePoint, week]);
 
+  // --- Инициализация даты ---
   useEffect(() => {
     const initialDate = calculateInitialDate();
-    if (initialDate) {
-      setDatePoint(initialDate);
-    }
+    if (initialDate) setDatePoint(initialDate);
   }, []);
 
+  // --- Загрузка статистики ---
   useEffect(() => {
     if (statistics && statistics.length > 0) {
-      const _statistics = _.cloneDeep(statistics);
-      setAllStatistics(_statistics);
+      setAllStatistics(_.cloneDeep(statistics));
     }
   }, [statistics]);
 
   return (
     <div className={classes.dialog}>
-      <Headers name={"сводка"}></Headers>
+      {contextHolder}
+      <Headers name="сводка" />
       <div className={classes.main}>
         <Flex gap="middle" justify="center">
           {countWeeks.map((item) => (
             <Button
+              key={item.value}
               type={week === item.value ? "primary" : "default"}
               onClick={() => setWeek(item.value)}
-              style={{
-                width: "auto", // Одинаковая ширина для всех кнопок
-              }}
             >
-              {item?.label}
+              {item.label}
             </Button>
           ))}
         </Flex>
@@ -217,14 +360,9 @@ export default function Svodka() {
           columns={columns}
           dataSource={tableData}
           loading={isLoadingGetStatistics || isFetchingGetStatistics}
-          scroll={{
-            y: "100%",
-            x: "max-content",
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
+          pagination={false}
+          scroll={{ x: "max-content", y: "calc(100vh - 200px)" }} // подгоняем под высоту экрана
+          style={{ width: "100%", height: "100%" }}
         />
       </div>
     </div>
