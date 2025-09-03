@@ -29,6 +29,8 @@ export const StatisticInformationDrawer = ({
   openDrawer,
   setOpenDrawer,
 
+  setChartDirection,
+
   statisticId,
 
   currentStatistic,
@@ -53,6 +55,10 @@ export const StatisticInformationDrawer = ({
   } = useUpdateSingleStatistic();
 
   const handlePostValuesChange = (changedValues, allValues) => {
+    if (changedValues?.type) {
+      setChartDirection(changedValues.type);
+    }
+
     const cleanedValues = Object.fromEntries(
       Object.entries(allValues).map(([key, value]) => [
         key,
@@ -124,8 +130,6 @@ export const StatisticInformationDrawer = ({
     isLoadingGetStatisticId,
     isFetchingGetStatisticId,
   ]);
-
-  console.log("currentStatistic = ", currentStatistic);
 
   return (
     <Drawer

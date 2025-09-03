@@ -29,6 +29,7 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
 import { DrawerStatisticTable } from "./DrawerStatisticTable";
+import ReportDay from "./components/ReportDay";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -61,6 +62,7 @@ export default function Statistic() {
     useState(false);
 
   const [statisticId, setStatisticId] = useState(null);
+  const [chartDirection, setChartDirection] = useState(null);
   const [openListStatisticDrawer, setOpenListStatisticDrawer] = useState(true);
 
   const [chartType, setChartType] = useState("daily");
@@ -380,7 +382,6 @@ export default function Statistic() {
           >
             Выбрать статистику
           </Button>
-
           {statisticId ? (
             <>
               <Button
@@ -404,6 +405,9 @@ export default function Statistic() {
               </Button>
             </>
           ) : null}
+
+          <ReportDay />
+          
         </BottomHeaders>
       </Headers>
 
@@ -441,6 +445,7 @@ export default function Statistic() {
                   <Graphic
                     data={[...createPoints, ...dataSource]}
                     width={widthMap[chartType] || widthMap.default}
+                    type={chartDirection || currentStatistic?.type}
                   />
                 </div>
 
@@ -507,6 +512,7 @@ export default function Statistic() {
               <StatisticInformationDrawer
                 openDrawer={openStatisticInformationDrawer}
                 setOpenDrawer={setOpenStatisticInformationDrawer}
+                setChartDirection={setChartDirection}
                 statisticId={statisticId}
                 currentStatistic={currentStatistic}
                 isLoadingGetStatisticId={isLoadingGetStatisticId}
