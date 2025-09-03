@@ -1,0 +1,29 @@
+.wrapper{
+    padding-top: 15px;
+    /* overflow: auto;
+    height: 100%; */
+}
+
+.title {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    background-color: var(--primary);
+    border-radius: 10px 0 0 0;
+    color: white;
+    font-size: 22px;
+    font-weight: 500;
+
+    >div{
+        display: flex;
+        gap: 8px;
+    }
+
+    img{
+        width: 17px;
+        height: 17px;
+    }
+    
+}

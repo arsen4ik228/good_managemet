@@ -1,0 +1,29 @@
+.wrapper{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+}
+
+.Header {
+    width: 100%;
+
+    > div:nth-child(1) {
+        height: 32px; 
+        background-color: var(--primary);
+    }
+    
+    > div:nth-child(2) {
+        height: 56px;
+        background-color: white;
+    }
+}
+
+.content{
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    border: 1px solid red;
+}

@@ -6,6 +6,8 @@ import ErrorPage from "@app/ErrorPage/ErrorPage";
 
 import { ConfigProvider } from "antd";
 import ruRU from "antd/locale/ru_RU";
+import ApplicationContainer from "../../UI/layout/ApplicationContainer/ApplicationContainer";
+import HelperChat from "../../UI/layout/HelperChat/HelperChat";
 
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
@@ -254,6 +256,28 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
+          <Route
+            path="/new/*"
+            element={<ApplicationContainer></ApplicationContainer>}
+          >
+            <Route
+              path="helper"
+              element={
+                <React.Suspense
+                  fallback={
+                    <div className="lazy">
+                      <HandlerMutation Loading={true} />
+                    </div>
+                  }
+                >
+                  <>
+                    <HelperChat></HelperChat>
+                  </>
+                </React.Suspense>
+              }
+            />
+          </Route>
         </Routes>
       </ConfigProvider>
     </div>

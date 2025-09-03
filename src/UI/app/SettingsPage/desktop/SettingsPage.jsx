@@ -282,7 +282,7 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
-    if (firstName && lastName && middleName && telephoneNumber.length == 12) {
+    if (firstName && lastName && middleName && telephoneNumber?.length == 12) {
       setIsValid(true);
     } else {
       setIsValid(false);

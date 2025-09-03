@@ -1,0 +1,29 @@
+.content{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.content:hover{
+    background-color: var(--primary-light);
+}
+
+.content:active{
+    filter: brightness(0.85);
+}
+
+.imgContainer{
+    >img{
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.text{
+    padding-left: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
