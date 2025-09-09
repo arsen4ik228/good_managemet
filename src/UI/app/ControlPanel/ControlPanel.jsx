@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+
 import classes from "./ControlPanel.module.css";
-import Headers from "@Custom/Headers/Headers";
-import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
+import Header from "@Custom/Header/Header";
+
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useControlPanel } from "@hooks";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks";
-import ModalWindow from "@Custom/ModalWindow";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 
 import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
-import ModalSetting from "./modalSetting/ModalSetting";
 import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
 import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
 
@@ -37,30 +36,28 @@ import {
   loadFromIndexedDB,
 } from "@utils/src/index.js";
 import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
-import { debounce, isEqual } from "lodash";
+import { debounce } from "lodash";
 
-import { Button, ConfigProvider, Tour } from "antd";
+import { Button, ConfigProvider,Tour } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
 import ruRU from "antd/locale/ru_RU";
 import { useGetAllStatisticsInControlPanel } from "@hooks";
 import { useGetPostsUserByOrganization } from "../../../hooks/Post/useGetPostsUserByOrganization";
+import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
 
 export default function ControlPanel() {
   const [datePoint, setDatePoint] = useState(null);
-  const [pagination, setPagination] = useState(0);
 
-  const [openModalSetting, setOpenModalSetting] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalGraphic, setOpenModalGraphic] = useState(false);
 
   const [selectedControlPanelId, setSelectedControlPanelId] = useState(null);
-  const [selectedControlPanelData, setSelectedControlPaneData] = useState(null);
   const [arrayAllControlPanel, setArrayAllControlPanel] = useState([]);
 
   const [selectedStatistic, setSelectedStatistic] = useState({
     id: null,
     name: "",
+    chartDirection: "Прямая"
   });
 
   const [cards, setCards] = useState([]);
@@ -108,6 +105,16 @@ export default function ControlPanel() {
     return true;
   });
 
+
+  const {
+    statistics,
+    isLoadingGetStatistics,
+    isFetchingGetStatistics,
+    isErrorGetStatistics,
+  } = useAllStatistics({
+    statisticData: false,
+  });
+
   const {
     reduxSelectedOrganizationId,
     reduxSelectedOrganizationReportDay,
@@ -145,13 +152,13 @@ export default function ControlPanel() {
 
   const {
     allStatistics,
-    statisticsIdsInPanel,
     isLoadingGetStatisticsInControlPanel,
     isErrorGetStatisticsInControlPanel,
     isFetchingGetStatisticsInControlPanel,
   } = useGetAllStatisticsInControlPanel({
     selectedControlPanelId,
     datePoint,
+    statisticData: true
   });
 
   const {
@@ -202,10 +209,6 @@ export default function ControlPanel() {
       id
     );
     setSelectedControlPanelId(id);
-    setSelectedControlPaneData(() =>
-      allControlPanel.find((item) => item?.id === id)
-    );
-    setPagination(0); // Сбрасываем пагинацию при смене панели
   };
 
   const openCreate = () => {
@@ -226,34 +229,7 @@ export default function ControlPanel() {
         console.error("Ошибка:", JSON.stringify(error, null, 2));
       });
   };
-  const removeControlPanel = async () => {
-    try {
-      // Удаляем панель управления через API
-      await deleteControlPanel({
-        controlPanelId: selectedControlPanelId,
-      }).unwrap();
 
-      setSelectedControlPanelId();
-      // Закрываем модальное окно
-      setOpenModalDelete(false);
-
-      // Удаляем панель управления из IndexedDB
-      deleteFromIndexedDB(reduxSelectedOrganizationId, selectedControlPanelId)
-        .then(() => {
-          console.log(
-            `Панель управления с id ${selectedControlPanelId} успешно удалена из IndexedDB.`
-          );
-        })
-        .catch((error) => {
-          console.error("Ошибка при удалении из IndexedDB:", error);
-        });
-    } catch (error) {
-      console.error(
-        "Ошибка при удалении панели управления:",
-        JSON.stringify(error, null, 2)
-      );
-    }
-  };
 
   const onDragEnd_ControlPanel = async (result) => {
     const { source, destination } = result;
@@ -294,14 +270,6 @@ export default function ControlPanel() {
     } catch (error) {
       console.error("Ошибка при сохранении данных в IndexedDB:", error);
     }
-  };
-
-  const btnYes = () => {
-    removeControlPanel();
-  };
-
-  const btnNo = () => {
-    setOpenModalDelete(false);
   };
 
   const sensors = useSensors(
@@ -398,7 +366,11 @@ export default function ControlPanel() {
     } else {
       setArrayAllControlPanel(allControlPanel);
     }
-  }, [allControlPanel]);
+
+  }, [allControlPanel, isLoadingGetAllControlPanel,
+    isFetchingGetAllControlPanel,
+    isErrorGetAllControlPanel,
+  ]);
 
   // Сброс cards при изменении reduxSelectedOrganizationId
   useEffect(() => {
@@ -407,16 +379,13 @@ export default function ControlPanel() {
 
   // Обновление cards при изменении statisticsPoints
   useEffect(() => {
-    if (allStatistics) {
-      if (pagination === 0) {
-        // Первая загрузка - полностью заменяем данные
-        setCards(allStatistics);
-      } else {
-        // Подгрузка - добавляем новые данные
-        setCards((prev) => [...prev, ...allStatistics]);
-      }
+    if (allStatistics.length > 0) {
+      setCards(allStatistics);
+    } else {
+      setCards([]);
     }
-  }, [allStatistics, pagination]);
+  }, [allStatistics]);
+
 
   useEffect(() => {
     setDatePoint(() => {
@@ -426,21 +395,9 @@ export default function ControlPanel() {
 
   return (
     <div className={classes.dialog}>
-      <Headers
+      <Header
         name={"панель управления"}
-        funcActiveHint={() => setOpenHint(true)}
       >
-      </Headers>
-
-      <ConfigProvider locale={ruRU}>
-        <Tour
-          open={openHint}
-          onClose={() => setOpenHint(false)}
-          steps={steps}
-        />
-      </ConfigProvider>
-
-      <div className={classes.main}>
         <DragDropContext onDragEnd={onDragEnd_ControlPanel}>
           <Droppable droppableId="panelList" direction="horizontal">
             {(provided) => (
@@ -454,27 +411,40 @@ export default function ControlPanel() {
                 </Button>
                 {arrayAllControlPanel?.map((item, index) => (
                   <Draggable
-                    key={index}
-                    draggableId={`item-${index}`}
+                    // key={index}
+                    // draggableId={`item-${index}`}
+                    // index={index}
+
+                    key={item.id}
+                    draggableId={String(item.id)}
                     index={index}
                   >
                     {(provided) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        {...provided.dragHandleProps}
                       >
+
                         <PanelDragDrop
+                          provided={provided}
+                          statistics={statistics}
+                          datePoint={datePoint}
+                          updateControlPanel={updateControlPanel}
+                          panel={item}
+                          deleteFromIndexedDB={deleteFromIndexedDB}
+                          deleteControlPanel={deleteControlPanel}
+                          reduxSelectedOrganizationId={reduxSelectedOrganizationId}
+                          id={item.id}
                           isActive={selectedControlPanelId === item.id}
-                          openSetting={() => setOpenModalSetting(true)}
+
                           name={
                             item.isNameChanged
                               ? item.panelName
                               : `${item.panelName} ${item.controlPanelNumber}`
                           }
                           onClick={() => getControlPanelId(item.id)}
-                          deletePanel={() => setOpenModalDelete(true)}
                         ></PanelDragDrop>
+
                       </div>
                     )}
                   </Draggable>
@@ -484,7 +454,17 @@ export default function ControlPanel() {
             )}
           </Droppable>
         </DragDropContext>
+      </Header>
 
+      <ConfigProvider locale={ruRU}>
+        <Tour
+          open={openHint}
+          onClose={() => setOpenHint(false)}
+          steps={steps}
+        />
+      </ConfigProvider>
+
+      <div className={classes.main}>
         {isErrorGetStatisticsInControlPanel ? (
           <>
             <HandlerQeury
@@ -523,27 +503,6 @@ export default function ControlPanel() {
           </DndContext>
         )}
 
-        {openModalSetting && (
-          <ModalSetting
-            exit={() => setOpenModalSetting(false)}
-            updateControlPanel={updateControlPanel}
-            currentControlPanel={selectedControlPanelData}
-            statisticsIdsInPanel={statisticsIdsInPanel}
-          ></ModalSetting>
-        )}
-
-        {openModalDelete && (
-          <ModalWindow
-            text={`Вы точно хотите удалить панель управления ${
-              selectedControlPanelData.isNameChanged
-                ? selectedControlPanelData.panelName
-                : `${selectedControlPanelData.panelName} ${selectedControlPanelData.controlPanelNumber}`
-            }`}
-            close={setOpenModalDelete}
-            btnYes={btnYes}
-            btnNo={btnNo}
-          ></ModalWindow>
-        )}
         {openModalCreate && (
           <ModalSelectRadio
             nameTable={"Название поста"}

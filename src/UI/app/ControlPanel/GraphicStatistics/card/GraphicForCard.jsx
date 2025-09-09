@@ -11,7 +11,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
-export default function GraphicForCard({ dataStatistics, datePoint }) {
+export default function GraphicForCard({ dataStatistics, datePoint, type }) {
   // Мемоизация данных статистики
   const dataSource = useMemo(() => {
     if (!dataStatistics) return [];
@@ -75,5 +75,5 @@ export default function GraphicForCard({ dataStatistics, datePoint }) {
     return countWeeks();
   }, [dataStatistics, datePoint]);
 
-  return <Graphic data={dataSource} />;
+  return <Graphic data={dataSource} type={type}/>;
 }

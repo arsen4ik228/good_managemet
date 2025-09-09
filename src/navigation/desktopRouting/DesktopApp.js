@@ -16,7 +16,6 @@ import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
 import EditStatistic from "../../UI/layout/Statistics/EditStatistic";
 
-
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
@@ -69,7 +68,26 @@ const AgreementDialogPage = React.lazy(() =>
 function DesktopApp() {
   return (
     <div>
-      <ConfigProvider locale={ruRU}>
+      <ConfigProvider
+        locale={ruRU}
+        theme={{
+          token: {
+            // Основные цвета
+            colorPrimary: "#005475",
+            colorSuccess: "#52c41a",
+            colorError: "#ff4d4f",
+            colorWarning: "#faad14",
+            colorInfo: "#1890ff",
+
+            // Hover-эффекты
+            colorPrimaryHover: "#003d5c",
+            colorPrimaryActive: "#002536",
+            colorSuccessHover: "#389e0d",
+            colorErrorHover: "#d9363e",
+            colorWarningHover: "#d48806",
+          },
+        }}
+      >
         <Routes>
           <Route
             path="/"
@@ -83,6 +101,7 @@ function DesktopApp() {
               </div>
             }
           />
+
           <Route
             path="/*"
             element={
@@ -191,11 +210,19 @@ function DesktopApp() {
                   <Route
                     path="controlPanel"
                     element={
-                
-                        <div className="content1">
-                          <ControlPanel />
-                        </div>
-                     
+                      <div className="tab">
+                        <ControlPanel />
+                      </div>
+                    }
+                  />
+
+                  {/* Маршрут для Svodka */}
+                  <Route
+                    path="svodka"
+                    element={
+                      <div className="tab">
+                        <Svodka />
+                      </div>
                     }
                   />
 
@@ -208,7 +235,6 @@ function DesktopApp() {
                         <div className="content">
                           <Chat />
                           <Routes>
-
                             <Route path="start" element={<Pomoshnik />} />
                             <Route path="goal" element={<Goal />} />
                             <Route
@@ -216,7 +242,7 @@ function DesktopApp() {
                               element={<Policy />}
                             />
                             <Route path="statistic" element={<Statistic />} />
-                            <Route path="svodka" element={<Svodka />} />
+                            {/* <Route path="svodka" element={<Svodka />} /> */}
                             <Route path="objective" element={<Objective />} />
                             <Route path="strategy" element={<Strategy />} />
                             <Route
@@ -252,6 +278,7 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
           <Route
             path="/error"
             element={

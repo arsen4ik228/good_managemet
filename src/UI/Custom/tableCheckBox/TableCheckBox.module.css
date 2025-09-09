@@ -29,7 +29,7 @@
 
 .table tbody tr {
     min-height: 200px;
-    height: calc(75vh - 185px);
+    height: calc(75vh - 190px);
 
     width: 100%;
     max-width: 100%;

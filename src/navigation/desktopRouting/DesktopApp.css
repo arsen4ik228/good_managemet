@@ -32,14 +32,13 @@
     column-gap: 25px;
 }
 
-.content1{
+.tab{
     height: 100vh;
 
-    width: calc(100vw);
-    max-width: calc(100vw);
+    width: 100vw;
+    min-width: 100vw;
 
     grid-area: content;
-    background: url('@image/background.png');
 
     display: flex;
 
@@ -172,7 +171,8 @@ h6 {
     --primary-light: #DDEBF1;
     --primary-dark: #cfdee5;
     --white: #FFFFFF;
-    --grey: #B4B4B4;
+    /* --grey: #B4B4B4; */
+    --grey: #999999;
     --grey-light: #F0F0F0;
     --dark: #3A3A3A;
     --second-primary:#3E7B94;
@@ -308,17 +308,4 @@ input[type="number"] {
     -moz-appearance: textfield;
     /* Firefox */
 }
-
-.ant-btn {
-    /* color: #3E7B94 !important; */
-  }
   
-  .ant-btn:hover{
-    color: #5A9DB0 !important;
-    border-color: #5A9DB0 !important;
-  }
-  
-  .ant-btn:active {
-    color: #2C5D70 !important;
-    border-color: #2C5D70 !important;
-  }
