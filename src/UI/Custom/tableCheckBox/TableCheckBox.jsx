@@ -9,18 +9,26 @@ export default function TableCheckBox({
   handleChecboxChange,
 }) {
 
-  const sortedArray = array ? [...array].sort((a, b) => {
-    const aIsChecked = arrayCheked.includes(a.id);
-    const bIsChecked = arrayCheked.includes(b.id);
-    
-    if (aIsChecked && !bIsChecked) return -1;
-    if (!aIsChecked && bIsChecked) return 1;
-    
-    const aValue = a[arrayItem] || "";
-    const bValue = b[arrayItem] || "";
-    
-    return aValue.localeCompare(bValue);
-  }) : [];
+  const checkedArray = array
+    ? array
+      .filter((a) => arrayCheked.includes(a.id))
+      .sort((a, b) => {
+        const aValue = a[arrayItem] || "";
+        const bValue = b[arrayItem] || "";
+        return aValue.localeCompare(bValue);
+      })
+    : [];
+
+  const uncheckedArray = array
+    ? array
+      .filter((a) => !arrayCheked.includes(a.id))
+      .sort((a, b) => {
+        const aValue = a[arrayItem] || "";
+        const bValue = b[arrayItem] || "";
+        return aValue.localeCompare(bValue);
+      })
+    : [];
+
 
   return (
     <table className={classes.table}>
@@ -33,7 +41,27 @@ export default function TableCheckBox({
       <tbody>
         <tr>
           <td>
-            {sortedArray.map((item) => (
+            {checkedArray.map((item) => (
+              <div
+                key={item.id}
+                className={classes.row}
+                onClick={() => handleChecboxChange(item.id)}
+              >
+                {deleteInputCheckbox ? null : (
+                  <input
+                    type="checkbox"
+                    checked={arrayCheked.includes(item.id)}
+                    readOnly
+                  />
+                )}
+
+                {item[arrayItem]}
+              </div>
+            ))}
+          </td>
+
+          <td>
+            {uncheckedArray.map((item) => (
               <div
                 key={item.id}
                 className={classes.row}
