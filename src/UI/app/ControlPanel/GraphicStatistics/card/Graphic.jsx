@@ -52,13 +52,13 @@ const formatNumber = (num) => {
   return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
-export default function Graphic({ data }) {
+export default function Graphic({ data, type }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-     // Сортировка данных
+    // Сортировка данных
     const sortedData = [...data].sort(
       (a, b) => Date.parse(a.valueDate) - Date.parse(b.valueDate)
     );
@@ -78,6 +78,14 @@ export default function Graphic({ data }) {
         isLowerThanPrevious = currentValue < previousValue;
       }
 
+      // Определяем цвета в зависимости от типа
+      let color;
+      if (type === "Обратная") {
+        color = isLowerThanPrevious ? "#3E7B94" : "#ff4d4f";
+      } else {
+        color = isLowerThanPrevious ? "#ff4d4f" : "#3E7B94";
+      }
+
       return {
         name: formatDate(item.valueDate),
         value: currentValue, // сохраняем как число
@@ -85,7 +93,7 @@ export default function Graphic({ data }) {
           currentValue !== null ? formatNumber(currentValue) : null,
         date: item.valueDate,
         itemStyle: {
-          color: isLowerThanPrevious ? "#ff4d4f" : "#3E7B94",
+          color: color,
         },
       };
     });
@@ -137,7 +145,6 @@ export default function Graphic({ data }) {
           `;
         },
         backgroundColor: "#fff",
-        borderColor: "#ddd",
         borderWidth: 1,
         padding: [10, 15],
         textStyle: {
@@ -185,7 +192,7 @@ export default function Graphic({ data }) {
       },
       yAxis: {
         type: "value",
-
+        inverse: type === "Обратная",
         min: yMin, // Минимальное значение
         max: yMax, // Максимальное значение
         interval: yInterval, // Шаг между линиями
@@ -211,19 +218,23 @@ export default function Graphic({ data }) {
           },
         },
       },
-      visualMap: {
+       visualMap: {
         show: false,
         dimension: 0,
         pieces: (() => {
           const pieces = [];
           for (let i = 1; i < chartData.length; i++) {
+            let color;
+            if (type === "Обратная") {
+              color = chartData[i].value < chartData[i - 1].value ? "#3E7B94" : "#ff4d4f";
+            } else {
+              color = chartData[i].value < chartData[i - 1].value ? "#ff4d4f" : "#3E7B94";
+            }
+            
             pieces.push({
               gt: i - 1,
               lte: i,
-              color:
-                chartData[i].value < chartData[i - 1].value
-                  ? "#ff2c41"
-                  : "#3E7B94",
+              color: color,
             });
           }
           return pieces;

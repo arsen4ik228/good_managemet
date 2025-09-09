@@ -57,7 +57,25 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
     viewType: chartType,
   });
 
-  const countWeeks = (quantity = 13) => {
+  const calculateInitialDate = () => {
+    const currentDate = localStorage.getItem("reportDay");
+    if (currentDate !== null) {
+      const targetDay = parseInt(currentDate, 10);
+      const today = new Date();
+      const todayDay = today.getDay();
+
+      let diff = todayDay - targetDay;
+      if (diff < 0) diff += 7;
+
+      const lastTargetDate = new Date(today);
+      lastTargetDate.setDate(today.getDate() - diff);
+
+      return lastTargetDate.toISOString().split("T")[0];
+    }
+    return modalDatePoint;
+  };
+
+  const countWeeks = (quantity) => {
     const reportDay = parseInt(localStorage.getItem("reportDay"), 10) || 0; // 0-воскр, 6-суббота
     const data = _.cloneDeep(statisticData);
 
@@ -127,7 +145,9 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
       }
     });
 
-    setDataSource(weeksArray);
+    setDataSource(
+      weeksArray.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate))
+    );
   };
 
   const countMonths = () => {
@@ -166,10 +186,15 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
   };
 
   const countDays = () => {
+    setDataSource(
+      _.cloneDeep(statisticData).sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      )
+    );
+
     const baseId = Date.now();
     const startDate = dayjs(modalDatePoint).startOf("day");
 
-    // Создаем Set для быстрого поиска существующих дат
     const existingDates = new Set(
       statisticData
         ?.filter(
@@ -179,12 +204,14 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
           dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
         ) || []
     );
+
     const newData = Array(7)
       .fill()
       .map((_, i) => {
+        // Добавляем дни без учета временной зоны
         const date = startDate.subtract(i, "day").startOf("day");
+
         if (!date || !date.isValid?.()) {
-          // Проверка валидности
           console.error("Некорректная дата на шаге", i, date);
           return null;
         }
@@ -194,29 +221,11 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
           valueDate: date.format("YYYY-MM-DD"),
         };
       })
-      .filter(Boolean) // Удаляем возможные null
+      .filter(Boolean)
       .filter((item) => !existingDates.has(item.valueDate))
-      .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
-    setDataSource([...newData]);
-  };
-
-  const calculateInitialDate = () => {
-    const currentDate = localStorage.getItem("reportDay");
-    if (currentDate !== null) {
-      const targetDay = parseInt(currentDate, 10);
-      const today = new Date();
-      const todayDay = today.getDay();
-
-      let diff = todayDay - targetDay;
-      if (diff < 0) diff += 7;
-
-      const lastTargetDate = new Date(today);
-      lastTargetDate.setDate(today.getDate() - diff);
-
-      return lastTargetDate.toISOString().split("T")[0];
-    }
-    return modalDatePoint;
+    setDataSource((prev) => [...prev, ...newData]);
   };
 
   useEffect(() => {
@@ -348,6 +357,7 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
             <Graphic
               data={dataSource}
               width={widthMap[chartType] || widthMap.default}
+              type={selectedStatistic?.type}
             />
           </div>
 
