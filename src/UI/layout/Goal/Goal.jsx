@@ -39,25 +39,6 @@ export default function Goal() {
     // { text: 'Распечатать', click: () => navigate('1') },
   ]
 
-  const test = [
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis vero labore maiores nisi, iste at dolorum hic provident dicta temporibus similique incidunt quam nemo corrupti libero sunt laborum est repellat?',
-  ]
 
   return (
     <>
@@ -65,7 +46,7 @@ export default function Goal() {
         buttons={buutonsArr}
       >
         <ViewingGoal
-          arrGoals={test}
+          arrGoals={currentGoal.content}
         ></ViewingGoal>
       </MainContentContainer>
     </>
