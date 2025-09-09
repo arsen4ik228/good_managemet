@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./DesktopApp.css";
 import HandlerMutation from "@Custom/HandlerMutation";
 import ErrorPage from "@app/ErrorPage/ErrorPage";
@@ -312,9 +312,11 @@ function DesktopApp() {
 
 
           <Route
-            path="/new/*"
+            path=":organizationId/*"
             element={<ApplicationContainer></ApplicationContainer>}
           >
+
+            <Route index element={<Navigate to = "helper" replace/>}/>
 
             <Route
               path="createUser"

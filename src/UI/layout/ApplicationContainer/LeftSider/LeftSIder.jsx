@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import classes from './LeftSider.module.css'
 import logo from '@image/big_logo.svg'
 import helper_icon from "@image/helper_icon.svg"
@@ -37,6 +37,7 @@ export default function LeftSIder() {
         localStorage.setItem("reportDay", reportDay);
         dispatch(setSelectedOrganizationId(id));
         dispatch(setSelectedOrganizationReportDay(reportDay));
+        navigate(`/${id}`)
     };
 
     const handlerHelper = () => {
@@ -56,7 +57,7 @@ export default function LeftSIder() {
         return organizations.filter(item =>
             item.organizationName.toLowerCase().includes(searchLower)
         );
-    }, [seacrhOrganizationsSectionsValue]);
+    }, [seacrhOrganizationsSectionsValue, organizations]);
 
     const filtredContacts = useMemo(() => {
         if (!searchContactsSectionsValue?.trim()) {
@@ -69,7 +70,28 @@ export default function LeftSIder() {
             item.userLastName.toLowerCase().includes(searchLower) ||
             item.postName.toLowerCase().includes(searchLower)
         );
-    }, [searchContactsSectionsValue]);
+    }, [searchContactsSectionsValue, allChats]);
+
+    useEffect(() => {
+        if (
+            !isLoadingOrganization &&
+            !isErrorOrganization &&
+            organizations?.length > 0
+        ) {
+            const defaultOrg = organizations[0];
+            if (!localStorage.getItem("selectedOrganizationId")) {
+                localStorage.setItem("selectedOrganizationId", defaultOrg.id);
+                localStorage.setItem("name", defaultOrg.organizationName);
+                localStorage.setItem("reportDay", defaultOrg.reportDay);
+
+                // Также обновляем Redux store
+                dispatch(setSelectedOrganizationId(defaultOrg.id));
+                dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
+
+                navigate(`/${defaultOrg.id}`)
+            }
+        }
+    }, [organizations, isLoadingOrganization, isErrorOrganization]);
 
 
     console.log(allChats)
@@ -93,6 +115,13 @@ export default function LeftSIder() {
                             <React.Fragment key={item.id}>
                                 <ListElem
                                     upperText={item.organizationName}
+                                    linkSegment={item.id}
+                                    clickFunc={() =>
+                                        handleOrganizationNameButtonClick(
+                                            item.id,
+                                            item.organizationName,
+                                            item.reportDay
+                                        )}
                                 />
                             </React.Fragment>
                         ))}
