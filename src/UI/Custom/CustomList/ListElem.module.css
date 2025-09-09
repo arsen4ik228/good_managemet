@@ -23,22 +23,28 @@
         width: 40px;
     }
 }
-
-.text{
+.text {
+    overflow: hidden;
     width: 100%;
     padding-left: 8px;
     font-size: 14px;
     font-weight: 500;
 }
 
-.upperTxt{
+.upperTxt {
+    overflow: hidden;    
     color: #333333;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
 }
 
-.bottomTxt{
+.bottomTxt {
+    overflow: hidden;    
     color: #999999;
     font-weight: 300;
     font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
 }
 
 .roundSection {
@@ -61,5 +67,10 @@
         font-weight: 400;
         color: white;
     }
+
+}
+
+.selected{
+    background-color: var(--primary-light);
 
 }

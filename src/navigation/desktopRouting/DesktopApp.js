@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./DesktopApp.css";
 import HandlerMutation from "@Custom/HandlerMutation";
 import ErrorPage from "@app/ErrorPage/ErrorPage";
@@ -14,7 +14,10 @@ import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
-import { EditStatistic } from "../../UI/layout/Statistics/EditStatistic";
+import EditStatistic from "../../UI/layout/Statistics/EditStatistic";
+import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
+
+
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -338,9 +341,11 @@ function DesktopApp() {
 
 
           <Route
-            path="/new/*"
+            path=":organizationId/*"
             element={<ApplicationContainer></ApplicationContainer>}
           >
+
+            <Route index element={<Navigate to = "helper" replace/>}/>
 
             <Route
               path="createUser"
@@ -445,7 +450,7 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <Post></Post>
+                    <MessageSelectingList></MessageSelectingList>
                   </React.Suspense>
                 }
               />

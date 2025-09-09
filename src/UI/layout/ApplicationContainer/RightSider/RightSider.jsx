@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import classes from './RightSider.module.css'
 import avatar from '@image/helper_big_avatar.svg'
 import CustomList from '../../../Custom/CustomList/CustomList'
@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom'
 export default function RightSider({ postInfo }) {
 
     const navigate = useNavigate()
+
+    const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState()
 
     const HELPER_SECTIONS = [
         // { id: '9', icon: '', text: 'Схема компании', link: 'companySchema' },
@@ -29,6 +31,17 @@ export default function RightSider({ postInfo }) {
         navigate(`helper/${link}`)
     }
 
+    const filtredHelperSections = useMemo(() => {
+        if (!searchHelperSectionsValue?.trim()) {
+            return HELPER_SECTIONS; // Возвращаем все элементы если поиск пустой
+        }
+        
+        const searchLower = searchHelperSectionsValue?.toLowerCase();
+        return HELPER_SECTIONS.filter(item => 
+            item.text.toLowerCase().includes(searchLower)
+        );
+    }, [searchHelperSectionsValue]);
+
     return (
         <>
             <div className={classes.wrapper}>
@@ -44,8 +57,10 @@ export default function RightSider({ postInfo }) {
                 <div className={classes.content}>
                     <CustomList
                         title={'C чем работаем?'}
+                        searchFunc={setSearchHelperSectionsValue}
+                        searchValue={searchHelperSectionsValue}
                     >
-                        {HELPER_SECTIONS.map((item) => (
+                        {filtredHelperSections.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
                                     id={item.id}
