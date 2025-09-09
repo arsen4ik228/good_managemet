@@ -52,44 +52,52 @@ const formatNumber = (num) => {
   return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
-export default function Graphic({ data }) {
+export default function Graphic({ data, type }) {
   const chartRef = useRef(null);
-
-  console.log("data =", data);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
 
     // Сортировка данных
-    const sortedData = [...data].sort((a, b) => {
-      const dateA =
-        typeof a.valueDate === "object"
-          ? new Date(a.valueDate.year, a.valueDate.month || 0)
-          : new Date(a.valueDate);
-      const dateB =
-        typeof b.valueDate === "object"
-          ? new Date(b.valueDate.year, b.valueDate.month || 0)
-          : new Date(b.valueDate);
-      return dateA - dateB;
-    });
+    const sortedData = [...data].sort(
+      (a, b) => Date.parse(a.valueDate) - Date.parse(b.valueDate)
+    );
 
-    // Подготовка данных
     const chartData = sortedData.map((item, index) => {
-      const isLowerThanPrevious =
-        index > 0 && item.value < sortedData[index - 1].value;
+      let isLowerThanPrevious = false;
+
+      // Преобразуем value в число для сравнения
+      const currentValue = item.value !== null ? Number(item.value) : null;
+      const previousValue =
+        index > 0 && sortedData[index - 1].value !== null
+          ? Number(sortedData[index - 1].value)
+          : null;
+
+      // Проверяем только если есть предыдущее значение и оба значения не null
+      if (index > 0 && currentValue !== null && previousValue !== null) {
+        isLowerThanPrevious = currentValue < previousValue;
+      }
+
+      // Определяем цвета в зависимости от типа
+      let color;
+      if (type === "Обратная") {
+        color = isLowerThanPrevious ? "#3E7B94" : "#ff4d4f";
+      } else {
+        color = isLowerThanPrevious ? "#ff4d4f" : "#3E7B94";
+      }
+
       return {
         name: formatDate(item.valueDate),
-        value: item.value,
-        formattedValue: item.value !== null ? formatNumber(item.value) : null,
+        value: currentValue, // сохраняем как число
+        formattedValue:
+          currentValue !== null ? formatNumber(currentValue) : null,
         date: item.valueDate,
         itemStyle: {
-          color: isLowerThanPrevious ? "#ff4d4f" : "#3E7B94",
+          color: color,
         },
       };
     });
 
-    console.log("chartData = ", chartData);
-    
     // Рассчитываем min, max и interval для 10 линий
     let yMin = 0;
     let yMax = 100;
@@ -125,6 +133,7 @@ export default function Graphic({ data }) {
 
     // Настройки графика
     const option = {
+      animation: false,
       tooltip: {
         trigger: "item",
         formatter: function (params) {
@@ -136,7 +145,6 @@ export default function Graphic({ data }) {
           `;
         },
         backgroundColor: "#fff",
-        borderColor: "#ddd",
         borderWidth: 1,
         padding: [10, 15],
         textStyle: {
@@ -184,7 +192,7 @@ export default function Graphic({ data }) {
       },
       yAxis: {
         type: "value",
-
+        inverse: type === "Обратная",
         min: yMin, // Минимальное значение
         max: yMax, // Максимальное значение
         interval: yInterval, // Шаг между линиями
@@ -210,37 +218,24 @@ export default function Graphic({ data }) {
           },
         },
       },
-      visualMap: {
+       visualMap: {
         show: false,
         dimension: 0,
         pieces: (() => {
           const pieces = [];
           for (let i = 1; i < chartData.length; i++) {
-            // Пропускаем текущий элемент если он null
-            if (chartData[i].value === null) {
-              continue;
+            let color;
+            if (type === "Обратная") {
+              color = chartData[i].value < chartData[i - 1].value ? "#3E7B94" : "#ff4d4f";
+            } else {
+              color = chartData[i].value < chartData[i - 1].value ? "#ff4d4f" : "#3E7B94";
             }
-
-            // Ищем предыдущее не-null значение
-            let prevNonNullIndex = i - 1;
-            while (
-              prevNonNullIndex >= 0 &&
-              chartData[prevNonNullIndex].value === null
-            ) {
-              prevNonNullIndex--;
-            }
-
-            // Если нашли предыдущее не-null значение
-            if (prevNonNullIndex >= 0) {
-              pieces.push({
-                gt: prevNonNullIndex,
-                lte: i,
-                color:
-                  chartData[i].value < chartData[prevNonNullIndex].value
-                    ? "#ff4d4f" // красный если значение упало
-                    : "#3E7B94", // синий если значение выросло или осталось таким же
-              });
-            }
+            
+            pieces.push({
+              gt: i - 1,
+              lte: i,
+              color: color,
+            });
           }
           return pieces;
         })(),
@@ -251,16 +246,12 @@ export default function Graphic({ data }) {
           type: "line",
           data: chartData,
           symbol: "circle",
-          symbolSize: 11,
-          connectNulls: true,
+          symbolSize: 10,
           lineStyle: {
             width: 3,
             type: "solid", // Явно указываем сплошную линию
           },
-          itemStyle: {
-            borderColor: "#fff",
-            borderWidth: 2,
-          },
+
           markPoint: {
             show: false,
           },

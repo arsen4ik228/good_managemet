@@ -4,8 +4,9 @@ import exitModal from "@image/exitModal.svg";
 import Blacksavetmp from "@image/Blacksavetmp.svg";
 import ButtonImage from "@Custom/buttonImage/ButtonImage";
 import TableCheckBox from "@Custom/tableCheckBox/TableCheckBox";
-import { useStatisticsHook } from "@hooks";
+
 import { Input, Select, Typography } from "antd";
+import { useGetAllStatisticsInControlPanel } from "@hooks";
 
 const panelTypes = [
   { value: "Личная", label: "Личная" },
@@ -13,22 +14,29 @@ const panelTypes = [
 ];
 
 export default function ModalSetting({
+  statistics,
+  datePoint,
   exit,
   currentControlPanel,
   updateControlPanel,
-  statisticsIdsInPanel,
 }) {
   const [oldPanelName, setOldPanelName] = useState("");
   const [panelName, setPanelName] = useState("");
   const [panelType, setPanelType] = useState("");
   const [statisticsChecked, setStatisticsChecked] = useState([]);
 
+
   const {
-    statistics,
-    isLoadingGetStatistics,
-    isFetchingGetStatistics,
-    isErrorGetStatistics,
-  } = useStatisticsHook({ statisticData: false });
+    statisticsIdsInPanel,
+    isLoadingGetStatisticsInControlPanel,
+    isErrorGetStatisticsInControlPanel,
+    isFetchingGetStatisticsInControlPanel,
+  } = useGetAllStatisticsInControlPanel({
+    selectedControlPanelId: currentControlPanel?.id ,
+    datePoint,
+    statisticData: false
+  });
+
 
   const saveUpdateControlPanel = async () => {
     const Data = {};
@@ -111,7 +119,7 @@ export default function ModalSetting({
             <Typography>Тип панели </Typography>
             <Select
               value={panelType}
-             onChange={(value) => setPanelType(value)}
+              onChange={(value) => setPanelType(value)}
               options={panelTypes}
               size="small"
             ></Select>

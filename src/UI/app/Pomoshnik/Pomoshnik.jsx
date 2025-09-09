@@ -25,7 +25,7 @@ export default function Pomoshnik() {
     navigate(`/pomoshnik/statistic`);
   };
   const svodka = () => {
-    navigate(`/pomoshnik/svodka`);
+    window.open('#/svodka', '_blank');
   };
   const project = () => {
     navigate(`/pomoshnik/projectWithProgramm`);

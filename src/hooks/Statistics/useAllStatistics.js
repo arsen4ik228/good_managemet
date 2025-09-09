@@ -1,7 +1,7 @@
 import { useGetStatisticsQuery } from "@services/index";
 import { useGetReduxOrganization } from "@hooks";
 
-export const useAllStatistics = ({  statisticData = false } = {}) => {
+export const useAllStatistics = ({  statisticData = false, isActive } = {}) => {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
   const {
@@ -13,6 +13,7 @@ export const useAllStatistics = ({  statisticData = false } = {}) => {
     {
       organizationId: reduxSelectedOrganizationId,
       statisticData: statisticData,
+     ...(isActive !== undefined && { isActive })
     },
     {
       selectFromResult: ({ data, isError, isFetching, isLoading }) => ({

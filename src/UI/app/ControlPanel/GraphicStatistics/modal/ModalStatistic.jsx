@@ -10,6 +10,7 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import Graphic from "../../../Graphic/Graphic";
 
 import _ from "lodash";
@@ -56,7 +57,25 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
     viewType: chartType,
   });
 
-  const countWeeks = (quantity = 13) => {
+  const calculateInitialDate = () => {
+    const currentDate = localStorage.getItem("reportDay");
+    if (currentDate !== null) {
+      const targetDay = parseInt(currentDate, 10);
+      const today = new Date();
+      const todayDay = today.getDay();
+
+      let diff = todayDay - targetDay;
+      if (diff < 0) diff += 7;
+
+      const lastTargetDate = new Date(today);
+      lastTargetDate.setDate(today.getDate() - diff);
+
+      return lastTargetDate.toISOString().split("T")[0];
+    }
+    return modalDatePoint;
+  };
+
+  const countWeeks = (quantity) => {
     const reportDay = parseInt(localStorage.getItem("reportDay"), 10) || 0; // 0-воскр, 6-суббота
     const data = _.cloneDeep(statisticData);
 
@@ -84,11 +103,11 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
         valueDate: endDate.format("YYYY-MM-DD"),
         valueDateForCreate: second_to_last_Date,
         dateForViewDaysInWeek: date_for_view_days_in_week,
-        value: 0,
+        value: null,
         isViewDays: false,
         correlationType: null,
       };
-    }).reverse();
+    });
 
     // Заполняем данные с правильным учетом недельных интервалов
     weeksArray.forEach((week) => {
@@ -110,59 +129,72 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
       );
 
       if (weekTotalPoint) {
-        week.value = parseFloat(weekTotalPoint.value) || 0;
+        week.value = parseFloat(weekTotalPoint.value) || null;
         week.id = weekTotalPoint.id;
         week.correlationType = "Неделя";
       } else {
-        week.value = weekPoints.reduce(
-          (sum, point) => sum + (parseFloat(point.value) || 0),
-          0
-        );
+        week.value = weekPoints.reduce((sum, point) => {
+          const pointValue = parseFloat(point.value);
+
+          if (isNaN(pointValue)) {
+            return sum; // пропускаем нечисловые значения
+          }
+
+          return sum === null ? pointValue : sum + pointValue;
+        }, null);
       }
     });
 
-    setDataSource(weeksArray);
+    setDataSource(
+      weeksArray.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate))
+    );
   };
 
   const countMonths = () => {
-    const monthsArray = _.cloneDeep(statisticData).map((item, index) => ({
-      id:
-        item?.id ??
-        `month-${index}-${dayjs()
-          .year(item.year)
-          .month(item.month - 1)
-          .format("YYYY-MM")}`,
-      value: item.total,
-      correlationType: item.correlationType,
-      valueDate: dayjs()
-        .year(item.year)
-        .month(item.month - 1)
-        .format("YYYY-MM"),
-      valueDateForCreate: dayjs()
-        .year(item.year)
-        .month(item.month - 1)
-        .day(15),
-    }));
+    const monthsArray = _.cloneDeep(statisticData)
+      .map((item, index) => {
+        const dateObj = dayjs(new Date(item.year, item.month - 1, 15));
+
+        return {
+          id: item?.id ?? `month-${index}-${dateObj.format("YYYY-MM")}`,
+          value: item.total,
+          correlationType: item.correlationType,
+          valueDate: dateObj.format("YYYY-MM"), // форматируем как строку
+          valueDateForCreate: dateObj, // оставляем как объект Day.js
+        };
+      })
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
+
     setDataSource(monthsArray);
   };
 
   const countYears = () => {
-    const yearsArray = _.cloneDeep(statisticData).map((item, index) => ({
-      id:
-        item?.id ?? `month-${index}-${dayjs().year(item.year).format("YYYY")}`,
-      value: item.total,
-      correlationType: item.correlationType,
-      valueDate: dayjs().year(item.year).format("YYYY"),
-      valueDateForCreate: dayjs().year(item.year).month(6).day(15),
-    }));
+    const yearsArray = _.cloneDeep(statisticData)
+      .map((item, index) => {
+        const dateObj = dayjs(new Date(item.year, 6, 15));
+
+        return {
+          id: item?.id ?? `year-${index}-${dateObj.format("YYYY")}`,
+          value: item.total,
+          correlationType: item.correlationType,
+          valueDate: dateObj.format("YYYY"),
+          valueDateForCreate: dateObj,
+        };
+      })
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
     setDataSource(yearsArray);
   };
 
   const countDays = () => {
+    setDataSource(
+      _.cloneDeep(statisticData).sort(
+        (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
+      )
+    );
+
     const baseId = Date.now();
     const startDate = dayjs(modalDatePoint).startOf("day");
 
-    // Создаем Set для быстрого поиска существующих дат
     const existingDates = new Set(
       statisticData
         ?.filter(
@@ -172,46 +204,28 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
           dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
         ) || []
     );
+
     const newData = Array(7)
       .fill()
       .map((_, i) => {
+        // Добавляем дни без учета временной зоны
         const date = startDate.subtract(i, "day").startOf("day");
+
         if (!date || !date.isValid?.()) {
-          // Проверка валидности
           console.error("Некорректная дата на шаге", i, date);
           return null;
         }
         return {
           id: baseId + i,
-          value: 0,
-          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
-          dateStr: date.format("YYYY-MM-DD"),
+          value: null,
+          valueDate: date.format("YYYY-MM-DD"),
         };
       })
-      .filter(Boolean) // Удаляем возможные null
-      .filter((item) => !existingDates.has(item.dateStr))
-      .map(({ dateStr, ...rest }) => rest)
-      .sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
+      .filter(Boolean)
+      .filter((item) => !existingDates.has(item.valueDate))
+      .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
-    setDataSource([...newData]);
-  };
-
-  const calculateInitialDate = () => {
-    const currentDate = localStorage.getItem("reportDay");
-    if (currentDate !== null) {
-      const targetDay = parseInt(currentDate, 10);
-      const today = new Date();
-      const todayDay = today.getDay();
-
-      let diff = todayDay - targetDay;
-      if (diff < 0) diff += 7;
-
-      const lastTargetDate = new Date(today);
-      lastTargetDate.setDate(today.getDate() - diff);
-
-      return lastTargetDate.toISOString().split("T")[0];
-    }
-    return modalDatePoint;
+    setDataSource((prev) => [...prev, ...newData]);
   };
 
   useEffect(() => {
@@ -300,101 +314,110 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
   }, [statisticData, modalDatePoint]);
 
   return (
-    <Modal
-      open={openModal}
-      onCancel={() => setOpenModal(false)}
-      closeIcon={<CloseOutlined />}
-      footer={null}
-      width="90%"
-      bodyStyle={{ height: "90vh" }}
-      style={{
-        top: "2vh",
-      }}
-    >
-      <Title level={4} style={{ color: "#3E7B94", textAlign: "center" }}>
-        {selectedStatistic?.name}
-      </Title>
+    <>
+      <HandlerQeury
+        Error={isErrorGetStatisticId}
+        Loading={isLoadingGetStatisticId}
+        Fetching={isFetchingGetStatisticId}
+      ></HandlerQeury>
 
-      <Flex
+      <Modal
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
+        closeIcon={<CloseOutlined />}
+        footer={null}
+        width="90%"
+        bodyStyle={{ height: "90vh" }}
         style={{
-          width: "100%",
-          height: "90%",
+          top: "2vh",
         }}
-        gap="small"
       >
-        {/* График - теперь первый элемент, растягивается на всё оставшееся пространство */}
+        <Title level={4} style={{ color: "#3E7B94", textAlign: "center" }}>
+          {selectedStatistic?.name}
+        </Title>
 
-        {/* График - центрируется */}
-        <div
-          style={{
-            flex: 1, // Занимает всё доступное пространство
-            display: "flex",
-            justifyContent: "center", // Центрирует по горизонтали
-            alignItems: "center", // Центрирует по вертикали (опционально)
-          }}
-        >
-          <Graphic
-            data={dataSource}
-            width={widthMap[chartType] || widthMap.default}
-          />
-        </div>
-
-        {/* Панель кнопок - сдвигается вправо */}
         <Flex
-          gap="middle"
-          vertical
-          justify="center"
+          style={{
+            width: "100%",
+            height: "90%",
+          }}
+          gap="small"
+        >
+          {/* График - теперь первый элемент, растягивается на всё оставшееся пространство */}
+
+          {/* График - центрируется */}
+          <div
+            style={{
+              flex: 1, // Занимает всё доступное пространство
+              display: "flex",
+              justifyContent: "center", // Центрирует по горизонтали
+              alignItems: "center", // Центрирует по вертикали (опционально)
+            }}
+          >
+            <Graphic
+              data={dataSource}
+              width={widthMap[chartType] || widthMap.default}
+              type={selectedStatistic?.type}
+            />
+          </div>
+
+          {/* Панель кнопок - сдвигается вправо */}
+          <Flex
+            gap="middle"
+            vertical
+            justify="center"
+            align="center"
+            style={{
+              marginLeft: "auto", // Это сдвигает блок вправо
+              padding: "0 16px",
+              borderLeft: "1px solid #f0f0f0", // Визуальное разделение
+              backgroundColor: "#fff",
+            }}
+          >
+            {typeViewStatistic.map((item) => (
+              <Tooltip title={item.tooltip} key={item.value} placement="left">
+                <Button
+                  type={chartType === item.value ? "primary" : "default"}
+                  onClick={() => setChartType(item.value)}
+                  icon={item?.icon}
+                  style={{
+                    width: "35px", // Одинаковая ширина для всех кнопок
+                  }}
+                >
+                  {item?.label}
+                </Button>
+              </Tooltip>
+            ))}
+          </Flex>
+        </Flex>
+
+        <Space
+          size="large"
           align="center"
           style={{
-            marginLeft: "auto", // Это сдвигает блок вправо
-            padding: "0 16px",
-            borderLeft: "1px solid #f0f0f0", // Визуальное разделение
-            backgroundColor: "#fff",
+            width: "100%",
+            justifyContent: "center",
           }}
         >
-          {typeViewStatistic.map((item) => (
-            <Tooltip title={item.tooltip} key={item.value} placement="left">
-              <Button
-                type={chartType === item.value ? "primary" : "default"}
-                onClick={() => setChartType(item.value)}
-                icon={item?.icon}
-                style={{
-                  width: "35px", // Одинаковая ширина для всех кнопок
-                }}
-              >
-                {item?.label}
-              </Button>
-            </Tooltip>
-          ))}
-        </Flex>
-      </Flex>
+          <Tooltip title="сдвигает график влево" placement="left">
+            <Button
+              icon={<LeftCircleOutlined />}
+              onClick={() => setClickArrow(["left", new Date()])}
+            />
+          </Tooltip>
 
-      <Space
-        size="large"
-        align="center"
-        style={{
-          width: "100%",
-          justifyContent: "center",
-        }}
-      >
-        <Tooltip title="сдвигает график влево" placement="left">
-          <Button
-            icon={<LeftCircleOutlined />}
-            onClick={() => setClickArrow(["left", new Date()])}
-          />
-        </Tooltip>
-
-        <Tooltip title="сдвигает график вправо" placement="right">
-          <Button
-            icon={<RightCircleOutlined />}
-            onClick={() => setClickArrow(["right", new Date()])}
-            style={{
-              marginRight: 50,
-            }}
-          />
-        </Tooltip>
-      </Space>
-    </Modal>
+          <Tooltip title="сдвигает график вправо" placement="right">
+            <Button
+              icon={<RightCircleOutlined />}
+              onClick={() => setClickArrow(["right", new Date()])}
+              style={{
+                marginRight: 50,
+              }}
+            />
+          </Tooltip>
+        </Space>
+      </Modal>
+    </>
   );
 };
 

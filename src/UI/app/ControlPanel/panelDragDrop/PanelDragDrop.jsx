@@ -1,25 +1,116 @@
-import React from "react";
+import React, { useState } from "react";
 import classes from "./PanelDragDrop.module.css";
-import setting from "@image/setting.svg";
-import exitModal from "@image/exitModal.svg";
+import { Button, Space, Typography, Popconfirm } from "antd";
+import { SettingOutlined, DeleteOutlined } from "@ant-design/icons";
+import ModalSetting from "../modalSetting/ModalSetting";
 
-export default function PanelDragDrop({ name, openSetting, onClick, deletePanel, isActive }) {
+const { Text } = Typography;
+
+export default function PanelDragDrop({
+  provided,
+  statistics,
+  datePoint,
+  updateControlPanel,
+  panel,
+  deleteFromIndexedDB,
+  deleteControlPanel,
+  reduxSelectedOrganizationId,
+  id,
+  name,
+  onClick,
+  isActive,
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  // отдельные состояния для кнопок
+  const [openSettingModal, setOpenSettingModal] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const removeControlPanel = async () => {
+    try {
+      await deleteControlPanel({ controlPanelId: id }).unwrap();
+
+      deleteFromIndexedDB(reduxSelectedOrganizationId, id)
+        .then(() => {
+          console.log(`Панель управления с id ${id} успешно удалена из IndexedDB.`);
+        })
+        .catch((error) => {
+          console.error("Ошибка при удалении из IndexedDB:", error);
+        });
+    } catch (error) {
+      console.error(
+        "Ошибка при удалении панели управления:",
+        JSON.stringify(error, null, 2)
+      );
+    }
+  };
+
+  const showActions = hovered || openSettingModal || confirmDeleteOpen;
+
   return (
-    <div data-tour="controlPanel" title={name} className={`${classes.block} ${isActive ? classes.active : ""}`} onClick = {onClick}>
-      <div className={classes.name}>
-        <span>{name}</span>
+    <>
+      <div
+       {...provided.dragHandleProps}
+        className={classes.div}
+        style={{
+          background: isActive ? "var(--primary)" : "var(--grey)",
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <Text
+          onClick={onClick}
+          ellipsis
+          style={{ color: "white", flex: 1, marginRight: 8 }}
+        >
+          {name}
+        </Text>
+
+        {showActions && (
+          <Space size={4}>
+            {/* Кнопка "Настройки" */}
+            <Button
+              type="text"
+              icon={<SettingOutlined style={{ color: "white" }} />}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenSettingModal(true);
+              }}
+            />
+
+            {/* Кнопка "Удалить" */}
+            <Popconfirm
+              title="Удалить панель"
+              description="Вы точно хотите удалить?"
+              open={confirmDeleteOpen}
+              onOpenChange={(visible) => setConfirmDeleteOpen(visible)}
+              onConfirm={removeControlPanel}
+              okText="Да"
+              cancelText="Нет"
+            >
+              <Button
+                type="text"
+                icon={<DeleteOutlined style={{ color: "white" }} />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setConfirmDeleteOpen(true);
+                }}
+              />
+            </Popconfirm>
+          </Space>
+        )}
       </div>
-      {
-        isActive ? <div className={classes.button}>
-        <img data-tour="setting-controlPanel" src={setting} alt="setting" onClick={(e) => {
-          openSetting();
-        }} />
-        <img data-tour="delete-controlPanel" src={exitModal} alt="exitModal" onClick= {(e) => {
-          deletePanel();
-        }}/>
-      </div>: null
-      }
-      
-    </div>
+
+      {/* Модалка настроек */}
+      {openSettingModal && (
+        <ModalSetting
+          statistics={statistics}
+          datePoint={datePoint}
+          currentControlPanel={panel}
+          updateControlPanel={updateControlPanel}
+          exit={() => setOpenSettingModal(false)}
+        />
+      )}
+    </>
   );
 }

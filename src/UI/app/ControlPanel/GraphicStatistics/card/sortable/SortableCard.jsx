@@ -19,14 +19,16 @@ const SortableCard = React.memo(({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style}>
       <CardStatistic
         name={item.name}
+        chartDirection={item.type}
         idStatistic={item.id}
-        data={[...item.statisticDatas]}
+        data={[...(item?.statisticDatas ?? [])]}
         datePoint={datePoint}
         setOpenModal={setOpenModal}
         setSelectedStatistic={setSelectedStatistic}
+         dragHandleProps={{ ...attributes, ...listeners }}
       />
     </div>
   );

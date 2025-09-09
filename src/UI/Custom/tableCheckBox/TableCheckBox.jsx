@@ -1,4 +1,3 @@
-import React from "react";
 import classes from "./TableCheckBox.module.css";
 
 export default function TableCheckBox({
@@ -9,6 +8,28 @@ export default function TableCheckBox({
   arrayCheked,
   handleChecboxChange,
 }) {
+
+  const checkedArray = array
+    ? array
+      .filter((a) => arrayCheked.includes(a.id))
+      .sort((a, b) => {
+        const aValue = a[arrayItem] || "";
+        const bValue = b[arrayItem] || "";
+        return aValue.localeCompare(bValue);
+      })
+    : [];
+
+  const uncheckedArray = array
+    ? array
+      .filter((a) => !arrayCheked.includes(a.id))
+      .sort((a, b) => {
+        const aValue = a[arrayItem] || "";
+        const bValue = b[arrayItem] || "";
+        return aValue.localeCompare(bValue);
+      })
+    : [];
+
+
   return (
     <table className={classes.table}>
       <thead>
@@ -20,7 +41,7 @@ export default function TableCheckBox({
       <tbody>
         <tr>
           <td>
-            {array?.map((item) => (
+            {checkedArray.map((item) => (
               <div
                 key={item.id}
                 className={classes.row}
@@ -30,6 +51,27 @@ export default function TableCheckBox({
                   <input
                     type="checkbox"
                     checked={arrayCheked.includes(item.id)}
+                    readOnly
+                  />
+                )}
+
+                {item[arrayItem]}
+              </div>
+            ))}
+          </td>
+
+          <td>
+            {uncheckedArray.map((item) => (
+              <div
+                key={item.id}
+                className={classes.row}
+                onClick={() => handleChecboxChange(item.id)}
+              >
+                {deleteInputCheckbox ? null : (
+                  <input
+                    type="checkbox"
+                    checked={arrayCheked.includes(item.id)}
+                    readOnly
                   />
                 )}
 
