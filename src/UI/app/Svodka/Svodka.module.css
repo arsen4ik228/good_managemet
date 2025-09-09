@@ -1,6 +1,6 @@
 .dialog {
     width: 100%;
-    max-width: calc(100vw - 80px);
+    min-width: 100vw;
 
     display: flex;
     flex-direction: column;
@@ -16,7 +16,9 @@
     position: relative;
 
     flex: 1 1 auto; /* растягиваем на доступное место */
+
     width: 100%;
+    min-width: 100vw;
 
     display: flex;
     flex-direction: column;
@@ -24,4 +26,10 @@
 
     padding: 10px;
     background-color: var(--white);
+}
+
+.activeCell {
+  outline: 2px solid #1890ff;
+  outline-offset: -2px;
+  border-radius: 2px;
 }

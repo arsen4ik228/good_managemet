@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
+
 import classes from "./Svodka.module.css";
-import Headers from "@Custom/Headers/Headers";
+import Header from "@Custom/Header/Header";
+
 import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
 import { useUpdateSvodka } from "@hooks";
-import { Table, Flex, Button, InputNumber, message } from "antd";
+import { Table, Flex, Button, InputNumber, message, Spin} from "antd";
 import _ from "lodash";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -93,6 +95,7 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
 const formatNumber = (num) => {
   return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
+
 // --- Компонент ---
 export default function Svodka() {
   const [allStatistics, setAllStatistics] = useState([]);
@@ -108,7 +111,7 @@ export default function Svodka() {
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  // --- Функция сохранения значения ячейки ---
+  // --- Сохранение значения ячейки ---
   const handleSaveCellValue = async ({
     rowId,
     colId,
@@ -187,6 +190,31 @@ export default function Svodka() {
     }
   };
 
+  // --- Навигация по ячейкам ---
+  const moveToCell = (rowId, colId, direction) => {
+    const rowIndex = tableData.findIndex((r) => r.id === rowId);
+    if (rowIndex === -1) return;
+
+    let newRow = rowIndex;
+    let newCol = colId;
+
+    if (direction === "right") newCol += 1;
+    if (direction === "left") newCol -= 1;
+    if (direction === "down") newRow += 1;
+    if (direction === "up") newRow -= 1;
+
+    if (newRow < 0 || newRow >= tableData.length) return;
+    const maxCols = week;
+    if (newCol < 0 || newCol >= maxCols) return;
+
+    const newRowId = tableData[newRow].id;
+    setEditingCell({
+      rowId: newRowId,
+      colId: newCol,
+      value: tableData[newRow][`week_${newCol}`]?.value ?? "",
+    });
+  };
+
   // --- Колонки таблицы ---
   const columns = useMemo(() => {
     if (!datePoint) return [];
@@ -234,51 +262,65 @@ export default function Svodka() {
           const isEditing =
             editingCell?.rowId === record.id && editingCell?.colId === index;
 
-          if (isEditing) {
-            const hasChanged = editingCell.value !== (cellValue ?? "");
+          const saveAndMove = (direction) => {
+            handleSaveCellValue({
+              ...editingCell,
+              originalValue: cellValue ?? "",
+            }).then(() => {
+              moveToCell(record.id, index, direction);
+            });
+          };
 
+          if (isEditing) {
             return (
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <Spin spinning={saving}>
                 <InputNumber
+                  controls={false}
                   autoFocus
                   value={editingCell.value === "" ? null : editingCell.value}
                   style={{ width: "100%" }}
                   decimalSeparator="."
                   onChange={(newVal) =>
-                    setEditingCell((prev) => ({
-                      ...prev,
-                      value: newVal ?? "",
-                    }))
+                    setEditingCell((prev) => ({ ...prev, value: newVal ?? "" }))
                   }
-                  onPressEnter={() =>
-                    hasChanged &&
+                  onBlur={() =>
                     handleSaveCellValue({
                       ...editingCell,
                       originalValue: cellValue ?? "",
                     })
                   }
-                />
-                {hasChanged && (
-                  <Button
-                    type="primary"
-                    size="small"
-                    loading={saving}
-                    onClick={() =>
-                      handleSaveCellValue({
-                        ...editingCell,
-                        originalValue: cellValue ?? "",
-                      })
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === "Tab") {
+                      e.preventDefault();
+                      saveAndMove("right");
+                    } else if (e.key === "ArrowRight") {
+                      e.preventDefault();
+                      saveAndMove("right");
+                    } else if (e.key === "ArrowLeft") {
+                      e.preventDefault();
+                      saveAndMove("left");
+                    } else if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      saveAndMove("up");
+                    } else if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      saveAndMove("down");
                     }
-                  >
-                    Сохранить
-                  </Button>
-                )}
-              </div>
+                  }}
+                />
+              </Spin>
             );
           }
 
           return (
             <div
+              onDoubleClick={() =>
+                setEditingCell({
+                  rowId: record.id,
+                  colId: index,
+                  value: cellValue ?? "",
+                })
+              }
               onClick={() =>
                 setEditingCell({
                   rowId: record.id,
@@ -289,15 +331,28 @@ export default function Svodka() {
               style={{
                 width: "100%",
                 height: "100%",
-                minHeight:"32px",
+                minHeight: "32px",
                 cursor: "pointer",
                 flex: 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                background:
+                  editingCell?.rowId === record.id &&
+                    editingCell?.colId === index
+                    ? "#e6f7ff"
+                    : "transparent",
               }}
             >
-              {cellValue == null ? "" : formatNumber(cellValue)}
+              {saving &&
+                editingCell?.rowId === record.id &&
+                editingCell?.colId === index ? (
+                <Spin size="small" />
+              ) : cellValue == null ? (
+                ""
+              ) : (
+                formatNumber(cellValue)
+              )}
             </div>
           );
         },
@@ -348,8 +403,7 @@ export default function Svodka() {
   return (
     <div className={classes.dialog}>
       {contextHolder}
-      <Headers name="сводка" />
-      <div className={classes.main}>
+      <Header name="сводка">
         <Flex gap="middle" justify="center">
           {countWeeks.map((item) => (
             <Button
@@ -361,16 +415,17 @@ export default function Svodka() {
             </Button>
           ))}
         </Flex>
-
+      </Header>
+      <div className={classes.main}>
         <Table
           columns={columns}
           dataSource={tableData}
           loading={isLoadingGetStatistics || isFetchingGetStatistics}
           pagination={false}
-          scroll={{ x: "max-content", y: "calc(100vh - 200px)" }} // подгоняем под высоту экрана
+          scroll={{ x: "max-content", y: "calc(100vh - 170px)" }}
           style={{ width: "100%", height: "100%" }}
         />
       </div>
     </div>
   );
-}
+} 
