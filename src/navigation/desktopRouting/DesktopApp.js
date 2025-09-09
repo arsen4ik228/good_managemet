@@ -15,6 +15,7 @@ import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
 import EditStatistic from "../../UI/layout/Statistics/EditStatistic";
+import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
@@ -421,7 +422,7 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <Post></Post>
+                    <MessageSelectingList></MessageSelectingList>
                   </React.Suspense>
                 }
               />
