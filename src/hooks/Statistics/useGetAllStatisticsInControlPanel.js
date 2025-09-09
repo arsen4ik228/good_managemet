@@ -3,6 +3,7 @@ import { useGetStatisticsInControlPanelQuery } from "@services/index";
 export const useGetAllStatisticsInControlPanel = ({
   selectedControlPanelId,
   datePoint,
+  statisticData
 } = {}) => {
   const {
     allStatistics = [],
@@ -11,7 +12,7 @@ export const useGetAllStatisticsInControlPanel = ({
     isErrorGetStatisticsInControlPanel,
     isFetchingGetStatisticsInControlPanel,
   } = useGetStatisticsInControlPanelQuery(
-    { selectedControlPanelId, datePoint },
+    { selectedControlPanelId, datePoint, statisticData },
     {
       selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
         allStatistics: data?.allStatistics || [],

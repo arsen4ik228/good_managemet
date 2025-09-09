@@ -121,8 +121,8 @@ export const statisticsApi = apiSlice.injectEndpoints({
     }),
 
     getStatisticsInControlPanel: build.query({
-      query: ({ selectedControlPanelId, pagination = 0, datePoint }) => ({
-        url: `statistics/${selectedControlPanelId}/statisticsInControlPanel?datePoint=${datePoint}`,
+      query: ({ selectedControlPanelId, datePoint, statisticData  }) => ({
+        url: `statistics/${selectedControlPanelId}/statisticsInControlPanel?datePoint=${datePoint}&statisticData=${statisticData}`,
       }),
 
       providesTags: [{ type: "StatisticsInControlPanel", id: "LIST" }],
