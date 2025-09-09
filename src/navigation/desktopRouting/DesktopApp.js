@@ -14,7 +14,7 @@ import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
-import EditStatistic from "../../UI/layout/Statistics/EditStatistic";
+import { EditStatistic } from "../../UI/layout/Statistics/EditStatistic";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -321,7 +321,7 @@ function DesktopApp() {
           />
 
           <Route
-            path="editStatistic"
+            path="editStatistic/:id"
             element={
               <React.Suspense
                 fallback={

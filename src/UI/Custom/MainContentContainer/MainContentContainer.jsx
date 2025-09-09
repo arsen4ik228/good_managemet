@@ -2,7 +2,7 @@ import React from 'react'
 import classes from './MainContentContainer.module.css'
 import { Button } from 'antd'
 
-export default function MainContentContainer({ buttons, children }) {
+export default function MainContentContainer({ component, buttons, children }) {
   return (
     <>
       <div className={classes.wrapper}>
@@ -12,6 +12,7 @@ export default function MainContentContainer({ buttons, children }) {
             {buttons?.map((item, index) => (
               <Button key={index} onClick={item.click}>{item.text}</Button>
             ))}
+            {component}
           </div>
         </div>
         <div className={classes.content}>

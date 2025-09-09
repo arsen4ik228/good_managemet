@@ -1,0 +1,18 @@
+.searchContainer {
+    margin-bottom: 16px;
+}
+
+.list {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.listItem {
+    overflow-y: auto;
+    cursor: pointer;
+    border-bottom: "1px solid #f0f0f0";
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+
