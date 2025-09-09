@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import classes from './LeftSider.module.css'
 import logo from '@image/big_logo.svg'
 import helper_icon from "@image/helper_icon.svg"
@@ -16,6 +16,9 @@ export default function LeftSIder() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
+
+    const [seacrhOrganizationsSectionsValue, setSearchOrganizationsSectionsValue] = useState()
+    const [searchContactsSectionsValue, setContactSectionsValue] = useState()
 
     const {
         organizations,
@@ -44,6 +47,30 @@ export default function LeftSIder() {
         navigate('createUser')
     }
 
+    const filtredOrganizations = useMemo(() => {
+        if (!seacrhOrganizationsSectionsValue?.trim()) {
+            return organizations; // Возвращаем все элементы если поиск пустой
+        }
+
+        const searchLower = seacrhOrganizationsSectionsValue?.toLowerCase();
+        return organizations.filter(item =>
+            item.organizationName.toLowerCase().includes(searchLower)
+        );
+    }, [seacrhOrganizationsSectionsValue]);
+
+    const filtredContacts = useMemo(() => {
+        if (!searchContactsSectionsValue?.trim()) {
+            return allChats; // Возвращаем все элементы если поиск пустой
+        }
+
+        const searchLower = searchContactsSectionsValue?.toLowerCase();
+        return allChats.filter(item =>
+            item.userFirstName.toLowerCase().includes(searchLower) ||
+            item.userLastName.toLowerCase().includes(searchLower) ||
+            item.postName.toLowerCase().includes(searchLower)
+        );
+    }, [searchContactsSectionsValue]);
+
 
     console.log(allChats)
 
@@ -51,7 +78,7 @@ export default function LeftSIder() {
         <>
             <div className={classes.wrapper}>
                 <div className={classes.header}>
-                    <img src={logo} alt="GOODMANAGEMENT" onClick={() => navigate('accountSettings')}/>
+                    <img src={logo} alt="GOODMANAGEMENT" onClick={() => navigate('accountSettings')} />
                     <div>GOODMANAGEMENT</div>
                 </div>
                 <div className={classes.content}>
@@ -59,9 +86,10 @@ export default function LeftSIder() {
                     <CustomList
                         title={'организации'}
                         addButtonText={'Новая организация'}
-                        
+                        searchValue={seacrhOrganizationsSectionsValue}
+                        searchFunc={setSearchOrganizationsSectionsValue}
                     >
-                        {organizations.map((item) => (
+                        {filtredOrganizations.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
                                     upperText={item.organizationName}
@@ -74,6 +102,8 @@ export default function LeftSIder() {
                         title={'контакты'}
                         addButtonText={'Новый контакт'}
                         addButtonClick={handlerCreateUser}
+                        searchValue={searchContactsSectionsValue}
+                        searchFunc={setContactSectionsValue}
                     >
                         <ListElem
                             icon={helper_icon}
@@ -82,7 +112,7 @@ export default function LeftSIder() {
                             clickFunc={handlerHelper}
                         />
 
-                        {allChats?.map((item) => (
+                        {filtredContacts?.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
                                     upperText={item.userFirstName + ' ' + item.userLastName}

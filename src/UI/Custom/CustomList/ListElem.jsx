@@ -1,11 +1,16 @@
 import React from 'react'
 import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
+import { useFindPathSegment } from '@helpers/helpers'
+import { useNavigate } from 'react-router-dom';
 
-export default function ListElem({ icon, upperText, bottomText, bage }) {
+export default function ListElem({ icon, upperText, bottomText, bage, linkSegment, clickFunc }) {
+
+    const isSelected = useFindPathSegment(linkSegment)
+
     return (
         <>
-            <div className={classes.content}>
+            <div className={`${classes.content} ${isSelected && classes.selected}`} onClick={() => clickFunc()}>
                 <div className={classes.imgContainer}>
                     <img src={icon ?? avatar} alt="avatar" />
                 </div>
