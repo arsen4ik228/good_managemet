@@ -1,5 +1,5 @@
 .textArea {
-    width: 700px;
+    width: 690px;
     overflow: hidden;
     min-height: 150px;
     background-color: #ffff;
@@ -37,4 +37,24 @@
 
 .textColor {
     color: var(--grey);
+}
+
+.main{
+    position: relative;
+    
+    >div{
+        position: absolute;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 18px;
+
+    }
+}
+
+.title{
+    padding-top: 140px;
 }

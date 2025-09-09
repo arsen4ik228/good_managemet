@@ -6,6 +6,15 @@ import ErrorPage from "@app/ErrorPage/ErrorPage";
 
 import { ConfigProvider } from "antd";
 import ruRU from "antd/locale/ru_RU";
+import ApplicationContainer from "../../UI/layout/ApplicationContainer/ApplicationContainer";
+import HelperChat from "../../UI/layout/HelperChat/HelperChat";
+import Goal from "../../UI/layout/Goal/Goal";
+import User from "../../UI/layout/CreateUser/User";
+import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
+import EditGoal from "../../UI/layout/Goal/EditGoal";
+import Statistic from "../../UI/layout/Statistics/Statistic";
+import Post from "../../UI/layout/Posts/Post";
+import EditStatistic from "../../UI/layout/Statistics/EditStatistic";
 
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
@@ -17,17 +26,17 @@ const Chat = React.lazy(() => import("@app/Chat/Chat"));
 
 const Pomoshnik = React.lazy(() => import("@app/Pomoshnik/Pomoshnik"));
 const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
-const User = React.lazy(() => import("@app/UserPage/User"));
-const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
+// const User = React.lazy(() => import("@app/UserPage/User"));
+// const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
 const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
-const Statistic = React.lazy(() => import("@app/StatisticsPage/Statistic"));
+// const Statistic = React.lazy(() => import("@app/StatisticsPage/Statistic"));
 const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
 const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
 const ProjectWithProgramm = React.lazy(() =>
   import("@app/Project/desktop/Main")
 );
-const Post = React.lazy(() => import("@app/PostPage/Post"));
+// const Post = React.lazy(() => import("@app/PostPage/Post"));
 const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
 const WorkingPlan = React.lazy(() =>
   import("@app/WorkingPlanPage/MainWorkingPlan")
@@ -44,9 +53,9 @@ const DesktopConvertsPage = React.lazy(() =>
 
 const DialogPage = React.lazy(() => import("@app/DialogPage/DialogPage.jsx"));
 
-const SettingsPage = React.lazy(() =>
-  import("@app/SettingsPage/desktop/SettingsPage.jsx")
-);
+// const SettingsPage = React.lazy(() =>
+//   import("@app/SettingsPage/desktop/SettingsPage.jsx")
+// );
 const WatcherDialogPage = React.lazy(() =>
   import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
 );
@@ -253,6 +262,172 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+          {/* edit */}
+          <Route
+            path="editGoal"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <EditGoal />
+              </React.Suspense>
+            }
+          />
+
+          <Route
+            path="editPolicy"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <>policy edit</>
+              </React.Suspense>
+            }
+          />
+
+          <Route
+            path="editStatistic"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <EditStatistic />
+              </React.Suspense>
+            }
+          />
+          {/* edit */}
+
+
+          <Route
+            path="/new/*"
+            element={<ApplicationContainer></ApplicationContainer>}
+          >
+
+            <Route
+              path="createUser"
+              element={
+                <React.Suspense
+                  fallback={
+                    <div className="lazy">
+                      <HandlerMutation Loading={true} />
+                    </div>
+                  }
+                >
+                  <User />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="accountSettings"
+              element={
+                <React.Suspense
+                  fallback={
+                    <div className="lazy">
+                      <HandlerMutation Loading={true} />
+                    </div>
+                  }
+                >
+                  <SettingsPage />
+                </React.Suspense>
+              }
+            />
+
+            {/* helper */}
+            <Route path="helper">
+              {/* Основной маршрут helper */}
+              <Route
+                index
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <HelperChat />
+                  </React.Suspense>
+                }
+              />
+
+              {/* Вложенный маршрут helper/goal */}
+              <Route
+                path="goal"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Goal />
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="policy"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <>policy</>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="statistics"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Statistic></Statistic>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="posts"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Post></Post>
+                  </React.Suspense>
+                }
+              />
+
+
+            </Route>
+            {/* //helper */}
+
+          </Route>
         </Routes>
       </ConfigProvider>
     </div>

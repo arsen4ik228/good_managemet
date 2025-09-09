@@ -1,12 +1,14 @@
-import {userId} from './constants'
+import React from 'react';
+import { userId } from './constants'
+import { useLocation } from 'react-router-dom';
 
 export const formattedDate = (date) => {
-  if (!date) return ''; 
-  
+  if (!date) return '';
+
   return date.slice(0, 10)
     .split('-')
     .reverse()
-    .map((part, index) => index === 2 ? part.slice(-2) : part) 
+    .map((part, index) => index === 2 ? part.slice(-2) : part)
     .join('.');
 }
 
@@ -116,21 +118,21 @@ export function extractHoursMinutes(timestamp) {
 }
 
 export const getPostIdRecipientSocketMessage = (host, recepient) => {
-  if(!notEmpty(host) || !notEmpty(recepient)) return
+  if (!notEmpty(host) || !notEmpty(recepient)) return
 
   const hostUserID = host.user.id
   const recepientUserId = recepient.user.id
 
   const userParticipantOfAgreement = userId !== hostUserID && userId !== recepientUserId
-  if(userParticipantOfAgreement || userId === recepientUserId)
+  if (userParticipantOfAgreement || userId === recepientUserId)
     return host.id
 
-  if(userId === hostUserID)
+  if (userId === hostUserID)
     return recepient.id
 }
 
 export const transformToString = (arr) => {
-  let string = '' 
+  let string = ''
   arr.forEach(element => {
     string += `${element} \n\n`
   });
@@ -138,13 +140,69 @@ export const transformToString = (arr) => {
 }
 
 
+
 export const compareStringArray = (arr1, arr2) => {
 
   if (arr1.length !== arr2.length) return true
 
-  for(let i=0; i < arr1.length; i++){
-    if(arr1[i] !== arr2[i]){
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
       return true
     }
   }
 }
+
+
+export const useFindPathSegment = (link) => {
+  const location = useLocation();
+  const pathParts = location.pathname.split('/').filter(Boolean);
+
+  if (link)
+    return pathParts.find(segment => segment === link);
+};
+
+export const findSelectedChild = (children, selectedItemId) => {
+  if (!children || !selectedItemId) return null;
+
+  const findInChildren = (child) => {
+    // Проверяем, есть ли у элемента props с идентификатором
+    if (child.props && child.props.id === selectedItemId) {
+      return child;
+    }
+
+    // Если это React Fragment, ищем в его детях
+    if (child.type === React.Fragment && child.props.children) {
+      const fragmentChildren = Array.isArray(child.props.children)
+        ? child.props.children
+        : [child.props.children];
+
+      for (const fragmentChild of fragmentChildren) {
+        const found = findInChildren(fragmentChild);
+        if (found) return found;
+      }
+    }
+
+    // Рекурсивно проверяем детей
+    if (child.props && child.props.children) {
+      const nestedChildren = Array.isArray(child.props.children)
+        ? child.props.children
+        : [child.props.children];
+
+      for (const nestedChild of nestedChildren) {
+        const found = findInChildren(nestedChild);
+        if (found) return found;
+      }
+    }
+
+    return null;
+  };
+
+  const childrenArray = Array.isArray(children) ? children : [children];
+
+  for (const child of childrenArray) {
+    const found = findInChildren(child);
+    if (found) return found;
+  }
+
+  return null;
+};
