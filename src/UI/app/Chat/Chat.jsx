@@ -103,6 +103,13 @@ export default function Chat() {
         <img src={iconHeader} alt="iconHeader" />
         <span>Личный помощник</span>
       </button>
+      <button
+        className={classes.btnPomoshnik}
+        onClick={() => navigate('/new/helper')}
+      >
+        <img src={iconHeader} alt="iconHeader" />
+        <span>Новый интерфейс</span>
+      </button>
       <div className={classes.orgHeader}>
         <div className={classes.orgHeaderName}>организации</div>
         <div className={classes.dropdown}
