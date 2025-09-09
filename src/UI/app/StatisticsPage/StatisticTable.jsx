@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classes from "./StatisticTable.module.css";
 
 import {
@@ -36,6 +36,9 @@ export default function StatisticTable({
   createCorellationPoints,
   setCreateCorellationPoints,
 }) {
+  const [editingRow, setEditingRow] = useState(null);
+  const inputRef = useRef(null);
+
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
 
@@ -165,9 +168,9 @@ export default function StatisticTable({
               prevData.map((item) =>
                 item.id === record.id
                   ? {
-                      ...item,
-                      valueDate: date ? date.toISOString() : null, // Сохраняем как ISO
-                    }
+                    ...item,
+                    valueDate: date ? date.toISOString() : null, // Сохраняем как ISO
+                  }
                   : item
               )
             );
@@ -205,10 +208,10 @@ export default function StatisticTable({
               prevData.map((item) =>
                 item.id === record.id
                   ? {
-                      ...item,
-                      value: value,
-                      ...(value !== record.value ? { isChanged: true } : {}),
-                    }
+                    ...item,
+                    value: value,
+                    ...(value !== record.value ? { isChanged: true } : {}),
+                  }
                   : item
               )
             );
@@ -245,9 +248,9 @@ export default function StatisticTable({
               prevData.map((item) =>
                 item.id === record.id
                   ? {
-                      ...item,
-                      valueDate: date ? date.toISOString() : null, // Сохраняем как ISO
-                    }
+                    ...item,
+                    valueDate: date ? date.toISOString() : null, // Сохраняем как ISO
+                  }
                   : item
               )
             );
@@ -259,21 +262,129 @@ export default function StatisticTable({
     },
   ];
 
+
+
   const columnsDataSourceWeek = [
     {
       title: "Значение",
       dataIndex: "value",
-      render: (text, record) => (
-        <InputNumber
-          value={text}
-          disabled
-          style={{ width: "100%" }}
-          formatter={(value) => {
-            if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-          }}
-        />
-      ),
+      render: (text, record) => {
+        const isEditing = editingRow === record.id;
+
+        return isEditing ? (
+
+          <Flex gap="small" justify="center" align="center" ref={inputRef}>
+
+            {record.correlationType ? (
+              <InputNumber
+                value={record.value}
+                onChange={(value) => {
+                  setDataSource((prevData) =>
+                    prevData.map((item) =>
+                      item.id === record.id
+                        ? {
+                          ...item,
+                          value: value,
+                          ...(value !== record.value
+                            ? { isChanged: true }
+                            : {}),
+                        }
+                        : item
+                    )
+                  );
+
+                }}
+                style={{ width: "100%" }}
+                min={undefined}
+                decimalSeparator="."
+                formatter={(value) => {
+                  if (value === undefined || value === null) return "";
+                  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                }}
+                parser={(value) => {
+                  if (value == null || value === "") return null;
+
+                  const cleanValue = value.toString().replace(/[\s,]/g, "");
+                  if (cleanValue === "") return null;
+
+                  const numericValue = parseFloat(cleanValue);
+                  return isNaN(numericValue) ? null : numericValue;
+                }}
+              />) : (
+              <InputNumber
+                style={{ width: "100%" }}
+                value={
+                  createCorellationPoints.find(
+                    (item) => item.id === record.id
+                  )?.value || record.value
+                }
+                onChange={(value) => {
+                  setCreateCorellationPoints((prevData) => {
+                    const exists = prevData.some(
+                      (item) => item.id === record.id
+                    );
+                    if (exists) {
+                      return prevData.map((item) =>
+                        item.id === record.id
+                          ? {
+                            ...item,
+                            value: value,
+                          }
+                          : item
+                      );
+                    }
+                    return [
+                      ...prevData,
+                      {
+                        id: record.id,
+                        value: value,
+                        valueDate: record.valueDateForCreate,
+                        correlationType: "Неделя",
+                      },
+                    ];
+                  });
+
+                }}
+                min={undefined}
+                precision={2}
+                decimalSeparator="."
+                formatter={(value) => {
+                  if (value === undefined || value === null) return "";
+                  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                }}
+                parser={(value) => {
+                  if (value == null || value === "") return null;
+
+                  const cleanValue = value.toString().replace(/[\s,]/g, "");
+                  if (cleanValue === "") return null;
+
+                  const numericValue = parseFloat(cleanValue);
+                  return isNaN(numericValue) ? null : numericValue;
+                }}
+              />
+            )
+            }
+
+          </Flex>
+
+        ) : (
+          <div
+            onDoubleClick={() => setEditingRow(record.id)}
+            style={{ cursor: "pointer", width: "100%", height:"32px"}}
+          >
+            {(() => {
+              const point = createCorellationPoints.find((item) => item.id === record.id);
+
+              const val = point ? point.value : record.value;
+
+              return val !== null && val !== undefined && val !== ""
+                ? `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                : "";
+            })()}
+
+          </div>
+        );
+      },
     },
 
     {
@@ -301,192 +412,130 @@ export default function StatisticTable({
       ),
     },
 
-    {
-      title: "Кор.число",
-      dataIndex: "correlationType",
-      align: "center",
-      render: (_, record) => (
-        <div className={classes.container}>
-          {record.correlationType ? (
-            <Popover
-              placement="rightBottom"
-              title="Установленно коррекционное число"
-              content={
-                <Flex gap="small" justify="center" align="center">
-                  <InputNumber
-                    value={record.value}
-                    onChange={(value) => {
-                      setDataSource((prevData) =>
-                        prevData.map((item) =>
-                          item.id === record.id
-                            ? {
-                                ...item,
-                                value: value,
-                                ...(value !== record.value
-                                  ? { isChanged: true }
-                                  : {}),
-                              }
-                            : item
-                        )
-                      );
-                    }}
-                    style={{ width: "100%" }}
-                    min={undefined}
-                    decimalSeparator="."
-                    formatter={(value) => {
-                      if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    }}
-                    parser={(value) => {
-                      if (value == null || value === "") return null;
 
-                      const cleanValue = value.toString().replace(/[\s,]/g, "");
-                      if (cleanValue === "") return null;
-
-                      const numericValue = parseFloat(cleanValue);
-                      return isNaN(numericValue) ? null : numericValue;
-                    }}
-                  />
-                  <Tooltip
-                    title="удалить коррекционное число"
-                    placement="right"
-                  >
-                    <Button
-                      type="text"
-                      danger
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        setDataSource((prevData) =>
-                          prevData.map((item) =>
-                            item.id === record.id
-                              ? {
-                                  ...item,
-                                  value: null,
-                                  correlationType: null,
-                                  isChanged: true,
-                                }
-                              : item
-                          )
-                        );
-                      }}
-                    />
-                  </Tooltip>
-                </Flex>
-              }
-            >
-              <Button type="text" icon={<AliwangwangOutlined />} />
-            </Popover>
-          ) : (
-            <Popover
-              placement="rightBottom"
-              title="Коррекционное число"
-              content={
-                <Flex gap="small" justify="center" align="center">
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    value={
-                      createCorellationPoints.find(
-                        (item) => item.id === record.id
-                      )?.value || null
-                    }
-                    onChange={(value) => {
-                      setCreateCorellationPoints((prevData) => {
-                        const exists = prevData.some(
-                          (item) => item.id === record.id
-                        );
-                        if (exists) {
-                          return prevData.map((item) =>
-                            item.id === record.id
-                              ? {
-                                  ...item,
-                                  value: value,
-                                }
-                              : item
-                          );
-                        }
-                        return [
-                          ...prevData,
-                          {
-                            id: record.id,
-                            value: value,
-                            valueDate: record.valueDateForCreate,
-                            correlationType: "Неделя",
-                          },
-                        ];
-                      });
-                    }}
-                    min={undefined}
-                    precision={2}
-                    decimalSeparator="."
-                    formatter={(value) => {
-                      if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    }}
-                    parser={(value) => {
-                      if (value == null || value === "") return null;
-
-                      const cleanValue = value.toString().replace(/[\s,]/g, "");
-                      if (cleanValue === "") return null;
-
-                      const numericValue = parseFloat(cleanValue);
-                      return isNaN(numericValue) ? null : numericValue;
-                    }}
-                  />
-
-                  {createCorellationPoints.find(
-                    (item) => item.id === record.id
-                  ) ? (
-                    <Tooltip
-                      title="удалить коррекционное число"
-                      placement="right"
-                    >
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => {
-                          setCreateCorellationPoints((prevData) =>
-                            prevData.filter((item) => item.id !== record.id)
-                          );
-                        }}
-                      />
-                    </Tooltip>
-                  ) : null}
-                </Flex>
-              }
-            >
-              <Button
-                style={{ width: "80px", height: "50px" }}
-                type="text"
-                icon={<AliwangwangOutlined style={{ color: "#8c8c8c" }} />}
-                className={
-                  createCorellationPoints.find((item) => item.id === record.id)
-                    ? ""
-                    : classes.hiddenButton
-                }
-              />
-            </Popover>
-          )}
-        </div>
-      ),
-    },
   ];
 
   const columnsDataSourceMonth = [
     {
       title: "Значение",
       dataIndex: "value",
-      render: (text, record) => (
-        <InputNumber
-          value={text}
-          disabled
-          style={{ width: "100%" }}
-          formatter={(value) => {
-            if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-          }}
-        />
-      ),
+      render: (text, record) => {
+        const isEditing = editingRow === record.id;
+
+        return isEditing ? (
+
+          <Flex gap="small" justify="center" align="center" ref={inputRef}>
+
+            {record.correlationType ? (
+              <InputNumber
+                value={record.value}
+                onChange={(value) => {
+                  setDataSource((prevData) =>
+                    prevData.map((item) =>
+                      item.id === record.id
+                        ? {
+                          ...item,
+                          value: value,
+                          ...(value !== record.value
+                            ? { isChanged: true }
+                            : {}),
+                        }
+                        : item
+                    )
+                  );
+
+                }}
+                style={{ width: "100%" }}
+                min={undefined}
+                decimalSeparator="."
+                formatter={(value) => {
+                  if (value === undefined || value === null) return "";
+                  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                }}
+                parser={(value) => {
+                  if (value == null || value === "") return null;
+
+                  const cleanValue = value.toString().replace(/[\s,]/g, "");
+                  if (cleanValue === "") return null;
+
+                  const numericValue = parseFloat(cleanValue);
+                  return isNaN(numericValue) ? null : numericValue;
+                }}
+              />) : (
+              <InputNumber
+                style={{ width: "100%" }}
+                value={
+                  createCorellationPoints.find(
+                    (item) => item.id === record.id
+                  )?.value || record.value
+                }
+                onChange={(value) => {
+                  setCreateCorellationPoints((prevData) => {
+                    const exists = prevData.some(
+                      (item) => item.id === record.id
+                    );
+                    if (exists) {
+                      return prevData.map((item) =>
+                        item.id === record.id
+                          ? {
+                            ...item,
+                            value: value,
+                          }
+                          : item
+                      );
+                    }
+                    return [
+                      ...prevData,
+                      {
+                        id: record.id,
+                        value: value,
+                        valueDate: record.valueDateForCreate,
+                        correlationType: "Месяц",
+                      },
+                    ];
+                  });
+
+                }}
+                min={undefined}
+                precision={2}
+                decimalSeparator="."
+                formatter={(value) => {
+                  if (value === undefined || value === null) return "";
+                  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                }}
+                parser={(value) => {
+                  if (value == null || value === "") return null;
+
+                  const cleanValue = value.toString().replace(/[\s,]/g, "");
+                  if (cleanValue === "") return null;
+
+                  const numericValue = parseFloat(cleanValue);
+                  return isNaN(numericValue) ? null : numericValue;
+                }}
+              />
+            )
+            }
+
+          </Flex>
+
+        ) : (
+          <div
+            onDoubleClick={() => setEditingRow(record.id)}
+            style={{ cursor: "pointer", width: "100%", height:"32px" }}
+          >
+            {(() => {
+              const point = createCorellationPoints.find((item) => item.id === record.id);
+
+              const val = point ? point.value : record.value;
+
+              return val !== null && val !== undefined && val !== ""
+                ? `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                : "";
+            })()}
+
+          </div>
+        );
+      },
     },
 
     {
@@ -502,377 +551,142 @@ export default function StatisticTable({
       ),
     },
 
-    {
-      title: "Кор.число",
-      dataIndex: "correlationType",
-      align: "center",
-      render: (_, record) => (
-        <div className={classes.container}>
-          {record.correlationType ? (
-            <Popover
-              placement="rightBottom"
-              title="Установленно коррекционное число"
-              content={
-                <Flex gap="small" justify="center" align="center">
-                  <InputNumber
-                    value={record.value}
-                    onChange={(value) => {
-                      setDataSource((prevData) =>
-                        prevData.map((item) =>
-                          item.id === record.id
-                            ? {
-                                ...item,
-                                value: value,
-                                ...(value !== record.value
-                                  ? { isChanged: true }
-                                  : {}),
-                              }
-                            : item
-                        )
-                      );
-                    }}
-                    style={{ width: "100%" }}
-                    min={undefined}
-                    decimalSeparator="."
-                    formatter={(value) => {
-                      if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    }}
-                    parser={(value) => {
-                      if (value == null || value === "") return null;
 
-                      const cleanValue = value.toString().replace(/[\s,]/g, "");
-                      if (cleanValue === "") return null;
-
-                      const numericValue = parseFloat(cleanValue);
-                      return isNaN(numericValue) ? null : numericValue;
-                    }}
-                  />
-                  <Tooltip
-                    title="удалить коррекционное число"
-                    placement="right"
-                  >
-                    <Button
-                      type="text"
-                      danger
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        setDataSource((prevData) =>
-                          prevData.map((item) =>
-                            item.id === record.id
-                              ? {
-                                  ...item,
-                                  value: null,
-                                  correlationType: null,
-                                  isChanged: true,
-                                }
-                              : item
-                          )
-                        );
-                      }}
-                    />
-                  </Tooltip>
-                </Flex>
-              }
-            >
-              <Button
-                style={{ width: "80px", height: "50px" }}
-                type="text"
-                icon={<AliwangwangOutlined />}
-              />
-            </Popover>
-          ) : (
-            <Popover
-              placement="rightBottom"
-              title="Коррекционное число"
-              content={
-                <Flex gap="small" justify="center" align="center">
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    value={
-                      createCorellationPoints.find(
-                        (item) => item.id === record.id
-                      )?.value || null
-                    }
-                    onChange={(value) => {
-                      setCreateCorellationPoints((prevData) => {
-                        const exists = prevData.some(
-                          (item) => item.id === record.id
-                        );
-                        if (exists) {
-                          return prevData.map((item) =>
-                            item.id === record.id
-                              ? {
-                                  ...item,
-                                  value: value,
-                                }
-                              : item
-                          );
-                        }
-                        return [
-                          ...prevData,
-                          {
-                            id: record.id,
-                            value: value,
-                            valueDate: record.valueDateForCreate,
-                            correlationType: "Месяц",
-                          },
-                        ];
-                      });
-                    }}
-                    min={undefined}
-                    precision={2}
-                    decimalSeparator="."
-                    formatter={(value) => {
-                      if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    }}
-                    parser={(value) => {
-                      if (value == null || value === "") return null;
-
-                      const cleanValue = value.toString().replace(/[\s,]/g, "");
-                      if (cleanValue === "") return null;
-
-                      const numericValue = parseFloat(cleanValue);
-                      return isNaN(numericValue) ? null : numericValue;
-                    }}
-                  />
-
-                  {createCorellationPoints.find(
-                    (item) => item.id === record.id
-                  ) ? (
-                    <Tooltip
-                      title="удалить коррекционное число"
-                      placement="right"
-                    >
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => {
-                          setCreateCorellationPoints((prevData) =>
-                            prevData.filter((item) => item.id !== record.id)
-                          );
-                        }}
-                      />
-                    </Tooltip>
-                  ) : null}
-                </Flex>
-              }
-            >
-              <Button
-                style={{ width: "80px", height: "50px" }}
-                type="text"
-                icon={<AliwangwangOutlined style={{ color: "#8c8c8c" }} />}
-                className={
-                  createCorellationPoints.find((item) => item.id === record.id)
-                    ? ""
-                    : classes.hiddenButton
-                }
-              />
-            </Popover>
-          )}
-        </div>
-      ),
-    },
   ];
 
   const columnsDataSourceYear = [
     {
       title: "Значение",
       dataIndex: "value",
-      render: (text, record) => (
-        <InputNumber
-          value={text}
-          disabled
-          style={{ width: "100%" }}
-          formatter={(value) => {
-            if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-          }}
-        />
-      ),
+      render: (text, record) => {
+
+        const isEditing = editingRow === record.id;
+
+        return isEditing ? (
+          <Flex gap="small" justify="center" align="center" ref={inputRef}>
+            {record.correlationType ? (
+              <InputNumber
+                value={record.value}
+                onChange={(value) => {
+                  setDataSource((prevData) =>
+                    prevData.map((item) =>
+                      item.id === record.id
+                        ? {
+                          ...item,
+                          value: value,
+                          ...(value !== record.value
+                            ? { isChanged: true }
+                            : {}),
+                        }
+                        : item
+                    )
+                  );
+
+                }}
+                style={{ width: "100%" }}
+                min={undefined}
+                decimalSeparator="."
+                formatter={(value) => {
+                  if (value === undefined || value === null) return "";
+                  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                }}
+                parser={(value) => {
+                  if (value == null || value === "") return null;
+
+                  const cleanValue = value.toString().replace(/[\s,]/g, "");
+                  if (cleanValue === "") return null;
+
+                  const numericValue = parseFloat(cleanValue);
+                  return isNaN(numericValue) ? null : numericValue;
+                }}
+              />) : (
+              <InputNumber
+                style={{ width: "100%" }}
+                value={
+                  createCorellationPoints.find(
+                    (item) => item.id === record.id
+                  )?.value || record.value
+                }
+                onChange={(value) => {
+                  setCreateCorellationPoints((prevData) => {
+
+                    const exists = prevData.some(
+                      (item) => item.id === record.id
+                    );
+
+                    if (exists) {
+                      return prevData.map((item) =>
+                        item.id === record.id
+                          ? {
+                            ...item,
+                            value: value,
+                          }
+                          : item
+                      );
+                    }
+                    return [
+                      ...prevData,
+                      {
+                        id: record.id,
+                        value: value,
+                        valueDate: record.valueDateForCreate,
+                        correlationType: "Год",
+                      },
+                    ];
+                  });
+
+                }}
+                min={undefined}
+                precision={2}
+                decimalSeparator="."
+                formatter={(value) => {
+                  if (value === undefined || value === null) return "";
+                  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                }}
+                parser={(value) => {
+                  if (value == null || value === "") return null;
+
+                  const cleanValue = value.toString().replace(/[\s,]/g, "");
+                  if (cleanValue === "") return null;
+
+                  const numericValue = parseFloat(cleanValue);
+                  return isNaN(numericValue) ? null : numericValue;
+                }}
+              />
+            )
+            }
+          </Flex>
+        ) : (
+          <div
+            onDoubleClick={() => setEditingRow(record.id)}
+            style={{ cursor: "pointer", width: "100%", height:"32px" }}
+          >
+            {(() => {
+              const point = createCorellationPoints.find((item) => item.id === record.id);
+
+              const val = point ? point.value : record.value;
+
+              return val !== null && val !== undefined && val !== ""
+                ? `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+                : "";
+            })()}
+
+          </div>
+
+        );
+      },
     },
 
     {
       title: "Год",
       dataIndex: "valueDate",
-      render: (text, record) => (
+      render: (text) => (
         <DatePicker
-          value={text ? dayjs(text) : null} // Парсим ISO строку
+          value={text ? dayjs(text) : null}
           disabled
-          format="YYYY" // Отображаем в удобном формате
+          format="YYYY"
           style={{ width: "100%" }}
         />
-      ),
-    },
-
-    {
-      title: "Кор.число",
-      dataIndex: "correlationType",
-      align: "center",
-      render: (_, record) => (
-        <div className={classes.container}>
-          {record.correlationType ? (
-            <Popover
-              placement="rightBottom"
-              title="Установленно коррекционное число"
-              content={
-                <Flex gap="small" justify="center" align="center">
-                  <InputNumber
-                    value={record.value}
-                    onChange={(value) => {
-                      setDataSource((prevData) =>
-                        prevData.map((item) =>
-                          item.id === record.id
-                            ? {
-                                ...item,
-                                value: value,
-                                ...(value !== record.value
-                                  ? { isChanged: true }
-                                  : {}),
-                              }
-                            : item
-                        )
-                      );
-                    }}
-                    style={{ width: "100%" }}
-                    min={undefined}
-                    decimalSeparator="."
-                    formatter={(value) => {
-                      if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    }}
-                    parser={(value) => {
-                      if (value == null || value === "") return null;
-
-                      const cleanValue = value.toString().replace(/[\s,]/g, "");
-                      if (cleanValue === "") return null;
-
-                      const numericValue = parseFloat(cleanValue);
-                      return isNaN(numericValue) ? null : numericValue;
-                    }}
-                  />
-                  <Tooltip
-                    title="удалить коррекционное число"
-                    placement="right"
-                  >
-                    <Button
-                      type="text"
-                      danger
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        setDataSource((prevData) =>
-                          prevData.map((item) =>
-                            item.id === record.id
-                              ? {
-                                  ...item,
-                                  value: null,
-                                  correlationType: null,
-                                  isChanged: true,
-                                }
-                              : item
-                          )
-                        );
-                      }}
-                    />
-                  </Tooltip>
-                </Flex>
-              }
-            >
-              <Button type="text" icon={<AliwangwangOutlined />} />
-            </Popover>
-          ) : (
-            <Popover
-              placement="rightBottom"
-              title="Коррекционное число"
-              content={
-                <Flex gap="small" justify="center" align="center">
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    value={
-                      createCorellationPoints.find(
-                        (item) => item.id === record.id
-                      )?.value || null
-                    }
-                    onChange={(value) => {
-                      setCreateCorellationPoints((prevData) => {
-                        const exists = prevData.some(
-                          (item) => item.id === record.id
-                        );
-                        if (exists) {
-                          return prevData.map((item) =>
-                            item.id === record.id
-                              ? {
-                                  ...item,
-                                  value: value,
-                                }
-                              : item
-                          );
-                        }
-                        return [
-                          ...prevData,
-                          {
-                            id: record.id,
-                            value: value,
-                            valueDate: record.valueDateForCreate,
-                            correlationType: "Год",
-                          },
-                        ];
-                      });
-                    }}
-                    min={undefined}
-                    precision={2}
-                    decimalSeparator="."
-                    formatter={(value) => {
-                      if (value === undefined || value === null) return "";
-                      return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    }}
-                    parser={(value) => {
-                      if (value == null || value === "") return null;
-
-                      const cleanValue = value.toString().replace(/[\s,]/g, "");
-                      if (cleanValue === "") return null;
-
-                      const numericValue = parseFloat(cleanValue);
-                      return isNaN(numericValue) ? null : numericValue;
-                    }}
-                  />
-                  {createCorellationPoints.find(
-                    (item) => item.id === record.id
-                  ) ? (
-                    <Tooltip
-                      title="удалить коррекционное число"
-                      placement="right"
-                    >
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => {
-                          setCreateCorellationPoints((prevData) =>
-                            prevData.filter((item) => item.id !== record.id)
-                          );
-                        }}
-                      />
-                    </Tooltip>
-                  ) : null}
-                </Flex>
-              }
-            >
-              <Button
-                style={{ width: "80px", height: "50px" }}
-                type="text"
-                icon={<AliwangwangOutlined style={{ color: "#8c8c8c" }} />}
-                className={
-                  createCorellationPoints.find((item) => item.id === record.id)
-                    ? ""
-                    : classes.hiddenButton
-                }
-              />
-            </Popover>
-          )}
-        </div>
       ),
     },
   ];
@@ -896,59 +710,75 @@ export default function StatisticTable({
     }
   };
 
+
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (inputRef.current && !inputRef.current.contains(event.target)) {
+        setEditingRow(null);
+      }
+    }
+
+    if (editingRow !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [editingRow]);
+
   return (
-   
-      <div style={{ overflowX: "hidden", marginTop: "10px" }}>
-        {isActive && (
-          <Space
-            size="large"
-            align="center"
-            style={{
-              marginBottom: 16,
-              width: "100%",
-              justifyContent: "center", // Добавлено для центрирования
-            }}
-          >
-            <Space direction="vertical" size={4}>
-              <div style={{ fontWeight: 500 }}>Создать точку</div>
-              <DatePicker
-                value={selectedDate}
-                onChange={handleDateChange}
-                format="DD.MM.YYYY"
-              />
-            </Space>
-
-            <Space direction="vertical" size={4}>
-              <div style={{ fontWeight: 500 }}>Создать интервал точек</div>
-              <RangePicker
-                value={selectedRange}
-                onChange={handleRangeChange}
-                format="DD.MM.YYYY"
-              />
-            </Space>
+    <div style={{ overflowX: "hidden", marginTop: "10px" }}>
+      {isActive && (
+        <Space
+          size="large"
+          align="center"
+          style={{
+            marginBottom: 16,
+            width: "100%",
+            justifyContent: "center", // Добавлено для центрирования
+          }}
+        >
+          <Space direction="vertical" size={4}>
+            <div style={{ fontWeight: 500 }}>Создать точку</div>
+            <DatePicker
+              value={selectedDate}
+              onChange={handleDateChange}
+              format="DD.MM.YYYY"
+            />
           </Space>
-        )}
 
-        {createPoints?.length > 0 ? (
-          <Table
-            columns={columnsCreatePoints}
-            dataSource={createPoints}
-            pagination={false}
-            size="small"
-            rowKey="id"
-          />
-        ) : null}
+          <Space direction="vertical" size={4}>
+            <div style={{ fontWeight: 500 }}>Создать интервал точек</div>
+            <RangePicker
+              value={selectedRange}
+              onChange={handleRangeChange}
+              format="DD.MM.YYYY"
+            />
+          </Space>
+        </Space>
+      )}
 
-        {dataSource?.length > 0 ? (
-          <Table
-            columns={getColumnsByChartType(chartType)}
-            dataSource={dataSource}
-            pagination={false}
-            size="small"
-            rowKey="id"
-          />
-        ) : null}
-      </div>
+      {createPoints?.length > 0 ? (
+        <Table
+          columns={columnsCreatePoints}
+          dataSource={createPoints}
+          pagination={false}
+          size="small"
+          rowKey="id"
+        />
+      ) : null}
 
+      {dataSource?.length > 0 ? (
+        <Table
+          columns={getColumnsByChartType(chartType)}
+          dataSource={dataSource}
+          pagination={false}
+          size="small"
+          rowKey="id"
+        />
+      ) : null}
+    </div>
   );
 }
