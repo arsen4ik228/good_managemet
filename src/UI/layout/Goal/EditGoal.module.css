@@ -19,12 +19,22 @@
     margin-bottom: 16px;
     /* Расстояние между редакторами */
     overflow: hidden;
+
+    &:hover{
+        .deleteIcon,
+        .drag{
+            visibility: visible;
+        }
+    }
 }
+
+
 
 .deleteIcon {
     /* display: block;
     border: #3A3A3A 1px solid; */
     position: absolute;
+    visibility: hidden;
     /* Позиционируем элемент абсолютно */
     top: -5px;
     /* Расстояние от верхней части контейнера */
@@ -45,6 +55,7 @@
 
 .drag {
     position: absolute;
+    visibility: hidden;
     /* Позиционируем элемент абсолютно */
     top: -3px;
     /* Расстояние от верхней части контейнера */
