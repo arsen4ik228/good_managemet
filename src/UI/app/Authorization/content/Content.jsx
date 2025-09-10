@@ -70,7 +70,7 @@ export default function Content() {
 
         if (serverData.isLogged && localStorage.getItem("accessToken")) {
           localStorage.setItem("fingerprint", fp.visitorId);
-          window.location.href = isMobile ? `#/Main` : "#/pomoshnik/start";
+          window.location.href = isMobile ? `#/Main` : "#/1";
         }
         console.log("Ответ от /:", serverData);
         setTokenForTG(serverData.tokenForTG);

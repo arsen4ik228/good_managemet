@@ -14,7 +14,7 @@ import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
-import EditStatistic from "../../UI/layout/Statistics/EditStatistic";
+import { EditStatistic } from "../../UI/layout/Statistics/EditStatistic";
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 
 
@@ -345,7 +345,7 @@ function DesktopApp() {
             element={<ApplicationContainer></ApplicationContainer>}
           >
 
-            <Route index element={<Navigate to = "helper" replace/>}/>
+            <Route index element={<Navigate to="helper" replace />} />
 
             <Route
               path="createUser"
@@ -450,7 +450,22 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <MessageSelectingList></MessageSelectingList>
+                    <MessageSelectingList presetName={'POSTS'}></MessageSelectingList>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="posts/:postId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Post></Post>
                   </React.Suspense>
                 }
               />
