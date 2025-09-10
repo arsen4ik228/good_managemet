@@ -99,3 +99,28 @@
 .ReactCrop__drag-handle::after {
     background: #1890ff;
 }
+
+.btnSave {
+
+    width: 150px;
+    height: 40px;
+
+    color: var(--white);
+
+    border-radius: 10px;
+    background-color: var(--primary);
+}
+
+.btnSave:not(:disabled):hover {
+    transition: all 0.3s;
+
+    transform: scale(1.1);
+
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+    background-color: var(--primary);
+}
+
+.btnSave:disabled{
+    background-color: var(--grey);
+}
