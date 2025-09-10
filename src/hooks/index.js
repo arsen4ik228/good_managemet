@@ -45,3 +45,6 @@ export { useGetAllStatisticsInControlPanel } from "./Statistics/useGetAllStatist
 
 //Сводка
 export { useUpdateSvodka } from "./Statistics/useUpdateSvodka";
+
+export { useRightPanel } from "./useRightPanel"
+export { usePanelPreset } from "./usePanelPreset"
