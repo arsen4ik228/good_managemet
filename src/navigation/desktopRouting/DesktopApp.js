@@ -19,7 +19,6 @@ import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatist
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
 
-
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
@@ -210,26 +209,6 @@ function DesktopApp() {
                     }
                   />
 
-                  {/* Маршрут для ControlPanel */}
-                  <Route
-                    path="controlPanel"
-                    element={
-                      <div className="tab">
-                        <ControlPanel />
-                      </div>
-                    }
-                  />
-
-                  {/* Маршрут для Svodka */}
-                  <Route
-                    path="svodka"
-                    element={
-                      <div className="tab">
-                        <Svodka />
-                      </div>
-                    }
-                  />
-
                   {/* Маршрут для Pomoshnik и его вложенных маршрутов */}
                   <Route
                     path="pomoshnik/*"
@@ -370,6 +349,42 @@ function DesktopApp() {
           />
           {/* edit */}
 
+          {/* Маршрут для ControlPanel */}
+          <Route
+            path="controlPanel"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <div className="tab">
+                  <ControlPanel />
+                </div>
+              </React.Suspense>
+            }
+          />
+
+          {/* Маршрут для Svodka */}
+          <Route
+            path="svodka"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <div className="tab">
+                  <Svodka />
+                </div>
+              </React.Suspense>
+            }
+          />
+
           <Route
             path=":organizationId/*"
             element={<ApplicationContainer></ApplicationContainer>}
@@ -479,7 +494,9 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <MessageSelectingList presetName={'POSTS'}></MessageSelectingList>
+                    <MessageSelectingList
+                      presetName={"POSTS"}
+                    ></MessageSelectingList>
                   </React.Suspense>
                 }
               />
@@ -501,7 +518,6 @@ function DesktopApp() {
             </Route>
             {/* //helper */}
           </Route>
-          
         </Routes>
       </ConfigProvider>
     </div>
