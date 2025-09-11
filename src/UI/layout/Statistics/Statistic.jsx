@@ -9,7 +9,7 @@ import ListStatisticDrawer from "./ListStatisticDrawer";
 import ModalCreateStatistic from "./ModalCreateStatistic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
 import ReportDay from "./components/ReportDay";
-import { useGetSingleStatistic } from "@hooks";
+import { useGetSingleStatistic, useRightPanel, usePanelPreset } from "@hooks";
 import { calculateInitialDate, countDays, countWeeks, countMonths, countYears } from "./function/functionForStatistic";
 
 import { Button, Space, Tooltip, Flex, Typography } from "antd";
@@ -23,6 +23,7 @@ import {
 
 import _ from "lodash";
 import dayjs from "dayjs";
+import { useParams } from 'react-router-dom';
 
 const { Title } = Typography;
 
@@ -44,6 +45,8 @@ const widthMap = {
 
 export default function Statistic() {
 
+    const {statisticId} = useParams() 
+
     const buutonsArr = [
         { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editStatisticInformation/' + statisticId, '_blank') },
         { text: 'ввести данные', click: () => window.open(window.location.origin + '/#/' + 'editStatisticPointsData/' + statisticId, '_blank') },
@@ -53,7 +56,7 @@ export default function Statistic() {
 
     const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
 
-    const [statisticId, setStatisticId] = useState(null);
+    // const [statisticId, setStatisticId] = useState(null);
 
     const [openListStatisticDrawer, setOpenListStatisticDrawer] = useState(true);
 
@@ -64,6 +67,9 @@ export default function Statistic() {
 
     const [dataSource, setDataSource] = useState([]);
     const [createPoints, setCreatePoints] = useState([]);
+
+        const { PRESETS } = useRightPanel();
+        usePanelPreset(PRESETS.STATISTICS);
 
     // Получение статистики по id
     const {
@@ -161,7 +167,7 @@ export default function Statistic() {
     useEffect(() => {
         setDataSource([]);
         setCreatePoints([]);
-        setStatisticId(null);
+        // setStatisticId(null);
     }, [reduxSelectedOrganizationId]);
 
 
@@ -273,17 +279,17 @@ export default function Statistic() {
                         </>
                     ) : null}
 
-                    <ListStatisticDrawer
+                    {/* <ListStatisticDrawer
                         open={openListStatisticDrawer}
                         setOpen={setOpenListStatisticDrawer}
                         statisticId={statisticId}
                         setStatisticId={setStatisticId}
-                    />
+                    /> */}
 
                     <ModalCreateStatistic
                         open={openCreateStatistic}
                         setOpen={setOpenCreateStatistic}
-                        setStatisticId={setStatisticId}
+                        // setStatisticId={setStatisticId}
                     />
 
                 </>

@@ -485,6 +485,21 @@ function DesktopApp() {
               />
 
               <Route
+                path="statistics/:statisticId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Statistic></Statistic>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
                 path="posts"
                 element={
                   <React.Suspense
@@ -518,6 +533,7 @@ function DesktopApp() {
             </Route>
             {/* //helper */}
           </Route>
+
         </Routes>
       </ConfigProvider>
     </div>
