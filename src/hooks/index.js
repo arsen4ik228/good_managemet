@@ -42,6 +42,7 @@ export { useCreateStatistic } from "./Statistics/useCreateStatistic";
 export { useGetSingleStatistic } from "./Statistics/useGetSingleStatistic";
 export { useUpdateSingleStatistic } from "./Statistics/useUpdateSingleStatistic";
 export { useGetAllStatisticsInControlPanel } from "./Statistics/useGetAllStatisticsInControlPanel";
+export { useGetSingleStatisticWithoutStatisticData } from "./Statistics/useGetSingleStatisticWithoutStatisticData";
 
 //Сводка
 export { useUpdateSvodka } from "./Statistics/useUpdateSvodka";

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import classes from "./StatisticTable.module.css";
 
 import {
   Button,
@@ -7,15 +6,12 @@ import {
   Space,
   DatePicker,
   InputNumber,
-  Popover,
   Flex,
-  Tooltip,
-  ConfigProvider,
 } from "antd";
 
 import _ from "lodash";
 
-import { DeleteOutlined, AliwangwangOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -128,6 +124,7 @@ export default function StatisticTable({
       key: "value",
       render: (text, record) => (
         <InputNumber
+          controls={false}
           value={text}
           onChange={(value) => {
             setCreatePoints((prevData) =>
@@ -136,7 +133,7 @@ export default function StatisticTable({
               )
             );
           }}
-          style={{ width: "100%" }}
+          style={{ width: "130px" }}
           min={undefined}
           decimalSeparator="."
           formatter={(value) => {
@@ -176,7 +173,7 @@ export default function StatisticTable({
             );
           }}
           format="DD.MM.YYYY" // Отображаем в удобном формате
-          style={{ width: "100%" }}
+          style={{ width: "150px" }}
         />
       ),
     },
@@ -202,6 +199,7 @@ export default function StatisticTable({
       key: "value",
       render: (text, record) => (
         <InputNumber
+          controls={false}
           value={text}
           onChange={(value) => {
             setDataSource((prevData) =>
@@ -216,7 +214,7 @@ export default function StatisticTable({
               )
             );
           }}
-          style={{ width: "100%" }}
+          style={{ width: "130px" }}
           min={undefined}
           decimalSeparator="."
           formatter={(value) => {
@@ -256,13 +254,11 @@ export default function StatisticTable({
             );
           }}
           format="DD.MM.YYYY" // Отображаем в удобном формате
-          style={{ width: "100%" }}
+          style={{ width: "150px" }}
         />
       ),
     },
   ];
-
-
 
   const columnsDataSourceWeek = [
     {
@@ -294,7 +290,8 @@ export default function StatisticTable({
                   );
 
                 }}
-                style={{ width: "100%" }}
+                controls={false}
+                style={{ width: "130px" }}
                 min={undefined}
                 decimalSeparator="."
                 formatter={(value) => {
@@ -312,7 +309,8 @@ export default function StatisticTable({
                 }}
               />) : (
               <InputNumber
-                style={{ width: "100%" }}
+                controls={false}
+                style={{ width: "130px" }}
                 value={
                   createCorellationPoints.find(
                     (item) => item.id === record.id
@@ -370,7 +368,8 @@ export default function StatisticTable({
         ) : (
           <div
             onDoubleClick={() => setEditingRow(record.id)}
-            style={{ cursor: "pointer", width: "100%", height:"32px"}}
+            style={{ cursor: "pointer", width: "130px", height: "32px" }}
+
           >
             {(() => {
               const point = createCorellationPoints.find((item) => item.id === record.id);
@@ -395,7 +394,7 @@ export default function StatisticTable({
           value={text ? dayjs(text) : null} // Парсим ISO строку
           disabled
           format="DD.MM.YYYY" // Отображаем в удобном формате
-          style={{ width: "100%" }}
+          style={{ width: "150px" }}
         />
       ),
     },
@@ -428,6 +427,7 @@ export default function StatisticTable({
 
             {record.correlationType ? (
               <InputNumber
+                controls={false}
                 value={record.value}
                 onChange={(value) => {
                   setDataSource((prevData) =>
@@ -445,7 +445,7 @@ export default function StatisticTable({
                   );
 
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "130px" }}
                 min={undefined}
                 decimalSeparator="."
                 formatter={(value) => {
@@ -463,7 +463,8 @@ export default function StatisticTable({
                 }}
               />) : (
               <InputNumber
-                style={{ width: "100%" }}
+                controls={false}
+                style={{ width: "130px" }}
                 value={
                   createCorellationPoints.find(
                     (item) => item.id === record.id
@@ -521,7 +522,7 @@ export default function StatisticTable({
         ) : (
           <div
             onDoubleClick={() => setEditingRow(record.id)}
-            style={{ cursor: "pointer", width: "100%", height:"32px" }}
+            style={{ cursor: "pointer", width: "130px", height: "32px" }}
           >
             {(() => {
               const point = createCorellationPoints.find((item) => item.id === record.id);
@@ -546,7 +547,7 @@ export default function StatisticTable({
           value={text ? dayjs(text) : null} // Парсим ISO строку
           disabled
           format="MM.YYYY" // Отображаем в удобном формате
-          style={{ width: "100%" }}
+          style={{ width: "150px" }}
         />
       ),
     },
@@ -566,6 +567,7 @@ export default function StatisticTable({
           <Flex gap="small" justify="center" align="center" ref={inputRef}>
             {record.correlationType ? (
               <InputNumber
+                controls={false}
                 value={record.value}
                 onChange={(value) => {
                   setDataSource((prevData) =>
@@ -583,7 +585,7 @@ export default function StatisticTable({
                   );
 
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "130px" }}
                 min={undefined}
                 decimalSeparator="."
                 formatter={(value) => {
@@ -601,7 +603,8 @@ export default function StatisticTable({
                 }}
               />) : (
               <InputNumber
-                style={{ width: "100%" }}
+                controls={false}
+                style={{ width: "130px" }}
                 value={
                   createCorellationPoints.find(
                     (item) => item.id === record.id
@@ -659,7 +662,7 @@ export default function StatisticTable({
         ) : (
           <div
             onDoubleClick={() => setEditingRow(record.id)}
-            style={{ cursor: "pointer", width: "100%", height:"32px" }}
+            style={{ cursor: "pointer", width: "130px", height: "32px" }}
           >
             {(() => {
               const point = createCorellationPoints.find((item) => item.id === record.id);
@@ -685,7 +688,7 @@ export default function StatisticTable({
           value={text ? dayjs(text) : null}
           disabled
           format="YYYY"
-          style={{ width: "100%" }}
+          style={{ width: "150px" }}
         />
       ),
     },
@@ -710,8 +713,6 @@ export default function StatisticTable({
     }
   };
 
-
-
   useEffect(() => {
     function handleClickOutside(event) {
       if (inputRef.current && !inputRef.current.contains(event.target)) {
@@ -729,7 +730,14 @@ export default function StatisticTable({
   }, [editingRow]);
 
   return (
-    <div style={{ overflowX: "hidden", marginTop: "10px" }}>
+    <div style={{
+      overflowX: "hidden",
+      height: "100%",
+      backgroundColor: "#fff",
+      border: "1px solid #CCCCCC",
+      borderRadius: "5px",
+    }}>
+
       {isActive && (
         <Space
           size="large"
@@ -743,6 +751,7 @@ export default function StatisticTable({
           <Space direction="vertical" size={4}>
             <div style={{ fontWeight: 500 }}>Создать точку</div>
             <DatePicker
+              style={{ width: "150px" }}
               value={selectedDate}
               onChange={handleDateChange}
               format="DD.MM.YYYY"
@@ -752,6 +761,7 @@ export default function StatisticTable({
           <Space direction="vertical" size={4}>
             <div style={{ fontWeight: 500 }}>Создать интервал точек</div>
             <RangePicker
+              style={{ width: "150px" }}
               value={selectedRange}
               onChange={handleRangeChange}
               format="DD.MM.YYYY"

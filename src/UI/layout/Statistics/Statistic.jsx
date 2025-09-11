@@ -1,43 +1,28 @@
 import React from 'react'
-import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
-
-
-
 import { useState, useEffect } from "react";
+
 import classes from "./Statistic.module.css";
-
-import Headers from "@Custom/Headers/Headers";
-import BottomHeaders from "@Custom/Headers/BottomHeaders/BottomHeaders";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
-
+import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Graphic from "../../app/Graphic/Graphic";
 import ListStatisticDrawer from "./ListStatisticDrawer";
-import { StatisticInformationDrawer } from "./EditStatistic";
 import ModalCreateStatistic from "./ModalCreateStatistic";
-
+import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
+import ReportDay from "./components/ReportDay";
 import { useGetSingleStatistic } from "@hooks";
+import { calculateInitialDate, countDays, countWeeks, countMonths, countYears } from "./function/functionForStatistic";
 
 import { Button, Space, Tooltip, Flex, Typography } from "antd";
 import {
     LeftCircleOutlined,
     RightCircleOutlined,
-    EditOutlined,
     SunOutlined,
     MoonOutlined,
     CalendarOutlined,
-    MenuFoldOutlined,
 } from "@ant-design/icons";
 
 import _ from "lodash";
 import dayjs from "dayjs";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
-import { DrawerStatisticTable } from "./DrawerStatisticTable";
-import ReportDay from "./components/ReportDay";
-
-dayjs.extend(isSameOrAfter);
-dayjs.extend(isSameOrBefore);
 
 const { Title } = Typography;
 
@@ -60,21 +45,13 @@ const widthMap = {
 export default function Statistic() {
 
     const buutonsArr = [
-        { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editStatistic/' + statisticId, '_blank') },
-        { text: 'ввести данные', click: () => window.open(window.location.origin + '/#/' + 'editStatistic', '_blank') },
-
-        // { text: 'Поделиться', click: () => navigate('1') },
-        // { text: 'Распечатать', click: () => navigate('1') },
+        { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editStatisticInformation/' + statisticId, '_blank') },
+        { text: 'ввести данные', click: () => window.open(window.location.origin + '/#/' + 'editStatisticPointsData/' + statisticId, '_blank') },
     ]
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
     const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
-    const [openStatisticInformationDrawer, setOpenStatisticInformationDrawer] =
-        useState(false);
-
-    const [openDrawerStatisticTable, setOpenDrawerStatisticTable] =
-        useState(false);
 
     const [statisticId, setStatisticId] = useState(null);
 
@@ -96,7 +73,6 @@ export default function Statistic() {
         isErrorGetStatisticId,
         isFetchingGetStatisticId,
     } = useGetSingleStatistic({
-        // statisticId: "76c273da-ed80-4da2-b6ef-72133830a1f3",
         statisticId: statisticId,
 
         datePoint: datePoint,
@@ -104,208 +80,11 @@ export default function Statistic() {
         viewType: chartType,
     });
 
-    const calculateInitialDate = () => {
-        const currentDate = localStorage.getItem("reportDay");
-        if (currentDate !== null) {
-            const targetDay = parseInt(currentDate, 10);
-            const today = new Date();
-            const todayDay = today.getDay();
-
-            let diff = todayDay - targetDay;
-            if (diff < 0) diff += 7;
-
-            const lastTargetDate = new Date(today);
-            lastTargetDate.setDate(today.getDate() - diff);
-
-            return lastTargetDate.toISOString().split("T")[0];
-        }
-        return datePoint;
-    };
-
-    const countWeeks = (quantity) => {
-        const reportDay = parseInt(localStorage.getItem("reportDay"), 10) || 0; // 0-воскр, 6-суббота
-        const data = _.cloneDeep(statisticData);
-
-        // Создаем массив 13 предыдущих недель (исключая текущую)
-        const weeksArray = Array.from({ length: quantity }, (_, i) => {
-            const second_to_last_Date = dayjs(datePoint)
-                .day(reportDay) // Устанавливаем день недели
-                .subtract(i, "week") // Отступаем i+1 недель назад (исключаем текущую)
-                .subtract(1, "day")
-                .endOf("day"); // Конец дня
-
-            const date_for_view_days_in_week = dayjs(datePoint)
-                .day(reportDay) // Устанавливаем день недели
-                .subtract(i, "week") // Отступаем i+1 недель назад (исключаем текущую)
-                .endOf("day") // Конец дня
-                .format("YYYY-MM-DD");
-
-            const endDate = dayjs(datePoint)
-                .day(reportDay) // Устанавливаем день недели
-                .subtract(i, "week") // Отступаем i+1 недель назад (исключаем текущую)
-                .endOf("day"); // Конец дня
-
-            return {
-                id: `week-${i}-${endDate.format("YYYY-MM-DD")}`,
-                valueDate: endDate.format("YYYY-MM-DD"),
-                valueDateForCreate: second_to_last_Date,
-                dateForViewDaysInWeek: date_for_view_days_in_week,
-                value: null,
-                isViewDays: false,
-                correlationType: null,
-            };
-        });
-
-        // Заполняем данные с правильным учетом недельных интервалов
-        weeksArray.forEach((week) => {
-            const weekEnd = dayjs(week.valueDate).endOf("day");
-            const weekStart = weekEnd.subtract(6, "day").startOf("day");
-
-            const weekPoints = data.filter((point) => {
-                const pointDate = dayjs(point.valueDate);
-                return (
-                    pointDate.isSameOrAfter(weekStart) &&
-                    pointDate.isSameOrBefore(weekEnd) &&
-                    point.correlationType !== "Месяц" &&
-                    point.correlationType !== "Год"
-                );
-            });
-
-            const weekTotalPoint = weekPoints.find(
-                (p) => p.correlationType === "Неделя"
-            );
-
-            if (weekTotalPoint) {
-                week.value = parseFloat(weekTotalPoint.value) || null;
-                week.id = weekTotalPoint.id;
-                week.correlationType = "Неделя";
-            } else {
-                week.value = weekPoints.reduce((sum, point) => {
-                    const pointValue = parseFloat(point.value);
-
-                    if (isNaN(pointValue)) {
-                        return sum; // пропускаем нечисловые значения
-                    }
-
-                    return sum === null ? pointValue : sum + pointValue;
-                }, null);
-            }
-        });
-
-        setDataSource(
-            weeksArray.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate))
-        );
-    };
-
-    const countMonths = () => {
-        const monthsArray = _.cloneDeep(statisticData)
-            .map((item, index) => {
-                const dateObj = dayjs(new Date(item.year, item.month - 1, 15));
-
-                return {
-                    id: item?.id ?? `month-${index}-${dateObj.format("YYYY-MM")}`,
-                    value: item.total,
-                    correlationType: item.correlationType,
-                    valueDate: dateObj.format("YYYY-MM"), // форматируем как строку
-                    valueDateForCreate: dateObj, // оставляем как объект Day.js
-                };
-            })
-            .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
-
-        setDataSource(monthsArray);
-    };
-
-    const countYears = () => {
-        const yearsArray = _.cloneDeep(statisticData)
-            .map((item, index) => {
-                const dateObj = dayjs(new Date(item.year, 6, 15));
-
-                return {
-                    id: item?.id ?? `year-${index}-${dateObj.format("YYYY")}`,
-                    value: item.total,
-                    correlationType: item.correlationType,
-                    valueDate: dateObj.format("YYYY"),
-                    valueDateForCreate: dateObj,
-                };
-            })
-            .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
-        setDataSource(yearsArray);
-    };
-
-    const countDays = () => {
-        setDataSource(
-            _.cloneDeep(statisticData).sort(
-                (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
-            )
-        );
-
-        const baseId = Date.now();
-        const startDate = dayjs(datePoint).startOf("day");
-
-        const existingDates = new Set(
-            statisticData
-                ?.filter(
-                    (item) => !["Неделя", "Месяц", "Год"].includes(item.correlationType)
-                )
-                .map((item) =>
-                    dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
-                ) || []
-        );
-
-        const newData = Array(7)
-            .fill()
-            .map((_, i) => {
-                // Добавляем дни без учета временной зоны
-                const date = startDate.subtract(i, "day").startOf("day");
-
-                if (!date || !date.isValid?.()) {
-                    console.error("Некорректная дата на шаге", i, date);
-                    return null;
-                }
-                return {
-                    id: baseId + i,
-                    value: null,
-                    valueDate: date.format("YYYY-MM-DD"),
-                };
-            })
-            .filter(Boolean)
-            .filter((item) => !existingDates.has(item.valueDate))
-            .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
-
-        setCreatePoints([...newData]);
-    };
-
-    const handleResetTable = () => {
-        setCreatePoints([]);
-
-        if (chartType === "daily") {
-            countDays();
-        }
-
-        if (chartType === "monthly") {
-            countMonths();
-        }
-
-        if (chartType === "yearly") {
-            countYears();
-        }
-
-        if (chartType === "thirteen") {
-            countWeeks(13);
-        }
-        if (chartType === "twenty_six") {
-            countWeeks(26);
-        }
-        if (chartType === "fifty_two") {
-            countWeeks(52);
-        }
-    };
-
     useEffect(() => {
         setDatePoint(() => {
-            return calculateInitialDate();
+            return calculateInitialDate(datePoint);
         });
-    }, [chartType]);
+    }, [chartType]);// chartType нужен для того чтобы когда поклацал по стрелкам  и поменял график datePoint сбросилась до клацаний
 
     useEffect(() => {
         if (!clickArrow[0] || !datePoint) return;
@@ -363,13 +142,14 @@ export default function Statistic() {
         if (!statisticId || !datePoint) return;
 
         const handlers = {
-            daily: countDays,
-            monthly: countMonths,
-            yearly: countYears,
-            thirteen: () => countWeeks(13),
-            twenty_six: () => countWeeks(26),
-            fifty_two: () => countWeeks(52),
+            daily: () => countDays(datePoint, statisticData, setDataSource, setCreatePoints),
+            monthly: () => countMonths(statisticData, setDataSource, setCreatePoints),
+            yearly: () => countYears(statisticData, setDataSource, setCreatePoints),
+            thirteen: () => countWeeks(13, datePoint, statisticData, setDataSource),
+            twenty_six: () => countWeeks(26, datePoint, statisticData, setDataSource),
+            fifty_two: () => countWeeks(52, datePoint, statisticData, setDataSource),
         };
+
 
         const handler = handlers[chartType];
         if (!handler) return;
@@ -383,6 +163,7 @@ export default function Statistic() {
         setCreatePoints([]);
         setStatisticId(null);
     }, [reduxSelectedOrganizationId]);
+
 
     return (
         <MainContentContainer
@@ -415,16 +196,16 @@ export default function Statistic() {
 
                                 <div
                                     style={{
-                                        flex: 1, // Занимает всё доступное пространство
+                                        flex: 1, 
                                         display: "flex",
-                                        justifyContent: "center", // Центрирует по горизонтали
-                                        alignItems: "center", // Центрирует по вертикали (опционально)
+                                        justifyContent: "center", 
+                                        alignItems: "center", 
                                     }}
                                 >
                                     <Graphic
                                         data={[...createPoints, ...dataSource]}
                                         width={widthMap[chartType] || widthMap.default}
-                                        type={ currentStatistic?.type}
+                                        type={currentStatistic?.type}
                                     />
                                 </div>
 
@@ -468,6 +249,7 @@ export default function Statistic() {
                                 style={{
                                     width: "100%",
                                     justifyContent: "center",
+                                    marginBottom: "10px"
                                 }}
                             >
                                 <Tooltip title="сдвигает график влево" placement="left">
@@ -488,21 +270,6 @@ export default function Statistic() {
                                 </Tooltip>
                             </Space>
 
-
-                            <DrawerStatisticTable
-                                openDrawer={openDrawerStatisticTable}
-                                setOpenDrawer={setOpenDrawerStatisticTable}
-                                dataSource={dataSource}
-                                setDataSource={setDataSource}
-                                createPoints={createPoints}
-                                setCreatePoints={setCreatePoints}
-                                setDatePoint={setDatePoint}
-                                chartType={chartType}
-                                currentStatistic={currentStatistic}
-                                isLoadingGetStatisticId={isLoadingGetStatisticId}
-                                isFetchingGetStatisticId={isFetchingGetStatisticId}
-                                handleResetTable={handleResetTable}
-                            />
                         </>
                     ) : null}
 
@@ -518,6 +285,7 @@ export default function Statistic() {
                         setOpen={setOpenCreateStatistic}
                         setStatisticId={setStatisticId}
                     />
+
                 </>
             </div>
 
