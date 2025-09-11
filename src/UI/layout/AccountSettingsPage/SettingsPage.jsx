@@ -428,6 +428,15 @@ export default function SettingsPage() {
                     )}
                   </InputMask>
                 </Input>
+
+                <button
+                  data-tour="data-save"
+                  onClick={handleUpdateUserButtonClick}
+                  className={classes.btnSave}
+                  disabled={!isValid}
+                >
+                  Сохранить
+                </button>
               </div>
             </div>
 

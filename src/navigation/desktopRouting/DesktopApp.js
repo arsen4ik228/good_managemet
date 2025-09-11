@@ -479,7 +479,21 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    {/* <MessageSelectingList></MessageSelectingList> */}
+                    <MessageSelectingList presetName={'POSTS'}></MessageSelectingList>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="posts/:postId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
                     <Post></Post>
                   </React.Suspense>
                 }

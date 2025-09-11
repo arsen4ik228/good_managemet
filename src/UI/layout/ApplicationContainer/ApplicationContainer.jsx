@@ -4,13 +4,17 @@ import classes from './ApplicationContainer.module.css';
 import { Outlet } from 'react-router-dom';
 import LeftSIder from './LeftSider/LeftSIder';
 import RightSider from './RightSider/RightSider';
+import { useSelector } from 'react-redux';
+import { selectRightPanel } from '../../../store/slices/panels.slice';
 
 const { Sider, Content } = Layout;
 
+const MemoizedLeftSider = memo(LeftSIder)
+const MemoizedRightSider = memo(RightSider)
+
 export default function ApplicationContainer() {
 
-    const MemoizedLeftSider = memo(LeftSIder)
-    const MemoizedRightSider = memo(RightSider)
+    const rightPanelConfig = useSelector(selectRightPanel);
 
     return (
         <Layout className={classes.wrapper}>
@@ -32,7 +36,7 @@ export default function ApplicationContainer() {
                 width={'20%'}
                 reverseArrow
             >
-                <MemoizedRightSider />
+                <MemoizedRightSider config={rightPanelConfig}/>
             </Sider>
         </Layout>
     );

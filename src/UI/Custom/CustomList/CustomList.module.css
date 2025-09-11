@@ -24,6 +24,7 @@
     img {
         width: 17px;
         height: 17px;
+        z-index: 1000;
     }
 }
 
@@ -116,5 +117,8 @@
 @media (max-width: 1280px) {
     .searchInput{
         width: 87%;
+    }
+    .title > div {
+        font-size: 18px;
     }
 }
