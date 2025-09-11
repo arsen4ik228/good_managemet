@@ -100,6 +100,13 @@ export default function Graphic({ data, width, type = "Прямая" }) {
     // Настройки графика
     const option = {
       animation: false,
+      grid: {
+        top: 20,    // отступ сверху
+        bottom: 10, // отступ снизу
+        left: 20,   // оставляем немного для подписей оси Y
+        right: 10,
+        containLabel: true, // чтобы подписи осей не обрезались
+      },
       tooltip: {
         trigger: "item",
         formatter: function (params) {
@@ -187,7 +194,7 @@ export default function Graphic({ data, width, type = "Прямая" }) {
             } else {
               color = chartData[i].value < chartData[i - 1].value ? "#ff4d4f" : "#3E7B94";
             }
-            
+
             pieces.push({
               gt: i - 1,
               lte: i,
@@ -227,7 +234,7 @@ export default function Graphic({ data, width, type = "Прямая" }) {
       window.removeEventListener("resize", handleResize);
       chart.dispose();
     };
-  }, [data, type]); 
+  }, [data, type]);
 
-  return <div ref={chartRef} style={{ width: width, height: "90%" }} />;
+  return <div ref={chartRef} style={{ width: width, height: "95%" }} />;
 }
