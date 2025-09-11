@@ -1,95 +1,76 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import classes from './RightSider.module.css'
-import avatar from '@image/helper_big_avatar.svg'
-import CustomList from '../../../Custom/CustomList/CustomList'
-import ListElem from '../../../Custom/CustomList/ListElem'
-import stat from '@image/statistic_icon.svg'
-import goal from '@image/goal_icon.svg'
-import post from '@image/post_icon.svg'
-import policy from '@image/poliycy_icon.svg'
-import { useNavigate } from 'react-router-dom'
+import React, { useMemo, useState } from 'react';
+import classes from './RightSider.module.css';
+import avatar from '@image/helper_big_avatar.svg';
+import CustomList from '../../../Custom/CustomList/CustomList';
+import ListElem from '../../../Custom/CustomList/ListElem';
+import stat from '@image/statistic_icon.svg';
+import goal from '@image/goal_icon.svg';
+import post from '@image/post_icon.svg';
+import policy from '@image/poliycy_icon.svg';
+import { useNavigate } from 'react-router-dom';
+import RightPanelMapper from '@helpers/RightPanelMapper';
 
-export default function RightSider({ postInfo }) {
-
-    const navigate = useNavigate()
-
-    const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState()
+export default function RightSider({ config }) {
+    const navigate = useNavigate();
+    const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
 
     const HELPER_SECTIONS = [
-        // { id: '9', icon: '', text: 'Схема компании', link: 'companySchema' },
-        // { id: '8', icon: '', text: 'Рабочий план', link: 'WorkingPlan' },
-        // { id: '2', icon: '', text: 'Проекты', link: 'projectWithProgramm' },
         { id: '7', icon: goal, text: 'Цели', link: 'goal' },
         { id: '6', icon: policy, text: 'Политика', link: 'policy' },
         { id: '1', icon: post, text: 'Посты', link: 'posts' },
-        // { id: '3', icon: '', text: 'Стратегия', link: 'Strategy' },
-        // { id: '4', icon: '', text: 'Краткосрочная цель', link: 'Objective', },
-        { id: '5', icon: stat, text: 'Статистики', link: 'statistics', },
-    ]
+        { id: '5', icon: stat, text: 'Статистики', link: 'statistics' },
+    ];
 
     const handlerClickHelper = (link) => {
-        navigate(`helper/${link}`)
-    }
+        navigate(`helper/${link}`);
+    };
 
     const filtredHelperSections = useMemo(() => {
-        if (!searchHelperSectionsValue?.trim()) {
-            return HELPER_SECTIONS; // Возвращаем все элементы если поиск пустой
+        if (!searchHelperSectionsValue.trim()) {
+            return HELPER_SECTIONS;
         }
-        
-        const searchLower = searchHelperSectionsValue?.toLowerCase();
-        return HELPER_SECTIONS.filter(item => 
+
+        const searchLower = searchHelperSectionsValue.toLowerCase();
+        return HELPER_SECTIONS.filter(item =>
             item.text.toLowerCase().includes(searchLower)
         );
     }, [searchHelperSectionsValue]);
 
     return (
-        <>
-            <div className={classes.wrapper}>
-                <div className={classes.contactInfo}>
-                    <div className={classes.avatarSection}>
-                        <img src={avatar} alt="avatar" />
-                    </div>
-                    <div className={classes.nameSection}>Гудменеджер</div>
-                    {postInfo && (
-                        <div className={classes.postSection}>{postInfo}</div>
-                    )}
+        <div className={classes.wrapper}>
+            <div className={classes.contactInfo}>
+                <div className={classes.avatarSection}>
+                    <img src={avatar} alt="avatar" />
                 </div>
-                <div className={classes.content}>
-                    <CustomList
-                        title={'C чем работаем?'}
-                        searchFunc={setSearchHelperSectionsValue}
-                        searchValue={searchHelperSectionsValue}
-                    >
-                        {filtredHelperSections.map((item) => (
-                            <React.Fragment key={item.id}>
-                                <ListElem
-                                    id={item.id}
-                                    upperText={item.text}
-                                    icon={item.icon}
-                                    linkSegment={item.link}
-                                    clickFunc={() => handlerClickHelper(item.link)}
-                                />
-                            </React.Fragment>
-                        ))}
-                    </CustomList>
+                <div className={classes.nameSection}>Гудменеджер</div>
+            </div>
 
-                    {/* <CustomList
-                        title={'C чем работаем?'}
-                        // elements={}
-                    >
-                        {HELPER_SECTIONS.map((item) => (
-                            <React.Fragment key={item.id}>
-                                <ListElem
-                                    upperText={item.text}
-                                    icon={item.icon}
-                                    activeLink={item.link}
-                                />
-                            </React.Fragment>
-                        ))}
-                    </CustomList> */}
+            <div className={classes.content}>
+                <CustomList
+                    title={'C чем работаем?'}
+                    searchFunc={setSearchHelperSectionsValue}
+                    searchValue={searchHelperSectionsValue}
+                >
+                    {filtredHelperSections.map((item) => (
+                        <ListElem
+                            key={item.id}
+                            id={item.id}
+                            upperText={item.text}
+                            icon={item.icon}
+                            linkSegment={item.link}
+                            clickFunc={() => handlerClickHelper(item.link)}
+                        />
+                    ))}
+                </CustomList>
 
+                {/* Используем маппер вместо прямого рендера элемента */}
+                <div className={classes.dynamicContent}>
+                    <RightPanelMapper
+                        componentType={config.componentType}
+                        props={config.props}
+                    />
                 </div>
             </div>
-        </>
-    )
+        </div>
+    );
 }

@@ -9,6 +9,7 @@ import programReducer from './slices/program.slice'
 import projectReducer from './slices/project.slice'
 import userReducer from './slices/user.slice'
 import selectedUserConversReducer from './slices/selectedUserConvers.slice'
+import panelsReducer from './slices/panels.slice'
 import apiSlice from './services/api'
 
 
@@ -20,6 +21,7 @@ export * from './slices/project.slice'
 export * from './slices/user.slice'
 export * from './slices/auth.slice'
 export * from './slices/selectedUserConvers.slice'
+export * from './slices/panels.slice'
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +32,7 @@ export const store = configureStore({
     project: projectReducer,
     user: userReducer,
     selectedUserConvers: selectedUserConversReducer,
+    panels: panelsReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware),

@@ -46,3 +46,6 @@ export { useGetSingleStatisticWithoutStatisticData } from "./Statistics/useGetSi
 
 //Сводка
 export { useUpdateSvodka } from "./Statistics/useUpdateSvodka";
+
+export { useRightPanel } from "./useRightPanel"
+export { usePanelPreset } from "./usePanelPreset"
