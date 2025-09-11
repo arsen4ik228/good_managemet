@@ -14,10 +14,9 @@ import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
-import { EditStatistic } from "../../UI/layout/Statistics/EditStatistic";
+import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatisticInformation";
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
-
-
+import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -31,7 +30,7 @@ const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
 // const User = React.lazy(() => import("@app/UserPage/User"));
 // const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
 const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
-// const Statistic = React.lazy(() => import("@app/StatisticsPage/Statistic"));
+const Statistic1 = React.lazy(() => import("@app/StatisticsPage/Statistic"));
 const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
 const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
@@ -244,7 +243,7 @@ function DesktopApp() {
                               path="policy/:policyId?"
                               element={<Policy />}
                             />
-                            <Route path="statistic" element={<Statistic />} />
+                            <Route path="statistic" element={<Statistic1 />} />
                             {/* <Route path="svodka" element={<Svodka />} /> */}
                             <Route path="objective" element={<Objective />} />
                             <Route path="strategy" element={<Strategy />} />
@@ -324,7 +323,7 @@ function DesktopApp() {
           />
 
           <Route
-            path="editStatistic/:id"
+            path="editStatisticInformation/:id"
             element={
               <React.Suspense
                 fallback={
@@ -333,18 +332,31 @@ function DesktopApp() {
                   </div>
                 }
               >
-                <EditStatistic />
+                <EditStatisticInformation />
+              </React.Suspense>
+            }
+          />
+
+          <Route
+            path="editStatisticPointsData/:id"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <EditStatisticPointsData />
               </React.Suspense>
             }
           />
           {/* edit */}
 
-
           <Route
             path=":organizationId/*"
             element={<ApplicationContainer></ApplicationContainer>}
           >
-
             <Route index element={<Navigate to="helper" replace />} />
 
             <Route
@@ -469,12 +481,10 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
-
-
             </Route>
             {/* //helper */}
-
           </Route>
+          
         </Routes>
       </ConfigProvider>
     </div>
