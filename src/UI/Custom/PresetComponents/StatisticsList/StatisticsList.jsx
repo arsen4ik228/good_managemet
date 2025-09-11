@@ -2,8 +2,9 @@ import React, { useMemo, useState } from 'react'
 import CustomList from '../../CustomList/CustomList';
 import { useAllStatistics } from '@hooks'
 import ListElem from '../../CustomList/ListElem';
-import statGraph from '@image/statGraph.svg' 
+import statGraph from '@image/statGraph.svg'
 import { useNavigate } from 'react-router-dom';
+import ListAddButtom from '../../ListAddButton/ListAddButtom';
 
 
 export default function StatisticsList() {
@@ -38,13 +39,16 @@ export default function StatisticsList() {
                 searchValue={seacrhStatisticsSectionsValue}
                 searchFunc={setSeacrhStatisticsSectionsValue}
             >
+
+                <ListAddButtom textButton={'Создать статсиктику'}/>
+
                 {filtredStats.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
                             icon={statGraph}
                             upperText={item.name}
                             linkSegment={item.id}
-                            clickFunc={() => navigate(`${item.id}`)}
+                            clickFunc={() => navigate(`helper/statistics/${item.id}`)}
                         />
                     </React.Fragment>
                 ))}

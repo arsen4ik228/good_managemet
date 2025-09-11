@@ -1,11 +1,11 @@
 import React from 'react';
-import Bey from '../store/slices/Bey';
+// import Bey from '../store/slices/Bey';
 import PostsList from '../UI/Custom/PresetComponents/PostsList';
 import StatisticsList from '../UI/Custom/PresetComponents/StatisticsList/StatisticsList';
 // import GoalsPanel from '../components/GoalsPanel';
 
 const componentMap = {
-    helper: Bey,
+    // helper: Bey,
     // goals: GoalsPanel,
     posts: PostsList,
     statistics: StatisticsList
