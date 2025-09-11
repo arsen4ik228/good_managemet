@@ -92,6 +92,21 @@ export const statisticsApi = apiSlice.injectEndpoints({
       ],
     }),
 
+    getStatisticsIdWithoutStatisticData: build.query({
+      query: ({ statisticId }) => ({
+        url: `statistics/${statisticId}/statistic`,
+      }),
+      transformResponse: (response) => {
+        return {
+          currentStatistic: response.statistic || {},
+        };
+      },
+      providesTags: (result, err, arg) => [
+        { type: "Statistic", id: arg.statisticId },
+      ],
+    }),
+
+
     updateStatistics: build.mutation({
       query: ({ statisticId, ...body }) => ({
         url: `/statistics/${statisticId}/update`,
@@ -103,7 +118,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
       ],
     }),
 
-     updateSvodka: build.mutation({
+    updateSvodka: build.mutation({
       query: ({ statisticId, ...body }) => ({
         url: `/statistics/${statisticId}/update`,
         method: "PATCH",
@@ -121,7 +136,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
     }),
 
     getStatisticsInControlPanel: build.query({
-      query: ({ selectedControlPanelId, datePoint, statisticData  }) => ({
+      query: ({ selectedControlPanelId, datePoint, statisticData }) => ({
         url: `statistics/${selectedControlPanelId}/statisticsInControlPanel?datePoint=${datePoint}&statisticData=${statisticData}`,
       }),
 
@@ -147,6 +162,7 @@ export const {
   usePostStatisticsMutation,
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
+  useGetStatisticsIdWithoutStatisticDataQuery,
   useUpdateStatisticsMutation,
   useUpdateSvodkaMutation,
   useUpdateStatisticsToPostIdMutation,
