@@ -14,9 +14,11 @@ import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
+import EditPost from "../../UI/layout/Posts/EditPost";
 import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatisticInformation";
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
+
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -351,6 +353,21 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
+          <Route
+            path="editPost"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <EditPost />
+              </React.Suspense>
+            }
+          />
           {/* edit */}
 
           <Route
@@ -462,7 +479,8 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <MessageSelectingList></MessageSelectingList>
+                    {/* <MessageSelectingList></MessageSelectingList> */}
+                    <Post></Post>
                   </React.Suspense>
                 }
               />
