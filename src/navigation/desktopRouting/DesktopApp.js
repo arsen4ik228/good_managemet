@@ -524,6 +524,36 @@ function DesktopApp() {
               />
 
               <Route
+                path="controlPanel"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <>controlPanel</>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="svodka"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <>svodka</>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
                 path="statistics"
                 element={
                   <React.Suspense
