@@ -7,10 +7,12 @@ import stat from '@image/statistic_icon.svg';
 import goal from '@image/goal_icon.svg';
 import post from '@image/post_icon.svg';
 import policy from '@image/poliycy_icon.svg';
-import { useNavigate } from 'react-router-dom';
+import controlPanel_icon from '@image/controlPanel_icon.svg'
+import { useNavigate, useParams } from 'react-router-dom';
 import RightPanelMapper from '@helpers/RightPanelMapper';
 
 export default function RightSider({ config }) {
+    const { organizationId } = useParams()
     const navigate = useNavigate();
     const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
 
@@ -19,10 +21,16 @@ export default function RightSider({ config }) {
         { id: '6', icon: policy, text: 'Политика', link: 'policy' },
         { id: '1', icon: post, text: 'Посты', link: 'posts' },
         { id: '5', icon: stat, text: 'Статистики', link: 'statistics' },
+        { id: '2', icon: controlPanel_icon, text: 'Панель управления', link: 'controlPanel' },
+        { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
     ];
 
     const handlerClickHelper = (link) => {
-        navigate(`helper/${link}`);
+        if (link === 'controlPanel' || link === 'svodka') {
+            window.open(window.location.origin + `/#/` + `${link}`, '_blank')
+        }
+        else
+            navigate(`helper/${link}`);
     };
 
     const filtredHelperSections = useMemo(() => {

@@ -51,7 +51,8 @@ export const useRightPanel = () => {
             HELPER: 'helper',
             GOALS: 'goals',
             POSTS: 'posts',
-            STATISTICS: 'statistics'
+            STATISTICS: 'statistics',
+            CHATS: 'chats'
         }
     };
 };

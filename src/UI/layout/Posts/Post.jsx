@@ -12,6 +12,8 @@ import MainContentContainer from '../../Custom/MainContentContainer/MainContentC
 import { useGetSinglePost } from '../../../hooks/Post/useGetSinglePost';
 import { baseUrl } from "@helpers/constants.js"; 
 import { formatPhone } from './function/functionForPost'
+import { usePanelPreset } from '@hooks';
+import { useRightPanel } from '@hooks';
 
 const { Title, Text } = Typography;
 
@@ -19,6 +21,10 @@ const { Title, Text } = Typography;
 export default function Post() {
 
     const { postId } = useParams();
+
+        const { PRESETS } = useRightPanel();
+    
+        usePanelPreset(PRESETS["POSTS"]);
 
     const buutonsArr = [
         { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPost/' + postId, '_blank') },
