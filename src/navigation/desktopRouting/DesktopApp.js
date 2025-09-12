@@ -14,6 +14,7 @@ import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
+import EditPost from "../../UI/layout/Posts/EditPost";
 import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatisticInformation";
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
@@ -210,26 +211,6 @@ function DesktopApp() {
                     }
                   />
 
-                  {/* Маршрут для ControlPanel */}
-                  <Route
-                    path="controlPanel"
-                    element={
-                      <div className="tab">
-                        <ControlPanel />
-                      </div>
-                    }
-                  />
-
-                  {/* Маршрут для Svodka */}
-                  <Route
-                    path="svodka"
-                    element={
-                      <div className="tab">
-                        <Svodka />
-                      </div>
-                    }
-                  />
-
                   {/* Маршрут для Pomoshnik и его вложенных маршрутов */}
                   <Route
                     path="pomoshnik/*"
@@ -354,7 +335,58 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
+          <Route
+            path="editPost/:postId"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <EditPost />
+              </React.Suspense>
+            }
+          />
           {/* edit */}
+
+          {/* Маршрут для ControlPanel */}
+          <Route
+            path="controlPanel"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <div className="tab">
+                  <ControlPanel />
+                </div>
+              </React.Suspense>
+            }
+          />
+
+          {/* Маршрут для Svodka */}
+          <Route
+            path="svodka"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <div className="tab">
+                  <Svodka />
+                </div>
+              </React.Suspense>
+            }
+          />
 
           <Route
             path=":organizationId/*"
@@ -531,7 +563,9 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <MessageSelectingList presetName={'POSTS'}></MessageSelectingList>
+                    <MessageSelectingList
+                      presetName={"POSTS"}
+                    ></MessageSelectingList>
                   </React.Suspense>
                 }
               />

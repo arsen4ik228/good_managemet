@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import classes from "./ModalCreateStatistic.module.css";
+import { useNavigate } from "react-router-dom";
+
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
 
 import { Button, Input, Modal, List, Avatar } from "antd";
@@ -7,11 +8,12 @@ import { CloseOutlined } from "@ant-design/icons";
 
 import { useGetPostsUserByOrganization, useCreateStatistic } from "@hooks";
 
+
 export default function ModalCreateStatistic({
   open,
   setOpen,
-  setStatisticId,
 }) {
+  const navigate = useNavigate();
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [hoveredItem, setHoveredItem] = useState(null);
@@ -44,7 +46,7 @@ export default function ModalCreateStatistic({
       .unwrap()
       .then((result) => {
         setOpen(false);
-        setStatisticId(result?.id);
+       navigate(`helper/statistics/${result?.id}`)
       })
       .catch((error) => {
         console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
@@ -77,19 +79,23 @@ export default function ModalCreateStatistic({
         closeIcon={<CloseOutlined />}
       >
         {/* Поле поиска */}
-        <div className={classes.searchContainer}>
-          <Input.Search
-            placeholder="Поиск по посту"
-            allowClear
-            onChange={(e) => setSearchText(e.target.value)}
-            value={searchText}
-          />
-        </div>
+        <Input.Search
+          style={{
+            marginBottom: "16px"
+          }}
+          placeholder="Поиск по посту"
+          allowClear
+          onChange={(e) => setSearchText(e.target.value)}
+          value={searchText}
+        />
         {/* Список с фильтрацией */}
         <List
           itemLayout="horizontal"
           dataSource={filteredPosts}
-          className={classes.list}
+          style={{
+            height: "50vh",
+            overflowY: "auto"
+          }}
           renderItem={(item) => (
             <List.Item
               onClick={() => {
@@ -104,8 +110,8 @@ export default function ModalCreateStatistic({
                   selectedPostId === item.id
                     ? "#f0f7ff"
                     : hoveredItem === item.id
-                    ? "#f5f5f5"
-                    : "transparent",
+                      ? "#f5f5f5"
+                      : "transparent",
                 transition: "background-color 0.3s",
                 borderBottom: "1px solid #f0f0f0",
               }}

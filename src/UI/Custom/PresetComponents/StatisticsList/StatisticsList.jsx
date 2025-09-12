@@ -5,10 +5,14 @@ import ListElem from '../../CustomList/ListElem';
 import statGraph from '@image/statGraph.svg'
 import { useNavigate } from 'react-router-dom';
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
+import ModalCreateStatistic from '../../../layout/Statistics/ModalCreateStatistic';
+import { Button, Space } from 'antd';
 
 
 export default function StatisticsList() {
     const [seacrhStatisticsSectionsValue, setSeacrhStatisticsSectionsValue] = useState()
+    const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
+    const [isActive, setIsActive] = useState(true);
     const navigate = useNavigate()
     // Получение всех статистик
     const {
@@ -18,7 +22,7 @@ export default function StatisticsList() {
         isErrorGetStatistics,
     } = useAllStatistics({
         statisticData: false,
-        isActive: true,
+        isActive: isActive,
     });
 
     const filtredStats = useMemo(() => {
@@ -40,7 +44,20 @@ export default function StatisticsList() {
                 searchFunc={setSeacrhStatisticsSectionsValue}
             >
 
-                <ListAddButtom textButton={'Создать статсиктику'}/>
+                <ListAddButtom textButton={'Создать статсиктику'} clickFunc={() => setOpenCreateStatistic(true)} />
+
+        
+                <Space style={{
+                    width:"100%",
+                    display:"flex",
+                    justifyContent:"center"
+                }}>
+                    <Button type= {isActive ? "primary": "default" }  onClick={() => setIsActive(true)}>Активная</Button>
+                    <Button   type= {!isActive ? "primary": "default" } onClick={() => setIsActive(false)}>Архивная</Button>
+                </Space>
+        
+
+
 
                 {filtredStats.map((item, index) => (
                     <React.Fragment key={index}>
@@ -53,6 +70,11 @@ export default function StatisticsList() {
                     </React.Fragment>
                 ))}
             </CustomList>
+
+            <ModalCreateStatistic
+                open={openCreateStatistic}
+                setOpen={setOpenCreateStatistic}
+            />
         </>
     )
 }

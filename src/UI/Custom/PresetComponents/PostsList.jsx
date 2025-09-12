@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react'
 import CustomList from '../CustomList/CustomList'
 import ListElem from '../CustomList/ListElem'
-import { usePostsHook } from '@hooks'
+import ListAddButtom from '../ListAddButton/ListAddButtom';
+import { useAllPosts } from '@hooks'
 import icon_post from '@image/icon _ post.svg'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,12 +11,15 @@ export default function PostsList() {
     const navigate = useNavigate()
     const [seacrhPostsSectionsValue, setSeacrhPostssSectionsValue] = useState()
 
+    const [openCreatePost, setOpenCreatePost] = useState(false);
+
+
     const {
         allPosts,
         isLoadingGetPosts,
+        isFetchingGetPosts,
         isErrorGetPosts,
-
-    } = usePostsHook();
+    } = useAllPosts();
 
     const handlerClickPost = (link) => {
         navigate(`helper/posts/${link}`);
@@ -39,6 +43,8 @@ export default function PostsList() {
                 searchValue={seacrhPostsSectionsValue}
                 searchFunc={setSeacrhPostssSectionsValue}
             >
+                <ListAddButtom textButton={'Создать пост'} clickFunc={() => setOpenCreatePost(true)} />
+
                 {filtredPosts.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
