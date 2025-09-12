@@ -147,6 +147,7 @@ export const EditStatisticInformation = () => {
               initialValues={initialValues}
               layout="vertical"
               style={{ maxWidth: 600 }}
+              disabled={!currentStatistic?.isActive}
             >
               <Row>
                 <Col span={24}>
@@ -193,6 +194,7 @@ export const EditStatisticInformation = () => {
                 <Col span={24}>
                   <Form.Item name="isActive" label="Состояние статистики">
                     <Select
+                      disabled={false}
                       options={[
                         { value: true, label: "Активная" },
                         { value: false, label: "Архивная" },

@@ -1,0 +1,21 @@
+.main {
+  position: relative;
+
+  width: auto;
+
+  flex: 1 0 120px;
+
+  background-color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: 20px 5px;
+  padding-top: 10px;
+
+  border: 1px solid #CCCCCC;
+  border-radius: 5px;
+
+  overflow-y: auto;
+}
