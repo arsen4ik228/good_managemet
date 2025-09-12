@@ -18,6 +18,10 @@ const initialState = {
         statistics: {
             componentType: 'statistics',
             props: {}
+        },
+        chats: {
+            componentType: 'chats',
+            props: {}
         }
         // goals: {
         //     componentType: 'goals', 

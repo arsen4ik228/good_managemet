@@ -1,0 +1,24 @@
+.wrapper {
+    overflow: hidden;
+    height: 100%; /* или нужная высота */
+}
+
+.content {
+    height: 100%;
+    width: 690px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 3px;
+}
+
+.messagesContainer {
+    overflow: auto; 
+    flex: 1; 
+    background-color: rgba(248, 248, 248, 1);
+    border: 1px	solid rgba(204, 204, 204, 1);
+    border-top: none;
+}
+
+.inputContainer {
+
+}

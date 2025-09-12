@@ -149,6 +149,8 @@ export default function LeftSIder() {
                                 <ListElem
                                     upperText={item.userFirstName + ' ' + item.userLastName}
                                     bottomText={item.postName}
+                                    linkSegment={`${item.id}`}
+                                    clickFunc={() => navigate(`chat/${item.id}`)}
                                 />
                             </React.Fragment>
                         ))}

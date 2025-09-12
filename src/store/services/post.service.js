@@ -63,8 +63,6 @@ export const postApi = apiSlice.injectEndpoints({
     }),
 
 
-   
-
     getPostsUserByOrganization: build.query({
       query: ({organizationId}) => ({
         url: `posts/myPosts`,

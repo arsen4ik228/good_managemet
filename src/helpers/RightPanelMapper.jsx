@@ -2,13 +2,15 @@ import React from 'react';
 // import Bey from '../store/slices/Bey';
 import PostsList from '../UI/Custom/PresetComponents/PostsList';
 import StatisticsList from '../UI/Custom/PresetComponents/StatisticsList/StatisticsList';
+import ConvertList from '../UI/Custom/PresetComponents/ConvertsList/ConvertList';
 // import GoalsPanel from '../components/GoalsPanel';
 
 const componentMap = {
     // helper: Bey,
     // goals: GoalsPanel,
     posts: PostsList,
-    statistics: StatisticsList
+    statistics: StatisticsList,
+    chats: ConvertList
     // добавьте другие компоненты
 };
 

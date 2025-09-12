@@ -17,6 +17,8 @@ import Post from "../../UI/layout/Posts/Post";
 import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatisticInformation";
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
+import DesktopDialogPage from "../../UI/layout/Chat/desktop/DesktopDoalogPage";
+import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
 const Main = React.lazy(() => import("@app/Authorization/Main"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -52,7 +54,7 @@ const DesktopConvertsPage = React.lazy(() =>
   import("@app/ConvertsPage/desktop/DesktopConvertPage.jsx")
 );
 
-const DialogPage = React.lazy(() => import("@app/DialogPage/DialogPage.jsx"));
+// const DialogPage = React.lazy(() => import("@app/DialogPage/DialogPage.jsx"));
 
 // const SettingsPage = React.lazy(() =>
 //   import("@app/SettingsPage/desktop/SettingsPage.jsx")
@@ -149,7 +151,7 @@ function DesktopApp() {
                         <Panel />
                         <div className="content">
                           <Chat />
-                          <DialogPage />
+                          {/* <DialogPage /> */}
                         </div>
                       </div>
                     }
@@ -291,6 +293,7 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
           {/* edit */}
           <Route
             path="editGoal"
@@ -387,6 +390,57 @@ function DesktopApp() {
                 </React.Suspense>
               }
             />
+
+            {/* dialog */}
+            <Route path="chat/:contactId/*">
+
+              <Route
+                index
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <MessageSelectingList presetName={"CHATS"} />
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="new"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <CreateNewConvertPage></CreateNewConvertPage>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path=":convertId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <DesktopDialogPage></DesktopDialogPage>
+                  </React.Suspense>
+                }
+              />
+
+            </Route>
+            {/* dialog */}
 
             {/* helper */}
             <Route path="helper">
@@ -502,7 +556,7 @@ function DesktopApp() {
 
         </Routes>
       </ConfigProvider>
-    </div>
+    </div >
   );
 }
 
