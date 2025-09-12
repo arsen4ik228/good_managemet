@@ -5,7 +5,6 @@ import classes from "./Statistic.module.css";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Graphic from "../../app/Graphic/Graphic";
-import ListStatisticDrawer from "./ListStatisticDrawer";
 import ModalCreateStatistic from "./ModalCreateStatistic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
 import ReportDay from "./components/ReportDay";
@@ -45,7 +44,7 @@ const widthMap = {
 
 export default function Statistic() {
 
-    const {statisticId} = useParams() 
+    const { statisticId } = useParams()
 
     const buutonsArr = [
         { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editStatisticInformation/' + statisticId, '_blank') },
@@ -53,12 +52,6 @@ export default function Statistic() {
     ]
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
-
-    const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
-
-    // const [statisticId, setStatisticId] = useState(null);
-
-    const [openListStatisticDrawer, setOpenListStatisticDrawer] = useState(true);
 
     const [chartType, setChartType] = useState("daily");
     const [clickArrow, setClickArrow] = useState([null, null]);
@@ -68,8 +61,8 @@ export default function Statistic() {
     const [dataSource, setDataSource] = useState([]);
     const [createPoints, setCreatePoints] = useState([]);
 
-        const { PRESETS } = useRightPanel();
-        usePanelPreset(PRESETS.STATISTICS);
+    const { PRESETS } = useRightPanel();
+    usePanelPreset(PRESETS.STATISTICS);
 
     // Получение статистики по id
     const {
@@ -167,7 +160,6 @@ export default function Statistic() {
     useEffect(() => {
         setDataSource([]);
         setCreatePoints([]);
-        // setStatisticId(null);
     }, [reduxSelectedOrganizationId]);
 
 
@@ -202,10 +194,10 @@ export default function Statistic() {
 
                                 <div
                                     style={{
-                                        flex: 1, 
+                                        flex: 1,
                                         display: "flex",
-                                        justifyContent: "center", 
-                                        alignItems: "center", 
+                                        justifyContent: "center",
+                                        alignItems: "center",
                                     }}
                                 >
                                     <Graphic
@@ -279,18 +271,6 @@ export default function Statistic() {
                         </>
                     ) : null}
 
-                    {/* <ListStatisticDrawer
-                        open={openListStatisticDrawer}
-                        setOpen={setOpenListStatisticDrawer}
-                        statisticId={statisticId}
-                        setStatisticId={setStatisticId}
-                    /> */}
-
-                    <ModalCreateStatistic
-                        open={openCreateStatistic}
-                        setOpen={setOpenCreateStatistic}
-                        // setStatisticId={setStatisticId}
-                    />
 
                 </>
             </div>

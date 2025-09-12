@@ -1,21 +1,40 @@
 import React from 'react'
+import { useParams } from 'react-router-dom';
+
 import classes from './Post.module.css'
 
 import { Card, Avatar, Typography, Space, Divider, Flex } from "antd";
 import {
     PhoneOutlined,
-    MailOutlined,
-    UserOutlined,
 } from "@ant-design/icons";
 
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
+import { useGetSinglePost } from '../../../hooks/Post/useGetSinglePost';
+import { baseUrl } from "@helpers/constants.js"; 
+import { formatPhone } from './function/functionForPost'
 
 const { Title, Text } = Typography;
 
 
 export default function Post() {
+
+    const { postId } = useParams();
+
+    const buutonsArr = [
+        { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPost/' + postId, '_blank') },
+    ]
+
+    const {
+        currentPost,
+        parentPost,
+
+        isLoadingGetPostId,
+        isErrorGetPostId,
+        isFetchingGetPostId,
+    } = useGetSinglePost({ postId });
+
     return (
-        <MainContentContainer>
+        <MainContentContainer buttons={buutonsArr} >
             <div className={classes.main}>
                 <Card
                     style={{
@@ -28,11 +47,11 @@ export default function Post() {
                     <Flex vertical align="center" style={{ marginBottom: 24 }}>
                         <Text type="secondary">руководящий пост</Text>
                         <Space size="small" align="center">
-                            <Avatar src="https://i.pravatar.cc/100" />
+                            <Avatar size={48} src={parentPost?.user?.avatar_url ? `${baseUrl}${parentPost?.user?.avatar_url}` : null} />
                             <Flex vertical>
-                                <Text strong>Андрей Макаров</Text>
+                                <Text strong>{parentPost?.user?.lastName} {parentPost?.user?.firstName}</Text>
                                 <Text type="secondary" style={{ fontSize: 12 }}>
-                                    Начальник склада
+                                    {parentPost?.postName}
                                 </Text>
                             </Flex>
                         </Space>
@@ -52,17 +71,17 @@ export default function Post() {
                         >
                             <Avatar
                                 size={96}
-                                src="https://i.pravatar.cc/150?img=11"
+                                src={currentPost?.user?.avatar_url ? `${baseUrl}${currentPost?.user?.avatar_url}` : null}
                                 style={{ marginBottom: 12 }}
                             />
-                            <Title level={5}>Алексей Любимов</Title>
+                            <Title level={5}>{currentPost?.user?.lastName} {currentPost?.user?.firstName}</Title>
 
                             <Divider />
 
                             <Flex vertical gap={8} align="flex-start">
                                 <Space>
                                     <PhoneOutlined />
-                                    <Text>+7 (925) 512 46 64</Text>
+                                    <Text>{formatPhone(currentPost?.user?.telephoneNumber)}</Text>
                                 </Space>
                             </Flex>
                         </Card>
@@ -71,37 +90,38 @@ export default function Post() {
                         <Flex vertical gap={12} style={{ flex: 1 }}>
                             <Flex vertical>
                                 <Text type="secondary">Название подразделения</Text>
-                                <Text strong>Грузчики</Text>
+                                <Text strong>{currentPost?.divisionName}</Text>
                             </Flex>
 
                             <Flex vertical>
                                 <Text type="secondary">Название поста</Text>
-                                <Text strong>Старший грузчик</Text>
+                                <Text strong>{currentPost?.postName}</Text>
                             </Flex>
 
                             <Flex vertical>
                                 <Text type="secondary">Продукт поста</Text>
                                 <Text>
-                                    Товары доставленные на склад или со склада в целости и сохранности
+                                    {currentPost?.product}
                                 </Text>
                             </Flex>
 
                             <Flex vertical>
                                 <Text type="secondary">Предназначение поста</Text>
                                 <Text>
-                                    Обеспечивать быструю приёмку и выдачу товаров на складе
+                                    {currentPost?.purpose}
                                 </Text>
                             </Flex>
 
                             <Flex vertical>
                                 <Text type="secondary">Статистики поста</Text>
-                                <Text>Количество доставленных грузов</Text>
-                                <Text>Время простоя</Text>
+                                <Text>
+                                    {currentPost?.statistics?.map(item => item.name).join(", ")}
+                                </Text>
                             </Flex>
 
                             <Flex vertical>
                                 <Text type="secondary">Политика поста</Text>
-                                <Text>ОПД грузчика склада</Text>
+                                <Text>{currentPost?.policy?.policyName}</Text>
                             </Flex>
                         </Flex>
                     </Flex>

@@ -177,47 +177,47 @@ export const EditStatisticPointsData = () => {
     setCreateCorellationPoints([]);
   };
 
-const exitClick = () => {
-  const createDtos = [
-    ...createCorellationPoints.map(({ id, ...rest }) => rest),
-    ...createPoints
-      .filter((item) => item.value !== null)
-      .map(({ id, ...rest }) => rest),
-  ];
+  const exitClick = () => {
+    const createDtos = [
+      ...createCorellationPoints.map(({ id, ...rest }) => rest),
+      ...createPoints
+        .filter((item) => item.value !== null)
+        .map(({ id, ...rest }) => rest),
+    ];
 
-  const updateDtos = dataSource
-    .filter((item) => item.isChanged === true)
-    .map(({ id, value, correlationType }) => ({
-      _id: id,
-      value,
-      correlationType,
-    }));
-
-
-  const hasChanges =
-    createDtos.length > 0 ||
-    updateDtos.length > 0 ; 
+    const updateDtos = dataSource
+      .filter((item) => item.isChanged === true)
+      .map(({ id, value, correlationType }) => ({
+        _id: id,
+        value,
+        correlationType,
+      }));
 
 
-  if (hasChanges) {
-    Modal.confirm({
-      title: "Есть несохранённые изменения",
-      icon: <ExclamationCircleFilled />,
-      content:
-        "Вы хотите сохранить изменения перед выходом из режима редактирования?",
-      okText: "Сохранить",
-      cancelText: "Не сохранять",
-      onOk() {
-        handleSave().then(() => window.close());
-      },
-      onCancel() {
-        window.close();
-      },
-    });
-  } else {
-    window.close();
-  }
-};
+    const hasChanges =
+      createDtos.length > 0 ||
+      updateDtos.length > 0;
+
+
+    if (hasChanges) {
+      Modal.confirm({
+        title: "Есть несохранённые изменения",
+        icon: <ExclamationCircleFilled />,
+        content:
+          "Вы хотите сохранить изменения перед выходом из режима редактирования?",
+        okText: "Сохранить",
+        cancelText: "Не сохранять",
+        onOk() {
+          handleSave().then(() => window.close());
+        },
+        onCancel() {
+          window.close();
+        },
+      });
+    } else {
+      window.close();
+    }
+  };
 
   useEffect(() => {
     setDatePoint(() => {
@@ -298,10 +298,8 @@ const exitClick = () => {
   }, [statisticData, chartType, datePoint]);
 
   return (
-    <ConfigProvider componentDisabled={!currentStatistic?.isActive}>
-
-      <EditContainer saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
-
+    <EditContainer saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
+      <ConfigProvider componentDisabled={!currentStatistic?.isActive}>
         <Flex gap={20} style={{
           minWidth: "calc(100vw - 20px)",
           minHeight: "100%",
@@ -357,6 +355,7 @@ const exitClick = () => {
             >
               <Tooltip title="сдвигает график влево" placement="left">
                 <Button
+                  disabled={false}
                   icon={<LeftCircleOutlined />}
                   onClick={() => setClickArrow(["left", new Date()])}
                 />
@@ -364,6 +363,7 @@ const exitClick = () => {
 
               <Tooltip title="сдвигает график вправо" placement="right">
                 <Button
+                  disabled={false}
                   icon={<RightCircleOutlined />}
                   onClick={() => setClickArrow(["right", new Date()])}
                   style={{
@@ -388,6 +388,7 @@ const exitClick = () => {
                 placement="left"
               >
                 <Button
+                  disabled={false}
                   type={chartType === item.value ? "primary" : "default"}
                   onClick={() => setChartType(item.value)}
                   icon={item?.icon}
@@ -402,9 +403,7 @@ const exitClick = () => {
           </Flex>
 
         </Flex>
-
-      </EditContainer>
-
-    </ConfigProvider >
+      </ConfigProvider >
+    </EditContainer>
   );
 };
