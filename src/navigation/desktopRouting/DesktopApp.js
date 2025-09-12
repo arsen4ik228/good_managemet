@@ -334,7 +334,7 @@ function DesktopApp() {
           />
 
           <Route
-            path="editPost"
+            path="editPost/:postId"
             element={
               <React.Suspense
                 fallback={
