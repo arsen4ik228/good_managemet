@@ -1,11 +1,3 @@
-.wrapper {
-    height: 100vh;
-    width: 100vw;
-    background-color: #005475;
-    overflow: hidden;
-    font-family: 'Montserrat';
-}
-
 .messages {
     height: 100vh;
     width: 100vw;

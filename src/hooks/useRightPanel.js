@@ -51,6 +51,7 @@ export const useRightPanel = () => {
             HELPER: 'helper',
             GOALS: 'goals',
             POSTS: 'posts',
+            POLICIES: 'policies',
             STATISTICS: 'statistics',
             CHATS: 'chats'
         }

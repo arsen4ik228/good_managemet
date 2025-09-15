@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import classes from "./Content.module.css"; // Ваши стили
+import classes from "./AuthPage.module.css"; // Ваши стили
 import { QRCode } from "antd";
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
@@ -9,7 +9,8 @@ import telegram from "@Custom/icon/telegram.svg";
 import logo from "@Custom/icon/logo.svg";
 import icon from "@image/iconHeader.svg";
 import { useDispatch } from "react-redux";
-import { setUserId } from "../../../../store/slices/local.storage.slice";
+import { setUserId } from "../../../store/slices/local.storage.slice";
+import GM from "@image/labelGM.svg"
 
 const socket = io(`${socketUrl}auth`, {
   cors: {
@@ -18,7 +19,7 @@ const socket = io(`${socketUrl}auth`, {
   transports: ["websocket"],
 }); // Подключение к сокету
 
-export default function Content() {
+export default function AuthPage() {
   const [data, setData] = useState({
     accessToken: "",
     refreshTokenId: "",
@@ -182,6 +183,8 @@ export default function Content() {
     }
   }, [socketId, tokenForTG]);
   console.warn(tokenForTG, ' ----', socket)
+
+
   return isMobile ? (
     <div className={classes.Container}>
       <div className={classes.logoContainer}>
@@ -206,10 +209,12 @@ export default function Content() {
       </div>
     </div>
   ) : (
+
+
     <div className={classes.body}>
       <span className={classes.text}>Для входа отсканируйте QR-код</span>
       <div className={classes.QR}>
-        {!tokenForTG ? (   //!socketId ||
+        {!tokenForTG ? (
           <span className={classes.loader}>
             <img src={icon} alt="icon" />
           </span>
@@ -231,6 +236,10 @@ export default function Content() {
           </span>
         )}
       </div>
+      {/* <img src={GM} alt="GM" /> */}
+
     </div>
+
+
   );
 }

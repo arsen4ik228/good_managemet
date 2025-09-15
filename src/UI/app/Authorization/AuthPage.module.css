@@ -1,6 +1,6 @@
 .body {
-  min-height: calc(100vh - 60px);
-  min-width: calc(100vw - 70px);
+  min-height: calc(100vh);
+  min-width: calc(100vw);
   border-radius: 25px 0px 0px 0px;
   background-color: #F1F5F9;
   display: flex;

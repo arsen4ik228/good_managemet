@@ -5,7 +5,7 @@ import Header from "@Custom/Header/Header";
 
 import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
 import { useUpdateSvodka } from "@hooks";
-import { Table, Flex, Button, InputNumber, message, Spin} from "antd";
+import { Table, Flex, Button, InputNumber, message, Spin } from "antd";
 import _ from "lodash";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -290,23 +290,29 @@ export default function Svodka() {
                     })
                   }
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === "Tab") {
-                      e.preventDefault();
-                      saveAndMove("right");
-                    } else if (e.key === "ArrowRight") {
-                      e.preventDefault();
-                      saveAndMove("right");
-                    } else if (e.key === "ArrowLeft") {
-                      e.preventDefault();
-                      saveAndMove("left");
-                    } else if (e.key === "ArrowUp") {
-                      e.preventDefault();
-                      saveAndMove("up");
-                    } else if (e.key === "ArrowDown") {
-                      e.preventDefault();
-                      saveAndMove("down");
+                    e.preventDefault(); // предотвращаем стандартное поведение сразу
+
+                    const keyMap = {
+                      Enter: "down",
+                      Tab: "right",
+                      ArrowRight: "right",
+                      ArrowLeft: "left",
+                      ArrowUp: "up",
+                      ArrowDown: "down",
+                    };
+
+                    const shiftKeyMap = {
+                      Enter: "up",
+                      Tab: "left",
+                    };
+
+                    const direction = e.shiftKey ? shiftKeyMap[e.key] : keyMap[e.key];
+
+                    if (direction) {
+                      saveAndMove(direction);
                     }
                   }}
+
                 />
               </Spin>
             );

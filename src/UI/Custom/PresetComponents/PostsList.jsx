@@ -5,6 +5,7 @@ import ListAddButtom from '../ListAddButton/ListAddButtom';
 import { useAllPosts } from '@hooks'
 import icon_post from '@image/icon _ post.svg'
 import { useNavigate } from 'react-router-dom'
+import ModalCreatePost from '../../layout/Posts/ModalCreatePost';
 
 export default function PostsList() {
 
@@ -55,6 +56,11 @@ export default function PostsList() {
                         />
                     </React.Fragment>
                 ))}
+
+                <ModalCreatePost
+                    open={openCreatePost}
+                    setOpen={setOpenCreatePost}
+                ></ModalCreatePost>
             </CustomList>
         </>
     )
