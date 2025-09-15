@@ -20,6 +20,7 @@ export default function MessageSelectingList({presetName}) {
                 </div>
                 <div className={classes.messageContainer}>
                     <div>Выберите нужный вам элемент, чтобы начать работать с разделом!</div>
+                    <div className={classes.arrow}></div>
                 </div>
             </div>
         </div>

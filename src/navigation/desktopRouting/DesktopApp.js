@@ -15,13 +15,15 @@ import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
 import Post from "../../UI/layout/Posts/Post";
 import EditPost from "../../UI/layout/Posts/EditPost";
+import Policy from "../../UI/layout/Policies/Policy";
+import EditPolicy from "../../UI/layout/Policies/EditPolicy";
 import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatisticInformation";
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
 import DesktopDialogPage from "../../UI/layout/Chat/desktop/DesktopDoalogPage";
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
-const Main = React.lazy(() => import("@app/Authorization/Main"));
+const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
 // Добавил
@@ -32,7 +34,7 @@ const Pomoshnik = React.lazy(() => import("@app/Pomoshnik/Pomoshnik"));
 const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
 // const User = React.lazy(() => import("@app/UserPage/User"));
 // const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
-const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
+// const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
 const Statistic1 = React.lazy(() => import("@app/StatisticsPage/Statistic"));
 const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
@@ -97,13 +99,11 @@ function DesktopApp() {
           <Route
             path="/"
             element={
-              <div className="wrapper">
-                <React.Suspense
-                  fallback={<HandlerMutation Loading={true}></HandlerMutation>}
-                >
-                  <Main />
-                </React.Suspense>
-              </div>
+              <React.Suspense
+                fallback={<HandlerMutation Loading={true}></HandlerMutation>}
+              >
+                <AuthPage />
+              </React.Suspense>
             }
           />
 
@@ -222,10 +222,10 @@ function DesktopApp() {
                           <Routes>
                             <Route path="start" element={<Pomoshnik />} />
                             <Route path="goal" element={<Goal />} />
-                            <Route
+                            {/* <Route
                               path="policy/:policyId?"
                               element={<Policy />}
-                            />
+                            /> */}
                             <Route path="statistic" element={<Statistic1 />} />
                             {/* <Route path="svodka" element={<Svodka />} /> */}
                             <Route path="objective" element={<Objective />} />
@@ -301,7 +301,7 @@ function DesktopApp() {
                   </div>
                 }
               >
-                <>policy edit</>
+                <EditPolicy />
               </React.Suspense>
             }
           />
@@ -425,7 +425,6 @@ function DesktopApp() {
 
             {/* dialog */}
             <Route path="chat/:contactId/*">
-
               <Route
                 index
                 element={
@@ -470,7 +469,6 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
-
             </Route>
             {/* dialog */}
 
@@ -518,7 +516,24 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <>policy</>
+                    <MessageSelectingList
+                      presetName={"POLICIES"}
+                    ></MessageSelectingList>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="policies/:policyId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                  <Policy/>
                   </React.Suspense>
                 }
               />
@@ -563,7 +578,9 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <Statistic></Statistic>
+                    <MessageSelectingList
+                      presetName={"STATISTICS"}
+                    ></MessageSelectingList>
                   </React.Suspense>
                 }
               />
@@ -617,10 +634,9 @@ function DesktopApp() {
             </Route>
             {/* //helper */}
           </Route>
-
         </Routes>
       </ConfigProvider>
-    </div >
+    </div>
   );
 }
 

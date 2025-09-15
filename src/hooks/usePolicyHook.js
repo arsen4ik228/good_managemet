@@ -6,11 +6,14 @@ import {
 } from "@services";
 
 import { useMutationHandler } from "./useMutationHandler";
+import useGetReduxOrganization from "@hooks/useGetReduxOrganization";
 
 export const usePolicyHook = ({
   policyId = null,
   organizationId = null,
 } = {}) => {
+  const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+
   const {
     activeDirectives = [],
     draftDirectives = [],
@@ -35,7 +38,7 @@ export const usePolicyHook = ({
     isErrorGetPolicies,
     isFetchingGetPolicies,
   } = useGetPoliciesQuery(
-    { organizationId: organizationId },
+    { organizationId: reduxSelectedOrganizationId },
     {
       selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
         activeDirectives: data?.activeDirectives || [],
@@ -61,7 +64,6 @@ export const usePolicyHook = ({
         isErrorGetPolicies: isError,
         isFetchingGetPolicies: isFetching,
       }),
-      skip: !organizationId,
     }
   );
 

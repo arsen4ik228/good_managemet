@@ -1,7 +1,7 @@
 import "./MobileApp.css";
 
 import { Route, Routes, Navigate } from "react-router-dom";
-import { AuthorizationPage } from "@app";
+// import { AuthorizationPage } from "@app";
 import { MobileMain } from "@app";
 import { HelperChat } from "@app";
 import { MainPolicy } from "@app";
@@ -44,7 +44,7 @@ function MobileApp() {
     <ConfigProvider locale={ruRU}>
       <Routes>
         {/* <Route path={'/'} element={<Navigate replace to="Main" />}></Route> */}
-        <Route path={"/"} element={<AuthorizationPage />}></Route>
+        {/* <Route path={"/"} element={<AuthorizationPage />}></Route> */}
         <Route
           path="/*"
           element={
