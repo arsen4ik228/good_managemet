@@ -10,7 +10,7 @@ import {
 
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import { useGetSinglePost } from '../../../hooks/Post/useGetSinglePost';
-import { baseUrl } from "@helpers/constants.js"; 
+import { baseUrl } from "@helpers/constants.js";
 import { formatPhone } from './function/functionForPost'
 import { usePanelPreset } from '@hooks';
 import { useRightPanel } from '@hooks';
@@ -22,9 +22,9 @@ export default function Post() {
 
     const { postId } = useParams();
 
-        const { PRESETS } = useRightPanel();
-    
-        usePanelPreset(PRESETS["POSTS"]);
+    const { PRESETS } = useRightPanel();
+
+    usePanelPreset(PRESETS["POSTS"]);
 
     const buutonsArr = [
         { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPost/' + postId, '_blank') },
@@ -52,15 +52,24 @@ export default function Post() {
                     {/* Руководитель */}
                     <Flex vertical align="center" style={{ marginBottom: 24 }}>
                         <Text type="secondary">руководящий пост</Text>
-                        <Space size="small" align="center">
-                            <Avatar size={48} src={parentPost?.user?.avatar_url ? `${baseUrl}${parentPost?.user?.avatar_url}` : null} />
-                            <Flex vertical>
-                                <Text strong>{parentPost?.user?.lastName} {parentPost?.user?.firstName}</Text>
-                                <Text type="secondary" style={{ fontSize: 12 }}>
-                                    {parentPost?.postName}
-                                </Text>
-                            </Flex>
-                        </Space>
+                        {parentPost && Object.keys(parentPost).length ? (
+                            <Space size="small" align="center">
+                                <Avatar
+                                    size={48}
+                                    src={parentPost.user?.avatar_url ? `${baseUrl}${parentPost.user.avatar_url}` : null}
+                                />
+                                <Flex vertical>
+                                    <Text strong>
+                                        {parentPost.user?.lastName} {parentPost.user?.firstName}
+                                    </Text>
+                                    <Text type="secondary" style={{ fontSize: 12 }}>
+                                        {parentPost.postName}
+                                    </Text>
+                                </Flex>
+                            </Space>
+                        ) : (
+                            <Text type="secondary">—</Text> // показываем, что данных нет
+                        )}
                     </Flex>
 
                     <Divider />
@@ -105,6 +114,13 @@ export default function Post() {
                             </Flex>
 
                             <Flex vertical>
+                                <Text type="secondary">Роль поста</Text>
+                                <Text strong>
+                                    {currentPost?.role?.roleName}
+                                </Text>
+                            </Flex>
+
+                            <Flex vertical>
                                 <Text type="secondary">Продукт поста</Text>
                                 <Text>
                                     {currentPost?.product}
@@ -121,14 +137,19 @@ export default function Post() {
                             <Flex vertical>
                                 <Text type="secondary">Статистики поста</Text>
                                 <Text>
-                                    {currentPost?.statistics?.map(item => item.name).join(", ")}
+                                    {currentPost?.statistics?.length
+                                        ? currentPost.statistics.map((item) => item.name).join(", ")
+                                        : <Text type="secondary">—</Text>}
                                 </Text>
                             </Flex>
 
                             <Flex vertical>
                                 <Text type="secondary">Политика поста</Text>
-                                <Text>{currentPost?.policy?.policyName}</Text>
+                                <Text>
+                                    {currentPost?.policy?.policyName || <Text type="secondary">—</Text>}
+                                </Text>
                             </Flex>
+
                         </Flex>
                     </Flex>
                 </Card>

@@ -6,7 +6,7 @@ import { PhoneOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 
 import isEqual from "lodash/isEqual";
 
-import { useGetSinglePost, useUpdateSinglePost, useAllStatistics, useUpdateStatisticsToPostId } from '@hooks';
+import { useGetSinglePost, useUpdateSinglePost, useAllStatistics, useUpdateStatisticsToPostId, useGetDataForCreatePost } from '@hooks';
 import EditContainer from "@Custom/EditContainer/EditContainer";
 
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
@@ -26,6 +26,8 @@ export default function EditPost() {
     const [initialValues, setInitialValues] = useState(null);
 
     const [dropdownOpen, setDropdownOpen] = useState(false); // 👈 добавили состояние
+
+    const { roles } = useGetDataForCreatePost();
 
     const {
         currentPost,
@@ -67,6 +69,7 @@ export default function EditPost() {
                 parentId: parentPost.id ?? null,
                 postName: currentPost.postName ?? null,
                 divisionName: currentPost.divisionName ?? null,
+                roleId: currentPost.role.id ?? null,
                 product: currentPost.product ?? null,
                 purpose: currentPost.purpose ?? null,
                 responsibleUserId: currentPost?.user?.id ?? null,
@@ -116,6 +119,7 @@ export default function EditPost() {
             parentId: parentPost.id ?? null,
             postName: currentPost.postName ?? null,
             divisionName: currentPost.divisionName ?? null,
+            roleId: currentPost.role.id ?? null,
             product: currentPost.product ?? null,
             purpose: currentPost.purpose ?? null,
             responsibleUserId: currentPost?.user?.id ?? null,
@@ -169,12 +173,13 @@ export default function EditPost() {
 
                         flex: "1 0 120px",
 
-                        backgroundColor: "#fff",
-
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
 
+                        padding: "10px",
+
+                        backgroundColor: "#fff",
                         border: "1px solid #CCCCCC",
                         borderRadius: "5px",
 
@@ -302,25 +307,45 @@ export default function EditPost() {
                                             </Form.Item>
 
                                             <Form.Item
-                                                label="Продукт поста"
-                                                name="product"
-                                                rules={[{ required: true, message: 'Введите продукт поста' }]}
+                                                name="roleId"
+                                                label="Роль поста"
+                                                rules={[{ required: true, message: "Назначьте роль посте" }]}
                                             >
-                                                <TextArea rows={3} placeholder="Описание продукта поста" />
+                                                <Select
+                                                    showSearch
+                                                    optionFilterProp="label"
+                                                    options={roles.map((r) => ({
+                                                        label: r.roleName,
+                                                        value: r.id,
+                                                    }))}
+                                                    filterOption={(input, option) =>
+                                                        option?.label?.toLowerCase().includes(input.toLowerCase())
+                                                    }
+                                                />
+
                                             </Form.Item>
 
-                                            <Form.Item
-                                                label="Предназначение поста"
-                                                name="purpose"
-                                                rules={[{ required: true, message: 'Введите предназначение поста' }]}
-                                            >
-                                                <TextArea rows={3} placeholder="Предназначение поста" />
-                                            </Form.Item>
                                         </Flex>
                                     </Flex>
 
                                     {/* Нижняя часть — на всю ширину */}
                                     <Flex vertical gap={12}>
+                                        <Form.Item
+                                            label="Продукт поста"
+                                            name="product"
+                                            rules={[{ required: true, message: 'Введите продукт поста' }]}
+                                        >
+                                            <TextArea rows={3} placeholder="Описание продукта поста" />
+                                        </Form.Item>
+
+                                        <Form.Item
+                                            label="Предназначение поста"
+                                            name="purpose"
+                                            rules={[{ required: true, message: 'Введите предназначение поста' }]}
+                                        >
+                                            <TextArea rows={3} placeholder="Предназначение поста" />
+                                        </Form.Item>
+
                                         <Form.Item
                                             label="Политика поста"
                                             name="policyId"
@@ -359,7 +384,7 @@ export default function EditPost() {
                             </Form>
                         </Card>
                     </div>
-                </EditContainer>
+                </EditContainer >
             }
 
         </>
