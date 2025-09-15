@@ -11,18 +11,22 @@ import { useSocket, useEmitSocket } from '@helpers/SocketContext';
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import MainContentContainer from '../../../Custom/MainContentContainer/MainContentContainer';
 import ChatContainer from '../ChatContainer/ChatContainer';
+import FinalConvertModal from '@Custom/FinalConvertModal/FinalConvertModal'
+
 
 
 export default function DesktopDialogPage() {
     const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
+    const [openFinishModal, setOpenFinishModal] = useState()
     const bodyRef = useRef(null);
     const [messagesArray, setMessagesArray] = useState();
     const [socketMessages, setSocketMessages] = useState([]);
     const unSeenMessagesRef = useRef(null);
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
+    const button = [{ click: () => setOpenFinishModal(true), text: 'завершить' }]
 
     const { currentConvert,
         senderPostId,
@@ -34,7 +38,7 @@ export default function DesktopDialogPage() {
         isLoadingGetConvertId,
         isFetchingGetConvartId,
         isErrorGetConvertId,
-        organizationId
+        pathOfUsers
     } = useConvertsHook({ convertId });
 
     const {
@@ -109,11 +113,12 @@ export default function DesktopDialogPage() {
         if (!notEmpty(socketResponse?.messageCreationEvent)) return;
 
         const newMessage = socketResponse.messageCreationEvent
+        console.log(newMessage)
         setSocketMessages(prev => [...prev, {
             id: newMessage.id,
             content: newMessage.content,
             userMessage: newMessage.sender.id === senderPostId,
-            attachmentToMessage: newMessage.attachmentToMessage,
+            attachmentToMessages: newMessage.attachmentToMessages,
             timeSeen: null,
             createdAt: newMessage.createdAt,
         }]);
@@ -207,67 +212,66 @@ export default function DesktopDialogPage() {
         };
     }, [unSeenMessages, socketMessages]);
 
-    console.warn(messagesArray, unSeenMessages, 'ffdgdfgdf')
+    console.warn( socketMessages, 'ffdgdfgdf')
 
     return (
-        <MainContentContainer>
+        <MainContentContainer buttons={button}>
             {/* <div className={classes.dialog}>
                 <Headers name={userInfo?.userName} sectionName={userInfo.postName} avatar={userInfo?.avatar}>
                 </Headers> */}
             <ChatContainer>
                 {/* <div className={classes.main}> */}
-                    <div className={classes.body} ref={bodyRef}>
-                        {socketMessages?.slice()?.reverse()?.map((item, index) => (
-                            <React.Fragment key={index}>
-                                <Message userMessage={item?.userMessage}
-                                    createdMessage={item?.createdAt}
-                                    seenStatuses={item?.seenStatuses}
+                <div className={classes.body} ref={bodyRef}>
+                    {socketMessages?.slice()?.reverse()?.map((item, index) => (
+                        <React.Fragment key={index}>
+                            <Message userMessage={item?.userMessage}
+                                createdMessage={item?.createdAt}
+                                seenStatuses={item?.seenStatuses}
+                                attachmentToMessage={item?.attachmentToMessages}
+                                {...(!item.userMessage && { 'data-message-id': item.id })}
+                            >
+                                {item.content}
+                            </Message>
+                        </React.Fragment>
+                    ))}
+                    {unSeenMessages?.length > 0 && (
+                        <>
+                            {unSeenMessages?.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <Message
+                                        userMessage={item?.userMessage}
+                                        createdMessage={item?.createdAt}
+                                        ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
+                                        data-message-id={item.id} // Добавляем data-атрибут
+                                        attachmentToMessage={item?.attachmentToMessages}
+                                        seenStatuses={item?.seenStatuses}
 
-                                    attachmentToMessage={item?.attachmentToMessages}
-                                    {...(!item.userMessage && { 'data-message-id': item.id })}
-                                >
-                                    {item.content}
-                                </Message>
-                            </React.Fragment>
-                        ))}
-                        {unSeenMessages?.length > 0 && (
-                            <>
-                                {unSeenMessages?.map((item, index) => (
-                                    <React.Fragment key={index}>
-                                        <Message
-                                            userMessage={item?.userMessage}
-                                            createdMessage={item?.createdAt}
-                                            ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
-                                            data-message-id={item.id} // Добавляем data-атрибут
-                                            attachmentToMessage={item?.attachmentToMessages}
-                                            seenStatuses={item?.seenStatuses}
-
-                                        >
-                                            {item.content}
-                                        </Message>
-                                    </React.Fragment>
-                                ))}
-                                <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
-                            </>
-                        )}
-                        {messagesArray?.map((item, index) => (
-                            <React.Fragment key={index}>
-                                <Message key={index}
-                                    userMessage={item?.userMessage}
-                                    seenStatuses={item?.seenStatuses}
-                                    senderPost={item?.sender}
-                                    attachmentToMessage={item?.attachmentToMessages}
-                                    createdMessage={item?.createdAt}
-                                >
-                                    {item.content}
-                                </Message>
-                            </React.Fragment>
-                        ))}
-                        {isFetchingSeenMessages && <div>Loading more messages...</div>}
-                    </div>
+                                    >
+                                        {item.content}
+                                    </Message>
+                                </React.Fragment>
+                            ))}
+                            <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+                        </>
+                    )}
+                    {messagesArray?.map((item, index) => (
+                        <React.Fragment key={index}>
+                            <Message key={index}
+                                userMessage={item?.userMessage}
+                                seenStatuses={item?.seenStatuses}
+                                senderPost={item?.sender}
+                                attachmentToMessage={item?.attachmentToMessages}
+                                createdMessage={item?.createdAt}
+                            >
+                                {item.content}
+                            </Message>
+                        </React.Fragment>
+                    ))}
+                    {isFetchingSeenMessages && <div>Loading more messages...</div>}
+                </div>
                 {/* </div> */}
             </ChatContainer>
-{/* 
+            {/* 
             {<footer className={classes.footer}>
                     <Input
                         convertId={currentConvert?.id}
@@ -281,6 +285,13 @@ export default function DesktopDialogPage() {
                 </footer>
             } */}
 
+            {openFinishModal && (
+                <FinalConvertModal
+                    setOpenModal={setOpenFinishModal}
+                    convertId={convertId}
+                    pathOfUsers={pathOfUsers}
+                ></FinalConvertModal>
+            )}
 
             <HandlerQeury
                 Error={isErrorGetConvertId}

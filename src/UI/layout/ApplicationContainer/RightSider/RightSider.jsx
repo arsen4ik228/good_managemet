@@ -15,6 +15,7 @@ export default function RightSider({ config }) {
     const { organizationId } = useParams()
     const navigate = useNavigate();
     const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
+    const [selectedItemHelper, setSelectedItemHelper] = useState()
 
     const HELPER_SECTIONS = [
         { id: '7', icon: goal, text: 'Цели', link: 'goal' },
@@ -50,7 +51,8 @@ export default function RightSider({ config }) {
                 <div className={classes.avatarSection}>
                     <img src={avatar} alt="avatar" />
                 </div>
-                <div className={classes.nameSection}>Гудменеджер</div>
+                <div className={classes.nameSection}>{config.props.name}</div>
+                {/* <div className={classes.postSection}>{config.props.posts}</div> */}
             </div>
 
             <div className={classes.content}>
@@ -58,6 +60,7 @@ export default function RightSider({ config }) {
                     title={'C чем работаем?'}
                     searchFunc={setSearchHelperSectionsValue}
                     searchValue={searchHelperSectionsValue}
+                    selectedItem={selectedItemHelper}
                 >
                     {filtredHelperSections.map((item) => (
                         <ListElem
@@ -67,6 +70,7 @@ export default function RightSider({ config }) {
                             icon={item.icon}
                             linkSegment={item.link}
                             clickFunc={() => handlerClickHelper(item.link)}
+                            setSelectedItemData={setSelectedItemHelper}
                         />
                     ))}
                 </CustomList>
@@ -75,7 +79,6 @@ export default function RightSider({ config }) {
                 <div className={classes.dynamicContent}>
                     <RightPanelMapper
                         componentType={config.componentType}
-                        props={config.props}
                     />
                 </div>
             </div>

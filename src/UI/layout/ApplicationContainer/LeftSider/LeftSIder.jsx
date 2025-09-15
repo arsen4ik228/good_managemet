@@ -3,7 +3,7 @@ import classes from './LeftSider.module.css'
 import logo from '@image/big_logo.svg'
 import helper_icon from "@image/helper_icon.svg"
 import CustomList from '../../../Custom/CustomList/CustomList'
-import { useOrganizationHook, useGetReduxOrganization, usePostsHook } from '@hooks'
+import { useOrganizationHook, useGetReduxOrganization, usePostsHook, useRightPanel } from '@hooks'
 import { useDispatch } from 'react-redux'
 import {
     setSelectedOrganizationId,
@@ -11,11 +11,13 @@ import {
 } from "@slices";
 import ListElem from '../../../Custom/CustomList/ListElem'
 import { useNavigate } from 'react-router-dom'
+import { baseUrl } from '@helpers/constants'
 
 export default function LeftSIder() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const { updatePanelProps } = useRightPanel()
 
     const [seacrhOrganizationsSectionsValue, setSearchOrganizationsSectionsValue] = useState()
     const [searchContactsSectionsValue, setContactSectionsValue] = useState()
@@ -46,6 +48,18 @@ export default function LeftSIder() {
 
     const handlerCreateUser = () => {
         navigate('createUser')
+    }
+
+    const handlerContact = (item) => {
+
+        updatePanelProps(
+            {
+                name: `${item.userFirstName} ${item.userLastName}`,
+                // avatar: baseUrl + item.avatarUrl
+            }
+        )
+
+        navigate(`chat/${item.userId}`)
     }
 
     const filtredOrganizations = useMemo(() => {
@@ -97,8 +111,6 @@ export default function LeftSIder() {
     }, [organizations, isLoadingOrganization, isErrorOrganization]);
 
 
-    console.log(allChats)
-
     return (
         <>
             <div className={classes.wrapper}>
@@ -149,8 +161,8 @@ export default function LeftSIder() {
                                 <ListElem
                                     upperText={item.userFirstName + ' ' + item.userLastName}
                                     bottomText={item.postName}
-                                    linkSegment={`${item.id}`}
-                                    clickFunc={() => navigate(`chat/${item.id}`)}
+                                    linkSegment={`${item.userId}`}
+                                    clickFunc={() => handlerContact(item)}
                                 />
                             </React.Fragment>
                         ))}
