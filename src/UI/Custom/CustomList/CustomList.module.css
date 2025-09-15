@@ -38,19 +38,63 @@
 }
 
 /* Контейнер для контента - ИЗМЕНИТЕ ЭТОТ СЕЛЕКТОР */
-.contentContainer {
-    overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.5s ease;
+/* .contentContainer {
+    position: relative;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .expanded {
-    max-height: 100000000000000000000000000px; /* Достаточно большое значение */
     opacity: 1;
+    transform: translateY(0);
 }
 
 .collapsed {
-    max-height: 0;
+    position: absolute;
     opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+} */
+
+/* Общий контейнер */
+.contentContainer {
+    position: relative;
+    overflow: hidden; /* Скрываем всё что выходит за границы */
+    width: 100%;
+}
+
+/* Стили для children */
+.childrenContainer {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    width: 100%;
+}
+
+.childrenContainer.collapsed {
+    opacity: 0;
+    transform: translateY(-10px);
+    height: 0;
+    overflow: hidden;
+}
+
+.childrenContainer.expanded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Стили для одиночного элемента */
+.singleItemContainer {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    width: 100%;
+}
+
+.singleItemContainer.expanded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.singleItemContainer.collapsed {
+    opacity: 0;
+    transform: translateY(10px);
+    height: 0;
     overflow: hidden;
 }
 

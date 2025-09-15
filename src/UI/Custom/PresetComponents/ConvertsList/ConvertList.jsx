@@ -41,7 +41,7 @@ export default function ConvertList() {
                 searchFunc={setSeacrhChatsSectionsValue}
             >
 
-                <ListAddButtom textButton={'Новая тема'} />
+                {/* <ListAddButtom textButton={'Новая тема'} /> */}
 
                 {filtredChats?.map((item, index) => (
                     <React.Fragment key={index}>

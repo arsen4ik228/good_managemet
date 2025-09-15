@@ -1,12 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
 import { useFindPathSegment } from '@helpers/helpers'
-import { useNavigate } from 'react-router-dom';
 
-export default function ListElem({ icon, upperText, bottomText, bage, linkSegment, clickFunc }) {
-
+export default function ListElem({ icon, upperText, bottomText, bage, linkSegment, clickFunc, setSelectedItemData }) {
     const isSelected = useFindPathSegment(linkSegment)
+
+    useEffect(() => {
+        if (isSelected && setSelectedItemData) {
+            setSelectedItemData({
+                icon,
+                upperText,
+                bottomText,
+                bage,
+                linkSegment,
+                clickFunc
+            })
+        }
+    }, [isSelected])
 
     return (
         <>

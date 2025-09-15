@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import classes from "./FilesModal.module.css";
 import ModalContainer from "@Custom/ModalContainer/ModalContainer";
-import { usePolicyHook } from "@hooks";
+import { usePolicyHook, useGetReduxOrganization } from "@hooks";
 import { usePostFilesMutation } from "@services";
 import { baseUrl } from "@helpers/constants";
 import { notEmpty } from "@helpers/helpers";
@@ -31,9 +31,9 @@ export default function FilesModal({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
-
+  const {reduxSelectedOrganizationId} = useGetReduxOrganization()
   const { activeDirectives, activeInstructions, disposalsActive } = usePolicyHook({
-    organizationId: postOrganizationId
+    organizationId: reduxSelectedOrganizationId
   });
 
   const handleFileChange = (e) => {
