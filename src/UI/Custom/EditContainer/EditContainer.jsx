@@ -2,13 +2,13 @@ import React from 'react'
 import classes from './EditContainer.module.css'
 import { Button } from 'antd'
 
-export default function EditContainer({saveClick, canselClick, exitClick, children}) {
+export default function EditContainer({header, saveClick, canselClick, exitClick, children}) {
   return (
     <>
         <div className={classes.wrapper}>
         <div className={classes.Header}>
           <div></div>
-          <div></div>
+          <div>{header}</div>
         </div>
         <div className={classes.content}>
           {children}

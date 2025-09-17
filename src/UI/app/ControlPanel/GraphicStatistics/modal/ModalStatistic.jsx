@@ -23,19 +23,20 @@ dayjs.extend(isSameOrBefore);
 
 const { Title } = Typography;
 
+
 const typeViewStatistic = [
-  { value: "daily", icon: <SunOutlined />, tooltip: "Ежедневный" },
-  { value: "monthly", icon: <MoonOutlined />, tooltip: "Ежемесячный" },
-  { value: "yearly", icon: <CalendarOutlined />, tooltip: "Ежегодовой" },
-  { value: "thirteen", label: "13", tooltip: "13 недель" },
-  { value: "twenty_six", label: "26", tooltip: "26 недель" },
-  { value: "fifty_two", label: "52", tooltip: "52 недели" },
+  { value: "thirteen", label: "13 недель" },
+  { value: "twenty_six", label: "26 недель" },
+  { value: "fifty_two", label: "52 недели" },
+  { value: "daily", label: "По дням" },
+  { value: "monthly", label: "По месяцам" },
+  { value: "yearly", label: "По годам" },
 ];
 
 const widthMap = {
-  fifty_two: "100%",
-  twenty_six: "70%",
-  default: "35%",
+    fifty_two: "70vw",
+    twenty_six: "60vw",
+    default: "20vw",
 };
 
 const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
@@ -367,28 +368,26 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
             vertical
             justify="center"
             align="center"
-            style={{
-              marginLeft: "auto", // Это сдвигает блок вправо
-              padding: "0 16px",
-              borderLeft: "1px solid #f0f0f0", // Визуальное разделение
-              backgroundColor: "#fff",
-            }}
           >
             {typeViewStatistic.map((item) => (
-              <Tooltip title={item.tooltip} key={item.value} placement="left">
-                <Button
-                  type={chartType === item.value ? "primary" : "default"}
-                  onClick={() => setChartType(item.value)}
-                  icon={item?.icon}
-                  style={{
-                    width: "35px", // Одинаковая ширина для всех кнопок
-                  }}
-                >
-                  {item?.label}
-                </Button>
-              </Tooltip>
+              <Button
+                disabled={false}
+                onClick={() => setChartType(item.value)}
+                style={{
+                  width: "120px",
+                  backgroundColor:
+                    chartType === item.value ? "rgba(207, 222, 229, 0.5)" : "#fff",
+                  color: chartType === item.value ? "#005475" : "#999999",
+                  border: "1px solid #CFDEE5",
+                  borderRadius: "6px",
+                  fontWeight: 400,
+                }}
+              >
+                {item.label}
+              </Button>
             ))}
           </Flex>
+
         </Flex>
 
         <Space

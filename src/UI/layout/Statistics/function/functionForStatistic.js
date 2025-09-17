@@ -24,50 +24,58 @@ export const calculateInitialDate = (datePoint) => {
   return datePoint;
 };
 
-export const countDays = (datePoint, statisticData, setDataSource, setCreatePoints) => {
-  setDataSource(
-    _.cloneDeep(statisticData).sort(
-      (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
-    )
-  );
-
+export const countDays = (datePoint, statisticData, setDataSource) => {
   const baseId = Date.now();
   const startDate = dayjs(datePoint).startOf("day");
 
-  const existingDates = new Set(
-    statisticData
-      ?.filter(
-        (item) => !["Неделя", "Месяц", "Год"].includes(item.correlationType)
-      )
-      .map((item) =>
-        dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
-      ) || []
+  // Последние 7 дат (строки)
+  const weekDates = Array.from({ length: 7 }, (_, i) =>
+    startDate.subtract(i, "day").format("YYYY-MM-DD")
   );
 
-  const newData = Array(7)
-    .fill()
-    .map((_, i) => {
-      // Добавляем дни без учета временной зоны
-      const date = startDate.subtract(i, "day").startOf("day");
+  // Нормализуем входящие данные (только дни)
+  const normalizedData = _.cloneDeep(statisticData)
+    .filter(
+      (item) => !["Неделя", "Месяц", "Год"].includes(item.correlationType)
+    )
+    .map((item, index) => {
+      const dateObj = dayjs(item.valueDate).startOf("day");
+      return {
+        id: item?.id ?? `day-${index}-${dateObj.format("YYYY-MM-DD")}`,
+        value: item.value ?? null,
+        valueDate: dateObj.format("YYYY-MM-DD"), 
+      };
+    });
 
-      if (!date || !date.isValid?.()) {
-        console.error("Некорректная дата на шаге", i, date);
-        return null;
+  // Карта для быстрого поиска по датам
+  const dataByDate = new Map(
+    normalizedData.map((item) => [item.valueDate, item])
+  );
+
+  // Финальный массив из 7 дней
+  const daysArray = weekDates
+    .map((dateStr, i) => {
+      if (dataByDate.has(dateStr)) {
+        return dataByDate.get(dateStr);
       }
       return {
-        id: baseId + i,
+        id: `day-${baseId}-${i}`,
         value: null,
-        valueDate: date.format("YYYY-MM-DD"),
+        valueDate: dateStr,
+        isCreate: true,
       };
     })
-    .filter(Boolean)
-    .filter((item) => !existingDates.has(item.valueDate))
     .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 
-  setCreatePoints([...newData]);
+  setDataSource(daysArray);
 };
 
-export const countWeeks = (quantity, datePoint, statisticData, setDataSource) => {
+export const countWeeks = (
+  quantity,
+  datePoint,
+  statisticData,
+  setDataSource
+) => {
   const reportDay = parseInt(localStorage.getItem("reportDay"), 10) || 0; // 0-воскр, 6-суббота
   const data = _.cloneDeep(statisticData);
 
@@ -176,4 +184,3 @@ export const countYears = (statisticData, setDataSource) => {
     .sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
   setDataSource(yearsArray);
 };
-

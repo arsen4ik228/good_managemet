@@ -5,7 +5,6 @@ import classes from "./Statistic.module.css";
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Graphic from "../../app/Graphic/Graphic";
-import ModalCreateStatistic from "./ModalCreateStatistic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
 import ReportDay from "./components/ReportDay";
 import { useGetSingleStatistic, useRightPanel, usePanelPreset } from "@hooks";
@@ -15,9 +14,6 @@ import { Button, Space, Tooltip, Flex, Typography } from "antd";
 import {
     LeftCircleOutlined,
     RightCircleOutlined,
-    SunOutlined,
-    MoonOutlined,
-    CalendarOutlined,
 } from "@ant-design/icons";
 
 import _ from "lodash";
@@ -27,18 +23,18 @@ import { useParams } from 'react-router-dom';
 const { Title } = Typography;
 
 const typeViewStatistic = [
-    { value: "daily", icon: <SunOutlined />, tooltip: "Ежедневный" },
-    { value: "monthly", icon: <MoonOutlined />, tooltip: "Ежемесячный" },
-    { value: "yearly", icon: <CalendarOutlined />, tooltip: "Ежегодовой" },
-    { value: "thirteen", label: "13", tooltip: "13 недель" },
-    { value: "twenty_six", label: "26", tooltip: "26 недель" },
-    { value: "fifty_two", label: "52", tooltip: "52 недели" },
+    { value: "thirteen", label: "13 недель" },
+    { value: "twenty_six", label: "26 недель" },
+    { value: "fifty_two", label: "52 недели" },
+    { value: "daily", label: "По дням" },
+    { value: "monthly", label: "По месяцам" },
+    { value: "yearly", label: "По годам" },
 ];
 
 const widthMap = {
-    fifty_two: "100%",
-    twenty_six: "70%",
-    default: "35%",
+    fifty_two: "55vw",
+    twenty_six: "50vw",
+    default: "20vw",
 };
 
 
@@ -59,7 +55,6 @@ export default function Statistic() {
     const [datePoint, setDatePoint] = useState(null);
 
     const [dataSource, setDataSource] = useState([]);
-    const [createPoints, setCreatePoints] = useState([]);
 
     const { PRESETS } = useRightPanel();
     usePanelPreset(PRESETS.STATISTICS);
@@ -73,9 +68,7 @@ export default function Statistic() {
         isFetchingGetStatisticId,
     } = useGetSingleStatistic({
         statisticId: statisticId,
-
         datePoint: datePoint,
-
         viewType: chartType,
     });
 
@@ -141,9 +134,9 @@ export default function Statistic() {
         if (!statisticId || !datePoint) return;
 
         const handlers = {
-            daily: () => countDays(datePoint, statisticData, setDataSource, setCreatePoints),
-            monthly: () => countMonths(statisticData, setDataSource, setCreatePoints),
-            yearly: () => countYears(statisticData, setDataSource, setCreatePoints),
+            daily: () => countDays(datePoint, statisticData, setDataSource),
+            monthly: () => countMonths(statisticData, setDataSource),
+            yearly: () => countYears(statisticData, setDataSource),
             thirteen: () => countWeeks(13, datePoint, statisticData, setDataSource),
             twenty_six: () => countWeeks(26, datePoint, statisticData, setDataSource),
             fifty_two: () => countWeeks(52, datePoint, statisticData, setDataSource),
@@ -153,13 +146,13 @@ export default function Statistic() {
         const handler = handlers[chartType];
         if (!handler) return;
 
-        setCreatePoints([]);
+
         handler();
     }, [statisticData, chartType, datePoint]);
 
     useEffect(() => {
         setDataSource([]);
-        setCreatePoints([]);
+
     }, [reduxSelectedOrganizationId]);
 
 
@@ -169,7 +162,18 @@ export default function Statistic() {
             buttons={buutonsArr}
         >
 
-            <div className={classes.main}>
+            <div style={{
+                overflow: "hidden",
+
+                flex: 1,
+
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                columnGap: "20px",
+
+                padding: "10px",
+            }}>
                 <>
                     <HandlerQeury
                         Error={isErrorGetStatisticId}
@@ -179,18 +183,22 @@ export default function Statistic() {
 
                     {statisticId ? (
                         <>
-                            <Title level={4} style={{ color: "#3E7B94" }}>
-                                {currentStatistic.name}
-                            </Title>
 
-                            <Flex
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                }}
-                                gap="small"
-                            >
-                                {/* График - теперь первый элемент, растягивается на всё оставшееся пространство */}
+                            <div style={{
+                                minHeight: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                backgroundColor: "#fff",
+                                border: "1px solid #CCCCCC",
+                                borderRadius: "5px",
+                                padding: "10px 5px 0px 5px",
+                                overflow: "hidden",
+                            }}>
+                                <Title level={4} style={{ color: "#3E7B94" }}>
+                                    {currentStatistic.name}
+                                </Title>
+
 
                                 <div
                                     style={{
@@ -201,80 +209,73 @@ export default function Statistic() {
                                     }}
                                 >
                                     <Graphic
-                                        data={[...createPoints, ...dataSource]}
+                                        data={[...dataSource]}
                                         width={widthMap[chartType] || widthMap.default}
                                         type={currentStatistic?.type}
                                     />
                                 </div>
 
-                                {/* Панель кнопок - сдвигается вправо */}
-                                <Flex
-                                    gap="middle"
-                                    vertical
-                                    justify="center"
+
+                                <Space
+                                    size="large"
                                     align="center"
                                     style={{
-                                        marginLeft: "auto", // Это сдвигает блок вправо
-                                        padding: "0 16px",
-                                        borderLeft: "1px solid #f0f0f0", // Визуальное разделение
-                                        backgroundColor: "#fff",
+                                        width: "100%",
+                                        justifyContent: "center",
+                                        marginBottom: "10px",
+                                        marginLeft: "50px",
                                     }}
                                 >
-                                    {typeViewStatistic.map((item) => (
-                                        <Tooltip
-                                            title={item.tooltip}
-                                            key={item.value}
-                                            placement="left"
-                                        >
-                                            <Button
-                                                type={chartType === item.value ? "primary" : "default"}
-                                                onClick={() => setChartType(item.value)}
-                                                icon={item?.icon}
-                                                style={{
-                                                    width: "35px", // Одинаковая ширина для всех кнопок
-                                                }}
-                                            >
-                                                {item?.label}
-                                            </Button>
-                                        </Tooltip>
-                                    ))}
-                                </Flex>
-                            </Flex>
+                                    <Tooltip title="сдвигает график влево" placement="left">
+                                        <Button
+                                            icon={<LeftCircleOutlined />}
+                                            onClick={() => setClickArrow(["left", new Date()])}
+                                        />
+                                    </Tooltip>
 
-                            <Space
-                                size="large"
+                                    <Tooltip title="сдвигает график вправо" placement="right">
+                                        <Button
+                                            icon={<RightCircleOutlined />}
+                                            onClick={() => setClickArrow(["right", new Date()])}
+                                            style={{
+                                                marginRight: 50,
+                                            }}
+                                        />
+                                    </Tooltip>
+                                </Space>
+
+                            </div>
+
+                            <Flex
+                                gap="middle"
+                                vertical
+                                justify="center"
                                 align="center"
-                                style={{
-                                    width: "100%",
-                                    justifyContent: "center",
-                                    marginBottom: "10px"
-                                }}
                             >
-                                <Tooltip title="сдвигает график влево" placement="left">
+                                {typeViewStatistic.map((item) => (
                                     <Button
-                                        icon={<LeftCircleOutlined />}
-                                        onClick={() => setClickArrow(["left", new Date()])}
-                                    />
-                                </Tooltip>
-
-                                <Tooltip title="сдвигает график вправо" placement="right">
-                                    <Button
-                                        icon={<RightCircleOutlined />}
-                                        onClick={() => setClickArrow(["right", new Date()])}
+                                        disabled={false}
+                                        onClick={() => setChartType(item.value)}
                                         style={{
-                                            marginRight: 50,
+                                            width: "120px",
+                                            backgroundColor:
+                                                chartType === item.value ? "rgba(207, 222, 229, 0.5)" : "#fff",
+                                            color: chartType === item.value ? "#005475" : "#999999",
+                                            border: "1px solid #CFDEE5",
+                                            borderRadius: "6px",
+                                            fontWeight: 400,
                                         }}
-                                    />
-                                </Tooltip>
-                            </Space>
-
+                                    >
+                                        {item.label}
+                                    </Button>
+                                ))}
+                            </Flex>
                         </>
                     ) : null}
-
 
                 </>
             </div>
 
-        </MainContentContainer>
+        </MainContentContainer >
     )
 }
