@@ -14,6 +14,11 @@ import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
 import { useParams } from 'react-router-dom';
 import { useRightPanel } from '../../../../hooks';
 
+const TYPE_OPTIONS = [
+    { value: 'Личная', label: 'Личная' },
+    // { value: 'Приказ', label: 'Приказ' },
+]
+
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
 
     const { contactId, convertId } = useParams()
@@ -31,11 +36,9 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const [startDate, setStartDate] = useState()
     const [deadlineDate, setDeadlineDate] = useState()
     const [senderPost, setSenderPost] = useState()
+    const [reciverPostId, setReciverPostId] = useState()
+    const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
 
-    const TYPE_OPTIONS = [
-        { value: 'Личная', label: 'Личная' },
-        { value: 'Приказ', label: 'Приказ' },
-    ]
 
     const {
         userPosts
@@ -146,6 +149,33 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     };
 
+    const createPersonalLetter = async () => {
+
+        if (!contentInput) return
+
+        const Data = {}
+
+        Data.convertTheme = convertTheme
+        Data.convertType = "Переписка"
+        Data.deadline = deadlineDate
+        Data.senderPostId = userPosts?.[0]?.id
+        Data.reciverPostId = contactInfo?.postId
+        Data.messageContent = contentInput
+
+
+        await postConvert({
+            ...Data
+        })
+            .unwrap()
+            .then(() => {
+                reset()
+            })
+            .catch((error) => {
+                console.error("Ошибка:", JSON.stringify(error, null, 2));
+            });
+
+    }
+
     const createOrder = async () => {
 
         if (!contentInput) {
@@ -165,13 +195,13 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         Data.convertType = "Приказ"
         Data.deadline = deadlineDate
         Data.senderPostId = senderPost
-        // Data.reciverPostId = reciverPostId
+        Data.reciverPostId = reciverPostId
         Data.messageContent = 'затычка в попу'
         Data.targetCreateDto = {
             type: "Приказ",
             orderNumber: 1,
             content: contentInput,
-            // holderPostId: reciverPostId,
+            holderPostId: reciverPostId,
             dateStart: startDate,
             deadline: deadlineDate,
             ...(attachmentIds.length > 0 && {
@@ -193,6 +223,13 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         message.success(`Конверт отправлен!`);
     }
 
+    const handlerSendClick = () => {
+        if (convertId)
+            send()
+        else
+            createPersonalLetter()
+    }
+
     useEffect(() => {
         loadDraft("DraftDB", "drafts", idTextarea, setContentInput);
     }, []);
@@ -205,25 +242,44 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         if (!contactInfo) return
 
 
-        updatePanelProps({name: contactInfo.userName, postsNames: contactInfo.postName})
+        updatePanelProps({ name: contactInfo.userName, postsNames: contactInfo.postName })
     }, [contactInfo])
 
-    console.log(contactInfo)
+    console.log(senderPost, reciverPostId)
     return (
 
         <div className={classes.wrapper}>
             {onCreate && (
                 <div className={classes.upperContainer}>
-                    <Select className={classes.selectItem} options={TYPE_OPTIONS} />
-                    <Input placeholder='Новая тема' value={convertTheme} onChange={(e) => setConvertTheme(e.target.value)} />
-                    <Select className={classes.selectItem} dropdownMatchSelectWidth={false} onChange={(e) => setSenderPost(e.target.value)}>
+                    <Select
+                        className={classes.selectItem}
+                        options={TYPE_OPTIONS}
+                        value={convertType}
+                        onChange={(value) => setConvertType(value)} // у Select onChange возвращает value напрямую
+                    />
+                    <Input
+                        placeholder='Новая тема'
+                        value={convertTheme}
+                        onChange={(e) => setConvertTheme(e.target.value)}
+                    />
+                    <Select className={classes.selectItem}
+                        dropdownMatchSelectWidth={false}
+                        onChange={(e) => setSenderPost(e)}
+                        defaultValue={userPosts?.[0]?.id}
+                    >
                         {userPosts?.map((item, index) => (
                             <Option key={index} value={item.id}>
                                 {item.postName}
                             </Option>
                         ))}
                     </Select>
-                    <Select className={classes.selectItem} />
+                    <Select
+                        className={classes.selectItem}
+                        value={contactInfo?.postId} // используем value вместо defaultValue
+                        onChange={(value) => setReciverPostId(value)}
+                    >
+                        <Option value={contactInfo?.postId}>{contactInfo?.postName}</Option>
+                    </Select>
                 </div>
             )}
             <div className={classes.bottomContainer}>
@@ -278,7 +334,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                     {isLoadingSendMessages ? (
                         <Spin size="small" />
                     ) : (
-                        <img src={sendIcon} alt="calenderIcon" onClick={() => send()} />
+                        <img src={sendIcon} alt="calenderIcon" onClick={() => handlerSendClick()} />
                     )}
                 </div>
             </div>

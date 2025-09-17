@@ -83,7 +83,7 @@ export default function RightSider({ config }) {
                         componentType={config.componentType}
                     />
 
-                    <CustomComponent></CustomComponent>
+                    {/* <CustomComponent></CustomComponent> */}
                 {/* </div> */}
             </div>
         </div>
