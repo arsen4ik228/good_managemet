@@ -1,198 +1,49 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import {
-  Button,
   Table,
-  Space,
-  DatePicker,
+  Input,
   InputNumber,
   Flex,
 } from "antd";
 
 import _ from "lodash";
 
-import { DeleteOutlined } from "@ant-design/icons";
-
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import PopoverForViewPointsOnWeek from "./PopoverForViewPointsOnWeek";
 // Extend dayjs with the plugin
 dayjs.extend(isSameOrAfter);
 
-const { RangePicker } = DatePicker;
 
 export default function StatisticTable({
-  selectedStatisticId,
-  isActive,
+  datePoint,
   dataSource,
   setDataSource,
-  createPoints,
-  setCreatePoints,
   chartType,
   createCorellationPoints,
   setCreateCorellationPoints,
 }) {
+
+  const startDate = dayjs(datePoint).subtract(6, "day").format("DD.MM.YYYY");
+  const endDate = dayjs(datePoint).format("DD.MM.YYYY");
+
   const [editingRow, setEditingRow] = useState(null);
   const inputRef = useRef(null);
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedRange, setSelectedRange] = useState(null);
-
-  const handleDateChange = (date) => {
-    if (date) {
-      const dateWithoutTZ = dayjs(date).startOf("day");
-      const newData = {
-        id: Date.now(),
-        value: null,
-        valueDate: `${dateWithoutTZ.format("YYYY-MM-DD")}T00:00:00.000Z`,
-        correlationType: null,
-      };
-
-      setCreatePoints((prev) => {
-        const isDateExists = prev.some((item) => {
-          const itemDate = dayjs(item.valueDate).startOf("day");
-          return itemDate.isSame(dateWithoutTZ, "day");
-        });
-
-        if (isDateExists) return prev;
-
-        return [...prev, newData].sort(
-          (a, b) => new Date(a.valueDate) - new Date(b.valueDate)
-        );
-      });
-    }
-    setSelectedDate(null);
-  };
-
-  const handleRangeChange = (dates) => {
-    if (!dates || !dates[0] || !dates[1]) {
-      setSelectedRange(null);
-      return;
-    }
-
-    // Блокируем повторные вызовы
-    if (
-      selectedRange &&
-      dates[0].isSame(selectedRange[0], "day") &&
-      dates[1].isSame(selectedRange[1], "day")
-    ) {
-      return;
-    }
-
-    const daysDiff = dates[1].diff(dates[0], "day");
-    const baseId = Date.now();
-
-    const newData = Array(daysDiff + 1)
-      .fill()
-      .map((_, i) => {
-        const date = dates[0].clone().add(i, "day").startOf("day");
-        return {
-          id: `${baseId}-${i}`,
-          value: null,
-          valueDate: `${date.format("YYYY-MM-DD")}T00:00:00.000Z`,
-          dateStr: date.format("YYYY-MM-DD"), // Для проверки дубликатов
-          correlationType: null,
-        };
-      });
-
-    setCreatePoints((prev) => {
-      const existingDates = new Set(
-        prev.map((item) =>
-          dayjs(item.valueDate).startOf("day").format("YYYY-MM-DD")
-        )
-      );
-
-      return [
-        ...prev,
-        ...newData
-          .filter((item) => !existingDates.has(item.dateStr))
-          .map(({ dateStr, ...rest }) => rest),
-      ].sort((a, b) => new Date(a.valueDate) - new Date(b.valueDate));
-    });
-
-    setSelectedRange(dates);
-  };
-
-  const handleDelete = (id) => {
-    setCreatePoints(createPoints.filter((item) => item.id !== id));
-  };
-
-  const columnsCreatePoints = [
-    {
-      title: "Значение",
-      dataIndex: "value",
-      key: "value",
-      render: (text, record) => (
-        <InputNumber
-          controls={false}
-          value={text}
-          onChange={(value) => {
-            setCreatePoints((prevData) =>
-              prevData.map((item) =>
-                item.id === record.id ? { ...item, value: value } : item
-              )
-            );
-          }}
-          style={{ width: "130px" }}
-          min={undefined}
-          decimalSeparator="."
-          formatter={(value) => {
-            if (value === undefined || value === null) return "";
-            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-          }}
-          parser={(value) => {
-            if (value == null || value === "") return null;
-
-            const cleanValue = value.toString().replace(/[\s,]/g, "");
-            if (cleanValue === "") return null;
-
-            const numericValue = parseFloat(cleanValue);
-            return isNaN(numericValue) ? null : numericValue;
-          }}
-        />
-      ),
-    },
-
+  const columnsDataSourceDaily = [
     {
       title: "Дата",
       dataIndex: "valueDate",
       key: "valueDate",
-      render: (text, record) => (
-        <DatePicker
-          value={text ? dayjs(text) : null} // Парсим ISO строку
-          onChange={(date, dateString) => {
-            setCreatePoints((prevData) =>
-              prevData.map((item) =>
-                item.id === record.id
-                  ? {
-                    ...item,
-                    valueDate: date ? date.toISOString() : null, // Сохраняем как ISO
-                  }
-                  : item
-              )
-            );
-          }}
-          format="DD.MM.YYYY" // Отображаем в удобном формате
+      render: (text) => (
+        <Input
+          value={text ? dayjs(text).format("DD.MM.YYYY") : ""}
+          readOnly
           style={{ width: "150px" }}
         />
       ),
     },
 
-    {
-      title: "Удалить",
-      key: "action",
-      render: (_, record) => (
-        <Button
-          type="text"
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => handleDelete(record.id)}
-        />
-      ),
-    },
-  ];
-
-  const columnsDataSourceDaily = [
     {
       title: "Значение",
       dataIndex: "value",
@@ -233,37 +84,26 @@ export default function StatisticTable({
         />
       ),
     },
-
-    {
-      title: "Дата",
-      dataIndex: "valueDate",
-      key: "valueDate",
-      render: (text, record) => (
-        <DatePicker
-          value={text ? dayjs(text) : null} // Парсим ISO строку
-          onChange={(date, dateString) => {
-            setDataSource((prevData) =>
-              prevData.map((item) =>
-                item.id === record.id
-                  ? {
-                    ...item,
-                    valueDate: date ? date.toISOString() : null, // Сохраняем как ISO
-                  }
-                  : item
-              )
-            );
-          }}
-          format="DD.MM.YYYY" // Отображаем в удобном формате
-          style={{ width: "150px" }}
-        />
-      ),
-    },
   ];
 
   const columnsDataSourceWeek = [
     {
+      title: "Неделя",
+      dataIndex: "valueDate",
+      align: "center",
+      render: (text) => (
+        <Input
+          value={text ? dayjs(text).format("DD.MM.YYYY") : ""}
+          readOnly
+          style={{ width: "150px" }}
+        />
+      ),
+    },
+
+    {
       title: "Значение",
       dataIndex: "value",
+      align: "center",
       render: (text, record) => {
         const isEditing = editingRow === record.id;
 
@@ -367,9 +207,21 @@ export default function StatisticTable({
 
         ) : (
           <div
-            onDoubleClick={() => setEditingRow(record.id)}
-            style={{ cursor: "pointer", width: "130px", height: "32px" }}
+            onClick={() => setEditingRow(record.id)}
+            style={{
+              cursor: "pointer",
 
+              width: "130px",
+              height: "32px",
+
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+
+              padding: "4px 11px",
+
+              fontSize: "16px",
+              textAlign: "left"
+            }}
           >
             {(() => {
               const point = createCorellationPoints.find((item) => item.id === record.id);
@@ -385,39 +237,26 @@ export default function StatisticTable({
         );
       },
     },
+  ];
 
+  const columnsDataSourceMonth = [
     {
-      title: "Неделя",
+      title: "Месяц",
       dataIndex: "valueDate",
-      render: (text, record) => (
-        <DatePicker
-          value={text ? dayjs(text) : null} // Парсим ISO строку
-          disabled
-          format="DD.MM.YYYY" // Отображаем в удобном формате
+      align: "center",
+      render: (text) => (
+        <Input
+          value={text ? dayjs(text).format("MM.YYYY") : ""}
+          readOnly
           style={{ width: "150px" }}
         />
       ),
     },
 
     {
-      title: "Дни",
-      dataIndex: "information",
-      render: (text, record) => (
-        <PopoverForViewPointsOnWeek
-          record={record}
-          setDataSource={setDataSource}
-          selectedStatisticId={selectedStatisticId}
-        />
-      ),
-    },
-
-
-  ];
-
-  const columnsDataSourceMonth = [
-    {
       title: "Значение",
       dataIndex: "value",
+      align: "center",
       render: (text, record) => {
         const isEditing = editingRow === record.id;
 
@@ -521,8 +360,17 @@ export default function StatisticTable({
 
         ) : (
           <div
-            onDoubleClick={() => setEditingRow(record.id)}
-            style={{ cursor: "pointer", width: "130px", height: "32px" }}
+            onClick={() => setEditingRow(record.id)}
+            style={{
+              cursor: "pointer",
+              width: "130px",
+              height: "32px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+              padding: "4px 11px",
+              fontSize: "16px",
+              textAlign: "left"
+            }}
           >
             {(() => {
               const point = createCorellationPoints.find((item) => item.id === record.id);
@@ -539,26 +387,26 @@ export default function StatisticTable({
       },
     },
 
+  ];
+
+  const columnsDataSourceYear = [
     {
-      title: "Месяц",
+      title: "Год",
       dataIndex: "valueDate",
-      render: (text, record) => (
-        <DatePicker
-          value={text ? dayjs(text) : null} // Парсим ISO строку
-          disabled
-          format="MM.YYYY" // Отображаем в удобном формате
+      align: "center",
+      render: (text) => (
+        <Input
+          value={text ? dayjs(text).format("YYYY") : ""}
+          readOnly
           style={{ width: "150px" }}
         />
       ),
     },
 
-
-  ];
-
-  const columnsDataSourceYear = [
     {
       title: "Значение",
       dataIndex: "value",
+      align: "center",
       render: (text, record) => {
 
         const isEditing = editingRow === record.id;
@@ -661,8 +509,17 @@ export default function StatisticTable({
           </Flex>
         ) : (
           <div
-            onDoubleClick={() => setEditingRow(record.id)}
-            style={{ cursor: "pointer", width: "130px", height: "32px" }}
+            onClick={() => setEditingRow(record.id)}
+            style={{
+              cursor: "pointer",
+              width: "130px",
+              height: "32px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+              padding: "4px 11px",
+              fontSize: "16px",
+              textAlign: "left"
+            }}
           >
             {(() => {
               const point = createCorellationPoints.find((item) => item.id === record.id);
@@ -678,19 +535,6 @@ export default function StatisticTable({
 
         );
       },
-    },
-
-    {
-      title: "Год",
-      dataIndex: "valueDate",
-      render: (text) => (
-        <DatePicker
-          value={text ? dayjs(text) : null}
-          disabled
-          format="YYYY"
-          style={{ width: "150px" }}
-        />
-      ),
     },
   ];
 
@@ -732,63 +576,92 @@ export default function StatisticTable({
   return (
     <div style={{
       overflowX: "hidden",
+
       height: "100%",
-      backgroundColor: "#fff",
-      border: "1px solid #CCCCCC",
-      borderRadius: "5px",
+
+      display: "flex",
+      flexDirection: "column",
+      rowGap: "5px"
     }}>
 
-      {isActive && (
-        <Space
-          size="large"
-          align="center"
-          style={{
-            marginBottom: 16,
-            width: "100%",
-            justifyContent: "center", // Добавлено для центрирования
-          }}
-        >
-          <Space direction="vertical" size={4}>
-            <div style={{ fontWeight: 500 }}>Создать точку</div>
-            <DatePicker
-              style={{ width: "150px" }}
-              value={selectedDate}
-              onChange={handleDateChange}
-              format="DD.MM.YYYY"
-            />
-          </Space>
+      {
+        chartType === "daily" ? (
 
-          <Space direction="vertical" size={4}>
-            <div style={{ fontWeight: 500 }}>Создать интервал точек</div>
-            <RangePicker
-              style={{ width: "150px" }}
-              value={selectedRange}
-              onChange={handleRangeChange}
-              format="DD.MM.YYYY"
-            />
-          </Space>
-        </Space>
-      )}
+          <>
 
-      {createPoints?.length > 0 ? (
-        <Table
-          columns={columnsCreatePoints}
-          dataSource={createPoints}
-          pagination={false}
-          size="small"
-          rowKey="id"
-        />
-      ) : null}
+            <div style={{
+              width: "100%",
+              height: "50px",
 
-      {dataSource?.length > 0 ? (
-        <Table
-          columns={getColumnsByChartType(chartType)}
-          dataSource={dataSource}
-          pagination={false}
-          size="small"
-          rowKey="id"
-        />
-      ) : null}
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              rowGap: "5px",
+
+              backgroundColor: "rgba(207, 222, 229, 0.5)",
+              border: "1px solid #CCCCCC",
+              borderRadius: "5px 5px 0 0",
+
+              padding: "5px",
+
+            }}>
+              <div style={{
+                color: "black",
+                fontWeight: "600"
+              }}>НЕДЕЛЯ</div>
+              <div> с {startDate} по {endDate}</div>
+            </div>
+
+            {dataSource?.length > 0 ? (
+
+              <div style={{
+                maxWidth: "330px",
+                minHeight: "calc(100% - 55px)",
+                backgroundColor: "#fff",
+                border: "1px solid #CCCCCC",
+                borderRadius: "5px",
+                overflowY: "auto",
+              }}>
+                <Table
+                  columns={getColumnsByChartType(chartType)}
+                  dataSource={dataSource}
+                  pagination={false}
+                  size="small"
+                  rowKey="id"
+                  showHeader={chartType === "daily" ? false : true}
+                  sticky
+                />
+              </div>
+            ) : null}
+          </>
+
+        ) : (
+          <>
+            {dataSource?.length > 0 ? (
+
+              <div style={{
+                maxWidth: "330px",
+                minHeight: "100%",
+                backgroundColor: "#fff",
+                border: "1px solid #CCCCCC",
+                borderRadius: "5px",
+                overflowY: "auto",
+              }}>
+                <Table
+                  columns={getColumnsByChartType(chartType)}
+                  dataSource={dataSource}
+                  pagination={false}
+                  size="small"
+                  rowKey="id"
+                  showHeader={chartType === "daily" ? false : true}
+                  sticky
+                />
+              </div>
+            ) : null}
+            </>
+            )
+      }
     </div>
   );
 }

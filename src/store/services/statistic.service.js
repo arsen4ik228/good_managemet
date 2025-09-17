@@ -59,6 +59,52 @@ export const statisticsApi = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true, // всегда делает запрос при монтировании или изменении аргументов
     }),
 
+    getStatisticsForPeriod: build.query({
+      query: ({ organizationId, weeks, isActive }) => ({
+        url: `/statistics/${organizationId}/allWithPeriod?weeks=${weeks}&isActive=${isActive}`,
+      }),
+      transformResponse: (response) => {
+        console.log("getStatistics:  ", response);
+
+        if (!Array.isArray(response)) {
+          console.error("Response is not an array");
+          return [];
+        }
+
+        const transformData = response
+          ?.map((item) => {
+            return {
+              id: item.statistic.id || "",
+              name: item.statistic.name || "",
+              ...(item.post && {
+                post: {
+                  id: item?.statistic?.post?.id || "",
+                  name: item?.statistic?.post?.postName || "",
+                },
+              }),
+
+              ...(item.statisticData && {
+                statisticDatas: item.statisticData
+              }),
+            };
+          })
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        console.log("Transform Data:  ", transformData);
+        return transformData;
+      },
+      providesTags: (result) =>
+        Array.isArray(result)
+          ? [
+              ...result?.map(({ id }) => ({
+                type: "Statistic",
+                id,
+              })),
+              "Statistic",
+            ]
+          : ["Statistic"],
+    }),
+
     postStatistics: build.mutation({
       query: ({ ...body }) => ({
         url: `/statistics/new`,
@@ -105,7 +151,6 @@ export const statisticsApi = apiSlice.injectEndpoints({
         { type: "Statistic", id: arg.statisticId },
       ],
     }),
-
 
     updateStatistics: build.mutation({
       query: ({ statisticId, ...body }) => ({
@@ -160,6 +205,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
 
 export const {
   usePostStatisticsMutation,
+  useGetStatisticsForPeriodQuery,
   useGetStatisticsIdQuery,
   useGetStatisticsQuery,
   useGetStatisticsIdWithoutStatisticDataQuery,

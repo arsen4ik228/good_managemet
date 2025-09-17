@@ -45,6 +45,7 @@ export { useUpdateSingleStatistic } from "./Statistics/useUpdateSingleStatistic"
 export { useGetAllStatisticsInControlPanel } from "./Statistics/useGetAllStatisticsInControlPanel";
 export { useGetSingleStatisticWithoutStatisticData } from "./Statistics/useGetSingleStatisticWithoutStatisticData";
 export { useUpdateStatisticsToPostId } from "./Statistics/useUpdateStatisticsToPostId";
+export { useGetStatisticsForPeriod } from "./Statistics/useGetStatisticsForPeriod";
 
 //Сводка
 export { useUpdateSvodka } from "./Statistics/useUpdateSvodka";

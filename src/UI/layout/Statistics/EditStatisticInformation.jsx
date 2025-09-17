@@ -82,7 +82,6 @@ export const EditStatisticInformation = () => {
     form.setFieldsValue(values);
   };
 
-
   const exitClick = () => {
     const currentValues = form.getFieldsValue();
     const hasChanges = !isEqual(currentValues, initialValues);
@@ -114,7 +113,6 @@ export const EditStatisticInformation = () => {
   };
 
   return (
-
     <>
       <HandlerQeury
         Error={isErrorGetStatisticId}
@@ -122,7 +120,7 @@ export const EditStatisticInformation = () => {
         Fetching={isFetchingGetStatisticId}
       ></HandlerQeury>
       {
-        initialValues && <EditContainer saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
+        initialValues && <EditContainer  header={"редактирование"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
 
           <div style={{
             position: "relative",
@@ -216,8 +214,6 @@ export const EditStatisticInformation = () => {
 
         </EditContainer>
       }
-
     </>
-
   );
 };
