@@ -41,6 +41,13 @@ export default function StatisticsList() {
         localStorage.setItem("selectedStatisticId", id);
         navigate(`helper/statistics/${id}`)
     }
+
+    const autoOpen = () => {
+        if (localStorage.getItem("selectedStatisticId")) {
+            navigate(`helper/statistics/${localStorage.getItem("selectedStatisticId")}`)
+        }
+    }
+    
     return (
         <>
             <CustomList
