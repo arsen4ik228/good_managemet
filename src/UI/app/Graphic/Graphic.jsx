@@ -101,8 +101,8 @@ export default function Graphic({ data, width, type = "Прямая" }) {
     const option = {
       animation: false,
       grid: {
-        top: 20,    // отступ сверху
-        bottom: 10, // отступ снизу
+        top: 10,    // отступ сверху
+        bottom: 5, // отступ снизу
         left: 20,   // оставляем немного для подписей оси Y
         right: 10,
         containLabel: true, // чтобы подписи осей не обрезались
@@ -236,5 +236,5 @@ export default function Graphic({ data, width, type = "Прямая" }) {
     };
   }, [data, type]);
 
-  return <div ref={chartRef} style={{ width: width, height: "95%" }} />;
+  return <div ref={chartRef} style={{ width: width, height: "95%"}} />;
 }
