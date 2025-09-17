@@ -51,7 +51,7 @@ export default function Post() {
                 >
                     {/* Руководитель */}
                     <Flex vertical align="center" style={{ marginBottom: 24 }}>
-                        <Text type="secondary">руководящий пост</Text>
+                        <Text type="secondary">Руководящий пост</Text>
                         {parentPost && Object.keys(parentPost).length ? (
                             <Space size="small" align="center">
                                 <Avatar

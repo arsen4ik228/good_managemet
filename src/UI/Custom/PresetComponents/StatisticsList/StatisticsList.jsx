@@ -36,6 +36,18 @@ export default function StatisticsList() {
         );
     }, [seacrhStatisticsSectionsValue, statistics]);
 
+
+    const openStatistic = (id) => {
+        localStorage.setItem("selectedStatisticId", id);
+        navigate(`helper/statistics/${id}`)
+    }
+
+    const autoOpen = () => {
+        if (localStorage.getItem("selectedStatisticId")) {
+            navigate(`helper/statistics/${localStorage.getItem("selectedStatisticId")}`)
+        }
+    }
+    
     return (
         <>
             <CustomList
@@ -46,16 +58,16 @@ export default function StatisticsList() {
 
                 <ListAddButtom textButton={'Создать статсиктику'} clickFunc={() => setOpenCreateStatistic(true)} />
 
-        
+
                 <Space style={{
-                    width:"100%",
-                    display:"flex",
-                    justifyContent:"center"
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center"
                 }}>
-                    <Button type= {isActive ? "primary": "default" }  onClick={() => setIsActive(true)}>Активная</Button>
-                    <Button   type= {!isActive ? "primary": "default" } onClick={() => setIsActive(false)}>Архивная</Button>
+                    <Button type={isActive ? "primary" : "default"} onClick={() => setIsActive(true)}>Активная</Button>
+                    <Button type={!isActive ? "primary" : "default"} onClick={() => setIsActive(false)}>Архивная</Button>
                 </Space>
-        
+
 
 
 
@@ -65,7 +77,7 @@ export default function StatisticsList() {
                             icon={statGraph}
                             upperText={item.name}
                             linkSegment={item.id}
-                            clickFunc={() => navigate(`helper/statistics/${item.id}`)}
+                            clickFunc={() => openStatistic(item.id)}
                         />
                     </React.Fragment>
                 ))}

@@ -6,7 +6,7 @@ import { PhoneOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 
 import isEqual from "lodash/isEqual";
 
-import { useGetSinglePost, useUpdateSinglePost, useAllStatistics, useUpdateStatisticsToPostId, useGetDataForCreatePost } from '@hooks';
+import { useGetSinglePost, useUpdateSinglePost, useAllStatistics, useUpdateStatisticsToPostId, useGetDataForCreatePost, useAllPosts } from '@hooks';
 import EditContainer from "@Custom/EditContainer/EditContainer";
 
 import HandlerQeury from "@Custom/HandlerQeury.jsx";
@@ -29,10 +29,15 @@ export default function EditPost() {
 
     const { roles } = useGetDataForCreatePost();
 
+
+    const {
+        allPosts: posts,
+    } = useAllPosts();
+
     const {
         currentPost,
         workers,
-        posts,
+        // posts,
         parentPost,
 
         policiesActive,
@@ -48,11 +53,11 @@ export default function EditPost() {
     const responsibleUserId = Form.useWatch("responsibleUserId", form);
     const selectedWorker = workers?.find(w => w.id === responsibleUserId);
 
+    const parentId = Form.useWatch("parentId", form);
+    const selectedParent = posts?.find(p => p.id === parentId);
+
     const {
         statistics = [],
-        isLoadingGetStatistics,
-        isFetchingGetStatistics,
-        isErrorGetStatistics
     } = useAllStatistics();
 
     const {
@@ -90,10 +95,12 @@ export default function EditPost() {
                 ...rest,
             }).unwrap();
 
-            await updateStatisticsToPostId({
-                postId: postId,
-                ids: statisticsIncludedPost,
-            }).unwrap();
+            if (statisticsIncludedPost?.length > 0) {
+                await updateStatisticsToPostId({
+                    postId,
+                    ids: statisticsIncludedPost,
+                }).unwrap();
+            }
 
             message.success("Данные успешно обновлены!");
             // обновляем initialValues, чтобы сбросить "грязное" состояние
@@ -165,7 +172,7 @@ export default function EditPost() {
             ></HandlerQeury>
 
             {
-                initialValues && <EditContainer saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
+                initialValues && <EditContainer header={"Офис собственника"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
                     <div style={{
                         position: "relative",
 
@@ -192,24 +199,63 @@ export default function EditPost() {
                                 layout="vertical">
 
                                 {/* Руководящий пост */}
-                                <Form.Item
-                                    label="Руководящий пост"
-                                    name="parentId"
-                                >
-                                    <Select
-                                        placeholder="Выберите руководителя"
-                                        allowClear
-                                        showSearch
-                                        optionFilterProp="label"
-                                        options={posts.map((post) => ({
-                                            label: post.postName,
-                                            value: post.id,
-                                        }))} />
-                                </Form.Item>
+
+                                <Flex vertical align="center">
+                                    <Space size="small" align="center" >
+                                        <Avatar
+                                            size={48}
+                                            src={selectedParent?.user?.avatar_url ? `${baseUrl}${selectedParent?.user?.avatar_url}` : null}
+                                        />
+
+                                        <Form.Item
+                                            name="parentId"
+                                            label="Руководящий пост"
+                                            style={{ flex: 1, marginBottom: 0 }} // 👈 растягиваем
+                                        >
+                                            <Select
+                                                style={{ width: 350 }}
+                                                placeholder="Выберите руководителя"
+                                                allowClear
+                                                showSearch
+                                                optionFilterProp="label"
+                                                options={posts.map((post) => {
+                                                    const user = post?.user;
+                                                    const fullName = [user?.lastName, user?.firstName].filter(Boolean).join(" "); // убираем null/undefined
+
+                                                    return {
+                                                        label: (
+                                                            <Flex align="center" gap={8}>
+                                                                <Avatar
+                                                                    size={24}
+                                                                    src={user?.avatar_url ? `${baseUrl}${user.avatar_url}` : null}
+                                                                />
+                                                                <span style={{
+                                                                    display: "inline-block",
+                                                                    maxWidth: 280,
+                                                                    whiteSpace: "nowrap",
+                                                                    overflow: "hidden",
+                                                                    textOverflow: "ellipsis",
+                                                                }}>
+                                                                    {post.postName}
+                                                                    {fullName && (
+                                                                        <span style={{ color: "#888", marginLeft: 4 }}>({fullName})</span>
+                                                                    )}
+                                                                </span>
+                                                            </Flex>
+                                                        ),
+                                                        value: post.id,
+                                                    };
+                                                })}
+                                            />
+
+                                        </Form.Item>
+                                    </Space>
+                                </Flex>
+
 
                                 <Divider />
 
-                                <Flex vertical gap={24}>
+                                <Flex vertical gap={6}>
                                     {/* Верхняя часть: сотрудник + блок с полями */}
                                     <Flex gap={24} align="start">
 
@@ -289,7 +335,7 @@ export default function EditPost() {
 
 
                                         {/* Правая колонка с полями */}
-                                        <Flex vertical gap={12} style={{ flex: 1 }}>
+                                        <Flex vertical gap={6} style={{ flex: 1 }}>
                                             <Form.Item
                                                 label="Название подразделения"
                                                 name="divisionName"
@@ -329,22 +375,28 @@ export default function EditPost() {
                                     </Flex>
 
                                     {/* Нижняя часть — на всю ширину */}
-                                    <Flex vertical gap={12}>
-                                        <Form.Item
-                                            label="Продукт поста"
-                                            name="product"
-                                            rules={[{ required: true, message: 'Введите продукт поста' }]}
-                                        >
-                                            <TextArea rows={3} placeholder="Описание продукта поста" />
-                                        </Form.Item>
+                                    <Flex vertical gap={6}>
 
-                                        <Form.Item
-                                            label="Предназначение поста"
-                                            name="purpose"
-                                            rules={[{ required: true, message: 'Введите предназначение поста' }]}
-                                        >
-                                            <TextArea rows={3} placeholder="Предназначение поста" />
-                                        </Form.Item>
+                                        <Flex gap={6}>
+                                            <Form.Item
+                                                label="Продукт поста"
+                                                name="product"
+                                                rules={[{ required: true, message: 'Введите продукт поста' }]}
+                                                style={{ flex: 1 }}
+                                            >
+                                                <TextArea rows={3} placeholder="Описание продукта поста" />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                label="Предназначение поста"
+                                                name="purpose"
+                                                rules={[{ required: true, message: 'Введите предназначение поста' }]}
+                                                style={{ flex: 1 }}
+                                            >
+                                                <TextArea rows={3} placeholder="Предназначение поста" />
+                                            </Form.Item>
+                                        </Flex>
+
 
                                         <Form.Item
                                             label="Политика поста"

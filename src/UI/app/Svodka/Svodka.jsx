@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import classes from "./Svodka.module.css";
 import Header from "@Custom/Header/Header";
 
-import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
+import { useAllStatistics, useGetStatisticsForPeriod } from "@hooks";
 import { useUpdateSvodka } from "@hooks";
 import { Table, Flex, Button, InputNumber, message, Spin } from "antd";
 import _ from "lodash";
@@ -106,6 +106,10 @@ export default function Svodka() {
 
   const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
     useAllStatistics({ statisticData: true });
+
+
+  // const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
+  //   useGetStatisticsForPeriod({ weeks: "13", isActive: true });
 
   const { updateSvodka } = useUpdateSvodka();
 

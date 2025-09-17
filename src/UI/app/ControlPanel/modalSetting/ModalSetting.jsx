@@ -3,7 +3,7 @@ import classes from "./ModalSetting.module.css";
 import exitModal from "@image/exitModal.svg";
 import Blacksavetmp from "@image/Blacksavetmp.svg";
 import ButtonImage from "@Custom/buttonImage/ButtonImage";
-import TableCheckBox from "@Custom/tableCheckBox/TableCheckBox";
+import TableCheckBox from "./tableCheckBox/TableCheckBox";
 
 import { Input, Select, Typography } from "antd";
 import { useGetAllStatisticsInControlPanel } from "@hooks";
@@ -126,7 +126,7 @@ export default function ModalSetting({
           </div>
 
           <TableCheckBox
-            nameTable={"Прикрепленные статистики"}
+            nameTable={["Выбранные статистики", "Доступные статистики"]}
             array={statistics}
             arrayItem={"name"}
             arrayCheked={statisticsChecked}

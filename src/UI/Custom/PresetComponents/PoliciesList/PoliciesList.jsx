@@ -32,14 +32,6 @@ export default function PoliciesList() {
         .concat(directivesActive)
         .concat(disposalsActive);
 
-    console.log("array = ", array);
-    console.log("instructionsActive = ", instructionsActive);
-    console.log("directivesActive = ", directivesActive);
-    console.log("disposalsActive = ", disposalsActive);
-
-    const handlerClickPost = (link) => {
-        navigate(`helper/policies/${link}`);
-    };
 
     const filtredPolicies = useMemo(() => {
         if (!seacrhPostsSectionsValue?.trim()) {
@@ -51,6 +43,12 @@ export default function PoliciesList() {
             item.postName.toLowerCase().includes(searchLower)
         );
     }, [seacrhPostsSectionsValue, array]);
+
+
+    const openPolicy = (id) => {
+        localStorage.setItem("selectedPolicyId", id);
+        navigate(`helper/policies/${id}`);
+    }
 
     return (
         <>
@@ -67,7 +65,7 @@ export default function PoliciesList() {
                             icon={icon_policy}
                             upperText={item.policyName}
                             linkSegment={item.id}
-                            clickFunc={() => handlerClickPost(item.id)}
+                            clickFunc={() => openPolicy(item.id)}
                         />
                     </React.Fragment>
                 ))}

@@ -22,10 +22,6 @@ export default function PostsList() {
         isErrorGetPosts,
     } = useAllPosts();
 
-    const handlerClickPost = (link) => {
-        navigate(`helper/posts/${link}`);
-    };
-
     const filtredPosts = useMemo(() => {
         if (!seacrhPostsSectionsValue?.trim()) {
             return allPosts; // Возвращаем все элементы если поиск пустой
@@ -36,6 +32,11 @@ export default function PostsList() {
             item.postName.toLowerCase().includes(searchLower)
         );
     }, [seacrhPostsSectionsValue, allPosts]);
+
+    const openPost = (id) => {
+        localStorage.setItem("selectedPostId", id);
+        navigate(`helper/posts/${id}`)
+    }
 
     return (
         <>
@@ -52,7 +53,7 @@ export default function PostsList() {
                             icon={icon_post}
                             upperText={item.postName}
                             linkSegment={item.id}
-                            clickFunc={() => handlerClickPost(item.id)}
+                            clickFunc={() => openPost(item.id)}
                         />
                     </React.Fragment>
                 ))}
