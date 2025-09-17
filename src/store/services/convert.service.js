@@ -74,7 +74,7 @@ export const convertApi = apiSlice.injectEndpoints({
         const transformedConvertsForContact = transformConvertsForContact(response?.convertsForContact)
         const transformedCopiesConvert = transformCopiesConvert(response?.copiesForContact)
         const finalArray = splitReadAndUnreadMessages(transformedConvertsForContact, transformedCopiesConvert)
-        console.log(finalArray.seen)
+
         return {
           contactInfo: transformContactInfo(response?.contact),
           seenConverts: finalArray.seen,

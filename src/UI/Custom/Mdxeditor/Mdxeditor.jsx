@@ -21,7 +21,7 @@ import {
 import i18n from "./i18n";
 import classes from "./Mdxeditor.module.css";
 import { usePostImageMutation } from "@services";
-import { baseUrl } from "@helpers/constants";
+import { baseUrl, selectedOrganizationName } from "@helpers/constants";
 import { formattedDate } from "@helpers/helpers"
 
 export default function Mdxeditor({
@@ -31,7 +31,8 @@ export default function Mdxeditor({
   readOnly,
   policyName,
   policyNumber,
-  policyDate
+  policyDate,
+  policyType
 }) {
   const editorRef = useRef(null); // Ссылка на редактор
 
@@ -77,9 +78,15 @@ export default function Mdxeditor({
       <div className={classes.editorContainer}>
         {readOnly && (
           <div className={classes.title}>
-            Политика №{policyNumber}
-            <br /> от {formattedDate(policyDate)}
-            <br /> {policyName}
+            <span>{selectedOrganizationName}</span>
+            <span>{policyType}</span>
+            <span>№{policyNumber}</span>
+            <span>{formattedDate(policyDate)}</span>
+            <span> {policyName}</span>
+            {/* <br />  
+            <br /> 
+            <br /> 
+            <br /> */}
           </div>
         )}
         <MDXEditor

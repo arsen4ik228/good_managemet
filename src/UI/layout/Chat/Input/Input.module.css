@@ -46,7 +46,7 @@
     position: relative;
     >textarea {
 
-        height: 48px;
+        min-height: 48px;
         width: 540px;
         border-radius: 18px;
         resize: none;

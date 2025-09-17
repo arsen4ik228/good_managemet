@@ -12,7 +12,7 @@ export default function HelperChat() {
                     <div className={classes.textSection}>
                         <img src={helper_medium} alt="helper_medium" />
                         <div>
-                            Привет! Я Гудменеджер?
+                            Привет! Я Гудменеджер
                         </div>
                         <div>
                             Чем могу быть полезен?

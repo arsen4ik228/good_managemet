@@ -51,3 +51,4 @@ export { useUpdateSvodka } from "./Statistics/useUpdateSvodka";
 
 export { useRightPanel } from "./useRightPanel"
 export { usePanelPreset } from "./usePanelPreset"
+export { useSetPresets } from "./useSetPresets"

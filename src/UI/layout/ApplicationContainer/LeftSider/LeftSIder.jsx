@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import classes from './LeftSider.module.css'
 import logo from '@image/big_logo.svg'
 import helper_icon from "@image/helper_icon.svg"
+import org_icon from '@image/org_icon.svg'
 import CustomList from '../../../Custom/CustomList/CustomList'
 import { useOrganizationHook, useGetReduxOrganization, usePostsHook, useRightPanel } from '@hooks'
 import { useDispatch } from 'react-redux'
@@ -21,6 +22,8 @@ export default function LeftSIder() {
 
     const [seacrhOrganizationsSectionsValue, setSearchOrganizationsSectionsValue] = useState()
     const [searchContactsSectionsValue, setContactSectionsValue] = useState()
+    const [selectedOrgSectionValue, setSelectedOrgSectionValue] = useState()
+    const [selectedContactsSectionValue, setSelectedContactsSectionsValue] = useState()
 
     const {
         organizations,
@@ -125,12 +128,16 @@ export default function LeftSIder() {
                         addButtonText={'Новая организация'}
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
+                        selectedItem={selectedOrgSectionValue}
+                        expanded={false}
                     >
                         {filtredOrganizations.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
+                                    icon={org_icon}
                                     upperText={item.organizationName}
                                     linkSegment={item.id}
+                                    setSelectedItemData={setSelectedOrgSectionValue}
                                     clickFunc={() =>
                                         handleOrganizationNameButtonClick(
                                             item.id,
@@ -148,11 +155,13 @@ export default function LeftSIder() {
                         addButtonClick={handlerCreateUser}
                         searchValue={searchContactsSectionsValue}
                         searchFunc={setContactSectionsValue}
+                        selectedItem={selectedContactsSectionValue}
                     >
                         <ListElem
                             icon={helper_icon}
                             linkSegment={'helper'}
                             upperText={'Гудменеджер'}
+                            bottomText={'ИИ Помощник'}
                             clickFunc={handlerHelper}
                         />
 
@@ -163,6 +172,7 @@ export default function LeftSIder() {
                                     bottomText={item.postName}
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
+                                    setSelectedItemData={setSelectedContactsSectionsValue}
                                 />
                             </React.Fragment>
                         ))}

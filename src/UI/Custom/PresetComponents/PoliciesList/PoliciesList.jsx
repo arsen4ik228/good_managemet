@@ -38,7 +38,7 @@ export default function PoliciesList() {
     console.log("disposalsActive = ", disposalsActive);
 
     const handlerClickPost = (link) => {
-        navigate(`helper/policies/${link}`);
+        navigate(`helper/policy/${link}`);
     };
 
     const filtredPolicies = useMemo(() => {

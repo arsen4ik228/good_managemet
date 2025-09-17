@@ -5,7 +5,7 @@
 
   flex: 1 0 120px;
 
-  background-color: #fff;
+  /* background-color: #fff; */
 
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   margin: 20px 5px;
   padding: 10px;
 
-  border: 1px solid #CCCCCC;
+  /* border: 1px solid #CCCCCC; */
   border-radius: 5px;
 
   overflow-y: auto;

@@ -1,0 +1,82 @@
+.customContainer {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.headerSection {
+
+    /* .title { */
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    background-color: var(--primary);
+    border-radius: 10px 0 0 0;
+    color: white;
+    font-size: 22px;
+    font-weight: 500;
+    cursor: pointer;
+
+    /* } */
+
+}
+
+.inputSection,
+.selectSection {
+    width: 100%;
+    height: 52px;
+    border-bottom: 1px solid rgba(204, 204, 204, 1);
+    position: relative;
+}
+
+.selectSection::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 4px;
+    right: 12px;
+    color: #666;
+    font-size: 10px;
+    font-weight: 500;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, white 20%, white 100%);
+    padding-left: 20px;
+}
+
+.customInput,
+.customSelect {
+    width: 100%;
+    height: 100%;
+    /* border: 1px solid #d9d9d9; */
+    border-radius: 4px;
+    /* padding: 8px 12px; */
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+
+/* Стили для античного селекта */
+.customSelect .ant-select-selector {
+    /* border: none !important;
+    box-shadow: none !important; */
+    padding: 0 !important;
+    /* height: auto !important; */
+}
+
+/* .customSelect .ant-select-selection-placeholder {
+    color: #bfbfbf;
+    font-size: 14px;
+  }
+  
+  .customSelect .ant-select-selection-search {
+    height: 100%;
+  }
+  
+  .customSelect .ant-select-selection-item {
+    line-height: 1.5;
+  } */

@@ -25,6 +25,7 @@ export default function Post() {
     const { PRESETS } = useRightPanel();
 
     usePanelPreset(PRESETS["POSTS"]);
+    
 
     const buutonsArr = [
         { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPost/' + postId, '_blank') },
