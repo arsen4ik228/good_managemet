@@ -16,7 +16,7 @@ export default function Policy() {
   usePanelPreset(PRESETS["POLICIES"]);
 
   const buutonsArr = [
-    { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPolicy/' + policyId, '_blank') },
+    // { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPolicy/' + policyId, '_blank') },
   ]
 
   const [editorState, setEditorState] = useState();
@@ -34,15 +34,17 @@ export default function Policy() {
 
       <div className={classes.main}>
 
-        {currentPolicy.content ? <Mdxeditor
-          key={currentPolicy.id}
-          editorState={currentPolicy.content}
-          setEditorState={setEditorState}
-          readOnly={true}
-          policyName={currentPolicy.policyName}
-          policyNumber={currentPolicy.policyNumber}
-          policyDate={currentPolicy.createdAt}
-        ></Mdxeditor>
+        {currentPolicy.content ?
+          <Mdxeditor
+            key={currentPolicy.id}
+            editorState={currentPolicy.content}
+            setEditorState={setEditorState}
+            readOnly={true}
+            policyName={currentPolicy.policyName}
+            policyNumber={currentPolicy.policyNumber}
+            policyDate={currentPolicy.createdAt}
+            policyType={(currentPolicy.type).toUpperCase()}
+          ></Mdxeditor>
           : null
         }
 

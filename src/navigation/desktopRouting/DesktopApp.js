@@ -435,12 +435,12 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                    <MessageSelectingList presetName={"CHATS"} />
-                  </React.Suspense>
+                    <CreateNewConvertPage></CreateNewConvertPage>
+                    </React.Suspense>
                 }
               />
 
-              <Route
+              {/* <Route
                 path="new"
                 element={
                   <React.Suspense
@@ -453,7 +453,7 @@ function DesktopApp() {
                     <CreateNewConvertPage></CreateNewConvertPage>
                   </React.Suspense>
                 }
-              />
+              /> */}
 
               <Route
                 path=":convertId"
@@ -524,7 +524,7 @@ function DesktopApp() {
               />
 
               <Route
-                path="policies/:policyId"
+                path="policy/:policyId"
                 element={
                   <React.Suspense
                     fallback={

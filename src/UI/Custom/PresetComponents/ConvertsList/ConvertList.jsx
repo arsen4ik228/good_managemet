@@ -4,6 +4,7 @@ import ListAddButtom from '../../ListAddButton/ListAddButtom';
 import ListElem from '../../CustomList/ListElem';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useConvertsHook } from '@hooks';
+import convert_icon from '@image/convert_icon.svg'
 
 export default function ConvertList() {
     const [seacrhChatsSectionsValue, setSeacrhChatsSectionsValue] = useState()
@@ -46,7 +47,7 @@ export default function ConvertList() {
                 {filtredChats?.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
-                            // icon={statGraph}
+                            icon={convert_icon}
                             upperText={item.convertTheme}
                             bottomText={item.convertType}
                             linkSegment={item.id}

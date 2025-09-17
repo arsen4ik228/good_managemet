@@ -7,32 +7,38 @@
 
 
 .contactInfo{
-    height: 235px;
+    height: 23%;
     display: flex;   
     flex-direction: column;
     align-items: center;
-    padding: 30px 0;
+    gap: 3px;
+    padding: 5px 0;
 }
 
 .avatarSection{
     >img{
         border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        margin-bottom: 30px;
+        width: 182px;
+        height: 182px;
+        /* margin-bottom: 30px; */
         border: 1px solid var(--primary);
     }
 }
 
 .nameSection{
+    overflow: hidden;
+    /* overflow: visible; */
+    max-width: 100%;
     font-size: 20px;
     font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-
-.content {
-    overflow: auto;
-    flex: 1;
+.postSection{
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(153, 153, 153, 1);
 }
 
 /* RightSider.module.css */
@@ -51,4 +57,39 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-height: 850px) {
+    .avatarSection>img {
+        width: 120px;
+        height: 120px;
+    }
+    .nameSection{
+        font-size: 18px;
+    }
+    .postSection{
+        font-size: 10px;
+    }
+}
+
+
+.content {
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    
+    >div:nth-child(1) {
+        flex: 0 1 auto; /* Сжимается при необходимости */
+        min-height: 0;
+        overflow-y: auto;
+        max-height: 50%;
+    }
+    
+    >div:nth-child(2) {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+    }
 }

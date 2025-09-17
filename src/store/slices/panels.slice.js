@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { presetProps } from '../../helpers/presetProps'
 
 const initialState = {
   right: {
@@ -9,28 +10,40 @@ const initialState = {
   presets: {
     helper: {
       componentType: "helper",
-      props: {},
+      props: {
+        ...presetProps("helper")
+      },
     },
     posts: {
       componentType: "posts",
-      props: {},
+      props: {
+        ...presetProps("posts")
+      },
     },
     policies: {
       componentType: "policies",
-      props: {},
+      props: {
+        ...presetProps("policies")
+
+      },
     },
     statistics: {
       componentType: "statistics",
-      props: {},
+      props: {
+        ...presetProps("statistics")
+
+      },
     },
     chats: {
       componentType: "chats",
       props: {},
     },
-    // goals: {
-    //     componentType: 'goals',
-    //     props: {}
-    // }
+    goal: {
+        componentType: 'goal',
+        props: {
+          ...presetProps("goal")
+        }
+    }
   },
 };
 

@@ -6,6 +6,7 @@ import LeftSIder from './LeftSider/LeftSIder';
 import RightSider from './RightSider/RightSider';
 import { useSelector } from 'react-redux';
 import { selectRightPanel } from '../../../store/slices/panels.slice';
+import { useSetPresets } from '@hooks'
 
 const { Sider, Content } = Layout;
 
@@ -13,6 +14,8 @@ const MemoizedLeftSider = memo(LeftSIder)
 const MemoizedRightSider = memo(RightSider)
 
 export default function ApplicationContainer() {
+
+    useSetPresets()
 
     const rightPanelConfig = useSelector(selectRightPanel);
 
@@ -36,7 +39,7 @@ export default function ApplicationContainer() {
                 width={'20%'}
                 reverseArrow
             >
-                <MemoizedRightSider config={rightPanelConfig}/>
+                <MemoizedRightSider config={rightPanelConfig} />
             </Sider>
         </Layout>
     );

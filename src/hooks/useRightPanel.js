@@ -49,7 +49,7 @@ export const useRightPanel = () => {
         // Preset keys
         PRESETS: {
             HELPER: 'helper',
-            GOALS: 'goals',
+            GOAL: 'goal',
             POSTS: 'posts',
             POLICIES: 'policies',
             STATISTICS: 'statistics',

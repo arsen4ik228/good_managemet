@@ -10,6 +10,7 @@ import policy from '@image/poliycy_icon.svg';
 import controlPanel_icon from '@image/controlPanel_icon.svg'
 import { useNavigate, useParams } from 'react-router-dom';
 import RightPanelMapper from '@helpers/RightPanelMapper';
+import CustomComponent from './CustomComponent';
 
 export default function RightSider({ config }) {
     const { organizationId } = useParams()
@@ -45,6 +46,7 @@ export default function RightSider({ config }) {
         );
     }, [searchHelperSectionsValue]);
 
+    console.log(config)
     return (
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>
@@ -52,7 +54,7 @@ export default function RightSider({ config }) {
                     <img src={avatar} alt="avatar" />
                 </div>
                 <div className={classes.nameSection}>{config.props.name}</div>
-                {/* <div className={classes.postSection}>{config.props.posts}</div> */}
+                <div className={classes.postSection}>{config.props.postsNames}</div>
             </div>
 
             <div className={classes.content}>
@@ -76,11 +78,13 @@ export default function RightSider({ config }) {
                 </CustomList>
 
                 {/* Используем маппер вместо прямого рендера элемента */}
-                <div className={classes.dynamicContent}>
+                {/* <div className={classes.dynamicContent}> */}
                     <RightPanelMapper
                         componentType={config.componentType}
                     />
-                </div>
+
+                    <CustomComponent></CustomComponent>
+                {/* </div> */}
             </div>
         </div>
     );

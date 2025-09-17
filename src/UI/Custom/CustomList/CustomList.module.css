@@ -1,10 +1,13 @@
 .wrapper {
     position: relative;
     padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    /* max-height: 50%; */
 }
 
 .title {
-    height: 32px;
+    min-height: 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -37,64 +40,52 @@
     transform: rotate(90deg);
 }
 
-/* Контейнер для контента - ИЗМЕНИТЕ ЭТОТ СЕЛЕКТОР */
-/* .contentContainer {
-    position: relative;
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.expanded {
+/* Контейнер для списка с фиксированной высотой и скроллом */
+.listContainer {
+    flex: 1;
+    overflow-y: auto;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    /* max-height: 500px; */
     opacity: 1;
-    transform: translateY(0);
+    
+    /* Внутренняя тень для индикации скролла */
+    box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.2);
+    position: relative;
+
 }
 
-.collapsed {
+/* Псевдоэлемент для более плавного градиента вместо резкой тени */
+/* .listContainer::after {
+    content: '';
     position: absolute;
-    opacity: 0;
-    transform: translateY(-10px);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.8) 100%);
     pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
 } */
 
-/* Общий контейнер */
-.contentContainer {
-    position: relative;
-    overflow: hidden; /* Скрываем всё что выходит за границы */
-    width: 100%;
-}
-
-/* Стили для children */
-.childrenContainer {
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    width: 100%;
-}
-
-.childrenContainer.collapsed {
+.listContainer.collapsed {
+    max-height: 0;
     opacity: 0;
-    transform: translateY(-10px);
-    height: 0;
     overflow: hidden;
 }
 
-.childrenContainer.expanded {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Стили для одиночного элемента */
+/* Контейнер для выбранного элемента */
 .singleItemContainer {
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    width: 100%;
-}
-
-.singleItemContainer.expanded {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 100px;
     opacity: 1;
-    transform: translateY(0);
 }
 
 .singleItemContainer.collapsed {
+    max-height: 0;
     opacity: 0;
-    transform: translateY(10px);
-    height: 0;
     overflow: hidden;
 }
 
@@ -102,7 +93,6 @@
     position: absolute;
     top: 15px;
     left: 0;
-    /* transform: translateY(-50%); */
     width: 0;
     opacity: 0;
     transition: all 0.3s ease;

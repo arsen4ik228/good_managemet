@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import classes from './CustomList.module.css'
 import dropdown from '@image/drop-down.svg';
 import search from '@image/search.svg'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
 import ListElem from './ListElem';
 
-export default function CustomList({ title, addButtonText, addButtonClick, searchValue, searchFunc, selectedItem, children }) {
-    const [isExpanded, setIsExpanded] = useState(true);
+export default function CustomList({ title, addButtonText, addButtonClick, searchValue, searchFunc, selectedItem, expanded = true, children }) {
+    const [isExpanded, setIsExpanded] = useState(expanded);
     const [showSearch, setShowSearch] = useState(false);
+    const listRef = useRef(null);
 
     const toggleDropdown = () => {
-
         setIsExpanded(!isExpanded);
     };
 
@@ -25,9 +25,6 @@ export default function CustomList({ title, addButtonText, addButtonClick, searc
         searchFunc(e.target.value);
     };
 
-
-
-    // console.log(children)
     return (
         <div className={classes.wrapper}>
             <div className={classes.title}>
@@ -66,8 +63,8 @@ export default function CustomList({ title, addButtonText, addButtonClick, searc
                 />
             )}
 
-            <div className={`${classes.contentContainer} ${classes.singleItemContainer} ${!isExpanded ? classes.expanded : classes.collapsed}`}>
-                {selectedItem && (
+            {selectedItem && (
+                <div className={`${classes.singleItemContainer} ${isExpanded ? classes.collapsed : ''}`}>
                     <ListElem
                         icon={selectedItem?.icon}
                         upperText={selectedItem?.upperText}
@@ -76,11 +73,14 @@ export default function CustomList({ title, addButtonText, addButtonClick, searc
                         linkSegment={selectedItem?.linkSegment}
                         clickFunc={selectedItem?.clickFunc}
                     />
-                )}
-            </div>
+                </div>
+            )}
 
-            {/* Children - исчезает на своем месте */}
-            <div className={`${classes.childrenContainer} ${!isExpanded ? classes.collapsed : classes.expanded}`}>
+            {/* Контейнер для списка с фиксированной высотой и скроллом */}
+            <div 
+                ref={listRef}
+                className={`${classes.listContainer} ${!isExpanded ? classes.collapsed : ''}`}
+            >
                 {children}
             </div>
         </div>

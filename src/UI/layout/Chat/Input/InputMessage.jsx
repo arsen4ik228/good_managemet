@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import classes from './Input.module.css'
 import sendIcon from '@Custom/icon/send.svg';
 import calenderIcon from '@Custom/icon/icon _ calendar.svg';
@@ -12,10 +12,11 @@ import { usePostsHook, useConvertsHook } from '@hooks'
 import { Option } from 'antd/es/mentions';
 import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
 import { useParams } from 'react-router-dom';
+import { useRightPanel } from '../../../../hooks';
 
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
 
-    const { convertId } = useParams()
+    const { contactId, convertId } = useParams()
 
     const idTextarea = 745264
     const [openFilesModal, setOpenFilesModal] = useState(false);
@@ -41,7 +42,12 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     } = usePostsHook()
 
     const {
+        updatePanelProps
+    } = useRightPanel()
+
+    const {
         currentConvert,
+        contactInfo,
         senderPostId,
         userInfo,
         senderPostName,
@@ -59,7 +65,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         isSuccessPostPoliciesMutation,
         isErrorPostPoliciesMutation,
         ErrorPostPoliciesMutation,
-    } = useConvertsHook({ convertId });
+    } = useConvertsHook({ convertId: convertId, contactId: contactId });
 
     const reset = () => {
         // setStartDate(new Date().toISOString().split("T")[0]);
@@ -194,8 +200,15 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     useEffect(() => {
         saveDraft("DraftDB", "drafts", idTextarea, contentInput);
     }, [contentInput]);
-    
-    console.log(userInfo)
+
+    useEffect(() => {
+        if (!contactInfo) return
+
+
+        updatePanelProps({name: contactInfo.userName, postsNames: contactInfo.postName})
+    }, [contactInfo])
+
+    console.log(contactInfo)
     return (
 
         <div className={classes.wrapper}>
@@ -226,7 +239,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                             setDateStart={setStartDate}
                             dateDeadline={deadlineDate}
                             setDateDeadline={setDeadlineDate}
-                            // disableDateStart={disableDateStart}
+                        // disableDateStart={disableDateStart}
                         />
                     )}
                     <FilesModal
