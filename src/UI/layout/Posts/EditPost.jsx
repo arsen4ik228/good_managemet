@@ -20,6 +20,9 @@ const { TextArea } = Input;
 
 export default function EditPost() {
 
+    const channel = new BroadcastChannel("post_channel");
+    const channelName = new BroadcastChannel("postName_channel");
+
     const { postId } = useParams();
 
     const [form] = Form.useForm();
@@ -101,6 +104,13 @@ export default function EditPost() {
                     ids: statisticsIncludedPost,
                 }).unwrap();
             }
+
+            channel.postMessage("updated");
+            
+            if (rest.postName !== currentPost.postName) {
+                channelName.postMessage("name");
+            }
+
 
             message.success("Данные успешно обновлены!");
             // обновляем initialValues, чтобы сбросить "грязное" состояние

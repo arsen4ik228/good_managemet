@@ -9,6 +9,7 @@ export const useAllStatistics = ({  statisticData = false, isActive } = {}) => {
     isLoadingGetStatistics,
     isFetchingGetStatistics,
     isErrorGetStatistics,
+    refetch
   } = useGetStatisticsQuery(
     {
       organizationId: reduxSelectedOrganizationId,
@@ -16,17 +17,19 @@ export const useAllStatistics = ({  statisticData = false, isActive } = {}) => {
      ...(isActive !== undefined && { isActive })
     },
     {
-      selectFromResult: ({ data, isError, isFetching, isLoading }) => ({
+      selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
         statistics: data || [],
         isLoadingGetStatistics: isLoading,
         isFetchingGetStatistics: isFetching,
         isErrorGetStatistics: isError,
+        refetch
       }),
     }
   );
 
   return {
     statistics,
+    refetch,
     isLoadingGetStatistics,
     isFetchingGetStatistics,
     isErrorGetStatistics,

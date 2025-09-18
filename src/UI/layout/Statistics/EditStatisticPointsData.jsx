@@ -31,17 +31,29 @@ const typeViewStatistic = [
 ];
 
 const widthMap = {
-  fifty_two: "58vw",
-  twenty_six: "50vw",
-  default: "25vw",
+  fifty_two: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)*1.8)",
+
+  },
+  twenty_six: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)*1.4)",
+  },
+  default: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)/1.4)",
+  },
 };
 
 
 export const EditStatisticPointsData = () => {
 
+  const channel = new BroadcastChannel("statistic_channel");
+
   const { id: statisticId } = useParams();
 
-  const [chartType, setChartType] = useState("daily");
+  const [chartType, setChartType] = useState("thirteen");
   const [datePoint, setDatePoint] = useState(null);
 
   const [dataSource, setDataSource] = useState([]);
@@ -109,6 +121,7 @@ export const EditStatisticPointsData = () => {
         ...DataArray,
       }).unwrap();
 
+      channel.postMessage("updated");
       message.success("Данные успешно обновлены!");
     } catch (error) {
       if (error.errorFields) {
@@ -294,7 +307,7 @@ export const EditStatisticPointsData = () => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
-            columnGap:"20px"
+            columnGap: "20px"
           }}>
 
           <Flex gap={20} style={{
@@ -331,9 +344,10 @@ export const EditStatisticPointsData = () => {
                 {currentStatistic.name}
               </Title>
 
+
               <Graphic
                 data={[...dataSource]}
-                width={widthMap[chartType] || widthMap.default}
+                widthObj={widthMap[chartType] || widthMap.default}
                 type={currentStatistic?.type}
               />
 
@@ -344,7 +358,7 @@ export const EditStatisticPointsData = () => {
                   width: "100%",
                   justifyContent: "center",
                   marginBottom: "10px",
-                  marginLeft:"50px"
+                  marginLeft: "50px"
                 }}
               >
                 <Tooltip title="сдвигает график влево" placement="left">
@@ -384,7 +398,7 @@ export const EditStatisticPointsData = () => {
                 style={{
                   width: "120px",
                   backgroundColor:
-                    chartType === item.value ? "rgba(207, 222, 229, 0.5)" :  "#fff",
+                    chartType === item.value ? "rgba(207, 222, 229, 0.5)" : "#fff",
                   color: chartType === item.value ? "#005475" : "#999999",
                   border: "1px solid #CFDEE5",
                   borderRadius: "6px",

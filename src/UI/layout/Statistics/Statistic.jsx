@@ -34,9 +34,18 @@ const typeViewStatistic = [
 ];
 
 const widthMap = {
-    fifty_two: "55vw",
-    twenty_six: "50vw",
-    default: "20vw",
+    fifty_two: {
+         height:"calc(100vh - 200px)", 
+        width: "calc((100vh - 200px)*1.4)",
+    },
+    twenty_six: {
+        height:"calc(100vh - 200px)", 
+        width: "calc((100vh - 200px)*1.4)",
+    },
+    default: {
+        height:"calc(100vh - 200px)", 
+        width: "calc((100vh - 200px)/1.4)",
+    },
 };
 
 
@@ -51,7 +60,7 @@ export default function Statistic() {
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
-    const [chartType, setChartType] = useState("daily");
+    const [chartType, setChartType] = useState("thirteen");
     const [clickArrow, setClickArrow] = useState([null, null]);
 
     const [datePoint, setDatePoint] = useState(null);
@@ -68,11 +77,30 @@ export default function Statistic() {
         isLoadingGetStatisticId,
         isErrorGetStatisticId,
         isFetchingGetStatisticId,
+        refetch
     } = useGetSingleStatistic({
         statisticId: statisticId,
         datePoint: datePoint,
         viewType: chartType,
     });
+
+
+    useEffect(() => {
+        const channel = new BroadcastChannel("statistic_channel");
+
+        const handler = (event) => {
+            if (event.data === "updated") {
+                refetch();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetch]);
 
     useEffect(() => {
         setDatePoint(() => {
@@ -188,13 +216,17 @@ export default function Statistic() {
 
                             <div style={{
                                 minHeight: "100%",
+
                                 display: "flex",
                                 flexDirection: "column",
                                 alignItems: "center",
+
                                 backgroundColor: "#fff",
                                 border: "1px solid #CCCCCC",
                                 borderRadius: "5px",
+
                                 padding: "10px 5px 0px 5px",
+                                
                                 overflow: "hidden",
                             }}>
                                 <Title level={4} style={{ color: "#3E7B94" }}>
@@ -212,7 +244,7 @@ export default function Statistic() {
                                 >
                                     <Graphic
                                         data={[...dataSource]}
-                                        width={widthMap[chartType] || widthMap.default}
+                                        widthObj={widthMap[chartType] || widthMap.default}
                                         type={currentStatistic?.type}
                                     />
                                 </div>

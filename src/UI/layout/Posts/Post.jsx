@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 
 import classes from './Post.module.css'
@@ -27,7 +27,7 @@ export default function Post() {
     const { PRESETS } = useRightPanel();
 
     usePanelPreset(PRESETS["POSTS"]);
-    
+
 
     const buutonsArr = [
         { text: 'редактировать', click: () => window.open(homeUrl + '#/' + 'editPost/' + postId, '_blank') },
@@ -37,11 +37,32 @@ export default function Post() {
         currentPost,
         parentPost,
 
+        refetch,
+
         isLoadingGetPostId,
         isErrorGetPostId,
         isFetchingGetPostId,
     } = useGetSinglePost({ postId });
 
+
+
+    useEffect(() => {
+        const channel = new BroadcastChannel("post_channel");
+
+        const handler = (event) => {
+            if (event.data === "updated") {
+                refetch();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetch]);
+    
     return (
         <MainContentContainer buttons={buutonsArr} >
             <div className={classes.main}>
