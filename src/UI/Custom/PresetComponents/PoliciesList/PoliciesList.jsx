@@ -46,7 +46,7 @@ export default function PoliciesList() {
 
 
     const openPolicy = (id) => {
-        navigate(`helper/policies/${id}`);
+        navigate(`helper/policy/${id}`);
     }
 
     return (

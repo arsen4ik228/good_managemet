@@ -37,15 +37,15 @@
 .selectSection::before {
     content: attr(data-label);
     position: absolute;
-    top: 4px;
-    right: 12px;
-    color: #666;
-    font-size: 10px;
-    font-weight: 500;
+    top: 0;
+    left: 1px;
+    color: rgba(153, 153, 153, 1);
+    font-size: 12px;
+    font-weight: 400;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent 0%, white 20%, white 100%);
-    padding-left: 20px;
+    /* background: linear-gradient(90deg, transparent 0%, white 20%, white 100%); */
+    padding-left: 10px;
 }
 
 .customInput,
