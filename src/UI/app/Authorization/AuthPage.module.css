@@ -1,35 +1,7 @@
-.body {
-  min-height: calc(100vh);
-  min-width: calc(100vw);
-  border-radius: 25px 0px 0px 0px;
-  background-color: #F1F5F9;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
 .text {
   color: black;
   font-weight: 600;
   margin-bottom: 20px;
-}
-
-.link {
-  position: relative;
-  font-weight: 600;
-  font-style: italic;
-  color: rgb(0, 84, 117);
-  text-shadow: 0px 8px 10px;
-}
-
-.link:before {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  background-color: rgb(0, 84, 117);
-  width: 100%;
-  height: 2px;
 }
 
 .QR {
@@ -46,16 +18,8 @@
   row-gap: 20px;
 }
 
-.telegram {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  row-gap: 20px;
-}
 
-
-.Container {  
+.Container {
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -94,43 +58,84 @@
 
 
 
-  .linkMobile {
-    color: #fff; /* Белый цвет текста */
-    text-decoration: none; /* Убираем подчеркивание ссылки */
-    font-size: 16px; /* Размер текста */
-    font-style: italic;
-    border-bottom: 2px solid #FFFFFF;
-    margin-top: 18px;
-  }
+.linkMobile {
+  color: #fff;
+  /* Белый цвет текста */
+  text-decoration: none;
+  /* Убираем подчеркивание ссылки */
+  font-size: 16px;
+  /* Размер текста */
+  font-style: italic;
+  border-bottom: 2px solid #FFFFFF;
+  margin-top: 18px;
+}
 
 
-  .loader {
-    width: 100px;
-    height: 100px;
-    border: 3px solid #FFF;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    position: relative;
-    box-sizing: border-box;
-    animation: smooth-rotation 1.8s infinite;
+/* новое */
 
-    img {
-      width: 100%;
-      height: 100%;
-    }
+.body {
+  min-height: 100vh;
+  min-width: 100vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #FFFF;
+}
+
+.title {
+  margin-top: 10px;
+  font-size: 60px;
+  color: #025575;
+}
+
+.text {
+  margin-top: 20px;
+
+  font-size: 16px;
+  font-weight: 200;
+}
+
+.telegram {
+  margin-top: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.link {
+  font-size: 16px;
+  color: rgba(2, 85, 117, 0.5);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.loader {
+  height: 5px;
+  width: 600px;
+  margin-top: 20px;
+  border-radius: 5px;
+  background-color: #C4C4C4;
+  overflow: hidden; /* чтобы line не выходила за границы */
+}
+
+.line {
+  height: 5px;
+  width: 0; /* стартовая ширина */
+  border-radius: 5px;
+  background-color: #025575;
+  animation: fillLine 2s forwards; /* анимация 2 секунды и останавливается */
+}
+
+@keyframes fillLine {
+  0% {
+    width: 0;
   }
-  
-  @keyframes smooth-rotation {
-    0% {
-      transform: rotate(0deg);
-      animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-    }
-    50% {
-      transform: rotate(180deg);
-      animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+  100% {
+    width: 80%; /* 80% ширины loader */
   }
+}

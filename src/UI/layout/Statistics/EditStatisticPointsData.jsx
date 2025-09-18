@@ -91,12 +91,15 @@ export const EditStatisticPointsData = () => {
       }
 
       // Обработка createPoints
-      DataArray.statisticDataCreateDtos = dataSource
-        .filter((item) => item.isCreate === true && item.value !== null)
-        .map(({ value, valueDate }) => ({
-          valueDate,
-          value
-        }));
+      DataArray.statisticDataCreateDtos = [
+        ...DataArray.statisticDataCreateDtos,
+        ...dataSource
+          .filter((item) => item.isCreate === true && item.value !== null)
+          .map(({ value, valueDate }) => ({
+            valueDate,
+            value
+          }))
+      ]
 
       // Обработка обновлений
       DataArray.statisticDataUpdateDtos = dataSource
@@ -108,10 +111,10 @@ export const EditStatisticPointsData = () => {
         }));
 
       // Удаляем пустые массивы
-      if (DataArray.statisticDataCreateDtos.length === 0) {
+      if (DataArray.statisticDataCreateDtos.length == 0) {
         delete DataArray.statisticDataCreateDtos;
       }
-      if (DataArray.statisticDataUpdateDtos.length === 0) {
+      if (DataArray.statisticDataUpdateDtos.length == 0) {
         delete DataArray.statisticDataUpdateDtos;
       }
 
