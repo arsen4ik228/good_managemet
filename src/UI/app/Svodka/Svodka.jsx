@@ -294,7 +294,6 @@ export default function Svodka() {
                     })
                   }
                   onKeyDown={(e) => {
-                    e.preventDefault(); // предотвращаем стандартное поведение сразу
 
                     const keyMap = {
                       Enter: "down",
@@ -313,6 +312,7 @@ export default function Svodka() {
                     const direction = e.shiftKey ? shiftKeyMap[e.key] : keyMap[e.key];
 
                     if (direction) {
+                      e.preventDefault(); // предотвращаем стандартное поведение сразу
                       saveAndMove(direction);
                     }
                   }}
