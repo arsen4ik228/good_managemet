@@ -16,7 +16,7 @@ import { useRightPanel } from '../../../../hooks';
 
 const TYPE_OPTIONS = [
     { value: 'Личная', label: 'Личная' },
-    // { value: 'Приказ', label: 'Приказ' },
+    { value: 'Приказ', label: 'Приказ' },
 ]
 
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
@@ -194,9 +194,9 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         Data.convertTheme = convertTheme
         Data.convertType = "Приказ"
         Data.deadline = deadlineDate
-        Data.senderPostId = senderPost
-        Data.reciverPostId = reciverPostId
-        Data.messageContent = 'затычка в попу'
+        Data.senderPostId = userPosts?.[0]?.id
+        Data.reciverPostId = contactInfo?.postId
+        Data.messageContent = contentInput
         Data.targetCreateDto = {
             type: "Приказ",
             orderNumber: 1,
@@ -226,8 +226,12 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const handlerSendClick = () => {
         if (convertId)
             send()
-        else
+        else if (convertType === 'Личная') {
             createPersonalLetter()
+        }
+        else {
+            createOrder()
+        }
     }
 
     useEffect(() => {
