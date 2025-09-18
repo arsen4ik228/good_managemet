@@ -4,7 +4,7 @@ import classes from './EditGoal.module.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import { useGoalHook, } from "@hooks";
-import { Button, Modal, notification } from 'antd';
+import { Button, Modal, notification, message } from 'antd';
 import { compareStringArray } from "../../../helpers/helpers";
 import { ExclamationCircleFilled, HolderOutlined, DeleteOutlined } from '@ant-design/icons';
 
@@ -44,8 +44,12 @@ export default function EditGoal() {
             content: editorState,
         })
             .unwrap()
-            .then(() => { channel.postMessage("updated"); })
+            .then(() => {
+                message.success("Данные успешно обновлены!");
+                channel.postMessage("updated");
+            })
             .catch((error) => {
+                message.error("Ошибка при сохранении");
                 console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
             });
     };
