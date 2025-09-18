@@ -1,31 +1,35 @@
-
-.wrapper{
+.wrapper {
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+
 }
 
 
-.contactInfo{
-    height: 23%;
-    display: flex;   
+.contactInfo {
+    width: 100%;
+    max-height: 350px;
+    display: flex;
     flex-direction: column;
     align-items: center;
     gap: 3px;
     padding: 5px 0;
+
+    container-type: inline-size;
+    container-name: contactInfo;
 }
 
-.avatarSection{
-    >img{
+.avatarSection {
+    >img {
         border-radius: 50%;
-        width: 182px;
-        height: 182px;
+        width: 177px;
+        height: 177px;
         /* margin-bottom: 30px; */
         border: 1px solid var(--primary);
     }
 }
 
-.nameSection{
+.nameSection {
     overflow: hidden;
     /* overflow: visible; */
     max-width: 100%;
@@ -35,7 +39,7 @@
     white-space: nowrap;
 }
 
-.postSection{
+.postSection {
     font-size: 12px;
     font-weight: 400;
     color: rgba(153, 153, 153, 1);
@@ -50,13 +54,20 @@
     background: #fafafa; */
 }
 
-.dynamicContent > * {
+.dynamicContent>* {
     animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-height: 850px) {
@@ -64,10 +75,12 @@
         width: 120px;
         height: 120px;
     }
-    .nameSection{
+
+    .nameSection {
         font-size: 18px;
     }
-    .postSection{
+
+    .postSection {
         font-size: 10px;
     }
 }
@@ -79,17 +92,43 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    
+
     >div:nth-child(1) {
-        flex: 0 1 auto; /* Сжимается при необходимости */
+        flex: 0 1 auto;
+        /* Сжимается при необходимости */
         min-height: 0;
         overflow-y: auto;
         max-height: 50%;
     }
-    
+
     >div:nth-child(2) {
         flex: 1;
         min-height: 0;
         overflow-y: auto;
+    }
+}
+
+
+@container contactInfo (max-width: 251px) {
+    .avatarSection {
+        >img {
+            border-radius: 50%;
+            width: 172px;
+            height: 172px;
+            /* margin-bottom: 30px; */
+            border: 1px solid green;
+        }
+    }
+}
+
+@container contactInfo (max-width: 280px) {
+    .avatarSection {
+        >img {
+            border-radius: 50%;
+            width: 144px;
+            height: 144px;
+            /* margin-bottom: 30px; */
+            border: 1px solid red;
+        }
     }
 }
