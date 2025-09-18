@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { use, useCallback, useEffect, useState } from 'react'
 import classes from './Input.module.css'
 import sendIcon from '@Custom/icon/send.svg';
 import calenderIcon from '@Custom/icon/icon _ calendar.svg';
@@ -234,6 +234,15 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }
 
+    const handleKeyDown = useCallback((e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (contentInput.trim()) {
+                handlerSendClick();
+            }
+        }
+    }, [contentInput]);
+
     useEffect(() => {
         loadDraft("DraftDB", "drafts", idTextarea, setContentInput);
     }, []);
@@ -244,8 +253,6 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     useEffect(() => {
         if (!contactInfo) return
-
-
         updatePanelProps({ name: contactInfo.userName, postsNames: contactInfo.postName })
     }, [contactInfo])
 
@@ -326,6 +333,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                             maxRows: 6
                         }}
                         value={contentInput} onChange={(e) => setContentInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         placeholder='Напишите сообщение'
                     />
                     {isLoadingSendMessages && (
