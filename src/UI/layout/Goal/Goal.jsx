@@ -9,26 +9,8 @@ import { useNavigate } from 'react-router-dom';
 export default function Goal() {
 
   const {
-    reduxSelectedOrganizationId,
-
     currentGoal,
-    isErrorGetGoal,
-    isLoadingGetGoal,
-    isFetchingGetGoal,
-
-    updateGoal,
-    isLoadingUpdateGoalMutation,
-    isSuccessUpdateGoalMutation,
-    isErrorUpdateGoalMutation,
-    ErrorUpdateGoalMutation,
-    localIsResponseUpdateGoalMutation,
-
-    postGoal,
-    isLoadingPostGoalMutation,
-    isSuccessPostGoalMutation,
-    isErrorPostGoalMutation,
-    ErrorPostGoalMutation,
-    localIsResponsePostGoalMutation,
+    refetch
   } = useGoalHook();
 
   const buutonsArr = [
@@ -36,6 +18,25 @@ export default function Goal() {
     // { text: 'Поделиться', click: () => navigate('1') },
     // { text: 'Распечатать', click: () => navigate('1') },
   ]
+
+
+useEffect(() => {
+  const channel = new BroadcastChannel("goal_channel"); 
+
+  const handler = (event) => {
+    if (event.data === "updated") {
+      refetch(); 
+    }
+  };
+
+  channel.addEventListener("message", handler);
+
+  return () => {
+    channel.removeEventListener("message", handler);
+    channel.close(); 
+  };
+}, [refetch]);
+
 
   return (
     <>

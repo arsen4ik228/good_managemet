@@ -2,18 +2,15 @@ import React, { useEffect, useState } from 'react'
 import EditContainer from '../../Custom/EditContainer/EditContainer'
 import classes from './EditGoal.module.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import drag from "@image/drag.svg";
-import deleteImage from "@image/delete.svg";
 import TextArea from "@Custom/TextArea/TextArea.jsx";
 import { useGoalHook, } from "@hooks";
-import { Modal, notification } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import { compareStringArray } from "../../../helpers/helpers";
-import { ExclamationCircleFilled, } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { ExclamationCircleFilled, HolderOutlined, DeleteOutlined } from '@ant-design/icons';
 
 export default function EditGoal() {
+    const channel = new BroadcastChannel("goal_channel");
 
-    const navigate = useNavigate()
     const [editorState, setEditorState] = useState([]);
     const [pressedIndex, setPressedIndex] = useState(null);
 
@@ -22,23 +19,10 @@ export default function EditGoal() {
         reduxSelectedOrganizationId,
 
         currentGoal,
-        isErrorGetGoal,
-        isLoadingGetGoal,
-        isFetchingGetGoal,
 
         updateGoal,
-        isLoadingUpdateGoalMutation,
-        isSuccessUpdateGoalMutation,
-        isErrorUpdateGoalMutation,
-        ErrorUpdateGoalMutation,
-        localIsResponseUpdateGoalMutation,
 
         postGoal,
-        isLoadingPostGoalMutation,
-        isSuccessPostGoalMutation,
-        isErrorPostGoalMutation,
-        ErrorPostGoalMutation,
-        localIsResponsePostGoalMutation,
     } = useGoalHook();
 
 
@@ -60,7 +44,7 @@ export default function EditGoal() {
             content: editorState,
         })
             .unwrap()
-            .then(() => { })
+            .then(() => { channel.postMessage("updated"); })
             .catch((error) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
             });
@@ -115,12 +99,12 @@ export default function EditGoal() {
                 onOk() {
                     // Здесь вызываем функцию сохранения
                     saveUpdateGoal().then(() => {
-                        navigate('/new/helper/goal')
+                        window.close()
                     });
                 },
                 onCancel() {
                     // Просто выходим из режима редактирования без сохранения
-                    navigate('/new/helper/goal')
+                    window.close()
                     notification.info({
                         message: 'Изменения не сохранены',
                         description: 'Редактирование отменено, изменения не были сохранены.',
@@ -129,7 +113,7 @@ export default function EditGoal() {
                 },
             });
         } else {
-            navigate('/new/helper/goal')
+            window.close()
         }
     };
 
@@ -188,13 +172,8 @@ export default function EditGoal() {
                                                             onMouseUp={() => setPressedIndex(null)}
                                                             onMouseLeave={() => setPressedIndex(null)}
                                                         >
-                                                            <img
-                                                                {...provided.dragHandleProps}
-                                                                className={classes.drag}
-                                                                // ref={ref1}
-                                                                src={drag}
-                                                                alt="drag"
-                                                            />
+
+                                                            <HolderOutlined {...provided.dragHandleProps} style={{ color: "#999999" }} className={classes.drag} />
                                                         </div>
 
                                                         <div
@@ -215,13 +194,8 @@ export default function EditGoal() {
                                                             />
                                                         </div>
 
-                                                        <img
-                                                            // ref={ref2}
-                                                            src={deleteImage}
-                                                            alt="deleteImage"
-                                                            className={classes.deleteIcon}
-                                                            onClick={() => deleteEditor(index)}
-                                                        />
+                                                        <Button type="link" onClick={() => deleteEditor(index)} className={classes.deleteIcon}> <DeleteOutlined style={{ color: "#999999" }} /></Button>
+
                                                     </div>
                                                 )}
                                             </Draggable>
@@ -233,7 +207,6 @@ export default function EditGoal() {
                         </DragDropContext>
 
                         <button
-                            // ref={ref3}
                             className={classes.add}
                             onClick={() => addEditor()}
                         >
@@ -260,38 +233,6 @@ export default function EditGoal() {
                         </button>
                     </>
 
-
-
-                    {/* Обработчики состояний - теперь внизу */}
-                    {/* <HandlerQeury
-                        Error={isErrorGetGoal}
-                        Loading={isLoadingGetGoal}
-                        Fetching={isFetchingGetGoal}
-                    />
-
-                    <HandlerMutation
-                        Loading={isLoadingUpdateGoalMutation}
-                        Error={isErrorUpdateGoalMutation && localIsResponseUpdateGoalMutation}
-                        Success={isSuccessUpdateGoalMutation && localIsResponseUpdateGoalMutation}
-                        textSuccess={"Цель обновлена"}
-                        textError={
-                            ErrorUpdateGoalMutation?.data?.errors?.[0]?.errors?.[0]
-                                ? ErrorUpdateGoalMutation.data.errors[0].errors[0]
-                                : ErrorUpdateGoalMutation?.data?.message
-                        }
-                    />
-
-                    <HandlerMutation
-                        Loading={isLoadingPostGoalMutation}
-                        Error={isErrorPostGoalMutation && localIsResponsePostGoalMutation}
-                        Success={isSuccessPostGoalMutation && localIsResponsePostGoalMutation}
-                        textSuccess={"Цель создана"}
-                        textError={
-                            ErrorPostGoalMutation?.data?.errors?.[0]?.errors?.[0]
-                                ? ErrorPostGoalMutation.data.errors[0].errors[0]
-                                : ErrorPostGoalMutation?.data?.message
-                        }
-                    /> */}
                 </div>
             </EditContainer>
         </>

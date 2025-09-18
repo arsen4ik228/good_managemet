@@ -31,17 +31,11 @@
 
 
 .deleteIcon {
-    /* display: block;
-    border: #3A3A3A 1px solid; */
     position: absolute;
     visibility: hidden;
-    /* Позиционируем элемент абсолютно */
-    top: -5px;
-    /* Расстояние от верхней части контейнера */
-    right: -5px;
-    /* Расстояние от правой части контейнера */
+    top: 15px;
+    right: 10px;
     cursor: pointer;
-    /* Изменяем курсор при наведении на иконку */
     transition: all 0.1s ease;
 
     &:hover {
@@ -56,11 +50,10 @@
 .drag {
     position: absolute;
     visibility: hidden;
-    /* Позиционируем элемент абсолютно */
-    top: -3px;
-    /* Расстояние от верхней части контейнера */
-    left: 17px;
+    top: 25px;
+    left: 25px;
     transition: all 0.1s ease;
+    z-index: 10;
     &:hover {
         transform: scale(1.1);
     }
