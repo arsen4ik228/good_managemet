@@ -7,10 +7,12 @@ import { isMobile } from "react-device-detect";
 import { socketUrl, baseUrl } from "@helpers/constants";
 import telegram from "@Custom/icon/telegram.svg";
 import logo from "@Custom/icon/logo.svg";
-import icon from "@image/iconHeader.svg";
+import tg from "@image/telegram.svg";
 import { useDispatch } from "react-redux";
 import { setUserId } from "../../../store/slices/local.storage.slice";
 import GM from "@image/labelGM.svg"
+
+
 
 const socket = io(`${socketUrl}auth`, {
   cors: {
@@ -212,7 +214,7 @@ export default function AuthPage() {
 
 
     <div className={classes.body}>
-      <span className={classes.text}>Для входа отсканируйте QR-код</span>
+      {/* <span className={classes.text}>Для входа отсканируйте QR-код</span>
       <div className={classes.QR}>
         {!tokenForTG ? (
           <span className={classes.loader}>
@@ -235,8 +237,31 @@ export default function AuthPage() {
             <img src={icon} alt="icon" />
           </span>
         )}
+      </div> */}
+
+      <img src={GM} alt="GM" />
+      <div className={classes.title}>GOODMANAGMENT</div>
+      <div className={classes.loader}>
+        <div className={classes.line}></div>
       </div>
-      {/* <img src={GM} alt="GM" /> */}
+      <div className={classes.text}>Войдите в программу удобным для вас способом:</div>
+
+      <div className={classes.telegram}>
+        {tokenForTG && qrUrl ? (
+          <QRCode errorLevel="H" value={qrUrl} icon={tg} />
+        ) : (
+          <QRCode errorLevel="H" icon={tg} status="loading" />
+        )}
+        <div className={classes.text}>Для входа отсканируйте QR-код</div>
+        <a
+          href={qrUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={classes.link}
+        >
+          Или перейдите по ссылке
+        </a>
+      </div>
 
     </div>
 
