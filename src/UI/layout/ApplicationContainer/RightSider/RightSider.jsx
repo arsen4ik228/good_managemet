@@ -11,6 +11,7 @@ import controlPanel_icon from '@image/controlPanel_icon.svg'
 import { useNavigate, useParams } from 'react-router-dom';
 import RightPanelMapper from '@helpers/RightPanelMapper';
 import CustomComponent from './CustomComponent';
+import { homeUrl } from '@helpers/constants'
 
 export default function RightSider({ config }) {
     const { organizationId } = useParams()
@@ -29,7 +30,7 @@ export default function RightSider({ config }) {
 
     const handlerClickHelper = (link) => {
         if (link === 'controlPanel' || link === 'svodka') {
-            window.open(window.location.origin + `/#/` + `${link}`, '_blank')
+            window.open(homeUrl + `#/${link}`, '_blank')
         }
         else
             navigate(`helper/${link}`);
@@ -79,11 +80,11 @@ export default function RightSider({ config }) {
 
                 {/* Используем маппер вместо прямого рендера элемента */}
                 {/* <div className={classes.dynamicContent}> */}
-                    <RightPanelMapper
-                        componentType={config.componentType}
-                    />
+                <RightPanelMapper
+                    componentType={config.componentType}
+                />
 
-                    <CustomComponent></CustomComponent>
+                {/* <CustomComponent></CustomComponent> */}
                 {/* </div> */}
             </div>
         </div>

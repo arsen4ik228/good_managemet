@@ -27,7 +27,7 @@ export default function Policy() {
     policyId: policyId,
   });
 
-  console.log("currentPolicy = ", currentPolicy);
+  console.log("currentPolicy = ", currentPolicy.content);
 
   return (
     <MainContentContainer buttons={buutonsArr} >
