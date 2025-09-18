@@ -1,4 +1,3 @@
-
 import apiSlice from "./api";
 
 export const goalApi = apiSlice.injectEndpoints({
@@ -9,7 +8,7 @@ export const goalApi = apiSlice.injectEndpoints({
       }),
 
       transformResponse: (response) => {
-        console.log('getGoal    ', response)
+        console.log("getGoal    ", response);
         return {
           currentGoal: response || {},
         };
@@ -24,7 +23,7 @@ export const goalApi = apiSlice.injectEndpoints({
       query: (body) => ({
         url: `goals/new`,
         method: "POST",
-        body
+        body,
       }),
       invalidatesTags: ["Goal"],
     }),
@@ -35,7 +34,7 @@ export const goalApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, err, arg) => [{ type: 'Goal', id: arg._id }],
+      invalidatesTags: (result, err, arg) => [{ type: "Goal", id: arg._id }],
     }),
   }),
 });
