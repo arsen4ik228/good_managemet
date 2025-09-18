@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import CustomList from '../../CustomList/CustomList';
 import { useAllStatistics } from '@hooks'
 import ListElem from '../../CustomList/ListElem';
@@ -20,6 +20,7 @@ export default function StatisticsList() {
         isLoadingGetStatistics,
         isFetchingGetStatistics,
         isErrorGetStatistics,
+        refetch
     } = useAllStatistics({
         statisticData: false,
         isActive: isActive,
@@ -38,10 +39,26 @@ export default function StatisticsList() {
 
 
     const openStatistic = (id) => {
-        localStorage.setItem("selectedStatisticId", id);
         navigate(`helper/statistics/${id}`)
     }
     
+        useEffect(() => {
+            const channel = new BroadcastChannel("statisticName_channel");
+    
+            const handler = (event) => {
+                if (event.data === "name") {
+                    refetch();
+                }
+            };
+    
+            channel.addEventListener("message", handler);
+    
+            return () => {
+                channel.removeEventListener("message", handler);
+                channel.close();
+            };
+        }, [refetch]);
+
     return (
         <>
             <CustomList

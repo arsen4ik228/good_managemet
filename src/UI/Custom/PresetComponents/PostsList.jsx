@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import CustomList from '../CustomList/CustomList'
 import ListElem from '../CustomList/ListElem'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
@@ -17,6 +17,7 @@ export default function PostsList() {
 
     const {
         allPosts,
+        refetch,
         isLoadingGetPosts,
         isFetchingGetPosts,
         isErrorGetPosts,
@@ -34,10 +35,25 @@ export default function PostsList() {
     }, [seacrhPostsSectionsValue, allPosts]);
 
     const openPost = (id) => {
-        localStorage.setItem("selectedPostId", id);
         navigate(`helper/posts/${id}`)
     }
 
+    useEffect(() => {
+        const channel = new BroadcastChannel("postName_channel");
+
+        const handler = (event) => {
+            if (event.data === "name") {
+                refetch();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetch]);
     return (
         <>
             <CustomList

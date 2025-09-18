@@ -46,7 +46,6 @@ export default function PoliciesList() {
 
 
     const openPolicy = (id) => {
-        localStorage.setItem("selectedPolicyId", id);
         navigate(`helper/policies/${id}`);
     }
 
