@@ -34,9 +34,18 @@ const typeViewStatistic = [
 ];
 
 const widthMap = {
-    fifty_two: "70vw",
-    twenty_six: "60vw",
-    default: "20vw",
+    fifty_two: {
+         height:"calc(100vh - 200px)", 
+         width: "100%",
+    },
+    twenty_six: {
+        height:"calc(100vh - 200px)", 
+        width: "calc((100vh - 200px)*1.4)",
+    },
+    default: {
+        height:"calc(100vh - 200px)", 
+        width: "calc((100vh - 200px)/1.4)",
+    },
 };
 
 const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
@@ -357,7 +366,7 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
           >
             <Graphic
               data={dataSource}
-              width={widthMap[chartType] || widthMap.default}
+              widthObj={widthMap[chartType] || widthMap.default}
               type={selectedStatistic?.type}
             />
           </div>

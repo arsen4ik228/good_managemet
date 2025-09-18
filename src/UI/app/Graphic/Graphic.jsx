@@ -51,7 +51,7 @@ const formatNumber = (num) => {
   return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
-export default function Graphic({ data, width, type = "Прямая" }) {
+export default function Graphic({ data, widthObj, type = "Прямая" }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -236,5 +236,5 @@ export default function Graphic({ data, width, type = "Прямая" }) {
     };
   }, [data, type]);
 
-  return <div ref={chartRef} style={{ width: width, height: "95%"}} />;
+  return <div ref={chartRef} style={{ ...widthObj }} />;
 }

@@ -31,9 +31,19 @@ const typeViewStatistic = [
 ];
 
 const widthMap = {
-  fifty_two: "58vw",
-  twenty_six: "50vw",
-  default: "25vw",
+  fifty_two: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)*1.8)",
+
+  },
+  twenty_six: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)*1.4)",
+  },
+  default: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)/1.4)",
+  },
 };
 
 
@@ -43,7 +53,7 @@ export const EditStatisticPointsData = () => {
 
   const { id: statisticId } = useParams();
 
-  const [chartType, setChartType] = useState("daily");
+  const [chartType, setChartType] = useState("thirteen");
   const [datePoint, setDatePoint] = useState(null);
 
   const [dataSource, setDataSource] = useState([]);
@@ -334,9 +344,10 @@ export const EditStatisticPointsData = () => {
                 {currentStatistic.name}
               </Title>
 
+
               <Graphic
                 data={[...dataSource]}
-                width={widthMap[chartType] || widthMap.default}
+                widthObj={widthMap[chartType] || widthMap.default}
                 type={currentStatistic?.type}
               />
 
