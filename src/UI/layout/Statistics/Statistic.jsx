@@ -66,11 +66,30 @@ export default function Statistic() {
         isLoadingGetStatisticId,
         isErrorGetStatisticId,
         isFetchingGetStatisticId,
+        refetch
     } = useGetSingleStatistic({
         statisticId: statisticId,
         datePoint: datePoint,
         viewType: chartType,
     });
+
+
+    useEffect(() => {
+        const channel = new BroadcastChannel("statistic_channel");
+
+        const handler = (event) => {
+            if (event.data === "updated") {
+                refetch();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetch]);
 
     useEffect(() => {
         setDatePoint(() => {

@@ -39,6 +39,8 @@ const widthMap = {
 
 export const EditStatisticPointsData = () => {
 
+  const channel = new BroadcastChannel("statistic_channel");
+
   const { id: statisticId } = useParams();
 
   const [chartType, setChartType] = useState("daily");
@@ -109,6 +111,7 @@ export const EditStatisticPointsData = () => {
         ...DataArray,
       }).unwrap();
 
+      channel.postMessage("updated");
       message.success("Данные успешно обновлены!");
     } catch (error) {
       if (error.errorFields) {
@@ -294,7 +297,7 @@ export const EditStatisticPointsData = () => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
-            columnGap:"20px"
+            columnGap: "20px"
           }}>
 
           <Flex gap={20} style={{
@@ -344,7 +347,7 @@ export const EditStatisticPointsData = () => {
                   width: "100%",
                   justifyContent: "center",
                   marginBottom: "10px",
-                  marginLeft:"50px"
+                  marginLeft: "50px"
                 }}
               >
                 <Tooltip title="сдвигает график влево" placement="left">
@@ -384,7 +387,7 @@ export const EditStatisticPointsData = () => {
                 style={{
                   width: "120px",
                   backgroundColor:
-                    chartType === item.value ? "rgba(207, 222, 229, 0.5)" :  "#fff",
+                    chartType === item.value ? "rgba(207, 222, 229, 0.5)" : "#fff",
                   color: chartType === item.value ? "#005475" : "#999999",
                   border: "1px solid #CFDEE5",
                   borderRadius: "6px",

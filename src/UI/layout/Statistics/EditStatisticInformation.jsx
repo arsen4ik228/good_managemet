@@ -25,6 +25,9 @@ import {
 const { TextArea } = Input;
 
 export const EditStatisticInformation = () => {
+  const channel = new BroadcastChannel("statistic_channel");
+  const channelName = new BroadcastChannel("statisticName_channel");
+
   const { id: statisticId } = useParams();
   const [form] = Form.useForm();
   const [initialValues, setInitialValues] = useState(null);
@@ -61,6 +64,13 @@ export const EditStatisticInformation = () => {
         _id: currentStatistic?.id,
         ...values,
       }).unwrap();
+
+
+      if (values.name !== currentStatistic.name) {
+        channelName.postMessage("name");
+      }
+      
+      channel.postMessage("updated");
       message.success("Данные успешно обновлены!");
       // обновляем initialValues, чтобы сбросить "грязное" состояние
       setInitialValues(values);
@@ -120,7 +130,7 @@ export const EditStatisticInformation = () => {
         Fetching={isFetchingGetStatisticId}
       ></HandlerQeury>
       {
-        initialValues && <EditContainer  header={"редактирование"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
+        initialValues && <EditContainer header={"редактирование"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
 
           <div style={{
             position: "relative",
