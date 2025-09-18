@@ -30,6 +30,7 @@ export default function StatisticTable({
   const [editingRow, setEditingRow] = useState(null);
   const inputRef = useRef(null);
 
+
   const columnsDataSourceDaily = [
     {
       title: "Дата",
@@ -151,11 +152,10 @@ export default function StatisticTable({
               <InputNumber
                 controls={false}
                 style={{ width: "130px" }}
-                value={
-                  createCorellationPoints.find(
-                    (item) => item.id === record.id
-                  )?.value || record.value
-                }
+                value={(() => {
+                  const foundItem = createCorellationPoints.find(item => item.id === record.id);
+                  return foundItem ? foundItem.value : record.value;
+                })()}
                 onChange={(value) => {
                   setCreateCorellationPoints((prevData) => {
                     const exists = prevData.some(
@@ -304,11 +304,10 @@ export default function StatisticTable({
               <InputNumber
                 controls={false}
                 style={{ width: "130px" }}
-                value={
-                  createCorellationPoints.find(
-                    (item) => item.id === record.id
-                  )?.value || record.value
-                }
+                value={(() => {
+                  const foundItem = createCorellationPoints.find(item => item.id === record.id);
+                  return foundItem ? foundItem.value : record.value;
+                })()}
                 onChange={(value) => {
                   setCreateCorellationPoints((prevData) => {
                     const exists = prevData.some(
@@ -453,11 +452,10 @@ export default function StatisticTable({
               <InputNumber
                 controls={false}
                 style={{ width: "130px" }}
-                value={
-                  createCorellationPoints.find(
-                    (item) => item.id === record.id
-                  )?.value || record.value
-                }
+                value={(() => {
+                  const foundItem = createCorellationPoints.find(item => item.id === record.id);
+                  return foundItem ? foundItem.value : record.value;
+                })()}
                 onChange={(value) => {
                   setCreateCorellationPoints((prevData) => {
 
@@ -659,8 +657,8 @@ export default function StatisticTable({
                 />
               </div>
             ) : null}
-            </>
-            )
+          </>
+        )
       }
     </div>
   );
