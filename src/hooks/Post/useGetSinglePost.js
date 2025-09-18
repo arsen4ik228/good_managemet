@@ -21,7 +21,7 @@ export const useGetSinglePost = ({postId, enabled = true}) => {
     //Валера
     selectedPolicyIDInPost = null,
     selectedPolicyNameInPost = null,
-    refetch: refetchPostIdQuery,
+    refetch,
   } = useGetPostIdQuery(
     { postId, enabled},
     {
@@ -66,6 +66,6 @@ export const useGetSinglePost = ({postId, enabled = true}) => {
     isFetchingGetPostId,
     selectedPolicyIDInPost,
     selectedPolicyNameInPost,
-    refetchPostIdQuery,
+    refetch,
   };
 };
