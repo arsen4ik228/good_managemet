@@ -16,7 +16,7 @@ import { useRightPanel } from '../../../../hooks';
 
 const TYPE_OPTIONS = [
     { value: 'Личная', label: 'Личная' },
-    { value: 'Приказ', label: 'Приказ' },
+    // { value: 'Приказ', label: 'Приказ' },
 ]
 
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
