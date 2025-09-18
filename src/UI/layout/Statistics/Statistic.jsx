@@ -19,6 +19,8 @@ import {
 import _ from "lodash";
 import dayjs from "dayjs";
 import { useParams } from 'react-router-dom';
+import { homeUrl } from '@helpers/constants'
+
 
 const { Title } = Typography;
 
@@ -43,8 +45,8 @@ export default function Statistic() {
     const { statisticId } = useParams()
 
     const buutonsArr = [
-        { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editStatisticInformation/' + statisticId, '_blank') },
-        { text: 'ввести данные', click: () => window.open(window.location.origin + '/#/' + 'editStatisticPointsData/' + statisticId, '_blank') },
+        { text: 'редактировать', click: () => window.open(homeUrl + '#/' + 'editStatisticInformation/' + statisticId, '_blank') },
+        { text: 'ввести данные', click: () => window.open(homeUrl + '#/' + 'editStatisticPointsData/' + statisticId, '_blank') },
     ]
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
