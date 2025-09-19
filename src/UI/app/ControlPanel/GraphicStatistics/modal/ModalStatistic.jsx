@@ -256,8 +256,8 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
         case "daily":
           newDate =
             clickArrow[0] === "right"
-              ? currentDate.add(1, "day")
-              : currentDate.subtract(1, "day");
+              ? currentDate.add(7, "day")
+              : currentDate.subtract(7, "day");
           break;
         case "thirteen":
           newDate =
