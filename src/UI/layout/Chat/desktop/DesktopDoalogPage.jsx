@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import classes from './DesktopDialogPage.module.css';
 import Headers from "@Custom/Headers/Headers";
-import { useConvertsHook, useMessages } from '@hooks';
+import { useConvertsHook, useMessages, useUnseenMessages, useRightPanel } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
 import Input from '../Input';
@@ -16,19 +16,23 @@ import FinalConvertModal from '@Custom/FinalConvertModal/FinalConvertModal'
 
 
 export default function DesktopDialogPage() {
-    const { convertId } = useParams();
+    const { contactId, convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
     const [openFinishModal, setOpenFinishModal] = useState()
+    const [openAgreementModal, setOpenAgreementModal] = useState()
     const bodyRef = useRef(null);
     const [messagesArray, setMessagesArray] = useState();
     const [socketMessages, setSocketMessages] = useState([]);
     const unSeenMessagesRef = useRef(null);
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
-    const button = [{ click: () => setOpenFinishModal(true), text: 'завершить' }]
 
-    const { currentConvert,
+    const buttons = [
+        { click: () => setOpenFinishModal(true), text: 'завершить' },
+    ]
+    const {
+        currentConvert,
         senderPostId,
         userInfo,
         senderPostName,
@@ -42,17 +46,27 @@ export default function DesktopDialogPage() {
     } = useConvertsHook({ convertId });
 
     const {
+        updatePanelProps
+    } = useRightPanel()
+
+    const {
         seenMessages,
         unSeenMessageExist,
         isLoadingSeenMessages,
         isErrorSeenMessages,
         isFetchingSeenMessages,
-        unSeenMessages,
+        // unSeenMessages,
         unSeenMessagesIds,
+
+    } = useMessages(convertId, paginationSeenMessages);
+
+    const {
+        unSeenMessages,
         isLoadingUnSeenMessages,
         isErrorUnSeenMessages,
         isFetchingUnSeenMessages,
-    } = useMessages(convertId, paginationSeenMessages);
+    } = useUnseenMessages(convertId)
+
     const seenMessagesRef = useRef(seenMessages);
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
@@ -214,17 +228,27 @@ export default function DesktopDialogPage() {
     }, [unSeenMessages, socketMessages]);
 
     useEffect(() => {
-        if(!convertId) return;
+        if (!convertId) return;
 
         setSocketMessages([])
         setMessagesArray()
 
-    },[convertId])
+    }, [convertId])
 
-    console.warn( socketMessages, 'ffdgdfgdf')
+    useEffect(() => {
+        if (!notEmpty(userInfo)) return
+        updatePanelProps({ name: userInfo.userName, }) //postsNames: contactInfo.postName 
+    }, [userInfo])
+
+    useEffect(() => {
+        if (!notEmpty(currentConvert) || currentConvert?.convertPath !== 'согласование') return
+        buttons.push({ click: () => setOpenAgreementModal(true), text: 'согласовать' })
+    }, [currentConvert])
+
+    console.warn(currentConvert)
 
     return (
-        <MainContentContainer buttons={button}>
+        <MainContentContainer buttons={buttons}>
             {/* <div className={classes.dialog}>
                 <Headers name={userInfo?.userName} sectionName={userInfo.postName} avatar={userInfo?.avatar}>
                 </Headers> */}
@@ -245,7 +269,6 @@ export default function DesktopDialogPage() {
                     ))}
                     {unSeenMessages?.length > 0 && (
                         <>
-                        <div>unseen</div>
                             {unSeenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <Message

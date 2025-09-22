@@ -116,7 +116,7 @@
             width: 172px;
             height: 172px;
             /* margin-bottom: 30px; */
-            border: 1px solid green;
+            /* border: 1px solid green; */
         }
     }
 }
@@ -128,7 +128,7 @@
             width: 144px;
             height: 144px;
             /* margin-bottom: 30px; */
-            border: 1px solid red;
+            /* border: 1px solid red; */
         }
     }
 }

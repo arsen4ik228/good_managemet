@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import classes from './DesktopDialogPage.module.css';
 import Headers from "@Custom/Headers/Headers";
-import { useConvertsHook, useMessages } from '@hooks';
+import { useConvertsHook, useMessages, useUnseenMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
 import Input from '../Input';
@@ -32,21 +32,27 @@ export default function DesktopDialogPage() {
         isLoadingGetConvertId,
         isFetchingGetConvartId,
         isErrorGetConvertId,
-        organizationId 
+        organizationId
     } = useConvertsHook({ convertId });
-    
+
     const {
         seenMessages,
         unSeenMessageExist,
         isLoadingSeenMessages,
         isErrorSeenMessages,
         isFetchingSeenMessages,
-        unSeenMessages,
+        // unSeenMessages,
         unSeenMessagesIds,
+
+    } = useMessages(convertId, paginationSeenMessages);
+
+    const {
+        unSeenMessages,
         isLoadingUnSeenMessages,
         isErrorUnSeenMessages,
         isFetchingUnSeenMessages,
-    } = useMessages(convertId, paginationSeenMessages);
+    } = useUnseenMessages({ convertId })
+
     const seenMessagesRef = useRef(seenMessages);
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 

@@ -5,11 +5,15 @@ import ListElem from '../../CustomList/ListElem';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useConvertsHook } from '@hooks';
 import convert_icon from '@image/convert_icon.svg'
+import personal_chat_icon from '@image/personal_chat_icon.svg'
+import order_chat_icon from '@image/order_chat_icon.svg'
+import { homeUrl } from '@helpers/constants'
+
 
 export default function ConvertList() {
     const [seacrhChatsSectionsValue, setSeacrhChatsSectionsValue] = useState()
     const navigate = useNavigate()
-    const { contactId } = useParams()
+    const { organizationId, contactId } = useParams()
     // Получение всех статистик
 
     const {
@@ -34,12 +38,23 @@ export default function ConvertList() {
         );
     }, [seacrhChatsSectionsValue, seenConverts, unseenConverts]);
 
+    const setIcon = (type) => {
+
+    }
+
+    const CONVERT_ICON = {
+        'Приказ': order_chat_icon,
+        'Переписка': personal_chat_icon,
+    }
+
     return (
         <>
             <CustomList
                 title={'Темы'}
                 searchValue={seacrhChatsSectionsValue}
                 searchFunc={setSeacrhChatsSectionsValue}
+                addButtonText={'Новая тема'}
+                addButtonClick={() => navigate(`chat/${contactId}`)}
             >
 
                 {/* <ListAddButtom textButton={'Новая тема'} /> */}
@@ -47,7 +62,7 @@ export default function ConvertList() {
                 {filtredChats?.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
-                            icon={convert_icon}
+                            icon={CONVERT_ICON[item.convertType]}
                             upperText={item.convertTheme}
                             bottomText={item.convertType}
                             linkSegment={item.id}
