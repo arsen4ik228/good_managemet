@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import classes from "./Policy.module.css"
 
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
 
-import { usePanelPreset, useRightPanel, usePolicyHook } from '@hooks';
+import { usePanelPreset, useRightPanel, useGetSinglePolicy } from '@hooks';
 
 
 export default function Policy() {
@@ -16,18 +16,33 @@ export default function Policy() {
   usePanelPreset(PRESETS["POLICIES"]);
 
   const buutonsArr = [
-    // { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPolicy/' + policyId, '_blank') },
+    { text: 'редактировать', click: () => window.open(window.location.origin + '/#/' + 'editPolicy/' + policyId, '_blank') },
   ]
 
-  const [editorState, setEditorState] = useState();
-
   const {
+    refetch,
     currentPolicy,
-  } = usePolicyHook({
+  } = useGetSinglePolicy({
     policyId: policyId,
   });
 
-  console.log("currentPolicy = ", currentPolicy.content);
+
+  useEffect(() => {
+    const channel = new BroadcastChannel("policy_channel");
+
+    const handler = (event) => {
+      if (event.data === "updated") {
+        refetch();
+      }
+    };
+
+    channel.addEventListener("message", handler);
+
+    return () => {
+      channel.removeEventListener("message", handler);
+      channel.close();
+    };
+  }, [refetch]);
 
   return (
     <MainContentContainer buttons={buutonsArr} >
@@ -36,9 +51,8 @@ export default function Policy() {
 
         {currentPolicy.content ?
           <Mdxeditor
-            key={currentPolicy.id}
+            key={currentPolicy.id + "-" + currentPolicy.updatedAt}
             editorState={currentPolicy.content}
-            setEditorState={setEditorState}
             readOnly={true}
             policyName={currentPolicy.policyName}
             policyNumber={currentPolicy.policyNumber}

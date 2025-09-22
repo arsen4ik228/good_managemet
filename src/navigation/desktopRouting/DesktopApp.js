@@ -292,7 +292,7 @@ function DesktopApp() {
           />
 
           <Route
-            path="editPolicy"
+            path="editPolicy/:policyId"
             element={
               <React.Suspense
                 fallback={

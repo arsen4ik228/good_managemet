@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import "@mdxeditor/editor/style.css";
 import {
   MDXEditor,
@@ -35,7 +35,6 @@ export default function Mdxeditor({
   policyType
 }) {
   const editorRef = useRef(null); // Ссылка на редактор
-
   // Функция для обновления содержимого редактора и состояния
   const updateEditorContent = (newContent) => {
     if (editorRef.current) {
@@ -45,7 +44,6 @@ export default function Mdxeditor({
   };
 
   const [postImage] = usePostImageMutation();
-
   // Функция для обработки загрузки изображений
   const imageUploadHandler = async (file) => {
     try {
