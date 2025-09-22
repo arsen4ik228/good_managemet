@@ -8,7 +8,7 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         isLoading: isLoadingGetConverts,
         isError: isErrorGetConverts,
         isFetching: isFetchingGetConvert,
-        error: ErrorGetConverts, 
+        error: ErrorGetConverts,
         refetch: refetchGetConverts,
     } = useGetConvertsQuery({ contactId }, { skip: !contactId });
 
@@ -84,7 +84,13 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
     ] = useApproveConvertMutation()
 
     const [
-        finishConvert
+        finishConvert,
+        {
+            isLoading: isLoadingFinishConvertMutation,
+            isSuccess: isSuccessFinishConvertMutation,
+            isError: isErrorFinishConvertMutation,
+            error: ErrorFinishConvertMutation,
+        }
     ] = useFinishConvertMutation()
 
     return {
@@ -129,6 +135,10 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         updateConvert,
 
         approveConvert,
-        finishConvert
+        finishConvert,
+        isLoadingFinishConvertMutation,
+        isSuccessFinishConvertMutation,
+        isErrorFinishConvertMutation,
+        ErrorFinishConvertMutation,
     }
 }

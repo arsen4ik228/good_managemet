@@ -16,7 +16,7 @@ import { useRightPanel } from '../../../../hooks';
 
 const TYPE_OPTIONS = [
     { value: 'Личная', label: 'Личная' },
-    // { value: 'Приказ', label: 'Приказ' },
+    { value: 'Приказ', label: 'Приказ' },
 ]
 
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
@@ -254,6 +254,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     useEffect(() => {
         if (!contactInfo) return
+        // console.warn('set props', contactInfo)
         updatePanelProps({ name: contactInfo.userName, postsNames: contactInfo.postName })
         setReciverPostId(contactInfo.postId)
 
@@ -265,7 +266,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }, [userPosts, senderPost]);
 
-    console.log(reciverPostId, senderPost)
+    console.log(contactInfo)
     return (
 
         <div className={classes.wrapper}>
