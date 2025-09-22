@@ -35,7 +35,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const [convertTheme, setConvertTheme] = useState()
     const [startDate, setStartDate] = useState()
     const [deadlineDate, setDeadlineDate] = useState()
-    const [senderPost, setSenderPost] = useState()
+    const [senderPost, setSenderPost] = useState(null)
     const [reciverPostId, setReciverPostId] = useState()
     const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
 
@@ -77,6 +77,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         setSelectedPolicy(false);
         deleteDraft("DraftDB", "drafts", idTextarea);
         setContentInputPolicyId("");
+        setConvertTheme('')
     };
 
     const transformText = (text, convertStatus) => {
@@ -254,9 +255,17 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     useEffect(() => {
         if (!contactInfo) return
         updatePanelProps({ name: contactInfo.userName, postsNames: contactInfo.postName })
+        setReciverPostId(contactInfo.postId)
+
     }, [contactInfo])
 
-    console.log(senderPost, reciverPostId)
+    useEffect(() => {
+        if (userPosts && userPosts.length > 0 && senderPost === null) {
+            setSenderPost(userPosts[0]?.id);
+        }
+    }, [userPosts, senderPost]);
+
+    console.log(reciverPostId, senderPost)
     return (
 
         <div className={classes.wrapper}>
@@ -286,10 +295,12 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                     </Select>
                     <Select
                         className={classes.selectItem}
-                        value={contactInfo?.postId} // используем value вместо defaultValue
+                        value={reciverPostId} // используем value вместо defaultValue
                         onChange={(value) => setReciverPostId(value)}
                     >
-                        <Option value={contactInfo?.postId}>{contactInfo?.postName}</Option>
+                        {contactInfo?.posts?.map((item, index) => (
+                            <Option key={index} value={item?.id}>{item?.postName}</Option>
+                        ))}
                     </Select>
                 </div>
             )}

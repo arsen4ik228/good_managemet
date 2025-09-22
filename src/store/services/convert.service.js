@@ -16,10 +16,11 @@ export const convertApi = apiSlice.injectEndpoints({
 
         const transformContactInfo = (contact) => {
           return {
-            postId: contact.id,
-            postName: contact.postName,
-            userName: contact?.user?.firstName + ' ' + contact?.user?.lastName,
-            avatar: contact?.user?.avatar_url
+            postId: contact[0].id,
+            postName: contact[0].postName,
+            userName: contact[0]?.user?.firstName + ' ' + contact[0]?.user?.lastName,
+            avatar: contact[0]?.user?.avatar_url,
+            posts: contact
           }
         }
 
@@ -57,7 +58,6 @@ export const convertApi = apiSlice.injectEndpoints({
         const splitReadAndUnreadMessages = (array1, array2) => {
           // /unseenMessagesCount
           const concatArray = array1.concat(array2)
-          console.log(concatArray)
           const seen = []
           const unseen = []
 
