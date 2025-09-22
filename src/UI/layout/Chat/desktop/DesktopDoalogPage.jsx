@@ -167,6 +167,7 @@ export default function DesktopDialogPage() {
 
     // Установка фокуса на не прочитанные сообщения 
     useLayoutEffect(() => {
+
         if (!isLoadingUnSeenMessages && unSeenMessages?.length > 0 && unSeenMessagesRef.current) {
             const firstUnSeenMessageElement = unSeenMessagesRef.current;
             const bodyElement = bodyRef.current;
@@ -212,6 +213,14 @@ export default function DesktopDialogPage() {
         };
     }, [unSeenMessages, socketMessages]);
 
+    useEffect(() => {
+        if(!convertId) return;
+
+        setSocketMessages([])
+        setMessagesArray()
+
+    },[convertId])
+
     console.warn( socketMessages, 'ffdgdfgdf')
 
     return (
@@ -236,6 +245,7 @@ export default function DesktopDialogPage() {
                     ))}
                     {unSeenMessages?.length > 0 && (
                         <>
+                        <div>unseen</div>
                             {unSeenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <Message
