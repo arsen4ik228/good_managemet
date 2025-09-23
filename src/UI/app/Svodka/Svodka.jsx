@@ -15,9 +15,9 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 const countWeeks = [
-  { label: "квартал", value: 13 },
-  { label: "полгода", value: 26 },
-  { label: "год", value: 52 },
+  { label: "квартал", value: "13" },
+  { label: "полгода", value: "26" },
+  { label: "год", value: "52" },
 ];
 
 // --- Вспомогательные функции ---
@@ -100,16 +100,16 @@ const formatNumber = (num) => {
 export default function Svodka() {
   const [allStatistics, setAllStatistics] = useState([]);
   const [datePoint, setDatePoint] = useState(null);
-  const [week, setWeek] = useState(13);
+  const [week, setWeek] = useState("13");
   const [editingCell, setEditingCell] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-    useAllStatistics({ statisticData: true, isActive: true });
-
-
   // const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-  //   useGetStatisticsForPeriod({ weeks: "13", isActive: true });
+  //   useAllStatistics({ statisticData: true, isActive: true });
+
+
+  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
+    useGetStatisticsForPeriod({ weeks: week, isActive: true });
 
   const { updateSvodka } = useUpdateSvodka();
 
