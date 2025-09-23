@@ -31,11 +31,9 @@ export default function ListElem({ icon, upperText, bottomText, bage, linkSegmen
                         <div className={classes.bottomTxt}>{bottomText}</div>
                     )}
                 </div>
-                {bage && (
+                {(Number(bage) > 0) && (
                     <div className={classes.roundSection}>
-                        <div>
-                            99+
-                        </div>
+                        <div>{bage}</div>
                     </div>
                 )}
             </div>
