@@ -53,3 +53,9 @@ export { useUpdateSvodka } from "./Statistics/useUpdateSvodka";
 export { useRightPanel } from "./useRightPanel"
 export { usePanelPreset } from "./usePanelPreset"
 export { useSetPresets } from "./useSetPresets"
+
+//Политика
+export { useGetSinglePolicy } from "./Policy/useGetSinglePolicy";
+export { useGetAllPolicy } from "./Policy/useGetAllPolicy";
+export { useCreatePolicy } from "./Policy/useCreatePolicy";
+export { useUpdatePolicy } from "./Policy/useUpdatePolicy";

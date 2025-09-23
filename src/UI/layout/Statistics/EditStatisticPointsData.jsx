@@ -238,8 +238,8 @@ export const EditStatisticPointsData = () => {
         case "daily":
           newDate =
             clickArrow[0] === "right"
-              ? currentDate.add(1, "day")
-              : currentDate.subtract(1, "day");
+              ? currentDate.add(7, "day")
+              : currentDate.subtract(7, "day");
           break;
         case "thirteen":
           newDate =
@@ -298,6 +298,16 @@ export const EditStatisticPointsData = () => {
     handler();
   }, [statisticData, chartType, datePoint]);
 
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Отслеживаем изменение ширины окна
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
   return (
     <EditContainer header={"ввод данных"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
       <ConfigProvider componentDisabled={!currentStatistic?.isActive}>
@@ -351,6 +361,7 @@ export const EditStatisticPointsData = () => {
               <Graphic
                 data={[...dataSource]}
                 widthObj={widthMap[chartType] || widthMap.default}
+                isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                 type={currentStatistic?.type}
               />
 

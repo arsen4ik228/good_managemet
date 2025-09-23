@@ -9,7 +9,7 @@ import ruRU from "antd/locale/ru_RU";
 import ApplicationContainer from "../../UI/layout/ApplicationContainer/ApplicationContainer";
 import HelperChat from "../../UI/layout/HelperChat/HelperChat";
 import Goal from "../../UI/layout/Goal/Goal";
-import User from "../../UI/layout/CreateUser/User";
+import User from "../../UI/layout/CreateUser/CreateUser";
 import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
@@ -292,7 +292,7 @@ function DesktopApp() {
           />
 
           <Route
-            path="editPolicy"
+            path="editPolicy/:policyId"
             element={
               <React.Suspense
                 fallback={

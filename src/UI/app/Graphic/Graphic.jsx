@@ -51,7 +51,7 @@ const formatNumber = (num) => {
   return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
-export default function Graphic({ data, widthObj, type = "Прямая" }) {
+export default function Graphic({ data, widthObj, isSmallPoint, type = "Прямая" }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -132,6 +132,11 @@ export default function Graphic({ data, widthObj, type = "Прямая" }) {
         data: chartData.map((item) => item.name),
         axisLabel: {
           rotate: 90,
+          ...(
+            isSmallPoint
+              ? { interval: 0, fontSize: 8 }  
+              : {}                             
+          )
         },
         axisLine: {
           show: true,
@@ -211,11 +216,13 @@ export default function Graphic({ data, widthObj, type = "Прямая" }) {
           type: "line",
           data: chartData,
           symbol: "circle",
-          symbolSize: 10,
-          lineStyle: {
-            width: 3,
-            type: "solid",
-          },
+
+          ...(
+            isSmallPoint
+              ? { symbolSize: 8, lineStyle: { width: 2, type: "solid" } }
+              : { symbolSize: 10, lineStyle: { width: 3, type: "solid" } }
+          ),
+
           markPoint: {
             show: false,
           },

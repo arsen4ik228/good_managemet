@@ -35,15 +35,15 @@ const typeViewStatistic = [
 
 const widthMap = {
     fifty_two: {
-         height:"calc(100vh - 200px)", 
+        height: "calc(100vh - 200px)",
         width: "calc((100vh - 200px)*1.4)",
     },
     twenty_six: {
-        height:"calc(100vh - 200px)", 
+        height: "calc(100vh - 200px)",
         width: "calc((100vh - 200px)*1.4)",
     },
     default: {
-        height:"calc(100vh - 200px)", 
+        height: "calc(100vh - 200px)",
         width: "calc((100vh - 200px)/1.4)",
     },
 };
@@ -119,8 +119,8 @@ export default function Statistic() {
                 case "daily":
                     newDate =
                         clickArrow[0] === "right"
-                            ? currentDate.add(1, "day")
-                            : currentDate.subtract(1, "day");
+                            ? currentDate.add(7, "day")
+                            : currentDate.subtract(7, "day");
                     break;
                 case "thirteen":
                     newDate =
@@ -186,6 +186,16 @@ export default function Statistic() {
     }, [reduxSelectedOrganizationId]);
 
 
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    // Отслеживаем изменение ширины окна
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     return (
         <MainContentContainer
             component={<ReportDay />}
@@ -226,7 +236,7 @@ export default function Statistic() {
                                 borderRadius: "5px",
 
                                 padding: "10px 5px 0px 5px",
-                                
+
                                 overflow: "hidden",
                             }}>
                                 <Title level={4} style={{ color: "#3E7B94" }}>
@@ -245,6 +255,7 @@ export default function Statistic() {
                                     <Graphic
                                         data={[...dataSource]}
                                         widthObj={widthMap[chartType] || widthMap.default}
+                                        isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                                         type={currentStatistic?.type}
                                     />
                                 </div>

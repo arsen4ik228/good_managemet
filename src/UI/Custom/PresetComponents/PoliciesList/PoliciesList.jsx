@@ -1,19 +1,22 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import CustomList from '../../CustomList/CustomList'
 import ListElem from '../../CustomList/ListElem'
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
-import { usePolicyHook } from '@hooks'
+import { useGetAllPolicy } from '@hooks'
 import icon_policy from '@image/poliycy_icon.svg'
 import { useNavigate } from 'react-router-dom'
+import ModalCreatePolicy from '../../../layout/Policies/ModalCreatePolicy';
 
 
 export default function PoliciesList() {
 
     const navigate = useNavigate()
     const [seacrhPostsSectionsValue, setSeacrhPostssSectionsValue] = useState()
+    const [openCreatePolicy, setOpenCreatePolicy] = useState(false);
 
     const {
-        //Valera
+        refetch,
+        
         instructionsActive,
         instructionsDraft,
         instructionsCompleted,
@@ -26,7 +29,11 @@ export default function PoliciesList() {
         disposalsDraft,
         disposalsCompleted,
 
-    } = usePolicyHook();
+        isLoadingGetPolicies,
+        isErrorGetPolicies,
+        isFetchingGetPolicies,
+
+    } = useGetAllPolicy();
 
     const array = instructionsActive
         .concat(directivesActive)
@@ -49,6 +56,23 @@ export default function PoliciesList() {
         navigate(`helper/policy/${id}`);
     }
 
+
+    useEffect(() => {
+        const channel = new BroadcastChannel("policyName_channel");
+
+        const handler = (event) => {
+            if (event.data === "name") {
+                refetch();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetch]);
     return (
         <>
             <CustomList
@@ -56,7 +80,7 @@ export default function PoliciesList() {
                 searchValue={seacrhPostsSectionsValue}
                 searchFunc={setSeacrhPostssSectionsValue}
             >
-                <ListAddButtom textButton={'Создать политику'} clickFunc={() => console.log()} />
+                <ListAddButtom textButton={'Создать политику'} clickFunc={() => setOpenCreatePolicy(true)} />
 
                 {filtredPolicies.map((item, index) => (
                     <React.Fragment key={index}>
@@ -68,6 +92,10 @@ export default function PoliciesList() {
                         />
                     </React.Fragment>
                 ))}
+
+                <ModalCreatePolicy
+                    open={openCreatePolicy}
+                    setOpen={setOpenCreatePolicy} />
 
             </CustomList>
         </>
