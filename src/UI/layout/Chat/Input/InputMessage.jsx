@@ -1,9 +1,10 @@
-import React, { use, useCallback, useEffect, useState } from 'react'
+import React, { use, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import classes from './Input.module.css'
 import sendIcon from '@Custom/icon/send.svg';
 import calenderIcon from '@Custom/icon/icon _ calendar.svg';
 import attachIcon from '@Custom/icon/subbar _ attach.svg';
 import icon_attachPpolicy from '@image/icon_attach policy.svg'
+import { notification } from 'antd'
 import TextArea from 'antd/es/input/TextArea';
 import FilesModal from '@app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import CalendarModal from '@app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
@@ -11,7 +12,7 @@ import { Select, Input, Spin, message } from 'antd';
 import { usePostsHook, useConvertsHook } from '@hooks'
 import { Option } from 'antd/es/mentions';
 import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useRightPanel } from '../../../../hooks';
 
 const TYPE_OPTIONS = [
@@ -22,6 +23,7 @@ const TYPE_OPTIONS = [
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
 
     const { contactId, convertId } = useParams()
+    const navigate = useNavigate()
 
     const idTextarea = 745264
     const [openFilesModal, setOpenFilesModal] = useState(false);
@@ -64,7 +66,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         organizationId,
 
         postConvert,
-        isLoadingPostPoliciesMutation,
+        isLoadingPostConvertMutation,
         isSuccessPostPoliciesMutation,
         isErrorPostPoliciesMutation,
         ErrorPostPoliciesMutation,
@@ -143,20 +145,25 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
         } catch (error) {
             console.error("Ошибка в sendMessage:", error);
-            if (error.response) {
-                console.error("Детали ошибки:", error.response.data);
-            }
+            notification.error({
+                message: 'Ошибка',
+                description: `${error?.data?.message}`,
+                placement: 'topRight',
+            })
+
             // Можно добавить обработку ошибки (например, показать уведомление)
         }
     };
 
     const createPersonalLetter = async () => {
 
-        if (!contentInput) return
+        if (!contentInput) {
+            return message.error(`Вы не заполнили текст сообщения!`);
+        }
 
         const Data = {}
-
-        Data.convertTheme = convertTheme
+        
+        Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Переписка"
         Data.deadline = deadlineDate
         Data.senderPostId = userPosts?.[0]?.id
@@ -168,19 +175,24 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
             ...Data
         })
             .unwrap()
-            .then(() => {
+            .then((res) => {
                 reset()
+                navigate(`${res.id}`)
             })
             .catch((error) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2));
+                notification.error({
+                    message: 'Ошибка',
+                    description: `${error?.data?.message}`,
+                    placement: 'topRight',
+                })
             });
-
     }
 
     const createOrder = async () => {
 
         if (!contentInput) {
-            message.error(`Вы не заполнили текст для задачи конверта!`);
+            return message.error(`Вы не заполнили текст для задачи конверта!`);
         }
 
         let attachmentIds = [];
@@ -214,35 +226,63 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
             ...Data
         })
             .unwrap()
-            .then(() => {
+            .then((res) => {
                 reset()
+                navigate(`${res.id}`)
             })
             .catch((error) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2));
+                notification.error({
+                    message: 'Ошибка',
+                    description: `${error?.data?.message}`,
+                    placement: 'topRight',
+                })
             });
 
         message.success(`Конверт отправлен!`);
     }
 
-    const handlerSendClick = () => {
-        if (convertId)
-            send()
-        else if (convertType === 'Личная') {
-            createPersonalLetter()
-        }
-        else {
-            createOrder()
+    const [isRequestInProgress, setIsRequestInProgress] = useState(false);
+
+    const handlerSendClick = async () => {
+        // Блокируем новые запросы, если уже выполняется
+        if(isLoadingSendMessages || isLoadingPostConvertMutation || isRequestInProgress) return;
+    
+        setIsRequestInProgress(true);
+        
+        try {
+            if (convertId)
+                await send();
+            else if (convertType === 'Личная') {
+                await createPersonalLetter();
+            }
+            else {
+                await createOrder();
+            }
+        } catch (error) {
+            console.error('Ошибка отправки:', error);
+        } finally {
+            setIsRequestInProgress(false);
         }
     }
-
-    const handleKeyDown = useCallback((e) => {
+    
+    const handleGlobalKeyDown = useCallback((e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            if (contentInput.trim()) {
+            if (contentInput.trim() && !isRequestInProgress) {
                 handlerSendClick();
             }
         }
-    }, [contentInput]);
+    }, [contentInput, isRequestInProgress]);
+
+    // Регистрируем глобальный обработчик
+    useLayoutEffect(() => {
+        document.addEventListener('keydown', handleGlobalKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleGlobalKeyDown);
+        };
+    }, [handleGlobalKeyDown]);
 
     useEffect(() => {
         loadDraft("DraftDB", "drafts", idTextarea, setContentInput);
@@ -266,7 +306,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }, [userPosts, senderPost]);
 
-    console.log(contactInfo)
+    console.log(isLoadingSendMessages, isLoadingPostConvertMutation)
     return (
 
         <div className={classes.wrapper}>
@@ -345,17 +385,17 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                             maxRows: 6
                         }}
                         value={contentInput} onChange={(e) => setContentInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
+                        // onKeyDown={handleKeyDown}
                         placeholder='Напишите сообщение'
                     />
-                    {isLoadingSendMessages && (
+                    {(isLoadingSendMessages || isLoadingPostConvertMutation) && (
                         <div className={classes.spin}>
                             <Spin size="big" />
                         </div>
                     )}
                 </div>
                 <div className={classes.sendSection}>
-                    {isLoadingSendMessages ? (
+                    {(isLoadingSendMessages || isLoadingPostConvertMutation) ? (
                         <Spin size="small" />
                     ) : (
                         <img src={sendIcon} alt="calenderIcon" onClick={() => handlerSendClick()} />
@@ -366,3 +406,27 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     )
 }
+
+
+const autoCreateConvertTheme = (content) => {
+    if (!content || typeof content !== 'string') return '';
+
+    // Обрезаем до 1023 символов
+    let truncated = content.slice(0, 124);
+
+    // Если контент и так короче 1023 символов, возвращаем как есть
+    if (content.length <= 124) {
+        return truncated;
+    }
+
+    // Ищем последний пробел, чтобы обрезать до последнего целого слова
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+    // Если нашли пробел и это не начало строки
+    if (lastSpaceIndex > 0) {
+        truncated = truncated.slice(0, lastSpaceIndex);
+    }
+
+    // Добавляем многоточие в конце
+    return truncated + '...';
+};

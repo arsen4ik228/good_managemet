@@ -113,7 +113,7 @@ export default function LeftSIder() {
         }
     }, [organizations, isLoadingOrganization, isErrorOrganization]);
 
-
+    console.log('filtredContacts   ', filtredContacts)
     return (
         <>
             <div className={classes.wrapper}>
@@ -173,6 +173,7 @@ export default function LeftSIder() {
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
+                                    bage={calculateUnseenMessages(item)}
                                 />
                             </React.Fragment>
                         ))}
@@ -184,3 +185,23 @@ export default function LeftSIder() {
         </>
     )
 }
+
+
+const calculateUnseenMessages = (item, socketMessagesCount) => {
+
+    if (!socketMessagesCount) {
+        return (
+            (+item.unseenMessagesCount || 0) +
+            (+item.watcherUnseenCount || 0) 
+            // (+(socketMessagesCount.get(item.id)) || 0)
+        );
+    }
+
+    if (!item?.unseenMessagesCount) return null;
+
+    return (
+        (+item.unseenMessagesCount || 0) +
+        (+item.watcherUnseenCount || 0) +
+        (+(socketMessagesCount.get(item.id)) || 0)
+    );
+};

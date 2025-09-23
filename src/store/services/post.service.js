@@ -23,12 +23,12 @@ export const postApi = apiSlice.injectEndpoints({
         Array.isArray(result?.originalPosts) // Проверяем originalPosts вместо result
           ? [
 
-              ...result.originalPosts.map(({ id }) => ({
-                type: "Post",
-                id,
-              })),
-              "Post",
-            ]
+            ...result.originalPosts.map(({ id }) => ({
+              type: "Post",
+              id,
+            })),
+            "Post",
+          ]
           : ["Post"],
     }),
 
@@ -64,7 +64,7 @@ export const postApi = apiSlice.injectEndpoints({
 
 
     getPostsUserByOrganization: build.query({
-      query: ({organizationId}) => ({
+      query: ({ organizationId }) => ({
         url: `posts/myPostsInOrganization/${organizationId}`,
       }),
       providesTags: ["Post", "User"],
@@ -118,31 +118,36 @@ export const postApi = apiSlice.injectEndpoints({
           const userExist = result.find(item => item.userId === element.userId)
           if (userExist) {
             userExist.postsNames = [...userExist.postsNames, element.postName]
-            userExist.unseenMessagesCount = userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
-            userExist.watcherUnseenCount = userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
+            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
+            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
           }
           else {
             result.push({
               ...element,
-              unseenMessagesCount: element.unseenMessagesCount ?? 0,
-              watcherUnseenCount: element.watcherUnseenCount ?? 0,
+              unseenMessagesCount: +element.unseenMessagesCount ?? 0,
+              watcherUnseenCount: +element.watcherUnseenCount ?? 0,
               postsNames: [element.postName]
             })
           }
         });
 
+        result.sort((a, b) => {
+          const countA = (Number(a.unseenMessagesCount) + Number(a.watcherUnseenCount)) || 0;
+          const countB = (Number(b.unseenMessagesCount) + Number(b.watcherUnseenCount)) || 0;
+          return countB - countA; // по убыванию
+        });
         response?.postsWithoutConverts.forEach(element => {
           const userExist = result.find(item => item.userId === element.user.id)
           if (userExist) {
             userExist.postsNames = [...userExist.postsNames, element.postName]
-            userExist.unseenMessagesCount = userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
-            userExist.watcherUnseenCount = userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
+            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
+            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
           }
           else {
             result.push({
               ...element,
-              unseenMessagesCount: element.unseenMessagesCount ?? 0,
-              watcherUnseenCount: element.watcherUnseenCount ?? 0,
+              unseenMessagesCount: +element.unseenMessagesCount ?? 0,
+              watcherUnseenCount: +element.watcherUnseenCount ?? 0,
               postsNames: [element.postName],
               userId: element?.user.id,
               userLastName: element?.user.lastName,

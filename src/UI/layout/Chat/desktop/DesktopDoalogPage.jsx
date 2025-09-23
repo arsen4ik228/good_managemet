@@ -12,11 +12,12 @@ import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import MainContentContainer from '../../../Custom/MainContentContainer/MainContentContainer';
 import ChatContainer from '../ChatContainer/ChatContainer';
 import FinalConvertModal from '@Custom/FinalConvertModal/FinalConvertModal'
+import ApproveConvertModal from '../../../Custom/FinalConvertModal/ApproveConvertModal';
 
 
 
 export default function DesktopDialogPage() {
-    const { contactId, convertId } = useParams();
+    const { convertId } = useParams();
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
     const [openFinishModal, setOpenFinishModal] = useState()
@@ -27,10 +28,8 @@ export default function DesktopDialogPage() {
     const unSeenMessagesRef = useRef(null);
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
+    const [buttons, setButtons] = useState()
 
-    const buttons = [
-        { click: () => setOpenFinishModal(true), text: 'завершить' },
-    ]
     const {
         currentConvert,
         senderPostId,
@@ -241,11 +240,19 @@ export default function DesktopDialogPage() {
     }, [userInfo])
 
     useEffect(() => {
-        if (!notEmpty(currentConvert) || currentConvert?.convertPath !== 'согласование') return
-        buttons.push({ click: () => setOpenAgreementModal(true), text: 'согласовать' })
+        if (!notEmpty(currentConvert)) return
+
+        if (currentConvert?.convertPath === 'Согласование') {
+            setButtons([
+                { click: () => setOpenFinishModal(true), text: 'завершить' },
+                { click: () => setOpenAgreementModal(true), text: 'согласовать' }
+            ])
+        } else {
+            setButtons([{ click: () => setOpenFinishModal(true), text: 'завершить' }])
+        }
     }, [currentConvert])
 
-    console.warn(currentConvert)
+    console.warn(currentConvert, buttons)
 
     return (
         <MainContentContainer buttons={buttons}>
@@ -324,6 +331,13 @@ export default function DesktopDialogPage() {
                     convertId={convertId}
                     pathOfUsers={pathOfUsers}
                 ></FinalConvertModal>
+            )}
+            {openAgreementModal && (
+                <ApproveConvertModal
+                    setOpenModal={setOpenAgreementModal}
+                    convertId={convertId}
+                >
+                </ApproveConvertModal>
             )}
 
             <HandlerQeury
