@@ -238,13 +238,14 @@ export default function AuthPage() {
           </span>
         )}
       </div> */}
-
-      <img src={GM} alt="GM" />
-      <div className={classes.title}>GOODMANAGMENT</div>
-      <div className={classes.loader}>
-        <div className={classes.line}></div>
+      <div className={classes.firstContainer}>
+        <img src={GM} alt="GM" />
+        <div className={classes.title}>GOODMANAGMENT</div>
+        <div className={classes.loader}>
+          <div className={classes.line}></div>
+        </div>
+        <div className={classes.text}>Войдите в программу удобным для вас способом:</div>
       </div>
-      <div className={classes.text}>Войдите в программу удобным для вас способом:</div>
 
       <div className={classes.telegram}>
         {tokenForTG && qrUrl ? (
