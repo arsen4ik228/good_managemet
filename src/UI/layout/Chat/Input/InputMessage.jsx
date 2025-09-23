@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { use, useCallback, useEffect, useState } from 'react'
 import classes from './Input.module.css'
 import sendIcon from '@Custom/icon/send.svg';
 import calenderIcon from '@Custom/icon/icon _ calendar.svg';
@@ -16,7 +16,7 @@ import { useRightPanel } from '../../../../hooks';
 
 const TYPE_OPTIONS = [
     { value: 'Личная', label: 'Личная' },
-    // { value: 'Приказ', label: 'Приказ' },
+    { value: 'Приказ', label: 'Приказ' },
 ]
 
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
@@ -35,7 +35,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const [convertTheme, setConvertTheme] = useState()
     const [startDate, setStartDate] = useState()
     const [deadlineDate, setDeadlineDate] = useState()
-    const [senderPost, setSenderPost] = useState()
+    const [senderPost, setSenderPost] = useState(null)
     const [reciverPostId, setReciverPostId] = useState()
     const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
 
@@ -77,6 +77,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         setSelectedPolicy(false);
         deleteDraft("DraftDB", "drafts", idTextarea);
         setContentInputPolicyId("");
+        setConvertTheme('')
     };
 
     const transformText = (text, convertStatus) => {
@@ -234,6 +235,15 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }
 
+    const handleKeyDown = useCallback((e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (contentInput.trim()) {
+                handlerSendClick();
+            }
+        }
+    }, [contentInput]);
+
     useEffect(() => {
         loadDraft("DraftDB", "drafts", idTextarea, setContentInput);
     }, []);
@@ -244,12 +254,19 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     useEffect(() => {
         if (!contactInfo) return
-
-
+        // console.warn('set props', contactInfo)
         updatePanelProps({ name: contactInfo.userName, postsNames: contactInfo.postName })
+        setReciverPostId(contactInfo.postId)
+
     }, [contactInfo])
 
-    console.log(senderPost, reciverPostId)
+    useEffect(() => {
+        if (userPosts && userPosts.length > 0 && senderPost === null) {
+            setSenderPost(userPosts[0]?.id);
+        }
+    }, [userPosts, senderPost]);
+
+    console.log(contactInfo)
     return (
 
         <div className={classes.wrapper}>
@@ -279,10 +296,12 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                     </Select>
                     <Select
                         className={classes.selectItem}
-                        value={contactInfo?.postId} // используем value вместо defaultValue
+                        value={reciverPostId} // используем value вместо defaultValue
                         onChange={(value) => setReciverPostId(value)}
                     >
-                        <Option value={contactInfo?.postId}>{contactInfo?.postName}</Option>
+                        {contactInfo?.posts?.map((item, index) => (
+                            <Option key={index} value={item?.id}>{item?.postName}</Option>
+                        ))}
                     </Select>
                 </div>
             )}
@@ -326,6 +345,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                             maxRows: 6
                         }}
                         value={contentInput} onChange={(e) => setContentInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         placeholder='Напишите сообщение'
                     />
                     {isLoadingSendMessages && (

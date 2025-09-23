@@ -38,3 +38,9 @@
     /* background-color: #F0F0F0; */
 
 }
+
+.unSeenMessagesInfo{
+    background-color: white;
+    width: 100%;
+    text-align: center;
+}
