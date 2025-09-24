@@ -554,21 +554,6 @@ function DesktopApp() {
               />
 
               <Route
-                path="svodka"
-                element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <>svodka</>
-                  </React.Suspense>
-                }
-              />
-
-              <Route
                 path="statistics"
                 element={
                   <React.Suspense
