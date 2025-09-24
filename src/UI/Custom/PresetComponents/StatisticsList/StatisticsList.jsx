@@ -3,7 +3,8 @@ import CustomList from '../../CustomList/CustomList';
 import { useAllStatistics } from '@hooks'
 import ListElem from '../../CustomList/ListElem';
 import statGraph from '@image/statGraph.svg'
-import { useNavigate } from 'react-router-dom';
+import { notEmpty } from '@helpers/helpers'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
 import ModalCreateStatistic from '../../../layout/Statistics/ModalCreateStatistic';
 import { Button, Space } from 'antd';
@@ -14,6 +15,7 @@ export default function StatisticsList() {
     const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
     const [isActive, setIsActive] = useState(true);
     const navigate = useNavigate()
+    const location = useLocation()
     // Получение всех статистик
     const {
         statistics,
@@ -37,27 +39,40 @@ export default function StatisticsList() {
         );
     }, [seacrhStatisticsSectionsValue, statistics]);
 
+    useEffect(() => {
+
+        if (!notEmpty(statistics)) return;
+
+        const pathname = location.pathname;
+        const parts = pathname.split('/').filter(part => part !== '');
+        const removedParts = parts.slice(-1);
+
+        if (removedParts[0] !== 'statistics') return;
+
+        navigate(`helper/statistics/${statistics[0]?.id}`)
+    }, [statistics])
+
 
     const openStatistic = (id) => {
         navigate(`helper/statistics/${id}`)
     }
-    
-        useEffect(() => {
-            const channel = new BroadcastChannel("statisticName_channel");
-    
-            const handler = (event) => {
-                if (event.data === "name") {
-                    refetch();
-                }
-            };
-    
-            channel.addEventListener("message", handler);
-    
-            return () => {
-                channel.removeEventListener("message", handler);
-                channel.close();
-            };
-        }, [refetch]);
+
+    useEffect(() => {
+        const channel = new BroadcastChannel("statisticName_channel");
+
+        const handler = (event) => {
+            if (event.data === "name") {
+                refetch();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetch]);
 
     return (
         <>

@@ -1,15 +1,17 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import CustomList from '../../CustomList/CustomList'
 import ListElem from '../../CustomList/ListElem'
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
 import { usePolicyHook } from '@hooks'
 import icon_policy from '@image/poliycy_icon.svg'
-import { useNavigate } from 'react-router-dom'
+import { notEmpty } from '@helpers/helpers'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 
 export default function PoliciesList() {
 
     const navigate = useNavigate()
+    const location = useLocation()
     const [seacrhPostsSectionsValue, setSeacrhPostssSectionsValue] = useState()
 
     const {
@@ -43,6 +45,19 @@ export default function PoliciesList() {
             item.postName.toLowerCase().includes(searchLower)
         );
     }, [seacrhPostsSectionsValue, array]);
+
+        useEffect(() => {
+    
+            if (!notEmpty(directivesActive)) return;
+    
+            const pathname = location.pathname;
+            const parts = pathname.split('/').filter(part => part !== '');
+            const removedParts = parts.slice(-1);
+    
+            if (removedParts[0] !== 'policy') return;
+    
+            navigate(`helper/policy/${directivesActive[0]?.id}`)
+        }, [directivesActive])
 
 
     const openPolicy = (id) => {

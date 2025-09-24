@@ -4,16 +4,17 @@ import ListElem from '../CustomList/ListElem'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
 import { useAllPosts } from '@hooks'
 import icon_post from '@image/icon _ post.svg'
-import { useNavigate } from 'react-router-dom'
+import { notEmpty } from '@helpers/helpers'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ModalCreatePost from '../../layout/Posts/ModalCreatePost';
 
 export default function PostsList() {
 
     const navigate = useNavigate()
+    const location = useLocation()
     const [seacrhPostsSectionsValue, setSeacrhPostssSectionsValue] = useState()
 
     const [openCreatePost, setOpenCreatePost] = useState(false);
-
 
     const {
         allPosts,
@@ -37,6 +38,19 @@ export default function PostsList() {
     const openPost = (id) => {
         navigate(`helper/posts/${id}`)
     }
+
+    useEffect(() => {
+
+        if (!notEmpty(allPosts)) return;
+
+        const pathname = location.pathname;
+        const parts = pathname.split('/').filter(part => part !== '');
+        const removedParts = parts.slice(-1);
+
+        if (removedParts[0] !== 'posts') return;
+
+        navigate(`helper/posts/${allPosts[0]?.id}`)
+    }, [allPosts])
 
     useEffect(() => {
         const channel = new BroadcastChannel("postName_channel");
