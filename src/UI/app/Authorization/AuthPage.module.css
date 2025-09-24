@@ -79,11 +79,26 @@
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+
+  padding: 10% 0 4% 0;
 
   background-color: #FFFF;
 }
+
+
+.firstContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  >img{
+    width: 300px;
+    height: 300px;
+  }
+}
+
 
 .title {
   margin-top: 10px;
@@ -139,3 +154,43 @@
     width: 80%; /* 80% ширины loader */
   }
 }
+
+@media screen and (max-height: 800px) {
+  .firstContainer {
+    >img{
+      width: 200px;
+      height: 200px;
+    }
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .firstContainer {
+    >img{
+      width: 125px;
+      height: 125px;
+    }
+  }
+
+  .title{
+    font-size: 40px;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  .firstContainer {
+    >img{
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  .title{
+    font-size: 32px;
+  }
+
+  .body{
+    padding-top: 5%;
+  }
+}
+

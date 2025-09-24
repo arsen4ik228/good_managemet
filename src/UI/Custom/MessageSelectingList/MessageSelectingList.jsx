@@ -4,17 +4,19 @@ import avatar from '@image/helper_medium.svg'
 import MainContentContainer from '../MainContentContainer/MainContentContainer'
 import { usePanelPreset } from '@hooks';
 import { useRightPanel } from '../../../hooks';
+import GM from "@image/labelGM.svg"
 
-export default function MessageSelectingList({presetName}) {
+
+export default function MessageSelectingList({ presetName }) {
 
     const { PRESETS } = useRightPanel();
 
     usePanelPreset(PRESETS[presetName]);
 
-  return (
-    <MainContentContainer>
-        <div className={classes.wrapper}>
-            <div className={classes.container}>
+    return (
+        <MainContentContainer>
+            <div className={classes.wrapper}>
+                {/* <div className={classes.container}>
                 <div className={classes.avatar}>
                     <img src={avatar} alt="avatar" />
                 </div>
@@ -22,8 +24,16 @@ export default function MessageSelectingList({presetName}) {
                     <div>Выберите нужный вам элемент, чтобы начать работать с разделом!</div>
                     <div className={classes.arrow}></div>
                 </div>
+            </div> */}
+
+                <div className={classes.firstContainer}>
+                    <img src={GM} alt="GM" />
+                    <div className={classes.title}>GOODMANAGMENT</div>
+                    <div className={classes.loader}>
+                        <div className={classes.line}></div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </MainContentContainer>
-  )
+        </MainContentContainer>
+    )
 }
