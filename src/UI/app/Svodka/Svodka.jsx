@@ -15,9 +15,9 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 const countWeeks = [
-  { label: "квартал", value: 13 },
-  { label: "полгода", value: 26 },
-  { label: "год", value: 52 },
+  { label: "квартал", value: "13" },
+  { label: "полгода", value: "26" },
+  { label: "год", value: "52" },
 ];
 
 // --- Вспомогательные функции ---
@@ -100,16 +100,16 @@ const formatNumber = (num) => {
 export default function Svodka() {
   const [allStatistics, setAllStatistics] = useState([]);
   const [datePoint, setDatePoint] = useState(null);
-  const [week, setWeek] = useState(13);
+  const [week, setWeek] = useState("13");
   const [editingCell, setEditingCell] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-    useAllStatistics({ statisticData: true });
-
-
   // const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-  //   useGetStatisticsForPeriod({ weeks: "13", isActive: true });
+  //   useAllStatistics({ statisticData: true, isActive: true });
+
+
+  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
+    useGetStatisticsForPeriod({ weeks: week, isActive: true });
 
   const { updateSvodka } = useUpdateSvodka();
 
@@ -139,8 +139,10 @@ export default function Svodka() {
     try {
       setSaving(true);
 
+      let response;
+
       if (cell._id) {
-        await updateSvodka({
+        response = await updateSvodka({
           statisticId: rowId,
           _id: rowId,
           statisticDataUpdateDtos: [
@@ -152,7 +154,7 @@ export default function Svodka() {
           ],
         }).unwrap();
       } else {
-        await updateSvodka({
+        response = await updateSvodka({
           statisticId: rowId,
           _id: rowId,
           statisticDataCreateDtos: [
@@ -164,22 +166,28 @@ export default function Svodka() {
           ],
         }).unwrap();
       }
+      
+      const createdId = response?.createdPointId;
 
       setAllStatistics((prev) =>
         prev.map((item) => {
           if (item.id !== rowId) return item;
           const statisticDatas = _.cloneDeep(item.statisticDatas) || [];
+
           if (cell._id) {
             const existingPoint = statisticDatas.find((p) => p.id === cell._id);
-            if (existingPoint)
+            if (existingPoint) {
               existingPoint.value = value === "" ? null : value;
+            }
           } else {
             statisticDatas.push({
+              id: createdId,
               value: value === "" ? null : value,
               correlationType: "Неделя",
               valueDate,
             });
           }
+
           return { ...item, statisticDatas };
         })
       );
@@ -192,6 +200,7 @@ export default function Svodka() {
       setSaving(false);
       setEditingCell(null);
     }
+
   };
 
   // --- Навигация по ячейкам ---

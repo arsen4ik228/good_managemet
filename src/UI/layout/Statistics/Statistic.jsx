@@ -1,8 +1,5 @@
 import React from 'react'
 import { useState, useEffect } from "react";
-
-import classes from "./Statistic.module.css";
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Graphic from "../../app/Graphic/Graphic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
@@ -35,15 +32,15 @@ const typeViewStatistic = [
 
 const widthMap = {
     fifty_two: {
-         height:"calc(100vh - 200px)", 
+        height: "calc(100vh - 200px)",
         width: "calc((100vh - 200px)*1.4)",
     },
     twenty_six: {
-        height:"calc(100vh - 200px)", 
+        height: "calc(100vh - 200px)",
         width: "calc((100vh - 200px)*1.4)",
     },
     default: {
-        height:"calc(100vh - 200px)", 
+        height: "calc(100vh - 200px)",
         width: "calc((100vh - 200px)/1.4)",
     },
 };
@@ -74,9 +71,6 @@ export default function Statistic() {
     const {
         currentStatistic,
         statisticData,
-        isLoadingGetStatisticId,
-        isErrorGetStatisticId,
-        isFetchingGetStatisticId,
         refetch
     } = useGetSingleStatistic({
         statisticId: statisticId,
@@ -119,8 +113,8 @@ export default function Statistic() {
                 case "daily":
                     newDate =
                         clickArrow[0] === "right"
-                            ? currentDate.add(1, "day")
-                            : currentDate.subtract(1, "day");
+                            ? currentDate.add(7, "day")
+                            : currentDate.subtract(7, "day");
                     break;
                 case "thirteen":
                     newDate =
@@ -182,9 +176,18 @@ export default function Statistic() {
 
     useEffect(() => {
         setDataSource([]);
-
     }, [reduxSelectedOrganizationId]);
 
+
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    // Отслеживаем изменение ширины окна
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     return (
         <MainContentContainer
@@ -205,16 +208,13 @@ export default function Statistic() {
                 padding: "10px",
             }}>
                 <>
-                    <HandlerQeury
-                        Error={isErrorGetStatisticId}
-                        Loading={isLoadingGetStatisticId}
-                        Fetching={isFetchingGetStatisticId}
-                    ></HandlerQeury>
-
                     {statisticId ? (
                         <>
 
                             <div style={{
+
+                                ...(widthMap[chartType] || widthMap.default),
+
                                 minHeight: "100%",
 
                                 display: "flex",
@@ -226,16 +226,18 @@ export default function Statistic() {
                                 borderRadius: "5px",
 
                                 padding: "10px 5px 0px 5px",
-                                
+
                                 overflow: "hidden",
                             }}>
-                                <Title level={4} style={{ color: "#3E7B94" }}>
+                                <Title level={4} style={{ textAlign: "center", color: "#3E7B94" }}>
                                     {currentStatistic.name}
                                 </Title>
 
 
                                 <div
                                     style={{
+                                        width: "100%",
+
                                         flex: 1,
                                         display: "flex",
                                         justifyContent: "center",
@@ -244,7 +246,8 @@ export default function Statistic() {
                                 >
                                     <Graphic
                                         data={[...dataSource]}
-                                        widthObj={widthMap[chartType] || widthMap.default}
+                                        widthObj={{ flex: 1, minWidth: "100%", minHeight: "100%" }}
+                                        isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                                         type={currentStatistic?.type}
                                     />
                                 </div>

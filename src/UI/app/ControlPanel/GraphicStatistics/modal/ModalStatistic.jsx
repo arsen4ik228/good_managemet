@@ -4,13 +4,9 @@ import { Button, Space, Tooltip, Flex, Modal, Typography } from "antd";
 import {
   LeftCircleOutlined,
   RightCircleOutlined,
-  SunOutlined,
-  MoonOutlined,
-  CalendarOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
 
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import Graphic from "../../../Graphic/Graphic";
 
 import _ from "lodash";
@@ -58,9 +54,6 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
   const {
     currentStatistic,
     statisticData,
-    isLoadingGetStatisticId,
-    isErrorGetStatisticId,
-    isFetchingGetStatisticId,
   } = useGetSingleStatistic({
     statisticId: selectedStatistic?.id,
     datePoint: modalDatePoint,
@@ -256,8 +249,8 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
         case "daily":
           newDate =
             clickArrow[0] === "right"
-              ? currentDate.add(1, "day")
-              : currentDate.subtract(1, "day");
+              ? currentDate.add(7, "day")
+              : currentDate.subtract(7, "day");
           break;
         case "thirteen":
           newDate =
@@ -325,12 +318,6 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
 
   return (
     <>
-      <HandlerQeury
-        Error={isErrorGetStatisticId}
-        Loading={isLoadingGetStatisticId}
-        Fetching={isFetchingGetStatisticId}
-      ></HandlerQeury>
-
       <Modal
         open={openModal}
         onCancel={() => setOpenModal(false)}

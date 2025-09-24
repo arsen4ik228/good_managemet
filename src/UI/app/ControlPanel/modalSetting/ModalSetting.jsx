@@ -28,9 +28,6 @@ export default function ModalSetting({
 
   const {
     statisticsIdsInPanel,
-    isLoadingGetStatisticsInControlPanel,
-    isErrorGetStatisticsInControlPanel,
-    isFetchingGetStatisticsInControlPanel,
   } = useGetAllStatisticsInControlPanel({
     selectedControlPanelId: currentControlPanel?.id ,
     datePoint,

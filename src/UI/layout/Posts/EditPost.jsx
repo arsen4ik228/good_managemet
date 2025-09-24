@@ -9,8 +9,6 @@ import isEqual from "lodash/isEqual";
 import { useGetSinglePost, useUpdateSinglePost, useAllStatistics, useUpdateStatisticsToPostId, useGetDataForCreatePost, useAllPosts } from '@hooks';
 import EditContainer from "@Custom/EditContainer/EditContainer";
 
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
-
 import { baseUrl } from "@helpers/constants.js";
 
 import { formatPhone } from './function/functionForPost'
@@ -40,17 +38,12 @@ export default function EditPost() {
     const {
         currentPost,
         workers,
-        // posts,
         parentPost,
 
         policiesActive,
         selectedPolicyIDInPost,
 
         statisticsIncludedPost,
-
-        isLoadingGetPostId,
-        isErrorGetPostId,
-        isFetchingGetPostId,
     } = useGetSinglePost({ postId });
 
     const responsibleUserId = Form.useWatch("responsibleUserId", form);
@@ -175,12 +168,6 @@ export default function EditPost() {
 
     return (
         <>
-            <HandlerQeury
-                Error={isErrorGetPostId}
-                Loading={isLoadingGetPostId}
-                Fetching={isFetchingGetPostId}
-            ></HandlerQeury>
-
             {
                 initialValues && <EditContainer header={"Офис собственника"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
                     <div style={{

@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react'
-// import classes from './Goal.module.css'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import { ViewingGoal } from './ViewingGoal'
-import { useGoalHook, usePolicyHook } from "@hooks";
-import { useNavigate } from 'react-router-dom';
+import { useGoalHook } from "@hooks";
 import { homeUrl } from '@helpers/constants'
 
 export default function Goal() {

@@ -32,16 +32,16 @@ const typeViewStatistic = [
 
 const widthMap = {
   fifty_two: {
-    height: "calc(100vh - 200px)",
+    height: "calc(100vh - 250px)",
     width: "calc((100vh - 200px)*1.8)",
 
   },
   twenty_six: {
-    height: "calc(100vh - 200px)",
+    height: "calc(100vh - 250px)",
     width: "calc((100vh - 200px)*1.4)",
   },
   default: {
-    height: "calc(100vh - 200px)",
+    height: "calc(100vh - 250px)",
     width: "calc((100vh - 200px)/1.4)",
   },
 };
@@ -238,8 +238,8 @@ export const EditStatisticPointsData = () => {
         case "daily":
           newDate =
             clickArrow[0] === "right"
-              ? currentDate.add(1, "day")
-              : currentDate.subtract(1, "day");
+              ? currentDate.add(7, "day")
+              : currentDate.subtract(7, "day");
           break;
         case "thirteen":
           newDate =
@@ -298,6 +298,16 @@ export const EditStatisticPointsData = () => {
     handler();
   }, [statisticData, chartType, datePoint]);
 
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Отслеживаем изменение ширины окна
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <EditContainer header={"ввод данных"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
       <ConfigProvider componentDisabled={!currentStatistic?.isActive}>
@@ -333,26 +343,44 @@ export const EditStatisticPointsData = () => {
             ></StatisticTable>
 
             <div style={{
+
+              ...(widthMap[chartType] || widthMap.default),
+
               minHeight: "100%",
+
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+
               backgroundColor: "#fff",
               border: "1px solid #CCCCCC",
               borderRadius: "5px",
+
               paddingTop: "10px",
               overflow: "hidden"
             }}>
-              <Title level={4} style={{ color: "#3E7B94" }}>
+              <Title level={4} style={{ textAlign: "center", color: "#3E7B94" }}>
                 {currentStatistic.name}
               </Title>
 
 
-              <Graphic
-                data={[...dataSource]}
-                widthObj={widthMap[chartType] || widthMap.default}
-                type={currentStatistic?.type}
-              />
+              <div
+                style={{
+                  width: "100%",
+
+                  flex: 1,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Graphic
+                  data={[...dataSource]}
+                  widthObj={{ flex: 1, minWidth: "100%", minHeight: "100%" }}
+                  isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
+                  type={currentStatistic?.type}
+                />
+              </div>
 
               <Space
                 size="large"

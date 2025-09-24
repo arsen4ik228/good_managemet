@@ -38,10 +38,6 @@ export default function Post() {
         parentPost,
 
         refetch,
-
-        isLoadingGetPostId,
-        isErrorGetPostId,
-        isFetchingGetPostId,
     } = useGetSinglePost({ postId });
 
 
