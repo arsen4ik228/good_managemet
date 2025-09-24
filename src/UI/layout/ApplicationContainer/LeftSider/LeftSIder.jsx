@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import classes from './LeftSider.module.css'
 import logo from '@image/big_logo.svg'
 import helper_icon from "@image/helper_icon.svg"
@@ -12,7 +12,8 @@ import {
 } from "@slices";
 import ListElem from '../../../Custom/CustomList/ListElem'
 import { useNavigate } from 'react-router-dom'
-import { baseUrl } from '@helpers/constants'
+import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
+import { useSocket } from '../../../../hooks'
 
 export default function LeftSIder() {
 
@@ -20,10 +21,23 @@ export default function LeftSIder() {
     const navigate = useNavigate()
     const { updatePanelProps } = useRightPanel()
 
+    const [copyChats, setCopyChats] = useState()
+    const [socketMessagesCount, setSocketMessagesCount] = useState(new Map());
     const [seacrhOrganizationsSectionsValue, setSearchOrganizationsSectionsValue] = useState()
     const [searchContactsSectionsValue, setContactSectionsValue] = useState()
     const [selectedOrgSectionValue, setSelectedOrgSectionValue] = useState()
     const [selectedContactsSectionValue, setSelectedContactsSectionsValue] = useState()
+
+    const eventNames = useMemo(
+        () => ["convertCreationEvent", "messageCountEvent"],
+        []
+    ); // Мемоизация массива событий
+
+    const handleEventData = useCallback((eventName, data) => {
+        console.log(`Data from ${eventName}:`, data);
+    }, []); // Мемоизация callbac
+
+    const socketResponse = useSocket(eventNames, handleEventData);
 
     const {
         organizations,
@@ -78,16 +92,40 @@ export default function LeftSIder() {
 
     const filtredContacts = useMemo(() => {
         if (!searchContactsSectionsValue?.trim()) {
-            return allChats; // Возвращаем все элементы если поиск пустой
+            return copyChats; // Возвращаем все элементы если поиск пустой
         }
 
         const searchLower = searchContactsSectionsValue?.toLowerCase();
-        return allChats?.filter(item =>
+        return copyChats?.filter(item =>
             item.userFirstName.toLowerCase().includes(searchLower) ||
             item.userLastName.toLowerCase().includes(searchLower) ||
             item.postName.toLowerCase().includes(searchLower)
         );
-    }, [searchContactsSectionsValue, allChats]);
+    }, [searchContactsSectionsValue, copyChats]);
+
+    useEffect(() => {
+        if (!notEmpty(socketResponse?.convertCreationEvent)) return
+
+        refetchAllChats()
+    }, [socketResponse?.convertCreationEvent])
+
+    useEffect(() => {
+        if (!notEmpty(socketResponse?.messageCountEvent)) return
+
+        const response = socketResponse.messageCountEvent
+        const recepientId = getPostIdRecipientSocketMessage(response.host, response.lastPostInConvert);
+        const newMap = new Map(socketMessagesCount);
+
+        if (newMap.has(recepientId.toString())) {
+            newMap.set(recepientId.toString(), newMap.get(recepientId.toString()) + 1);
+        }
+        else {
+            newMap.set(recepientId.toString(), 1);
+        }
+
+        setCopyChats(getChatsWithTimeOfSocketMessage(copyChats, recepientId))
+        setSocketMessagesCount(newMap);
+    }, [socketResponse?.messageCountEvent])
 
     useEffect(() => {
         if (
@@ -113,7 +151,13 @@ export default function LeftSIder() {
         }
     }, [organizations, isLoadingOrganization, isErrorOrganization]);
 
-    console.log('filtredContacts   ', filtredContacts)
+    useEffect(() => {
+        if (!notEmpty(allChats)) return
+
+        setCopyChats([...allChats])
+    }, [allChats])
+
+    console.log('socketResponse   ', socketResponse)
     return (
         <>
             <div className={classes.wrapper}>
@@ -173,7 +217,7 @@ export default function LeftSIder() {
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
-                                    bage={calculateUnseenMessages(item)}
+                                    bage={calculateUnseenMessages(item, socketMessagesCount)}
                                 />
                             </React.Fragment>
                         ))}
@@ -192,7 +236,7 @@ const calculateUnseenMessages = (item, socketMessagesCount) => {
     if (!socketMessagesCount) {
         return (
             (+item.unseenMessagesCount || 0) +
-            (+item.watcherUnseenCount || 0) 
+            (+item.watcherUnseenCount || 0)
             // (+(socketMessagesCount.get(item.id)) || 0)
         );
     }
@@ -204,4 +248,28 @@ const calculateUnseenMessages = (item, socketMessagesCount) => {
         (+item.watcherUnseenCount || 0) +
         (+(socketMessagesCount.get(item.id)) || 0)
     );
+};
+
+const getChatsWithTimeOfSocketMessage = (chatsArray, id) => {
+    if (!chatsArray) return [];
+
+    // 1. Приводим ВСЕ даты к типу Date (чтобы сравнивать одинаковые типы)
+    const normalizedChats = chatsArray.map(chat => ({
+        ...chat,
+        latestMessageCreatedAt: new Date(chat.latestMessageCreatedAt)
+    }));
+
+    // 2. Обновляем дату в нужном чате
+    const updatedChats = normalizedChats.map(chat =>
+        chat.id === id
+            ? { ...chat, latestMessageCreatedAt: new Date() }
+            : chat
+    );
+
+    // 3. Сортируем (теперь все latestMessageCreatedAt — объекты Date)
+    const sortedChats = [...updatedChats].sort((a, b) =>
+        b.latestMessageCreatedAt - a.latestMessageCreatedAt
+    );
+    console.warn(sortedChats)
+    return sortedChats;
 };

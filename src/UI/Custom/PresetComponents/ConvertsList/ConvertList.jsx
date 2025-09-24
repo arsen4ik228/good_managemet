@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import CustomList from '../../CustomList/CustomList';
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
 import ListElem from '../../CustomList/ListElem';
@@ -10,6 +10,7 @@ import order_chat_icon from '@image/order_chat_icon.svg'
 import convert_agreement_icon from '@image/convert_agreement_icon.svg'
 import request_chat_icon from '@image/request_chat_icon.svg'
 import { homeUrl } from '@helpers/constants'
+import { useSocket } from '../../../../hooks';
 
 
 export default function ConvertList() {
@@ -28,6 +29,18 @@ export default function ConvertList() {
         isFetchingGetConvert,
         ErrorGetConverts,
     } = useConvertsHook({ contactId: contactId })
+
+
+    const eventNames = useMemo(
+        () => ["convertCreationEvent", "messageCountEvent"],
+        []
+    ); // Мемоизация массива событий
+
+    const handleEventData = useCallback((eventName, data) => {
+        console.log(`Data from ${eventName}:`, data);
+    }, []); // Мемоизация callbac
+
+    const socketResponse = useSocket(eventNames, handleEventData);
 
     const filtredChats = useMemo(() => {
         if (!seacrhChatsSectionsValue?.trim()) {
@@ -55,6 +68,7 @@ export default function ConvertList() {
         return CONVERT_ICON[path]
     }
 
+    console.log(contactInfo)
     return (
         <>
             <CustomList
