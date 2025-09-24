@@ -21,10 +21,6 @@ export default function ReportDay() {
   const {
     updateOrganization,
     isLoadingUpdateOrganizationMutation,
-    isSuccessUpdateOrganizationMutation,
-    isErrorUpdateOrganizationMutation,
-    ErrorOrganization,
-    localIsResponseUpdateOrganizationMutation,
   } = useUpdateSingleOrganization();
 
   useEffect(() => {

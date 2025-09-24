@@ -4,10 +4,9 @@ import { useParams } from 'react-router-dom';
 
 import { useGetSinglePolicy, useUpdatePolicy } from '@hooks';
 import EditContainer from "@Custom/EditContainer/EditContainer";
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
 
-import { Typography, Space, Divider, Select, Input, Form, Modal, Flex, message } from "antd";
+import { Select, Input, Form, Modal, message } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import isEqual from "lodash/isEqual";
 
@@ -37,15 +36,11 @@ export default function EditPolicy() {
     const [editorState, setEditorState] = useState(null);
     
     const {
-
         currentPolicy,
-        isLoadingGetPoliciesId,
-        isFetchingGetPoliciesId,
-        isErrorGetPoliciesId,
-
     } = useGetSinglePolicy({
         policyId
     });
+    
     const { updatePolicy } = useUpdatePolicy();
 
     useEffect(() => {
@@ -136,12 +131,6 @@ export default function EditPolicy() {
 
     return (
         <>
-            <HandlerQeury
-                Error={isErrorGetPoliciesId}
-                Loading={isLoadingGetPoliciesId}
-                Fetching={isFetchingGetPoliciesId}
-            ></HandlerQeury>
-
             {
                 initialValues &&
 

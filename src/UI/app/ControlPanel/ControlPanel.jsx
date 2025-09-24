@@ -62,62 +62,15 @@ export default function ControlPanel() {
 
   const [cards, setCards] = useState([]);
 
-  const refCreate = useRef(null);
-  const [openHint, setOpenHint] = useState(false);
-
-  const steps = [
-    {
-      title: "Создать",
-      description: "Нажмите для создания панели управления",
-      target: () => refCreate.current,
-    },
-    {
-      title: "Панель управления",
-      description:
-        "Нажмите для показа содержимого (зажмите и поменяйте порядок панелей управлений)",
-      target: () => document.querySelector('[data-tour="controlPanel"]'),
-      disabled: !document.querySelector('[data-tour="controlPanel"]'),
-    },
-    {
-      title: "Настройки",
-      description: "Нажмите и отредактируйте панель управления",
-      target: () =>
-        document.querySelector('[data-tour="setting-controlPanel"]'),
-      disabled: !document.querySelector('[data-tour="setting-controlPanel"]'),
-    },
-    {
-      title: "Удалить",
-      description: "Нажмите и удалите панель управления",
-      target: () => document.querySelector('[data-tour="delete-controlPanel"]'),
-      disabled: !document.querySelector('[data-tour="delete-controlPanel"]'),
-    },
-    {
-      title: "Карточка статистики",
-      description:
-        "Нажмите для показа подробной статистики (зажмите и поменяйте порядок статистик)",
-      target: () => document.querySelector('[data-tour="cardStatistics"]'),
-      disabled: !document.querySelector('[data-tour="cardStatistics"]'),
-    },
-  ].filter((step) => {
-    if (step.target.toString().includes("querySelector")) {
-      return !step.disabled;
-    }
-    return true;
-  });
-
 
   const {
     statistics,
-    isLoadingGetStatistics,
-    isFetchingGetStatistics,
-    isErrorGetStatistics,
   } = useAllStatistics({
     statisticData: false,
   });
 
   const {
     reduxSelectedOrganizationId,
-    reduxSelectedOrganizationReportDay,
 
     // Получение всех панелей по организации
     allControlPanel,
@@ -163,10 +116,6 @@ export default function ControlPanel() {
 
   const {
     userPosts,
-
-    isLoadingGetPostsUser,
-    isFetchingGetPostsUser,
-    isErrorGetPostsUser,
   } = useGetPostsUserByOrganization();
 
   const {
@@ -281,12 +230,6 @@ export default function ControlPanel() {
 
   const {
     updatePanelToStatisticsUpdateOrderNumbers,
-    isLoadingPanelToStatisticsUpdateOrderNumbersMutation,
-    isSuccessPanelToStatisticsUpdateOrderNumbersMutation,
-    isErrorPanelToStatisticsUpdateOrderNumbersMutation,
-    ErrorPanelToStatisticsUpdateOrderNumbersMutation,
-    resetPanelToStatisticsUpdateOrderNumbersMutation,
-    localIsResponsePanelToStatisticsUpdateOrderNumbersMutation,
   } = usePanelToStatisticsHook();
 
   const debouncedUpdate = useCallback(
@@ -452,30 +395,7 @@ export default function ControlPanel() {
         </DragDropContext>
       </Header>
 
-      <ConfigProvider locale={ruRU}>
-        <Tour
-          open={openHint}
-          onClose={() => setOpenHint(false)}
-          steps={steps}
-        />
-      </ConfigProvider>
-
       <div className={classes.main}>
-        {isErrorGetStatisticsInControlPanel ? (
-          <>
-            <HandlerQeury
-              Error={isErrorGetStatisticsInControlPanel}
-            ></HandlerQeury>
-          </>
-        ) : (
-          <>
-            <HandlerQeury
-              Loading={isLoadingGetStatisticsInControlPanel}
-              Fetching={isFetchingGetStatisticsInControlPanel}
-            ></HandlerQeury>
-          </>
-        )}
-
         {cards.length > 0 && (
           <DndContext
             sensors={sensors}
@@ -524,17 +444,6 @@ export default function ControlPanel() {
         )}
 
         <div className={classes.handler}>
-          <HandlerQeury
-            Loading={isLoadingGetAllControlPanel}
-            Fetching={isFetchingGetAllControlPanel}
-            Error={isErrorGetAllControlPanel}
-            textError={
-              isErrorGetAllControlPanel?.data?.errors?.[0]?.errors?.[0]
-                ? isErrorGetAllControlPanel.data.errors[0].errors[0]
-                : isErrorGetAllControlPanel?.data?.message
-            }
-          ></HandlerQeury>
-
           <HandlerMutation
             Loading={isLoadingPostControlPanelMutation}
             Error={

@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-
-import HandlerMutation from "@Custom/HandlerMutation.jsx";
 
 import { Button, Input, Modal, List, Avatar } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
@@ -21,20 +19,11 @@ export default function ModalCreateStatistic({
   // Получение всех постов для создания статистики
   const {
     userPosts,
-
-    isLoadingGetPostsUser,
-    isFetchingGetPostsUser,
-    isErrorGetPostsUser,
   } = useGetPostsUserByOrganization();
 
   // Создание статистики
   const {
     postStatistics,
-    isLoadingPostStatisticMutation,
-    isSuccessPostStatisticMutation,
-    isErrorPostStatisticMutation,
-    ErrorPostStatisticMutation,
-    localIsResponsePostStatisticsMutation,
   } = useCreateStatistic();
 
   // Фунция для Создания статистики
@@ -72,7 +61,6 @@ export default function ModalCreateStatistic({
             Создать
           </Button>
         }
-        loading={isFetchingGetPostsUser}
         open={open}
         onCancel={() => setOpen(false)}
         width={700}
@@ -158,23 +146,6 @@ export default function ModalCreateStatistic({
           )}
         />
       </Modal>
-
-      <HandlerMutation
-        Loading={isLoadingPostStatisticMutation}
-        Error={
-          isErrorPostStatisticMutation && localIsResponsePostStatisticsMutation
-        }
-        Success={
-          isSuccessPostStatisticMutation &&
-          localIsResponsePostStatisticsMutation
-        }
-        textSuccess={"Цель создана"}
-        textError={
-          ErrorPostStatisticMutation?.data?.errors?.[0]?.errors?.[0]
-            ? ErrorPostStatisticMutation.data.errors[0].errors[0]
-            : ErrorPostStatisticMutation?.data?.message
-        }
-      ></HandlerMutation>
     </>
   );
 }
