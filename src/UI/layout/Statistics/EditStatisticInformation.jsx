@@ -13,8 +13,6 @@ import {
 } from "antd";
 
 import isEqual from "lodash/isEqual";
-
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import EditContainer from "@Custom/EditContainer/EditContainer";
 import {
   useAllPosts,
@@ -33,12 +31,7 @@ export const EditStatisticInformation = () => {
   const [initialValues, setInitialValues] = useState(null);
 
   // данные
-  const { currentStatistic,
-    isErrorGetStatisticId,
-    isLoadingGetStatisticId,
-    isFetchingGetStatisticId } = useGetSingleStatisticWithoutStatisticData({
-      statisticId,
-    });
+  const { currentStatistic } = useGetSingleStatisticWithoutStatisticData({ statisticId });
   const { allPosts } = useAllPosts();
 
   const { updateStatistics } = useUpdateSingleStatistic();
@@ -69,7 +62,7 @@ export const EditStatisticInformation = () => {
       if (values.name !== currentStatistic.name) {
         channelName.postMessage("name");
       }
-      
+
       channel.postMessage("updated");
       message.success("Данные успешно обновлены!");
       // обновляем initialValues, чтобы сбросить "грязное" состояние
@@ -124,11 +117,6 @@ export const EditStatisticInformation = () => {
 
   return (
     <>
-      <HandlerQeury
-        Error={isErrorGetStatisticId}
-        Loading={isLoadingGetStatisticId}
-        Fetching={isFetchingGetStatisticId}
-      ></HandlerQeury>
       {
         initialValues && <EditContainer header={"редактирование"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
 

@@ -134,21 +134,7 @@ export default function SettingsPage() {
 
   // Создание аккаунта
   const {
-    // Создать user
-    reduxSelectedOrganizationId,
-    postUser,
-
-    isLoadingUserMutation,
-    isSuccessUserMutation,
-    isErrorUserMutation,
-    ErrorUserMutation,
-
     localIsResponseUpdateUserMutation,
-
-    // Получит информацию для создания user
-    postsWithoutUser,
-    isLoadingGetUserNew,
-    isErrorGetUserNew,
 
     userInfo,
     refetchUserInfo,
@@ -310,24 +296,6 @@ export default function SettingsPage() {
 
   return (
     <div className={classes.dialog}>
-      {/* <Headers
-        name={"редактирование пользователя"}
-        funcActiveHint={() => setOpenHint(true)}
-      >
-        <BottomHeaders
-          update={handleUpdateUserButtonClick}
-          refUpdate={refUpdate}
-        ></BottomHeaders>
-      </Headers>
-
-      <ConfigProvider locale={ruRU}>
-        <Tour
-          open={openHint}
-          onClose={() => setOpenHint(false)}
-          steps={steps}
-        />
-      </ConfigProvider> */}
-
       <Modal
         title="Обрезка аватарки"
         open={cropModalVisible}
@@ -484,16 +452,6 @@ export default function SettingsPage() {
               )}
             />
           </div>
-
-          {/* <FloatButton
-          icon={<SaveOutlined />}
-          type="primary"
-          tooltip="Сохранить изменения"
-          onClick={handleUpdateUserButtonClick}
-          style={{
-            insetInlineEnd: 94,
-          }}
-        /> */}
 
           <HandlerMutation
             Loading={isLoadingUpdateUserMutation}

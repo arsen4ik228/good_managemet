@@ -1,8 +1,5 @@
 import React from 'react'
 import { useState, useEffect } from "react";
-
-import classes from "./Statistic.module.css";
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Graphic from "../../app/Graphic/Graphic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
@@ -74,9 +71,6 @@ export default function Statistic() {
     const {
         currentStatistic,
         statisticData,
-        isLoadingGetStatisticId,
-        isErrorGetStatisticId,
-        isFetchingGetStatisticId,
         refetch
     } = useGetSingleStatistic({
         statisticId: statisticId,
@@ -182,7 +176,6 @@ export default function Statistic() {
 
     useEffect(() => {
         setDataSource([]);
-
     }, [reduxSelectedOrganizationId]);
 
 
@@ -215,12 +208,6 @@ export default function Statistic() {
                 padding: "10px",
             }}>
                 <>
-                    <HandlerQeury
-                        Error={isErrorGetStatisticId}
-                        Loading={isLoadingGetStatisticId}
-                        Fetching={isFetchingGetStatisticId}
-                    ></HandlerQeury>
-
                     {statisticId ? (
                         <>
 

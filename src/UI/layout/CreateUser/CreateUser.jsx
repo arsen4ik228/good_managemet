@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
-import classes from "./User.module.css";
-
 import { Form, Input, Button, message } from "antd";
 import InputMask from "react-input-mask";
 import MainContentContainer from "@Custom/MainContentContainer/MainContentContainer";
-import { useUserHook, useCreatePost } from '@hooks';
+import { useUserHook } from '@hooks';
 import ModalCreatePost from './ModalCreatePost';
 
 export default function CreateUser() {
