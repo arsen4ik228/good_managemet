@@ -225,6 +225,9 @@ export default function Statistic() {
                         <>
 
                             <div style={{
+
+                                ...(widthMap[chartType] || widthMap.default),
+
                                 minHeight: "100%",
 
                                 display: "flex",
@@ -239,13 +242,15 @@ export default function Statistic() {
 
                                 overflow: "hidden",
                             }}>
-                                <Title level={4} style={{ color: "#3E7B94" }}>
+                                <Title level={4} style={{ textAlign: "center", color: "#3E7B94" }}>
                                     {currentStatistic.name}
                                 </Title>
 
 
                                 <div
                                     style={{
+                                        width: "100%",
+
                                         flex: 1,
                                         display: "flex",
                                         justifyContent: "center",
@@ -254,7 +259,7 @@ export default function Statistic() {
                                 >
                                     <Graphic
                                         data={[...dataSource]}
-                                        widthObj={widthMap[chartType] || widthMap.default}
+                                        widthObj={{ flex: 1, minWidth: "100%", minHeight: "100%" }}
                                         isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                                         type={currentStatistic?.type}
                                     />
