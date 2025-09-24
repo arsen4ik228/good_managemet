@@ -3,16 +3,19 @@ import DesktopApp from "./desktopRouting/DesktopApp";
 import MobileApp from "./mobileRouting/MobileApp";
 import { SocketProvider } from "@helpers/SocketContext.js";
 
+import { Spin } from "antd";
+import { useGlobalLoading } from "@hooks";
 
 function App() {
+  const loading = useGlobalLoading();
 
   return (
-    <>
-      <SocketProvider>
-        {isMobile ? <MobileApp /> : <DesktopApp />}
-      </SocketProvider>
-    </>
-  );
+      <Spin spinning={loading} tip="Загрузка данных..." size="large">
+        <SocketProvider>
+          {isMobile ? <MobileApp /> : <DesktopApp />}
+        </SocketProvider>
+      </Spin>
+  );А
 }
 
 export default App;
@@ -57,4 +60,3 @@ export default App;
 // }
 
 // export default App;
-
