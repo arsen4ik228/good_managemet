@@ -59,3 +59,6 @@ export { useGetSinglePolicy } from "./Policy/useGetSinglePolicy";
 export { useGetAllPolicy } from "./Policy/useGetAllPolicy";
 export { useCreatePolicy } from "./Policy/useCreatePolicy";
 export { useUpdatePolicy } from "./Policy/useUpdatePolicy";
+
+// Loading
+export { useGlobalLoading } from "./useGlobalLoading";
