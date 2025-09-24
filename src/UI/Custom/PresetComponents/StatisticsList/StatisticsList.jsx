@@ -32,7 +32,7 @@ export default function StatisticsList() {
         }
 
         const searchLower = seacrhStatisticsSectionsValue?.toLowerCase();
-        return statistics.filter(item =>
+        return statistics?.filter(item =>
             item.name.toLowerCase().includes(searchLower)
         );
     }, [seacrhStatisticsSectionsValue, statistics]);

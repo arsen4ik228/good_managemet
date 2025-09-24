@@ -39,7 +39,7 @@ export default function PoliciesList() {
         }
 
         const searchLower = seacrhPostsSectionsValue?.toLowerCase();
-        return instructionsActive.filter(item =>
+        return instructionsActive?.filter(item =>
             item.postName.toLowerCase().includes(searchLower)
         );
     }, [seacrhPostsSectionsValue, array]);

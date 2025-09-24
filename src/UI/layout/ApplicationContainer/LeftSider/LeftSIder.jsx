@@ -71,7 +71,7 @@ export default function LeftSIder() {
         }
 
         const searchLower = seacrhOrganizationsSectionsValue?.toLowerCase();
-        return organizations.filter(item =>
+        return organizations?.filter(item =>
             item.organizationName.toLowerCase().includes(searchLower)
         );
     }, [seacrhOrganizationsSectionsValue, organizations]);
@@ -82,7 +82,7 @@ export default function LeftSIder() {
         }
 
         const searchLower = searchContactsSectionsValue?.toLowerCase();
-        return allChats.filter(item =>
+        return allChats?.filter(item =>
             item.userFirstName.toLowerCase().includes(searchLower) ||
             item.userLastName.toLowerCase().includes(searchLower) ||
             item.postName.toLowerCase().includes(searchLower)

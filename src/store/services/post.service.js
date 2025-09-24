@@ -164,6 +164,18 @@ export const postApi = apiSlice.injectEndpoints({
         // ); 
         //.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt))
       },
+
+      providesTags: (result) =>
+        result
+          ? [
+            ...result?.map(({userId}) => 
+              ({
+                type: 'Chats',
+                id: userId,
+              })),
+              'Chats',
+          ]
+          : ['Chats']
     }),
 
     getUnderPosts: build.query({

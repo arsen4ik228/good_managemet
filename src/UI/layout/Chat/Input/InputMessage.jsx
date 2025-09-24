@@ -306,7 +306,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }, [userPosts, senderPost]);
 
-    console.log(isLoadingSendMessages, isLoadingPostConvertMutation)
+    // console.log(isLoadingSendMessages, isLoadingPostConvertMutation)
     return (
 
         <div className={classes.wrapper}>

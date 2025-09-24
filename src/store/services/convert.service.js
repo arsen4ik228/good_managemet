@@ -78,14 +78,15 @@ export const convertApi = apiSlice.injectEndpoints({
         return {
           contactInfo: transformContactInfo(response?.contact),
           seenConverts: finalArray.seen,
-          unseenConverts: finalArray.unseen
+          unseenConverts: finalArray.unseen,
+          finalyArray : finalArray.seen.concat(finalArray.unseen)
         }
       },
 
       providesTags: (result) =>
         result
           ? [
-            ...result?.seenConverts?.map(({ id }) =>
+            ...result?.finalyArray?.map(({ id }) =>
             ({
               type: 'Convert',
               id,
@@ -186,6 +187,7 @@ export const convertApi = apiSlice.injectEndpoints({
           return {
             id,
             postName,
+            userId: user.id,
             userName: `${user.firstName} ${user.lastName}`,
             avatar: user.avatar_url,
           };
@@ -200,7 +202,8 @@ export const convertApi = apiSlice.injectEndpoints({
               id,
               postName,
               userName: `${user.firstName} ${user.lastName}`,
-              avatar: user.avatar_url,
+              userId: user?.id,
+              avatar: user?.avatar_url,
             };
           }
 
@@ -230,7 +233,7 @@ export const convertApi = apiSlice.injectEndpoints({
         };
 
         const selectWatcherPost = (watchers) => {
-          const userWatcherPost = watchers?.find(item => item.post.user.id === userId).post
+          const userWatcherPost = watchers?.find(item => item?.post?.user?.id === userId)?.post
 
           const { user, ...rest } = userWatcherPost
 
@@ -238,19 +241,19 @@ export const convertApi = apiSlice.injectEndpoints({
         }
 
         const selectRecipientPost = (convertToPosts, host) => {
-          return (convertToPosts.find(item => item.post.id !== host.id)).post
+          return (convertToPosts?.find(item => item?.post?.id !== host?.id))?.post
         }
 
         const { id: senderPostId, postName: senderPostName, senderPostForSocket } = selectSenderPostId(convertToPosts, userId);
         const userInfo = extractUserInfo(hostPost, convertToPosts)
-
+        console.log(userInfo, 'user info service')
         const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchersToConvert) : null
         const recipientPost = selectRecipientPost(convertToPosts, hostPost)
 
         return {
           currentConvert: response?.convert,
           userInfo,
-          userIsHost: hostPost.user.id === userId,
+          userIsHost: hostPost?.user?.id === userId,
           senderPostId: senderPostId,
           senderPostName: senderPostName,
           senderPostForSocket,
