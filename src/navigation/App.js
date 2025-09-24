@@ -15,7 +15,7 @@ function App() {
           {isMobile ? <MobileApp /> : <DesktopApp />}
         </SocketProvider>
       </Spin>
-  );А
+  );
 }
 
 export default App;
