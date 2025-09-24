@@ -410,13 +410,9 @@ export default function ControlPanel() {
                   Добавить <PlusCircleOutlined />
                 </Button>
                 {arrayAllControlPanel?.map((item, index) => (
-                  <Draggable
-                    // key={index}
-                    // draggableId={`item-${index}`}
-                    // index={index}
-
-                    key={item.id}
-                    draggableId={String(item.id)}
+                  <Draggable     
+                    key={item?.id}
+                    draggableId={String(item?.id)}
                     index={index}
                   >
                     {(provided) => (
@@ -435,14 +431,14 @@ export default function ControlPanel() {
                           deleteControlPanel={deleteControlPanel}
                           reduxSelectedOrganizationId={reduxSelectedOrganizationId}
                           id={item.id}
-                          isActive={selectedControlPanelId === item.id}
+                          isActive={selectedControlPanelId === item?.id}
 
                           name={
-                            item.isNameChanged
-                              ? item.panelName
-                              : `${item.panelName} ${item.controlPanelNumber}`
+                            item?.isNameChanged
+                              ? item?.panelName
+                              : `${item?.panelName} ${item?.controlPanelNumber}`
                           }
-                          onClick={() => getControlPanelId(item.id)}
+                          onClick={() => getControlPanelId(item?.id)}
                         ></PanelDragDrop>
 
                       </div>

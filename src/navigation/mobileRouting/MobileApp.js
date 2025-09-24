@@ -71,7 +71,7 @@ function MobileApp() {
 
               <Route path="account" element={<SettingsPage></SettingsPage>} />
               <Route path="Main" element={<MobileMain />} />
-              <Route path="ControlPanel" element={<MobileControlPanel />} />
+              {/* <Route path="ControlPanel" element={<MobileControlPanel />} /> */}
               <Route
                 path="pomoshnik/*"
                 element={

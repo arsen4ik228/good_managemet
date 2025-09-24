@@ -305,7 +305,7 @@ export default function SettingsPage() {
   }, [userInfo]);
 
   const buttonClickToPost = (id) => {
-    navigate(`/pomoshnik/post/${id}`);
+    navigate(`/${localStorage.getItem("selectedOrganizationId")}/helper/posts/${id}`);
   };
 
   return (
