@@ -9,8 +9,6 @@ import { useControlPanel } from "@hooks";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
-import HandlerQeury from "@Custom/HandlerQeury.jsx";
-
 import PanelDragDrop from "./panelDragDrop/PanelDragDrop";
 import SortableCard from "./GraphicStatistics/card/sortable/SortableCard";
 import ModalStatistic from "./GraphicStatistics/modal/ModalStatistic";
@@ -38,9 +36,8 @@ import {
 import usePanelToStatisticsHook from "@hooks/usePanelToStatisticsHook";
 import { debounce } from "lodash";
 
-import { Button, ConfigProvider,Tour } from "antd";
+import { Button } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
-import ruRU from "antd/locale/ru_RU";
 import { useGetAllStatisticsInControlPanel } from "@hooks";
 import { useGetPostsUserByOrganization } from "../../../hooks/Post/useGetPostsUserByOrganization";
 import { useAllStatistics } from "@hooks/Statistics/useAllStatistics";
@@ -105,9 +102,6 @@ export default function ControlPanel() {
 
   const {
     allStatistics,
-    isLoadingGetStatisticsInControlPanel,
-    isErrorGetStatisticsInControlPanel,
-    isFetchingGetStatisticsInControlPanel,
   } = useGetAllStatisticsInControlPanel({
     selectedControlPanelId,
     datePoint,
@@ -353,7 +347,7 @@ export default function ControlPanel() {
                   Добавить <PlusCircleOutlined />
                 </Button>
                 {arrayAllControlPanel?.map((item, index) => (
-                  <Draggable     
+                  <Draggable
                     key={item?.id}
                     draggableId={String(item?.id)}
                     index={index}
