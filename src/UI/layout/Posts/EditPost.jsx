@@ -99,7 +99,7 @@ export default function EditPost() {
             }
 
             channel.postMessage("updated");
-            
+
             if (rest.postName !== currentPost.postName) {
                 channelName.postMessage("name");
             }
@@ -214,12 +214,17 @@ export default function EditPost() {
                                                 placeholder="Выберите руководителя"
                                                 allowClear
                                                 showSearch
-                                                optionFilterProp="label"
+                                                filterOption={(input, option) => {
+                                                    const searchText = (option?.searchText || "").toLowerCase();
+                                                    return searchText.includes(input.toLowerCase());
+                                                }}
                                                 options={posts.map((post) => {
                                                     const user = post?.user;
                                                     const fullName = [user?.lastName, user?.firstName].filter(Boolean).join(" "); // убираем null/undefined
 
                                                     return {
+                                                        value: post.id,
+                                                        searchText: `${post.postName} ${fullName}`,
                                                         label: (
                                                             <Flex align="center" gap={8}>
                                                                 <Avatar
@@ -240,7 +245,7 @@ export default function EditPost() {
                                                                 </span>
                                                             </Flex>
                                                         ),
-                                                        value: post.id,
+
                                                     };
                                                 })}
                                             />
