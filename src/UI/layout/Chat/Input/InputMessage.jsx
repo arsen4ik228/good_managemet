@@ -1,4 +1,4 @@
-import React, { use, useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import React, { use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import classes from './Input.module.css'
 import sendIcon from '@Custom/icon/send.svg';
 import calenderIcon from '@Custom/icon/icon _ calendar.svg';
@@ -26,6 +26,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const navigate = useNavigate()
 
     const idTextarea = 745264
+    const textAreaRef = useRef(null);
     const [openFilesModal, setOpenFilesModal] = useState(false);
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [contentInputPolicyId, setContentInputPolicyId] = useState("");
@@ -80,6 +81,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         deleteDraft("DraftDB", "drafts", idTextarea);
         setContentInputPolicyId("");
         setConvertTheme('')
+        setFiles()
     };
 
     const transformText = (text, convertStatus) => {
@@ -101,7 +103,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     const send = async () => {
         if (contentInput.trim() === "" && (!files || files?.length < 1)) return;
-        console.log(contentInput , contentInput?.trim(),  files?.length)
+        console.log(contentInput, contentInput?.trim(), files?.length)
         // Удаляем черновик
         // deleteDraft("DraftDB", "drafts", idTextArea);
 
@@ -162,7 +164,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
 
         const Data = {}
-        
+
         Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Переписка"
         Data.deadline = deadlineDate
@@ -246,10 +248,10 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     const handlerSendClick = async () => {
         // Блокируем новые запросы, если уже выполняется
-        if(isLoadingSendMessages || isLoadingPostConvertMutation || isRequestInProgress) return;
-    
+        if (isLoadingSendMessages || isLoadingPostConvertMutation || isRequestInProgress) return;
+
         setIsRequestInProgress(true);
-        
+
         try {
             if (convertId)
                 await send();
@@ -263,9 +265,14 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
             console.error('Ошибка отправки:', error);
         } finally {
             setIsRequestInProgress(false);
+            setTimeout(() => {
+                if (textAreaRef.current) {
+                    textAreaRef.current.focus();
+                }
+            }, 0);
         }
     }
-    
+
     const handleGlobalKeyDown = useCallback((e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -306,7 +313,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }, [userPosts, senderPost]);
 
-    console.log(reciverPostId, senderPost)
+    console.log(contentInput, contentInput.trim() )
     return (
 
         <div className={classes.wrapper}>
@@ -379,6 +386,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 </div>
                 <div className={classes.textInputSection}>
                     <TextArea
+                        ref={textAreaRef}
+                        autoFocus
                         disabled={isLoadingSendMessages}
                         autoSize={{
                             minRows: 1,

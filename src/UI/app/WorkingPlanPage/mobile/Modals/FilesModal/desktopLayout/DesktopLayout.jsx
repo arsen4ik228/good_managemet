@@ -280,7 +280,8 @@ import {
   Card,
   Image,
   message,
-  Progress
+  Progress,
+  Badge
 } from "antd";
 import {
   UploadOutlined,
@@ -354,12 +355,12 @@ export default function DesktopLayout({
   const handleFileListChange = (info) => {
     let fileList = [...info.fileList];
     fileList = fileList.slice(-5);
-    
+
     // Фильтруем только новые файлы (те, у которых есть originFileObj)
     const newFiles = fileList
       .filter(file => file.originFileObj)
       .map(file => file.originFileObj);
-    
+
     if (newFiles.length > 0) {
       setSelectedFiles(newFiles);
     }
@@ -543,7 +544,7 @@ export default function DesktopLayout({
       </div>
     </Flex>
   );
-
+  // console.log(files)
   return (
     <Popconfirm
       placement="topLeft"
@@ -560,12 +561,21 @@ export default function DesktopLayout({
       icon={null}
       showCancel={false}
     >
-      <img 
-        src={attachIcon} 
-        alt="attachIcon" 
-        style={{ cursor: 'pointer' }}
-        onClick={() => setPopconfirmOpen(true)}
-      />
+      <Badge
+        count={files?.length || 0}
+        size="small"
+        offset={[-5, 5]} // Смещение бейджа в правый верхний угол
+        style={{
+          backgroundColor: '#005475', // Красный цвет для бейджа
+        }}
+      >
+        <img
+          src={attachIcon}
+          alt="attachIcon"
+          style={{ cursor: 'pointer' }}
+          onClick={() => setPopconfirmOpen(true)}
+        />
+      </Badge>
     </Popconfirm>
   );
 }
