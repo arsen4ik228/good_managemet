@@ -104,12 +104,12 @@ export default function Svodka() {
   const [editingCell, setEditingCell] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  // const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-  //   useAllStatistics({ statisticData: true, isActive: true });
-
-
   const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-    useGetStatisticsForPeriod({ weeks: week, isActive: true });
+    useAllStatistics({ statisticData: true, isActive: true });
+
+
+  // const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
+  //   useGetStatisticsForPeriod({ weeks: week, isActive: true });
 
   const { updateSvodka } = useUpdateSvodka();
 
