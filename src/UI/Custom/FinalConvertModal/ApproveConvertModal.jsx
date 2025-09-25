@@ -19,26 +19,28 @@ export default function ApproveConvertModal({ setOpenModal, convertId}) {
         showConfirmationModal()
     }, [])
 
+
     const finalConvert = async () => {
-
-
-        await approveConvert(convertId)
-            .unwrap()
-            .then(() => {
-                navigate(`/${organizationId}/chat/${contactId}`)
-            })
-            .catch((error) => {
-                console.error('Ошибка при согласовании конверта:', error)
+        try {
+            await approveConvert(convertId).unwrap();
+            navigate(`/${organizationId}/chat/${contactId}`);
+        } catch (error) {
+            // Проверяем, если это ошибка парсинга, но статус 200
+            if (error.status === 'PARSING_ERROR' && error.originalStatus === 200) {
+                // Значит запрос фактически успешен
+                navigate(`/${organizationId}/chat/${contactId}`);
+            } else {
                 notification.error({
                     message: 'Ошибка',
                     description: 'Не удалось согласовать конверт',
                     placement: 'topRight',
-                })
-            })
-            .finally(() => {
-                setOpenModal(false)
-            })
+                });
+            }
+        } finally {
+            setOpenModal(false);
+        }
     }
+
     const showConfirmationModal = () => {
 
         if (userIsHost) {

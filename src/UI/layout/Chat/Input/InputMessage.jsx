@@ -100,8 +100,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     };
 
     const send = async () => {
-        if (contentInput.trim() === "" && files.length === 0) return;
-
+        if (contentInput.trim() === "" && (!files || files?.length < 1)) return;
+        console.log(contentInput , contentInput?.trim(),  files?.length)
         // Удаляем черновик
         // deleteDraft("DraftDB", "drafts", idTextArea);
 
@@ -166,8 +166,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Переписка"
         Data.deadline = deadlineDate
-        Data.senderPostId = userPosts?.[0]?.id
-        Data.reciverPostId = contactInfo?.postId
+        Data.senderPostId = senderPost
+        Data.reciverPostId = reciverPostId
         Data.messageContent = contentInput
 
 
@@ -207,8 +207,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         Data.convertTheme = convertTheme
         Data.convertType = "Приказ"
         Data.deadline = deadlineDate
-        Data.senderPostId = userPosts?.[0]?.id
-        Data.reciverPostId = contactInfo?.postId
+        Data.senderPostId = senderPost
+        Data.reciverPostId = reciverPostId
         Data.messageContent = contentInput
         Data.targetCreateDto = {
             type: "Приказ",
@@ -306,7 +306,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }, [userPosts, senderPost]);
 
-    // console.log(isLoadingSendMessages, isLoadingPostConvertMutation)
+    console.log(reciverPostId, senderPost)
     return (
 
         <div className={classes.wrapper}>
