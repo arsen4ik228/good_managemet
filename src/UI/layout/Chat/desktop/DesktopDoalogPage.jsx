@@ -138,6 +138,9 @@ export default function DesktopDialogPage() {
             timeSeen: null,
             createdAt: newMessage.createdAt,
         }]);
+
+        dispatch(convertApi.util.invalidateTags([{ type: 'Convert', id: convertId }]));
+        dispatch(postApi.util.invalidateTags([{ type: 'Chats', id: userInfo?.userId  }]));
     }, [socketResponse?.messageCreationEvent]);
 
     // Прочтение сообщений(смена статуса)
@@ -261,7 +264,7 @@ export default function DesktopDialogPage() {
         }
     }, [currentConvert])
 
-    console.warn(userInfo)
+    console.warn(messagesArray)
 
     return (
         <MainContentContainer buttons={buttons}>
