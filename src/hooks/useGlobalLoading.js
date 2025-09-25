@@ -2,26 +2,25 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 export const useGlobalLoading = (delay = 1000) => {
-  // RTK Query: проверяем, есть ли активные запросы
-  const isLoading = useSelector((state) =>
-    Object.values(state.api?.queries || {}).some(
-      (query) => query?.status === "pending"
-    )
-  );
+  const isLoading = useSelector((state) => {
+    const queries = state.api?.queries || {};
 
-  // Локальное состояние для отложенного отображения спиннера
+    return Object.entries(queries)
+      .filter(([key]) => {
+        // ❗️Фильтруем по имени запроса — исключаем Convert и Message
+        return !key.toLowerCase().includes("convert") && !key.toLowerCase().includes("message");
+      })
+      .some(([_, query]) => query?.status === "pending");
+  });
+
   const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
     let timer;
 
     if (isLoading) {
-      // если загрузка началась — запускаем таймер
-      timer = setTimeout(() => {
-        setShowSpinner(true);
-      }, delay);
+      timer = setTimeout(() => setShowSpinner(true), delay);
     } else {
-      // если загрузка закончилась — сразу убираем спиннер и чистим таймер
       setShowSpinner(false);
       clearTimeout(timer);
     }
