@@ -141,12 +141,12 @@
         "sizes": "512x512"
       }
     ],
-  "start_url": ".",
+  "start_url": "/gm",
   "display": "standalone",
   "theme_color": "#005475",
   "background_color": "#ffffff",
   "lang": "en-US",
-  "scope": "/",
+   "scope": "/gm/",
   "orientation": "portrait",
   "description": "GoodManagement - приложение Академии 'Стратег' "
 }
