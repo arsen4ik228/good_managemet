@@ -69,7 +69,9 @@ export default function EditPost() {
             setInitialValues({
                 parentId: parentPost.id ?? null,
                 postName: currentPost.postName ?? null,
+
                 divisionName: currentPost.divisionName ?? null,
+
                 roleId: currentPost.role.id ?? null,
                 product: currentPost.product ?? null,
                 purpose: currentPost.purpose ?? null,
@@ -84,7 +86,10 @@ export default function EditPost() {
         try {
             const { statisticsIncludedPost, ...rest } = await form.validateFields();
 
-            console.log("rest = ", rest);
+           // 👇 если есть parentId — не отправляем divisionName на сервер
+            if (rest.parentId) {
+                delete rest.divisionName;
+            }
 
             await updatePost({
                 _id: postId,
@@ -128,7 +133,12 @@ export default function EditPost() {
         const values = {
             parentId: parentPost.id ?? null,
             postName: currentPost.postName ?? null,
+
+            // divisionName: parentPost.id
+            //     ? parentPost.divisionName
+            //     : currentPost.divisionName ?? null,
             divisionName: currentPost.divisionName ?? null,
+
             roleId: currentPost.role.id ?? null,
             product: currentPost.product ?? null,
             purpose: currentPost.purpose ?? null,
@@ -165,6 +175,25 @@ export default function EditPost() {
             window.close();
         }
     };
+
+
+    useEffect(() => {
+        if (parentId) {
+            const parent = posts?.find(p => p.id === parentId);
+            if (parent) {
+                form.setFieldsValue({
+                    divisionName: parent.divisionName || "",
+                });
+            }
+        } else {
+            // если родитель снят — вернуть divisionName текущего поста
+            form.setFieldsValue({
+                divisionName: currentPost?.divisionName || "",
+            });
+        }
+    }, [parentId, posts, form, currentPost]);
+
+
 
     return (
         <>
@@ -207,7 +236,8 @@ export default function EditPost() {
                                         <Form.Item
                                             name="parentId"
                                             label="Руководящий пост"
-                                            style={{ flex: 1, marginBottom: 0 }} // 👈 растягиваем
+                                            normalize={(value) => value ?? null}
+                                            style={{ flex: 1, marginBottom: 0 }}
                                         >
                                             <Select
                                                 style={{ width: 350 }}
@@ -343,7 +373,7 @@ export default function EditPost() {
                                                 name="divisionName"
                                                 rules={[{ required: true, message: 'Введите название подразделения' }]}
                                             >
-                                                <Input placeholder="Название подразделения" />
+                                                <Input placeholder="Название подразделения" disabled={!!parentId} />
                                             </Form.Item>
 
                                             <Form.Item
@@ -403,6 +433,7 @@ export default function EditPost() {
                                         <Form.Item
                                             label="Политика поста"
                                             name="policyId"
+                                            normalize={(value) => value ?? null}
                                         >
                                             <Select
                                                 placeholder="Выберите политику"

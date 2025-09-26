@@ -58,7 +58,7 @@ export default function Post() {
             channel.close();
         };
     }, [refetch]);
-    
+
     return (
         <MainContentContainer buttons={buutonsArr} >
             <div className={classes.main}>
@@ -125,7 +125,11 @@ export default function Post() {
                         <Flex vertical gap={12} style={{ flex: 1 }}>
                             <Flex vertical>
                                 <Text type="secondary">Название подразделения</Text>
-                                <Text strong>{currentPost?.divisionName}</Text>
+                                <Text strong>
+                                    {parentPost?.id
+                                    ? parentPost?.divisionName
+                                    : currentPost?.divisionName}
+                                </Text>
                             </Flex>
 
                             <Flex vertical>
