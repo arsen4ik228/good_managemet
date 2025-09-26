@@ -49,7 +49,7 @@ export default function ConvertList() {
 
         const searchLower = seacrhChatsSectionsValue?.toLowerCase();
         return unseenConverts?.concat(seenConverts)?.filter(item =>
-            item.name.toLowerCase().includes(searchLower)
+            item?.name.toLowerCase().includes(searchLower)
         );
     }, [seacrhChatsSectionsValue, seenConverts, unseenConverts]);
 
