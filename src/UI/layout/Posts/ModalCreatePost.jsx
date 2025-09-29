@@ -13,6 +13,7 @@ export default function ModalCreatePost({ open, setOpen }) {
 
     const { createPost, reduxSelectedOrganizationId } = useCreatePost();
     const {
+        maxDivisionNumber,
         workers,
         roles
     } = useGetDataForCreatePost();
@@ -30,6 +31,7 @@ export default function ModalCreatePost({ open, setOpen }) {
             const values = await form.validateFields();
             await createPost({
                 ...values,
+                divisionName:`Подразделение №${maxDivisionNumber}`,
                 organizationId: reduxSelectedOrganizationId
             })
                 .unwrap()

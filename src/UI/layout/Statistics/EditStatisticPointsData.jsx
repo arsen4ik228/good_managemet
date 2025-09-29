@@ -179,14 +179,14 @@ export const EditStatisticPointsData = () => {
         .filter((item) => item.value !== null)
         .map(({ id, ...rest }) => rest),
 
-      dataSource
+      ...dataSource
         .filter((item) => item.isCreate === true && item.value !== null)
         .map(({ value, valueDate }) => ({
           valueDate,
           value
         }))
     ];
-
+    
     const updateDtos = dataSource
       .filter((item) => item.isChanged === true && item.isCreate !== true)
       .map(({ id, value, correlationType }) => ({

@@ -34,13 +34,13 @@ export default function EditPolicy() {
     const [form] = Form.useForm();
     const [initialValues, setInitialValues] = useState(null);
     const [editorState, setEditorState] = useState(null);
-    
+
     const {
         currentPolicy,
     } = useGetSinglePolicy({
         policyId
     });
-    
+
     const { updatePolicy } = useUpdatePolicy();
 
     useEffect(() => {
@@ -66,9 +66,9 @@ export default function EditPolicy() {
                 ...(hasContentChanges ? { content: editorState } : {})
             }).unwrap();
 
-            
+
             channel.postMessage("updated");
-             
+
             if (values.policyName !== currentPolicy.policyName) {
                 channelName.postMessage("name");
             }
@@ -159,7 +159,8 @@ export default function EditPolicy() {
                             <Form
                                 form={form}
                                 initialValues={initialValues}
-                                layout="vertical">
+                                layout="vertical"
+                                disabled={currentPolicy?.state === "Отменён"}>
 
                                 <Form.Item
                                     label="Название политики"
@@ -205,7 +206,7 @@ export default function EditPolicy() {
                                 key={`${currentPolicy.id}-${resetKey}`}
                                 editorState={editorState}
                                 setEditorState={setEditorState}
-                                readOnly={false}
+                                readOnly={currentPolicy?.state === "Отменён"}
                                 policyName={currentPolicy.policyName}
                                 policyNumber={currentPolicy.policyNumber}
                                 policyDate={currentPolicy.createdAt}

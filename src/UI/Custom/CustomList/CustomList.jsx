@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react'
 import classes from './CustomList.module.css'
 import dropdown from '@image/drop-down.svg';
 import search from '@image/search.svg'
+import icon_filter from '@image/icon_filter.svg'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
 import ListElem from './ListElem';
 
-export default function CustomList({ title, addButtonText, addButtonClick, searchValue, searchFunc, selectedItem, expanded = true, children }) {
+export default function CustomList({ title, isFilter, setOpenFilter, addButtonText, addButtonClick, searchValue, searchFunc, selectedItem, expanded = true, children }) {
     const [isExpanded, setIsExpanded] = useState(expanded);
     const [showSearch, setShowSearch] = useState(false);
     const listRef = useRef(null);
@@ -13,6 +14,10 @@ export default function CustomList({ title, addButtonText, addButtonClick, searc
     const toggleDropdown = () => {
         setIsExpanded(!isExpanded);
     };
+
+    const toggleFilter = () => {
+        setOpenFilter((prev) => !prev);
+    }
 
     const toggleSearch = () => {
         setShowSearch(!showSearch);
@@ -41,6 +46,17 @@ export default function CustomList({ title, addButtonText, addButtonClick, searc
                             />
                         </form>
                     </div>
+
+                    {
+                        isFilter &&
+                        <img
+                            src={icon_filter}
+                            alt="filter"
+                            className={classes.searchIcon}
+                            onClick={toggleFilter}
+                        />
+                    }
+
                     <img
                         src={search}
                         alt="search"
@@ -77,7 +93,7 @@ export default function CustomList({ title, addButtonText, addButtonClick, searc
             )}
 
             {/* Контейнер для списка с фиксированной высотой и скроллом */}
-            <div 
+            <div
                 ref={listRef}
                 className={`${classes.listContainer} ${!isExpanded ? classes.collapsed : ''}`}
             >
