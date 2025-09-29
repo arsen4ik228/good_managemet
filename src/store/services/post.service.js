@@ -131,11 +131,6 @@ export const postApi = apiSlice.injectEndpoints({
           }
         });
 
-        result.sort((a, b) => {
-          const countA = (Number(a.unseenMessagesCount) + Number(a.watcherUnseenCount)) || 0;
-          const countB = (Number(b.unseenMessagesCount) + Number(b.watcherUnseenCount)) || 0;
-          return countB - countA; // по убыванию
-        });
         response?.postsWithoutConverts.forEach(element => {
           const userExist = result.find(item => item.userId === element.user.id)
           if (userExist) {
@@ -156,7 +151,26 @@ export const postApi = apiSlice.injectEndpoints({
           }
         });
 
-        console.log(result)
+        // result.sort((a, b) => {
+        //   const countA = (Number(a.unseenMessagesCount) + Number(a.watcherUnseenCount)) || 0;
+        //   const countB = (Number(b.unseenMessagesCount) + Number(b.watcherUnseenCount)) || 0;
+
+        //   // Если у обоих сумма непрочитанных равна 0, сортируем по дате
+        //   if (countA === 0 && countB === 0) {
+        //     const dateA = new Date(a.latestMessageCreatedAt);
+        //     const dateB = new Date(b.latestMessageCreatedAt);
+        //     return dateB - dateA; // по убыванию (новые выше)
+        //   }
+
+        //   // Если у одного из элементов есть непрочитанные, а у другого нет
+        //   if (countA === 0) return 1; // a без непрочитанных идет ниже b
+        //   if (countB === 0) return -1; // b без непрочитанных идет ниже a
+
+        //   // Оба имеют непрочитанные - сортируем по количеству
+        //   return countB - countA; // по убыванию количества
+        // });
+        result.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt));
+        console.log(result);
 
         return result
         // response?.postsWithConverts.concat(
@@ -168,12 +182,12 @@ export const postApi = apiSlice.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-            ...result?.map(({userId}) => 
-              ({
-                type: 'Chats',
-                id: userId,
-              })),
-              'Chats',
+            ...result?.map(({ userId }) =>
+            ({
+              type: 'Chats',
+              id: userId,
+            })),
+            'Chats',
           ]
           : ['Chats']
     }),

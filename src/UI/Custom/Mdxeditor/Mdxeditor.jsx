@@ -39,7 +39,8 @@ export default function Mdxeditor({
   const updateEditorContent = (newContent) => {
     if (editorRef.current) {
       editorRef.current.setMarkdown(newContent); // Обновляем содержимое через setMarkdown
-      setEditorState(newContent); // Обновляем состояние редактора
+      if (setEditorState)
+        setEditorState(newContent); // Обновляем состояние редактора
     }
   };
 

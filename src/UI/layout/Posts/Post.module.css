@@ -2,6 +2,7 @@
   position: relative;
 
   width: auto;
+  max-width: 690px;
 
   flex: 1 0 120px;
 
@@ -18,4 +19,10 @@
   border-radius: 5px;
 
   overflow-y: auto;
+}
+
+@media screen and (max-width: 1301px) {
+  .main {
+    max-width: 620px;
+  }
 }

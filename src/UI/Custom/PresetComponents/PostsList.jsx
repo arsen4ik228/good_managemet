@@ -31,7 +31,7 @@ export default function PostsList() {
 
         const searchLower = seacrhPostsSectionsValue?.toLowerCase();
         return allPosts?.filter(item =>
-            item.postName.toLowerCase().includes(searchLower)
+            item?.postName.toLowerCase().includes(searchLower)
         );
     }, [seacrhPostsSectionsValue, allPosts]);
 

@@ -15,11 +15,14 @@ import FinalConvertModal from '@Custom/FinalConvertModal/FinalConvertModal'
 import ApproveConvertModal from '../../../Custom/FinalConvertModal/ApproveConvertModal';
 import { convertApi, postApi } from '../../../../store/services';
 import { useDispatch } from 'react-redux';
+import { baseUrl } from '../../../../helpers/constants';
+import default_avatar from '@image/default_avatar.svg'
+
 
 
 
 export default function DesktopDialogPage() {
-    const { convertId } = useParams();
+    const { convertId, contactId } = useParams();
     const dispatch = useDispatch()
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
@@ -44,8 +47,10 @@ export default function DesktopDialogPage() {
         isLoadingGetConvertId,
         isFetchingGetConvartId,
         isErrorGetConvertId,
-        pathOfUsers
-    } = useConvertsHook({ convertId });
+        pathOfUsers,
+
+        contactInfo
+    } = useConvertsHook({ convertId: convertId, contactId: contactId });
 
     const {
         updatePanelProps
@@ -138,6 +143,9 @@ export default function DesktopDialogPage() {
             timeSeen: null,
             createdAt: newMessage.createdAt,
         }]);
+
+        dispatch(convertApi.util.invalidateTags([{ type: 'Convert', id: convertId }]));
+        dispatch(postApi.util.invalidateTags([{ type: 'Chats', id: userInfo?.userId }]));
     }, [socketResponse?.messageCreationEvent]);
 
     // Прочтение сообщений(смена статуса)
@@ -177,7 +185,7 @@ export default function DesktopDialogPage() {
         }
 
         dispatch(convertApi.util.invalidateTags([{ type: 'Convert', id: convertId }]));
-        dispatch(postApi.util.invalidateTags([{ type: 'Chats', id: userInfo?.userId  }]));
+        dispatch(postApi.util.invalidateTags([{ type: 'Chats', id: userInfo?.userId }]));
 
         // Обновляем socketMessages
         const updatedSocketMessages = updateMessages(socketMessages);
@@ -241,12 +249,15 @@ export default function DesktopDialogPage() {
     }, [convertId])
 
     useEffect(() => {
-        // console.error(userInfo)
+        if (!contactInfo) return
+        console.warn('set props desktopDoalog ', contactInfo)
+        updatePanelProps({
+            name: contactInfo.userName,
+            postsNames: contactInfo?.postsNames.join(', '),
+            avatar: contactInfo.avatar ? baseUrl + contactInfo.avatar : default_avatar
+        })
 
-        if (!notEmpty(userInfo)) return
-        console.error('vjhbdfhjvbdfhjvbdfhjvbdfhjvbhj')
-        updatePanelProps({ name: userInfo.userName, }) //postsNames: contactInfo.postName 
-    }, [userInfo])
+    }, [contactInfo])
 
     useEffect(() => {
         if (!notEmpty(currentConvert)) return
@@ -261,7 +272,7 @@ export default function DesktopDialogPage() {
         }
     }, [currentConvert])
 
-    console.warn(userInfo)
+    console.log(userInfo)
 
     return (
         <MainContentContainer buttons={buttons}>
