@@ -7,15 +7,31 @@ import { notEmpty } from '@helpers/helpers'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
 import ModalCreateStatistic from '../../../layout/Statistics/ModalCreateStatistic';
-import { Button, Space } from 'antd';
+import FilterElement from '../../CustomList/FilterElement'
 
+
+
+const arrayFilter = [
+    {
+        label: "Активные",
+        value: true
+    },
+    {
+        label: "Архивные",
+        value: false
+    }
+]
 
 export default function StatisticsList() {
     const [seacrhStatisticsSectionsValue, setSeacrhStatisticsSectionsValue] = useState()
     const [openCreateStatistic, setOpenCreateStatistic] = useState(false);
+
     const [isActive, setIsActive] = useState(true);
+    const [openFilter, setOpenFilter] = useState(false);
+
     const navigate = useNavigate()
     const location = useLocation()
+
     // Получение всех статистик
     const {
         statistics,
@@ -78,23 +94,23 @@ export default function StatisticsList() {
         <>
             <CustomList
                 title={'Статистики'}
+                isFilter={true}
+                setOpenFilter={setOpenFilter}
                 searchValue={seacrhStatisticsSectionsValue}
                 searchFunc={setSeacrhStatisticsSectionsValue}
             >
 
+                {
+                    openFilter && <FilterElement
+                        array={arrayFilter}
+                        state={isActive}
+                        setState={setIsActive}
+                        setOpenFilter={setOpenFilter}
+                    />
+                }
+
+
                 <ListAddButtom textButton={'Создать статсиктику'} clickFunc={() => setOpenCreateStatistic(true)} />
-
-
-                <Space style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center"
-                }}>
-                    <Button type={isActive ? "primary" : "default"} onClick={() => setIsActive(true)}>Активная</Button>
-                    <Button type={!isActive ? "primary" : "default"} onClick={() => setIsActive(false)}>Архивная</Button>
-                </Space>
-
-
 
 
                 {filtredStats.map((item, index) => (

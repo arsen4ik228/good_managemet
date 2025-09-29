@@ -14,8 +14,12 @@ import ListElem from '../../../Custom/CustomList/ListElem'
 import { useNavigate } from 'react-router-dom'
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { useSocket } from '../../../../hooks'
+
+import { ModalCreateOrganization } from '../../Organization/ModalCreateOrganization'
+
 import { baseUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
+
 
 export default function LeftSIder() {
 
@@ -29,6 +33,8 @@ export default function LeftSIder() {
     const [searchContactsSectionsValue, setContactSectionsValue] = useState()
     const [selectedOrgSectionValue, setSelectedOrgSectionValue] = useState()
     const [selectedContactsSectionValue, setSelectedContactsSectionsValue] = useState()
+
+    const [openModalCreateOrganization, setOpenModalCreateOrganization] = useState(false)
 
     const eventNames = useMemo(
         () => ["convertCreationEvent", "messageCountEvent"],
@@ -146,10 +152,10 @@ export default function LeftSIder() {
                 dispatch(setSelectedOrganizationId(defaultOrg.id));
                 dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
 
-                // navigate(`/${defaultOrg.id}`)
+                navigate(`/${defaultOrg.id}`)
             }
 
-            navigate(`/${defaultOrg.id}`)
+            // navigate(`/${defaultOrg.id}`)
 
         }
     }, [organizations, isLoadingOrganization, isErrorOrganization]);
@@ -173,6 +179,7 @@ export default function LeftSIder() {
                     <CustomList
                         title={'организации'}
                         addButtonText={'Новая организация'}
+                        addButtonClick={ () => setOpenModalCreateOrganization(true)}
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
                         selectedItem={selectedOrgSectionValue}
@@ -195,6 +202,16 @@ export default function LeftSIder() {
                             </React.Fragment>
                         ))}
                     </CustomList>
+
+                    {
+                      openModalCreateOrganization && 
+                        <ModalCreateOrganization
+                            open={openModalCreateOrganization}
+                            setOpen={setOpenModalCreateOrganization}
+                            allOrganizations={organizations}
+                            handleOrganizationNameButtonClick={handleOrganizationNameButtonClick}
+                        />
+                    }
 
                     <CustomList
                         title={'контакты'}
