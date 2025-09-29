@@ -9,7 +9,15 @@ const transformText = (text) => {
     const regex = /(.*?)policyId:([^,]+),policyName:([^,]+)(.*)/i;
     const match = text.match(regex);
 
-    if (!match) return text; // Если совпадений нет, вернуть исходный текст
+    if (!match) return (
+        <div style={{
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+            lineHeight: '1.4'
+        }}>
+            {text}
+        </div>
+    ) //text.replace(/\\n/g, '\n');
 
     const before = match[1]; // Всё до policyId
     const value = match[2];  // Значение policyId
@@ -17,11 +25,17 @@ const transformText = (text) => {
     const after = match[4].replace(/^,/, ''); // Убираем начальную запятую
 
     return (
-        <>
-            {before}
-            <a href={`#/pomoshnik/policy/${value}`}>{label}</a>
-            {after}
-        </>
+
+            <div style={{
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                lineHeight: '1.4'
+            }}>
+                {before}
+                <a href={`#/pomoshnik/policy/${value}`}>{label}</a>
+                {after}
+            </div>
+
     );
 };
 

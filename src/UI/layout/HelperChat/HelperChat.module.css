@@ -1,9 +1,10 @@
 .content{
-    width: 700px;
+    width: 690px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0 20px;
     background-color: white;
 }
 
@@ -35,4 +36,22 @@
 
 .inputTextSection{
     padding-top: 30px;
+
+    >img{
+        width: 620px;
+    }
+}
+
+@media screen and (max-width: 1301px) {
+    .content{
+    width: 630px;    
+    }
+
+    .inputTextSection{
+        padding-top: 30px;
+    
+        >img{
+            width: 580px;
+        }
+    }
 }
