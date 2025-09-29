@@ -1,5 +1,4 @@
-
-.wrapper{
+.wrapper {
     width: 100%;
     height: 100vh;
     display: flex;
@@ -28,10 +27,20 @@
         /* margin-bottom: 30px; */
     }
 
-    >div{
+    >div {
         /* padding-top: 30px; */
     }
 }
+
+
+.logo {
+    transition: transform 1s ease-in-out;
+}
+
+.logo:hover {
+    transform: rotate(360deg);
+}
+
 
 @media (max-width: 1500px) {
     .header {
@@ -58,14 +67,15 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    
+
     >div:nth-child(1) {
-        flex: 0 1 auto; /* Сжимается при необходимости */
+        flex: 0 1 auto;
+        /* Сжимается при необходимости */
         min-height: 0;
         overflow-y: auto;
         max-height: 50%;
     }
-    
+
     >div:nth-child(2) {
         flex: 1;
         min-height: 0;
@@ -77,6 +87,7 @@
 @container wrapper (max-width: 251px) {
     .header {
         font-size: 20px;
+
         >img {
             width: 100px;
             height: 100px;
@@ -88,6 +99,7 @@
 @container wrapper (max-width: 280px) {
     .header {
         font-size: 22px;
+
         >img {
             width: 110px;
             height: 110px;
