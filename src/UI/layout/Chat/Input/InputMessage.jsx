@@ -37,6 +37,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const [selectedPolicy, setSelectedPolicy] = useState(false);
     const [files, setFiles] = useState();
     const [unpinFiles, setUnpinFiles] = useState([]);
+    const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
     const [convertTheme, setConvertTheme] = useState()
     const [startDate, setStartDate] = useState()
@@ -246,8 +247,6 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
         message.success(`Конверт отправлен!`);
     }
-
-    const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
     const handlerSendClick = async () => {
         // Блокируем новые запросы, если уже выполняется

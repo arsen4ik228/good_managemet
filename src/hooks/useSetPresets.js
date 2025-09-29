@@ -8,7 +8,7 @@ const PRESETS_NAMES = {
     statistics: 'STATISTICS',
     goal: 'GOAL',
     helper: 'HELPER',
-    // chat: 'CHATS'
+    chat: 'CHATS'
 }
 
 const map = new Map(Object.entries(PRESETS_NAMES))
@@ -28,6 +28,6 @@ export const useSetPresets = () => {
             break;
         }
     }
-
+    console.error(PRESETS[presetName])
     usePanelPreset(PRESETS[presetName])
 }

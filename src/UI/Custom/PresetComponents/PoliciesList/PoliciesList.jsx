@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from 'react'
 import CustomList from '../../CustomList/CustomList'
 import FilterElement from '../../CustomList/FilterElement'
@@ -63,13 +62,6 @@ export default function PoliciesList() {
         .concat(disposalsDraft);
 
 
-        const searchLower = seacrhPostsSectionsValue?.toLowerCase();
-        return instructionsActive?.filter(item =>
-            item?.postName.toLowerCase().includes(searchLower)
-        );
-    }, [seacrhPostsSectionsValue, array]);
-
-
     const arrayCompleted = instructionsCompleted
         .concat(directivesCompleted)
         .concat(disposalsCompleted);
@@ -129,7 +121,8 @@ export default function PoliciesList() {
             >
 
                 {
-                    openFilter && <FilterElement
+                    openFilter &&
+                    <FilterElement
                         array={arrayFilter}
                         state={statePolicy}
                         setState={setStatePolicy}
@@ -137,8 +130,10 @@ export default function PoliciesList() {
                     />
                 }
 
-
-                <ListAddButtom textButton={'Создать политику'} clickFunc={() => setOpenCreatePolicy(true)} />
+                {
+                    !openFilter &&
+                    <ListAddButtom textButton={'Создать политику'} clickFunc={() => setOpenCreatePolicy(true)} />
+                }
 
 
                 <PoliciesMenu

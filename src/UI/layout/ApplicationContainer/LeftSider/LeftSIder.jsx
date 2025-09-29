@@ -146,10 +146,11 @@ export default function LeftSIder() {
                 dispatch(setSelectedOrganizationId(defaultOrg.id));
                 dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
 
-                // navigate(`/${defaultOrg.id}`)
+                navigate(`/${defaultOrg.id}`)
             }
-
-            navigate(`/${defaultOrg.id}`)
+            else { 
+                navigate(`/${localStorage.getItem("selectedOrganizationId")}`)
+            }
 
         }
     }, [organizations, isLoadingOrganization, isErrorOrganization]);

@@ -5,9 +5,9 @@ import { usePanelPreset,useRightPanel } from '@hooks';
 
 export default function ChatContainer({children, onCreate, onCalendar}) {
 
-        const { PRESETS } = useRightPanel();
-    
-        usePanelPreset(PRESETS['CHATS']);
+        // const { PRESETS } = useRightPanel();
+        // console.log(',klvndsjdvnfhdvndjfhvdfjkhv dfjnvhdfvnjdfvjnkdfvjdfvj')
+        // usePanelPreset(PRESETS['CHATS']);
 
     return (
         <div className={classes.wrapper}>
