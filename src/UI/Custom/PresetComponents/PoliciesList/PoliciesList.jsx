@@ -63,6 +63,13 @@ export default function PoliciesList() {
         .concat(disposalsDraft);
 
 
+        const searchLower = seacrhPostsSectionsValue?.toLowerCase();
+        return instructionsActive?.filter(item =>
+            item?.postName.toLowerCase().includes(searchLower)
+        );
+    }, [seacrhPostsSectionsValue, array]);
+
+
     const arrayCompleted = instructionsCompleted
         .concat(directivesCompleted)
         .concat(disposalsCompleted);

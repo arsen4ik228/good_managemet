@@ -52,10 +52,10 @@ export default function RightSider({ config }) {
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>
                 <div className={classes.avatarSection}>
-                    <img src={avatar} alt="avatar" />
+                    <img src={config.props?.avatar ? config.props.avatar : avatar} alt="avatar" />
                 </div>
-                <div className={classes.nameSection}>{config.props.name}</div>
-                <div className={classes.postSection}>{config.props.postsNames}</div>
+                <div className={classes.nameSection}>{config.props?.name}</div>
+                <div className={classes.postSection}>{config.props?.postsNames}</div>
             </div>
 
             <div className={classes.content}>

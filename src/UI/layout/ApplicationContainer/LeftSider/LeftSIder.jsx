@@ -14,6 +14,8 @@ import ListElem from '../../../Custom/CustomList/ListElem'
 import { useNavigate } from 'react-router-dom'
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { useSocket } from '../../../../hooks'
+import { baseUrl } from '@helpers/constants'
+import default_avatar from '@image/default_avatar.svg'
 
 export default function LeftSIder() {
 
@@ -69,12 +71,13 @@ export default function LeftSIder() {
 
     const handlerContact = (item) => {
 
-        updatePanelProps(
-            {
-                name: `${item.userFirstName} ${item.userLastName}`,
-                // avatar: baseUrl + item.avatarUrl
-            }
-        )
+        // updatePanelProps(
+        //     {
+        //         name: `${item.userFirstName} ${item.userLastName}`,
+        //         postsNames : item.postsNames.join(', '),
+        //         avatar: item.userAvatar ? `${baseUrl + item.userAvatar}` : default_avatar
+        //     }
+        // )
 
         navigate(`chat/${item.userId}`)
     }
@@ -86,7 +89,7 @@ export default function LeftSIder() {
 
         const searchLower = seacrhOrganizationsSectionsValue?.toLowerCase();
         return organizations?.filter(item =>
-            item.organizationName.toLowerCase().includes(searchLower)
+            item?.organizationName.toLowerCase().includes(searchLower)
         );
     }, [seacrhOrganizationsSectionsValue, organizations]);
 
@@ -97,9 +100,9 @@ export default function LeftSIder() {
 
         const searchLower = searchContactsSectionsValue?.toLowerCase();
         return copyChats?.filter(item =>
-            item.userFirstName.toLowerCase().includes(searchLower) ||
-            item.userLastName.toLowerCase().includes(searchLower) ||
-            item.postName.toLowerCase().includes(searchLower)
+            item?.userFirstName.toLowerCase().includes(searchLower) ||
+            item?.userLastName.toLowerCase().includes(searchLower) ||
+            item?.postName.toLowerCase().includes(searchLower)
         );
     }, [searchContactsSectionsValue, copyChats]);
 
@@ -157,7 +160,7 @@ export default function LeftSIder() {
         setCopyChats([...allChats])
     }, [allChats])
 
-    console.log('socketResponse   ', socketResponse)
+    console.log('filtredContacts   ', filtredContacts)
     return (
         <>
             <div className={classes.wrapper}>
@@ -212,8 +215,9 @@ export default function LeftSIder() {
                         {filtredContacts?.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
+                                    icon={item.userAvatar ? `${baseUrl + item.userAvatar}` : default_avatar}
                                     upperText={item.userFirstName + ' ' + item.userLastName}
-                                    bottomText={item.postName}
+                                    bottomText={item.postsNames.join(', ')}
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
