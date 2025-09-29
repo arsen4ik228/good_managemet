@@ -13,11 +13,20 @@ import RightPanelMapper from '@helpers/RightPanelMapper';
 import CustomComponent from './CustomComponent';
 import { homeUrl } from '@helpers/constants'
 
-export default function RightSider({ config }) {
+export default function RightSider({ config: initialConfig }) {
     const { organizationId } = useParams()
     const navigate = useNavigate();
     const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
     const [selectedItemHelper, setSelectedItemHelper] = useState()
+
+        // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
+        const config = useMemo(() => initialConfig, [
+            initialConfig.componentType,
+            initialConfig.props?.avatar,
+            initialConfig.props?.name,
+            initialConfig.props?.postsNames
+            // Добавьте другие зависимости, которые влияют на config
+        ]);
 
     const HELPER_SECTIONS = [
         { id: '7', icon: goal, text: 'Цели', link: 'goal' },

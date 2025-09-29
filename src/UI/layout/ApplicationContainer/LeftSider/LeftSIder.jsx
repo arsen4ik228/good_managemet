@@ -154,8 +154,10 @@ export default function LeftSIder() {
 
                 navigate(`/${defaultOrg.id}`)
             }
+            else { 
+                navigate(`/${localStorage.getItem("selectedOrganizationId")}`)
+            }
 
-            // navigate(`/${defaultOrg.id}`)
 
         }
     }, [organizations, isLoadingOrganization, isErrorOrganization]);

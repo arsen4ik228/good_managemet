@@ -121,7 +121,8 @@ export default function PoliciesList() {
             >
 
                 {
-                    openFilter && <FilterElement
+                    openFilter &&
+                    <FilterElement
                         array={arrayFilter}
                         state={statePolicy}
                         setState={setStatePolicy}
@@ -129,8 +130,10 @@ export default function PoliciesList() {
                     />
                 }
 
-
-                <ListAddButtom textButton={'Создать политику'} clickFunc={() => setOpenCreatePolicy(true)} />
+                {
+                    !openFilter &&
+                    <ListAddButtom textButton={'Создать политику'} clickFunc={() => setOpenCreatePolicy(true)} />
+                }
 
 
                 <PoliciesMenu

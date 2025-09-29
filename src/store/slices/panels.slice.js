@@ -36,7 +36,7 @@ const initialState = {
     },
     chats: {
       componentType: "chats",
-      props: {},
+      // props: {},
     },
     goal: {
         componentType: 'goal',
