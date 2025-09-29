@@ -4,3 +4,12 @@
   color: #333333;
   font-size: 14px !important;
 }
+
+:global(.ant-menu-item-group-title),
+:global(.ant-menu-submenu-title) {
+  padding-left: 10px !important;
+}
+
+:global(.ant-menu-sub .ant-menu-item) {
+  padding-left: 20px !important; 
+}
