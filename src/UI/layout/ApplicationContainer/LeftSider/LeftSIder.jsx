@@ -14,6 +14,7 @@ import ListElem from '../../../Custom/CustomList/ListElem'
 import { useNavigate } from 'react-router-dom'
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { useSocket } from '../../../../hooks'
+import { ModalCreateOrganization } from '../../Organization/ModalCreateOrganization'
 
 export default function LeftSIder() {
 
@@ -27,6 +28,8 @@ export default function LeftSIder() {
     const [searchContactsSectionsValue, setContactSectionsValue] = useState()
     const [selectedOrgSectionValue, setSelectedOrgSectionValue] = useState()
     const [selectedContactsSectionValue, setSelectedContactsSectionsValue] = useState()
+
+    const [openModalCreateOrganization, setOpenModalCreateOrganization] = useState(false)
 
     const eventNames = useMemo(
         () => ["convertCreationEvent", "messageCountEvent"],
@@ -170,6 +173,7 @@ export default function LeftSIder() {
                     <CustomList
                         title={'организации'}
                         addButtonText={'Новая организация'}
+                        addButtonClick={ () => setOpenModalCreateOrganization(true)}
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
                         selectedItem={selectedOrgSectionValue}
@@ -192,6 +196,16 @@ export default function LeftSIder() {
                             </React.Fragment>
                         ))}
                     </CustomList>
+
+                    {
+                      openModalCreateOrganization && 
+                        <ModalCreateOrganization
+                            open={openModalCreateOrganization}
+                            setOpen={setOpenModalCreateOrganization}
+                            allOrganizations={organizations}
+                            handleOrganizationNameButtonClick={handleOrganizationNameButtonClick}
+                        />
+                    }
 
                     <CustomList
                         title={'контакты'}
