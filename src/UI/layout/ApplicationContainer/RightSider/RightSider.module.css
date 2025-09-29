@@ -40,9 +40,14 @@
 }
 
 .postSection {
+    overflow: hidden;
+    max-width: 100%;
+
     font-size: 12px;
     font-weight: 400;
     color: rgba(153, 153, 153, 1);
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* RightSider.module.css */

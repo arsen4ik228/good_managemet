@@ -11,11 +11,14 @@ import convert_agreement_icon from '@image/convert_agreement_icon.svg'
 import request_chat_icon from '@image/request_chat_icon.svg'
 import { homeUrl } from '@helpers/constants'
 import { useSocket } from '../../../../hooks';
+import default_avatar from '@image/default_avatar.svg'
+
 
 
 export default function ConvertList() {
     const [seacrhChatsSectionsValue, setSeacrhChatsSectionsValue] = useState()
     const navigate = useNavigate()
+    
     const { organizationId, contactId } = useParams()
     // Получение всех статистик
 

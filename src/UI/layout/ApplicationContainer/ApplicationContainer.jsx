@@ -17,7 +17,7 @@ export default function ApplicationContainer() {
 
     useSetPresets()
 
-    const rightPanelConfig = useSelector(selectRightPanel);
+    const rightPanelConfig = useSelector(selectRightPanel)
 
     return (
         <Layout className={classes.wrapper}>

@@ -14,6 +14,9 @@ import { Option } from 'antd/es/mentions';
 import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRightPanel } from '../../../../hooks';
+import default_avatar from '@image/default_avatar.svg'
+import { baseUrl } from '../../../../helpers/constants';
+
 
 const TYPE_OPTIONS = [
     { value: 'Личная', label: 'Личная' },
@@ -301,8 +304,12 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     useEffect(() => {
         if (!contactInfo) return
-        // console.warn('set props', contactInfo)
-        updatePanelProps({ name: contactInfo.userName, postsNames: contactInfo.postName })
+        console.warn('set props inputMesage ', contactInfo)
+        updatePanelProps({
+            name: contactInfo.userName,
+            postsNames: contactInfo?.postsNames.join(', '),
+            avatar: contactInfo.avatar ? baseUrl + contactInfo.avatar : default_avatar
+        })
         setReciverPostId(contactInfo.postId)
 
     }, [contactInfo])
@@ -313,7 +320,6 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     }, [userPosts, senderPost]);
 
-    console.log(contentInput, contentInput.trim() )
     return (
 
         <div className={classes.wrapper}>

@@ -20,6 +20,7 @@ export const convertApi = apiSlice.injectEndpoints({
             postName: contact[0].postName,
             userName: contact[0]?.user?.firstName + ' ' + contact[0]?.user?.lastName,
             avatar: contact[0]?.user?.avatar_url,
+            postsNames : contact.map(item => item.postName),
             posts: contact
           }
         }
