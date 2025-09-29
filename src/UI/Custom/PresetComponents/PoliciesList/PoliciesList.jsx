@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from 'react'
 import CustomList from '../../CustomList/CustomList'
 import FilterElement from '../../CustomList/FilterElement'
@@ -61,13 +60,6 @@ export default function PoliciesList() {
     const arrayDraft = instructionsDraft
         .concat(directivesDraft)
         .concat(disposalsDraft);
-
-
-        const searchLower = seacrhPostsSectionsValue?.toLowerCase();
-        return instructionsActive?.filter(item =>
-            item?.postName.toLowerCase().includes(searchLower)
-        );
-    }, [seacrhPostsSectionsValue, array]);
 
 
     const arrayCompleted = instructionsCompleted
