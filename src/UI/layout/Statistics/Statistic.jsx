@@ -33,17 +33,38 @@ const typeViewStatistic = [
 const widthMap = {
     fifty_two: {
         height: "calc(100vh - 200px)",
-        width: "calc((100vh - 200px)*1.4)",
+        aspectRatio: "297 / 210"
+
     },
     twenty_six: {
         height: "calc(100vh - 200px)",
-        width: "calc((100vh - 200px)*1.4)",
+        aspectRatio: "297 / 210"
+
     },
     default: {
         height: "calc(100vh - 200px)",
-        width: "calc((100vh - 200px)/1.4)",
+        aspectRatio: "210 / 297"
+
     },
 };
+
+// const widthMap = {
+//     fifty_two: {
+//         height: "calc(100vh - 200px)",
+//          aspectRatio: "210 / 297"
+//         // width: "calc((100vh - 200px)*1.4)",
+//     },
+//     twenty_six: {
+//         height: "calc(100vh - 200px)",
+//          aspectRatio: "210 / 297"
+//         // width: "calc((100vh - 200px)*1.4)",
+//     },
+//     default: {
+//         height: "calc(100vh - 200px)",
+//          aspectRatio: "210 / 297"
+//         // width: "calc((100vh - 200px)/1.4)",
+//     },
+// };
 
 
 export default function Statistic() {

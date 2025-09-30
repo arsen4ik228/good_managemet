@@ -34,12 +34,12 @@ const widthMap = {
   fifty_two: {
     height: "calc(100vh - 250px)",
     width: "calc((100vh - 200px)*1.8)",
-    maxWidth: "60vw"
-
+    maxWidth:"60vw",
   },
   twenty_six: {
     height: "calc(100vh - 250px)",
     width: "calc((100vh - 200px)*1.4)",
+    maxWidth:"60vw",
   },
   default: {
     height: "calc(100vh - 250px)",
