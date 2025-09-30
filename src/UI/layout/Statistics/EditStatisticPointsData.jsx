@@ -34,6 +34,7 @@ const widthMap = {
   fifty_two: {
     height: "calc(100vh - 250px)",
     width: "calc((100vh - 200px)*1.8)",
+    maxWidth: "60vw"
 
   },
   twenty_six: {
