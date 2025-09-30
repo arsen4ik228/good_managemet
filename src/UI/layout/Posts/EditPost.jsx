@@ -13,6 +13,9 @@ import { baseUrl } from "@helpers/constants.js";
 
 import { formatPhone } from './function/functionForPost'
 
+import default_avatar from '@image/default_avatar.svg'
+
+
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
@@ -230,7 +233,7 @@ export default function EditPost() {
                                     <Space size="small" align="center" >
                                         <Avatar
                                             size={48}
-                                            src={selectedParent?.user?.avatar_url ? `${baseUrl}${selectedParent?.user?.avatar_url}` : null}
+                                            src={selectedParent?.user?.avatar_url ? `${baseUrl}${selectedParent?.user?.avatar_url}` : default_avatar}
                                         />
 
                                         <Form.Item
@@ -259,7 +262,7 @@ export default function EditPost() {
                                                             <Flex align="center" gap={8}>
                                                                 <Avatar
                                                                     size={24}
-                                                                    src={user?.avatar_url ? `${baseUrl}${user.avatar_url}` : null}
+                                                                    src={user?.avatar_url ? `${baseUrl}${user.avatar_url}` : default_avatar}
                                                                 />
                                                                 <span style={{
                                                                     display: "inline-block",
@@ -308,7 +311,7 @@ export default function EditPost() {
                                                     src={
                                                         selectedWorker?.avatar_url
                                                             ? `${baseUrl}${selectedWorker?.avatar_url}`
-                                                            : undefined
+                                                            : default_avatar
                                                     }
                                                     style={{ marginBottom: 12 }}
                                                 />
@@ -335,7 +338,7 @@ export default function EditPost() {
                                                                         src={
                                                                             worker.avatar_url
                                                                                 ? `${baseUrl}${worker.avatar_url}`
-                                                                                : undefined
+                                                                                : default_avatar
                                                                         }
                                                                     />
                                                                     <span
