@@ -35,6 +35,7 @@ export default function LeftSIder() {
     const [selectedContactsSectionValue, setSelectedContactsSectionsValue] = useState()
 
     const [openModalCreateOrganization, setOpenModalCreateOrganization] = useState(false)
+    const [expanendOrg, setExpanendOrg] = useState(false)
 
     const eventNames = useMemo(
         () => ["convertCreationEvent", "messageCountEvent"],
@@ -65,6 +66,7 @@ export default function LeftSIder() {
         dispatch(setSelectedOrganizationId(id));
         dispatch(setSelectedOrganizationReportDay(reportDay));
         navigate(`/${id}`)
+        setExpanendOrg(false)
     };
 
     const handlerHelper = () => {
@@ -185,7 +187,8 @@ export default function LeftSIder() {
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
                         selectedItem={selectedOrgSectionValue}
-                        expanded={false}
+                        expanded={expanendOrg}
+                        onExpandedChange={setExpanendOrg}
                     >
                         {filtredOrganizations.map((item) => (
                             <React.Fragment key={item.id}>

@@ -15,6 +15,8 @@ import { formatPhone } from './function/functionForPost'
 import { usePanelPreset } from '@hooks';
 import { useRightPanel } from '@hooks';
 import { homeUrl } from '@helpers/constants'
+import default_avatar from '@image/default_avatar.svg'
+
 
 
 const { Title, Text } = Typography;
@@ -76,7 +78,7 @@ export default function Post() {
                             <Space size="small" align="center">
                                 <Avatar
                                     size={48}
-                                    src={parentPost.user?.avatar_url ? `${baseUrl}${parentPost.user.avatar_url}` : null}
+                                    src={parentPost.user?.avatar_url ? `${baseUrl}${parentPost.user.avatar_url}` : default_avatar}
                                 />
                                 <Flex vertical>
                                     <Text strong>
@@ -106,7 +108,7 @@ export default function Post() {
                         >
                             <Avatar
                                 size={96}
-                                src={currentPost?.user?.avatar_url ? `${baseUrl}${currentPost?.user?.avatar_url}` : null}
+                                src={currentPost?.user?.avatar_url ? `${baseUrl}${currentPost?.user?.avatar_url}` : default_avatar}
                                 style={{ marginBottom: 12 }}
                             />
                             <Title level={5}>{currentPost?.user?.lastName} {currentPost?.user?.firstName}</Title>

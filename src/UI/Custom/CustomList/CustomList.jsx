@@ -6,28 +6,69 @@ import icon_filter from '@image/icon_filter.svg'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
 import ListElem from './ListElem';
 
-export default function CustomList({ title, isFilter, setOpenFilter, addButtonText, addButtonClick, searchValue, searchFunc, selectedItem, expanded = true, children }) {
-    const [isExpanded, setIsExpanded] = useState(expanded);
+export default function CustomList({
+    title,
+    isFilter,
+    setOpenFilter,
+    addButtonText,
+    addButtonClick,
+    searchValue,
+    searchFunc,
+    onExpandedChange, // опциональный callback для управления извне
+    selectedItem,
+    expanded, // опциональное внешнее управление состоянием
+    children
+}) {
+    // Внутреннее состояние используется только если expanded не передано извне
+    const [internalExpanded, setInternalExpanded] = useState(true);
     const [showSearch, setShowSearch] = useState(false);
     const listRef = useRef(null);
 
+    // Определяем, используем ли внешнее управление
+    const isControlled = expanded !== undefined;
+    
+    // Текущее состояние expanded (внешнее или внутреннее)
+    const currentExpanded = isControlled ? expanded : internalExpanded;
+
+    // Синхронизируем внутреннее состояние при изменении внешнего
+    useEffect(() => {
+        if (!isControlled) {
+            setInternalExpanded(true); // значение по умолчанию для внутреннего управления
+        }
+    }, [isControlled]);
+
     const toggleDropdown = () => {
-        setIsExpanded(!isExpanded);
+        const newExpandedState = !currentExpanded;
+        
+        if (isControlled) {
+            // Если компонент управляется извне - вызываем callback
+            onExpandedChange?.(newExpandedState);
+        } else {
+            // Если внутреннее управление - обновляем внутреннее состояние
+            setInternalExpanded(newExpandedState);
+        }
     };
 
+    // Если expanded изменился извне - синхронизируем внутреннее состояние
+    useEffect(() => {
+        if (isControlled) {
+            setInternalExpanded(expanded);
+        }
+    }, [expanded, isControlled]);
+
     const toggleFilter = () => {
-        setOpenFilter((prev) => !prev);
+        setOpenFilter?.((prev) => !prev);
     }
 
     const toggleSearch = () => {
         setShowSearch(!showSearch);
         if (showSearch) {
-            searchFunc('');
+            searchFunc?.('');
         }
     };
 
     const handleSearchChange = (e) => {
-        searchFunc(e.target.value);
+        searchFunc?.(e.target.value);
     };
 
     return (
@@ -40,22 +81,21 @@ export default function CustomList({ title, isFilter, setOpenFilter, addButtonTe
                             <input
                                 type="text"
                                 placeholder="Поиск..."
-                                value={searchValue}
+                                value={searchValue || ''}
                                 onChange={handleSearchChange}
                                 className={classes.searchInput}
                             />
                         </form>
                     </div>
 
-                    {
-                        isFilter &&
+                    {isFilter && (
                         <img
                             src={icon_filter}
                             alt="filter"
                             className={classes.searchIcon}
                             onClick={toggleFilter}
                         />
-                    }
+                    )}
 
                     <img
                         src={search}
@@ -66,7 +106,7 @@ export default function CustomList({ title, isFilter, setOpenFilter, addButtonTe
                     <img
                         src={dropdown}
                         alt="dropdown"
-                        className={`${classes.dropdownIcon} ${!isExpanded ? classes.rotated : ''}`}
+                        className={`${classes.dropdownIcon} ${!currentExpanded ? classes.rotated : ''}`}
                         onClick={toggleDropdown}
                     />
                 </div>
@@ -80,7 +120,7 @@ export default function CustomList({ title, isFilter, setOpenFilter, addButtonTe
             )}
 
             {selectedItem && (
-                <div className={`${classes.singleItemContainer} ${isExpanded ? classes.collapsed : ''}`}>
+                <div className={`${classes.singleItemContainer} ${currentExpanded ? classes.collapsed : ''}`}>
                     <ListElem
                         icon={selectedItem?.icon}
                         upperText={selectedItem?.upperText}
@@ -95,7 +135,7 @@ export default function CustomList({ title, isFilter, setOpenFilter, addButtonTe
             {/* Контейнер для списка с фиксированной высотой и скроллом */}
             <div
                 ref={listRef}
-                className={`${classes.listContainer} ${!isExpanded ? classes.collapsed : ''}`}
+                className={`${classes.listContainer} ${!currentExpanded ? classes.collapsed : ''}`}
             >
                 {children}
             </div>

@@ -80,3 +80,16 @@
   .customSelect .ant-select-selection-item {
     line-height: 1.5;
   } */
+
+@media screen and (max-height: 791px) {
+
+    .inputSection,
+    .selectSection {
+        height: 30px;
+        border-bottom: 1px solid red;
+    }
+
+    .selectSection::before{
+        top: -5px;
+    }
+}
