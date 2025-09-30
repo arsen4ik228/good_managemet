@@ -118,8 +118,8 @@ export const postApi = apiSlice.injectEndpoints({
           const userExist = result.find(item => item.userId === element.userId)
           if (userExist) {
             userExist.postsNames = [...userExist.postsNames, element.postName]
-            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
-            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
+            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (+element.unseenMessagesCount ?? 0)
+            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (+element.watcherUnseenCount ?? 0)
           }
           else {
             result.push({
@@ -135,8 +135,8 @@ export const postApi = apiSlice.injectEndpoints({
           const userExist = result.find(item => item.userId === element.user.id)
           if (userExist) {
             userExist.postsNames = [...userExist.postsNames, element.postName]
-            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (element.unseenMessagesCount ?? 0)
-            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (element.watcherUnseenCount ?? 0)
+            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (+element.unseenMessagesCount ?? 0)
+            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (+element.watcherUnseenCount ?? 0)
           }
           else {
             result.push({

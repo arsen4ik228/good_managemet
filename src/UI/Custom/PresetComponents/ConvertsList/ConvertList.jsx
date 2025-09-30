@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import CustomList from '../../CustomList/CustomList';
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
 import ListElem from '../../CustomList/ListElem';
@@ -12,13 +12,14 @@ import request_chat_icon from '@image/request_chat_icon.svg'
 import { homeUrl } from '@helpers/constants'
 import { useSocket } from '../../../../hooks';
 import default_avatar from '@image/default_avatar.svg'
+import { notEmpty } from '../../../../helpers/helpers';
 
 
 
 export default function ConvertList() {
     const [seacrhChatsSectionsValue, setSeacrhChatsSectionsValue] = useState()
     const navigate = useNavigate()
-    
+
     const { organizationId, contactId } = useParams()
     // Получение всех статистик
 
@@ -31,6 +32,7 @@ export default function ConvertList() {
         isLoadingGetConverts,
         isFetchingGetConvert,
         ErrorGetConverts,
+        refetchGetConverts,
     } = useConvertsHook({ contactId: contactId })
 
 
@@ -71,7 +73,35 @@ export default function ConvertList() {
         return CONVERT_ICON[path]
     }
 
+    useEffect(() => {
+        if (!notEmpty(socketResponse?.messageCountEvent)) return
+
+        const response = socketResponse.messageCountEvent
+        const hostId = response?.host.id
+        // const lastPostId = response?.lastPostInConvert.id
+
+        if (contactInfo.posts?.some(post => post.id === hostId)) {
+            refetchGetConverts()
+        }
+
+    }, [socketResponse?.messageCountEvent])
+
+    useEffect(() => {
+        if (!notEmpty(socketResponse?.convertCreationEvent)) return
+
+        const response = socketResponse.convertCreationEvent
+        
+        const hostId = response?.host.id
+        // const lastPostId = response?.receiver.id
+
+        if (contactInfo.posts?.some(post => post.id === hostId)) {
+            refetchGetConverts()
+        }
+
+    }, [socketResponse?.convertCreationEvent])
+
     console.log(contactInfo)
+    console.log(socketResponse)
     return (
         <>
             <CustomList

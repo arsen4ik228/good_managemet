@@ -28,6 +28,5 @@ export const useSetPresets = () => {
             break;
         }
     }
-    console.error(PRESETS[presetName])
     usePanelPreset(PRESETS[presetName])
 }
