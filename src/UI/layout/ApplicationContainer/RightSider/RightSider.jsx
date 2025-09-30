@@ -8,25 +8,26 @@ import goal from '@image/goal_icon.svg';
 import post from '@image/post_icon.svg';
 import policy from '@image/poliycy_icon.svg';
 import controlPanel_icon from '@image/controlPanel_icon.svg'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import RightPanelMapper from '@helpers/RightPanelMapper';
 import CustomComponent from './CustomComponent';
 import { homeUrl } from '@helpers/constants'
 
 export default function RightSider({ config: initialConfig }) {
-    const { organizationId } = useParams()
+    const { convertId, contactId } = useParams()
+    const location = useLocation()
     const navigate = useNavigate();
     const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
     const [selectedItemHelper, setSelectedItemHelper] = useState()
 
-        // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
-        const config = useMemo(() => initialConfig, [
-            initialConfig.componentType,
-            initialConfig.props?.avatar,
-            initialConfig.props?.name,
-            initialConfig.props?.postsNames
-            // Добавьте другие зависимости, которые влияют на config
-        ]);
+    // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
+    const config = useMemo(() => initialConfig, [
+        initialConfig.componentType,
+        initialConfig.props?.avatar,
+        initialConfig.props?.name,
+        initialConfig.props?.postsNames
+        // Добавьте другие зависимости, которые влияют на config
+    ]);
 
     const HELPER_SECTIONS = [
         { id: '7', icon: goal, text: 'Цели', link: 'goal' },
@@ -56,7 +57,7 @@ export default function RightSider({ config: initialConfig }) {
         );
     }, [searchHelperSectionsValue]);
 
-    console.log(config)
+    console.log(location.pathname)
     return (
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>
@@ -92,8 +93,9 @@ export default function RightSider({ config: initialConfig }) {
                 <RightPanelMapper
                     componentType={config.componentType}
                 />
-
-                {/* <CustomComponent></CustomComponent> */}
+                {(!convertId && contactId) && (
+                    <CustomComponent></CustomComponent>
+                )}
                 {/* </div> */}
             </div>
         </div>

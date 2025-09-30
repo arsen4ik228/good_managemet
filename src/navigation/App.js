@@ -2,6 +2,8 @@ import { isMobile } from "react-device-detect"; // Импортируем фун
 import DesktopApp from "./desktopRouting/DesktopApp";
 import MobileApp from "./mobileRouting/MobileApp";
 import { SocketProvider } from "@helpers/SocketContext.js";
+import { ConvertFormProvider } from '../contexts/ConvertFormContext.js';
+
 
 import { useGlobalLoading } from "@hooks";
 import Loader from "../UI/Custom/Loader/Loader";
@@ -15,7 +17,9 @@ function App() {
       {loading && <Loader />}
 
       <SocketProvider>
-        {isMobile ? <MobileApp /> : <DesktopApp />}
+        <ConvertFormProvider>
+          {isMobile ? <MobileApp /> : <DesktopApp />}
+        </ConvertFormProvider>
       </SocketProvider>
     </>
   );

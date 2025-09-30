@@ -9,7 +9,8 @@ import TextArea from 'antd/es/input/TextArea';
 import FilesModal from '@app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import CalendarModal from '@app/WorkingPlanPage/mobile/Modals/CalendarModal/CalendarModal';
 import { Select, Input, Spin, message } from 'antd';
-import { usePostsHook, useConvertsHook } from '@hooks'
+import { usePostsHook, useConvertsHook, } from '@hooks'
+import { useConvertForm } from '../../../../contexts/ConvertFormContext.js'
 import { Option } from 'antd/es/mentions';
 import { deleteDraft, loadDraft, saveDraft } from "@helpers/indexedDB";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -39,12 +40,12 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const [unpinFiles, setUnpinFiles] = useState([]);
     const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
-    const [convertTheme, setConvertTheme] = useState()
+    // const [convertTheme, setConvertTheme] = useState()
     const [startDate, setStartDate] = useState()
     const [deadlineDate, setDeadlineDate] = useState()
-    const [senderPost, setSenderPost] = useState(null)
-    const [reciverPostId, setReciverPostId] = useState()
-    const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
+    // const [senderPost, setSenderPost] = useState(null)
+    // const [reciverPostId, setReciverPostId] = useState()
+    // const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
 
 
     const {
@@ -54,6 +55,14 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const {
         updatePanelProps
     } = useRightPanel()
+
+    const {
+        convertType,
+        convertTheme,
+        senderPost,
+        reciverPostId,
+        // и все остальные состояния и функции
+    } = useConvertForm();
 
     const {
         currentConvert,
@@ -84,7 +93,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         setSelectedPolicy(false);
         deleteDraft("DraftDB", "drafts", idTextarea);
         setContentInputPolicyId("");
-        setConvertTheme('')
+        // setConvertTheme('')
         setFiles()
     };
 
@@ -168,6 +177,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
 
         const Data = {}
+        console.log(senderPost, reciverPostId, convertType, convertTheme)
 
         Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Переписка"
@@ -207,10 +217,10 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 .filter(item => !unpinFiles.includes(item.id)) // Фильтруем файлы
                 .map(element => element.id); // Преобразуем в массив ID
         }
-
+        console.log(senderPost, reciverPostId, convertType, convertTheme)
         const Data = {}
 
-        Data.convertTheme = convertTheme
+        Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Приказ"
         Data.deadline = deadlineDate
         Data.senderPostId = senderPost
@@ -309,20 +319,20 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
             postsNames: contactInfo?.postsNames.join(', '),
             avatar: contactInfo.avatar ? baseUrl + contactInfo.avatar : default_avatar
         })
-        setReciverPostId(contactInfo.postId)
+        // setReciverPostId(contactInfo.postId)
 
     }, [contactInfo])
 
-    useEffect(() => {
-        if (userPosts && userPosts.length > 0 && senderPost === null) {
-            setSenderPost(userPosts[0]?.id);
-        }
-    }, [userPosts, senderPost]);
-
+    // useEffect(() => {
+    //     if (userPosts && userPosts.length > 0 && senderPost === null) {
+    //         setSenderPost(userPosts[0]?.id);
+    //     }
+    // }, [userPosts, senderPost]);
+    console.log(senderPost)
     return (
 
         <div className={classes.wrapper}>
-            {onCreate && (
+            {/* {onCreate && (
                 <div className={classes.upperContainer}>
                     <Select
                         className={classes.selectItem}
@@ -356,7 +366,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                         ))}
                     </Select>
                 </div>
-            )}
+            )} */}
             <div className={classes.bottomContainer}>
                 <div className={classes.iconSection}>
                     {/* <img src={icon_attachPpolicy} alt="icon_attachPpolicy" />
