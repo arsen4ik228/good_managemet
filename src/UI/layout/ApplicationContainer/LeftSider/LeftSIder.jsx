@@ -237,7 +237,7 @@ export default function LeftSIder() {
                         {filtredContacts?.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
-                                    icon={item.userAvatar ? `${baseUrl + item.userAvatar}` : default_avatar}
+                                    icon={item?.user?.avatar_url ? `${baseUrl + item?.user?.avatar_url }` : default_avatar}
                                     upperText={item.userFirstName + ' ' + item.userLastName}
                                     bottomText={item.postsNames.join(', ')}
                                     linkSegment={`${item.userId}`}
