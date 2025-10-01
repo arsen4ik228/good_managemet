@@ -23,6 +23,10 @@ import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisti
 import DesktopDialogPage from "../../UI/layout/Chat/desktop/DesktopDoalogPage";
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
+import { Strategy } from "../../UI/layout/Strategy/Strategy";
+import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
+import { Project } from "../../UI/layout/Project/Project";
+
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
@@ -38,7 +42,7 @@ const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
 const Statistic1 = React.lazy(() => import("@app/StatisticsPage/Statistic"));
 const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
-const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
+// const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
 const ProjectWithProgramm = React.lazy(() =>
   import("@app/Project/desktop/Main")
 );
@@ -229,7 +233,7 @@ function DesktopApp() {
                             <Route path="statistic" element={<Statistic1 />} />
                             {/* <Route path="svodka" element={<Svodka />} /> */}
                             <Route path="objective" element={<Objective />} />
-                            <Route path="strategy" element={<Strategy />} />
+                            {/* <Route path="strategy" element={<Strategy />} /> */}
                             <Route
                               path="projectWithProgramm"
                               element={<ProjectWithProgramm />}
@@ -436,7 +440,7 @@ function DesktopApp() {
                     }
                   >
                     <CreateNewConvertPage></CreateNewConvertPage>
-                    </React.Suspense>
+                  </React.Suspense>
                 }
               />
 
@@ -491,6 +495,52 @@ function DesktopApp() {
               />
 
               {/* Вложенный маршрут helper/goal */}
+
+              <Route
+                path="strategy"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Strategy />
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="project"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Project />
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="schemaCompany"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <SchemaCompany />
+                  </React.Suspense>
+                }
+              />
+
               <Route
                 path="goal"
                 element={
@@ -533,7 +583,7 @@ function DesktopApp() {
                       </div>
                     }
                   >
-                  <Policy/>
+                    <Policy />
                   </React.Suspense>
                 }
               />
