@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import classes from './RightSider.module.css';
 import avatar from '@image/helper_big_avatar.svg';
 import CustomList from '../../../Custom/CustomList/CustomList';
@@ -25,6 +25,7 @@ export default function RightSider({ config: initialConfig }) {
     const navigate = useNavigate();
     const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
     const [selectedItemHelper, setSelectedItemHelper] = useState()
+    const [expanendHelper, setExpanendHelper] = useState(true)
 
     // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
     const config = useMemo(() => initialConfig, [
@@ -68,6 +69,12 @@ export default function RightSider({ config: initialConfig }) {
         );
     }, [searchHelperSectionsValue]);
 
+    useEffect(() => {
+        if (!convertId && contactId) {
+            setExpanendHelper(false)
+        }
+    }, [contactId, convertId])
+
     console.log(location.pathname)
     return (
         <div className={classes.wrapper}>
@@ -85,6 +92,8 @@ export default function RightSider({ config: initialConfig }) {
                     searchFunc={setSearchHelperSectionsValue}
                     searchValue={searchHelperSectionsValue}
                     selectedItem={selectedItemHelper}
+                    expanded={expanendHelper}
+                    onExpandedChange={setExpanendHelper}
                 >
                     {filtredHelperSections.map((item) => (
                         <ListElem
