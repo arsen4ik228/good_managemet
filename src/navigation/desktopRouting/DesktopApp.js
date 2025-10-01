@@ -9,7 +9,7 @@ import ruRU from "antd/locale/ru_RU";
 import ApplicationContainer from "../../UI/layout/ApplicationContainer/ApplicationContainer";
 import HelperChat from "../../UI/layout/HelperChat/HelperChat";
 import Goal from "../../UI/layout/Goal/Goal";
-import User from "../../UI/layout/CreateUser/CreateUser";
+// import User from "../../UI/layout/CreateUser/CreateUser";
 import SettingsPage from "../../UI/layout/AccountSettingsPage/SettingsPage";
 import EditGoal from "../../UI/layout/Goal/EditGoal";
 import Statistic from "../../UI/layout/Statistics/Statistic";
@@ -26,6 +26,7 @@ import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/Crea
 import { Strategy } from "../../UI/layout/Strategy/Strategy";
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
+import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -36,7 +37,7 @@ const Chat = React.lazy(() => import("@app/Chat/Chat"));
 
 const Pomoshnik = React.lazy(() => import("@app/Pomoshnik/Pomoshnik"));
 const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
-// const User = React.lazy(() => import("@app/UserPage/User"));
+const User = React.lazy(() => import("@app/UserPage/User"));
 // const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
 // const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
 const Statistic1 = React.lazy(() => import("@app/StatisticsPage/Statistic"));
@@ -48,9 +49,9 @@ const ProjectWithProgramm = React.lazy(() =>
 );
 // const Post = React.lazy(() => import("@app/PostPage/Post"));
 const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
-const WorkingPlan = React.lazy(() =>
-  import("@app/WorkingPlanPage/MainWorkingPlan")
-);
+// const WorkingPlan = React.lazy(() =>
+//   import("@app/WorkingPlanPage/MainWorkingPlan")
+// );
 const PostSchema = React.lazy(() =>
   import("@app/CompanySchema/desktop/CompanySchema")
 );
@@ -241,10 +242,10 @@ function DesktopApp() {
 
                             <Route path="post/:postId?" element={<Post />} />
                             <Route path="postNew" element={<PostNew />} />
-                            <Route
+                            {/* <Route
                               path="workingPlan"
                               element={<WorkingPlan />}
-                            />
+                            /> */}
                             <Route
                               path="companySchema"
                               element={<SchemeСompanies />}
@@ -537,6 +538,23 @@ function DesktopApp() {
                     }
                   >
                     <SchemaCompany />
+                  </React.Suspense>
+                }
+              />
+
+
+
+              <Route
+                path="workingPlan"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <WorkingPlan />
                   </React.Suspense>
                 }
               />
