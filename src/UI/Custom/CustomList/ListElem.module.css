@@ -40,6 +40,11 @@
     white-space: nowrap; 
 }
 
+
+.notActive {
+    color: #666666;
+}
+
 .bottomTxt {
     overflow: hidden;    
     color: #999999;
