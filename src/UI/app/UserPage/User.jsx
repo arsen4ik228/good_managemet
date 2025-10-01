@@ -21,6 +21,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCreatedUserId } from "@slices";
 
+
+import MainContentContainer from "@Custom/MainContentContainer/MainContentContainer";
+
 import { ConfigProvider, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 
@@ -277,133 +280,123 @@ export default function User() {
   };
 
   return (
-    <div className={classes.dialog}>
-      <Headers
-        name={"создание пользователя"}
-        funcActiveHint={() => setOpenHint(true)}
-      >
-        <BottomHeaders></BottomHeaders>
-      </Headers>
 
-      <ConfigProvider locale={ruRU}>
-        <Tour
-          open={openHint}
-          onClose={() => setOpenHint(false)}
-          steps={steps}
-        />
-      </ConfigProvider>
+    <MainContentContainer>
+      <div className={classes.dialog}>
 
-      <div className={classes.main}>
-        <div className={classes.block}>
-          <div className={classes.avatarContainer} data-tour="data-avatar">
-            <img
-              src={avatarLocal || addCircle}
-              alt="avatar"
-              className={classes.avatar}
-              onClick={handleAvatarClick}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              className={classes.hiddenInput}
-              onChange={imageUploadHandlerLocal}
-            />
-            <img
-              src={exitHeader}
-              title={"удалить картинку"}
-              onClick={deleteImage}
-              style={{ width: "12px", height: "12px" }}
-            ></img>
-          </div>
-
-          <div className={classes.column2}>
-            <div data-tour="data-form" className={classes.column2}>
-              <Input
-                name={"Имя"}
-                value={firstName}
-                onChange={handleChangeFirstName}
-              ></Input>
-
-              <Input
-                name={"Фамилия"}
-                value={lastName}
-                onChange={handleChangeLastName}
-              ></Input>
-
-              <Input
-                name={"Отчество"}
-                value={middleName}
-                onChange={handleChangeMiddleName}
-              ></Input>
-
-              <Input name={"Телефон"} isShowInput={true}>
-                <InputMask
-                  mask="+9 (999) 999-99-99"
-                  value={telephoneNumber}
-                  onChange={handleChangeTelephoneNumber}
-                  placeholder="+9 (999) 999-99-99"
-                  required
-                >
-                  {(inputProps) => (
-                    <input {...inputProps} type="tel" id="phone" />
-                  )}
-                </InputMask>
-              </Input>
+        <div className={classes.main}>
+          <div className={classes.block}>
+            <div className={classes.avatarContainer} data-tour="data-avatar">
+              <img
+                src={avatarLocal || addCircle}
+                alt="avatar"
+                className={classes.avatar}
+                onClick={handleAvatarClick}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                className={classes.hiddenInput}
+                onChange={imageUploadHandlerLocal}
+              />
+              <img
+                src={exitHeader}
+                title={"удалить картинку"}
+                onClick={deleteImage}
+                style={{ width: "12px", height: "12px" }}
+              ></img>
             </div>
 
-            <ButtonAttach
-              dataTour="data-post"
-              image={post}
-              onClick={() => setOpenModalSelectPosts(true)}
-              selectArray={arrayCheckedPostsNames}
-              prefix={"Посты: "}
-              btnName={"Прикрепить посты"}
-              disabled={!isValid}
-            ></ButtonAttach>
+            <div className={classes.column2}>
+              <div data-tour="data-form" className={classes.column2}>
+                <Input
+                  name={"Имя"}
+                  value={firstName}
+                  onChange={handleChangeFirstName}
+                ></Input>
 
-            {openModalSelectPosts && (
-              <ModalSelectCheckBox
-                nameTable={"Посты"}
-                handleSearchValue={inputSearchModalCheckBox}
-                handleSearchOnChange={(e) =>
-                  setInputSearchModalCheckBox(e.target.value)
-                }
-                exit={exitsModalSelectPosts}
-                filterArray={filterArraySearchModalCheckBox}
-                array={postsWithoutUser}
-                arrayItem={"postName"}
-                handleChecboxChange={handleCheckboxChange}
-                arrayChecked={arrayCheckedPostsIds}
-                save={createUserAndCreatePost}
-                nameBtn={"создать"}
-                iconBtn={iconAdd}
-              ></ModalSelectCheckBox>
-            )}
+                <Input
+                  name={"Фамилия"}
+                  value={lastName}
+                  onChange={handleChangeLastName}
+                ></Input>
 
-            <button
-              data-tour="data-save"
-              onClick={handleCreateUserButtonClick}
-              className={classes.btnSave}
-              disabled={!isValid}
-            >
-              Сохранить
-            </button>
+                <Input
+                  name={"Отчество"}
+                  value={middleName}
+                  onChange={handleChangeMiddleName}
+                ></Input>
+
+                <Input name={"Телефон"} isShowInput={true}>
+                  <InputMask
+                    mask="+9 (999) 999-99-99"
+                    value={telephoneNumber}
+                    onChange={handleChangeTelephoneNumber}
+                    placeholder="+9 (999) 999-99-99"
+                    required
+                  >
+                    {(inputProps) => (
+                      <input {...inputProps} type="tel" id="phone" />
+                    )}
+                  </InputMask>
+                </Input>
+              </div>
+
+              {/* <ButtonAttach
+                dataTour="data-post"
+                image={post}
+                onClick={() => setOpenModalSelectPosts(true)}
+                selectArray={arrayCheckedPostsNames}
+                prefix={"Посты: "}
+                btnName={"Прикрепить посты"}
+                disabled={!isValid}
+              ></ButtonAttach>
+
+              {openModalSelectPosts && (
+                <ModalSelectCheckBox
+                  nameTable={"Посты"}
+                  handleSearchValue={inputSearchModalCheckBox}
+                  handleSearchOnChange={(e) =>
+                    setInputSearchModalCheckBox(e.target.value)
+                  }
+                  exit={exitsModalSelectPosts}
+                  filterArray={filterArraySearchModalCheckBox}
+                  array={postsWithoutUser}
+                  arrayItem={"postName"}
+                  handleChecboxChange={handleCheckboxChange}
+                  arrayChecked={arrayCheckedPostsIds}
+                  save={createUserAndCreatePost}
+                  nameBtn={"создать"}
+                  iconBtn={iconAdd}
+                ></ModalSelectCheckBox>
+              )} */}
+
+              <button
+                data-tour="data-save"
+                onClick={handleCreateUserButtonClick}
+                className={classes.btnSave}
+                disabled={!isValid}
+              >
+                Сохранить
+              </button>
+            </div>
           </div>
-        </div>
 
-        <HandlerMutation
-          Loading={isLoadingUserMutation}
-          Error={isErrorUserMutation && localIsResponseUserMutation}
-          Success={isSuccessUserMutation && localIsResponseUserMutation}
-          textSuccess={`Пользователь ${firstName} ${lastName} ${middleName} создан`}
-          textError={
-            ErrorUserMutation?.data?.errors?.[0]?.errors?.[0]
-              ? ErrorUserMutation.data.errors[0].errors[0]
-              : ErrorUserMutation?.data?.message
-          }
-        ></HandlerMutation>
+          <HandlerMutation
+            Loading={isLoadingUserMutation}
+            Error={isErrorUserMutation && localIsResponseUserMutation}
+            Success={isSuccessUserMutation && localIsResponseUserMutation}
+            textSuccess={`Пользователь ${firstName} ${lastName} ${middleName} создан`}
+            textError={
+              ErrorUserMutation?.data?.errors?.[0]?.errors?.[0]
+                ? ErrorUserMutation.data.errors[0].errors[0]
+                : ErrorUserMutation?.data?.message
+            }
+          ></HandlerMutation>
+        </div>
       </div>
-    </div>
+
+    </MainContentContainer>
   );
 }

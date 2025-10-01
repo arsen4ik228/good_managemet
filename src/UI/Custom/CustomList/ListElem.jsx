@@ -4,7 +4,7 @@ import avatar from '@image/icon _ GM-large.svg'
 import { useFindPathSegment } from '@helpers/helpers'
 import { Tooltip } from 'antd'
 
-export default function ListElem({ icon, upperText, bottomText, bage, linkSegment, clickFunc, setSelectedItemData }) {
+export default function ListElem({ icon, upperText, bottomText, bage, linkSegment, isActive, clickFunc, setSelectedItemData }) {
     const isSelected = useFindPathSegment(linkSegment)
 
 
@@ -15,7 +15,7 @@ export default function ListElem({ icon, upperText, bottomText, bage, linkSegmen
                 upperText,
                 bottomText,
                 bage,
-                linkSegment,
+                linkSegment,    
                 clickFunc
             })
         }
@@ -39,7 +39,7 @@ export default function ListElem({ icon, upperText, bottomText, bage, linkSegmen
                     <div
                         className={classes.text}
                     >
-                        <div className={classes.upperTxt}>{upperText}</div>
+                        <div className={ ` ${classes.upperTxt}   ${ isActive === false && classes.notActive}`}>{upperText}</div>
                         {bottomText && (
                             <div className={classes.bottomTxt}>{bottomText}</div>
                         )}

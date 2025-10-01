@@ -13,6 +13,11 @@ import RightPanelMapper from '@helpers/RightPanelMapper';
 import CustomComponent from './CustomComponent';
 import { homeUrl } from '@helpers/constants'
 
+
+import schemaCompany from '@image/schemaCompany.svg';
+import project from '@image/project.svg';
+import strategy from '@image/strategy.svg';
+
 export default function RightSider({ config: initialConfig }) {
     const { convertId, contactId } = useParams()
     const location = useLocation()
@@ -36,6 +41,10 @@ export default function RightSider({ config: initialConfig }) {
         { id: '5', icon: stat, text: 'Статистики', link: 'statistics' },
         { id: '2', icon: controlPanel_icon, text: 'Панель управления', link: 'controlPanel' },
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
+
+        { id: '8', icon: strategy, text: 'Стратегия', link: 'strategy', isActive: false },
+        { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
+        { id: '10', icon: schemaCompany, text: 'Схема компании', link: 'schemaCompany', isActive: false },
     ];
 
     const handlerClickHelper = (link) => {
@@ -82,6 +91,7 @@ export default function RightSider({ config: initialConfig }) {
                             upperText={item.text}
                             icon={item.icon}
                             linkSegment={item.link}
+                            isActive={item?.isActive}
                             clickFunc={() => handlerClickHelper(item.link)}
                             setSelectedItemData={setSelectedItemHelper}
                         />
