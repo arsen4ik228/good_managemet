@@ -16,7 +16,6 @@
 .listItem {
     padding: 20px 32px;
     cursor: pointer;
-    background-color: #cfdee5;
     transition: all 0.2s;
     border-radius: 4px;
     margin-left: 3px;
@@ -25,13 +24,13 @@
 }
 
 .listItem:hover {
-    box-shadow: 0px 0px 5px 2px #005475;
+    box-shadow: 0px 0px 5px 0px #005475;
 }
 
 .selectedItem {
     transition: all 0.2s;
     background-color: #E1F5FE;
-    box-shadow: 0px 0px 5px 2px #005475;
+    box-shadow: 0px 0px 5px 0px #005475;
 }
 
 .itemContent {

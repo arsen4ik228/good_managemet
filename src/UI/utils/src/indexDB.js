@@ -178,37 +178,39 @@ const doesStoreExist = (db, storeName) => db.objectStoreNames.contains(storeName
 // Инициализация базы
 export const initDB = (orgName) => {
   return new Promise((resolve, reject) => {
-    if (dbInstance) {
-      resolve(dbInstance);
-      return;
-    }
+    // Открываем базу, чтобы узнать текущую версию
+    const tempRequest = indexedDB.open(dbName);
 
-    // Открываем базу без указания версии, чтобы не было конфликта
-    const request = indexedDB.open(dbName);
-
-    request.onupgradeneeded = (event) => {
+    tempRequest.onsuccess = (event) => {
       const db = event.target.result;
-      if (!doesStoreExist(db, orgName)) {
-        db.createObjectStore(orgName, { keyPath: "id" });
-        console.log(`Хранилище ${orgName} создано.`);
+
+      if (doesStoreExist(db, orgName)) {
+        dbInstance = db;
+        resolve(db);
+      } else {
+        // Если нужного objectStore нет — закрываем и создаём с новой версией
+        const newVersion = db.version + 1;
+        db.close();
+
+        const upgradeRequest = indexedDB.open(dbName, newVersion);
+        upgradeRequest.onupgradeneeded = (e) => {
+          const upgradedDB = e.target.result;
+          if (!doesStoreExist(upgradedDB, orgName)) {
+            upgradedDB.createObjectStore(orgName, { keyPath: "id" });
+            console.log(`Создано новое хранилище: ${orgName}`);
+          }
+        };
+
+        upgradeRequest.onsuccess = (e) => {
+          dbInstance = e.target.result;
+          resolve(dbInstance);
+        };
+
+        upgradeRequest.onerror = (e) => reject(e.target.error);
       }
     };
 
-    request.onsuccess = (event) => {
-      const db = event.target.result;
-
-      // Закрываем соединение, если версия изменилась в другой вкладке
-      db.onversionchange = () => {
-        console.warn("Версия IndexedDB изменилась в другой вкладке. Соединение закрыто.");
-        db.close();
-        dbInstance = null;
-      };
-
-      dbInstance = db;
-      resolve(db);
-    };
-
-    request.onerror = (event) => reject(event.target.error);
+    tempRequest.onerror = (event) => reject(event.target.error);
   });
 };
 

@@ -98,6 +98,14 @@ function DesktopApp() {
             colorErrorHover: "#d9363e",
             colorWarningHover: "#d48806",
           },
+
+          components: {
+            Menu: {
+              itemHoverBg: "#DDEBF1", // фон при наведении
+              itemActiveBg: "#DDEBF1", // фон при клике (active)
+              itemSelectedBg: "#DDEBF1", // фон у выбранного пункта
+            },
+          },
         }}
       >
         <Routes>
@@ -541,8 +549,6 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
-
-
 
               <Route
                 path="workingPlan"
