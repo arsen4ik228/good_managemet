@@ -4,7 +4,7 @@ import MainContentContainer from '../../Custom/MainContentContainer/MainContentC
 import Graphic from "../../app/Graphic/Graphic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
 import ReportDay from "./components/ReportDay";
-import { useGetSingleStatistic, useRightPanel, usePanelPreset } from "@hooks";
+import { useGetSingleStatistic, useRightPanel, usePanelPreset, useModuleActions } from "@hooks";
 import { calculateInitialDate, countDays, countWeeks, countMonths, countYears } from "./function/functionForStatistic";
 
 import { Button, Space, Tooltip, Flex, Typography } from "antd";
@@ -71,10 +71,7 @@ export default function Statistic() {
 
     const { statisticId } = useParams()
 
-    const buutonsArr = [
-        { text: 'редактировать', click: () => window.open(homeUrl + '#/' + 'editStatisticInformation/' + statisticId, '_blank') },
-        { text: 'ввести данные', click: () => window.open(homeUrl + '#/' + 'editStatisticPointsData/' + statisticId, '_blank') },
-    ]
+    const { buutonsArr } = useModuleActions("statistic", statisticId);
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 

@@ -3,7 +3,7 @@ import classes from "./PanelDragDrop.module.css";
 import { Button, Space, Typography, Popconfirm } from "antd";
 import { SettingOutlined, DeleteOutlined } from "@ant-design/icons";
 import ModalSetting from "../modalSetting/ModalSetting";
-
+import { useModuleActions } from "@hooks";
 const { Text } = Typography;
 
 export default function PanelDragDrop({
@@ -20,6 +20,10 @@ export default function PanelDragDrop({
   onClick,
   isActive,
 }) {
+
+
+  const { isChange_control_panel } = useModuleActions("control_panel");
+
   const [hovered, setHovered] = useState(false);
 
   // отдельные состояния для кнопок
@@ -50,7 +54,7 @@ export default function PanelDragDrop({
   return (
     <>
       <div
-       {...provided.dragHandleProps}
+        {...provided.dragHandleProps}
         className={classes.div}
         style={{
           background: isActive ? "var(--primary)" : "var(--grey)",
@@ -66,7 +70,7 @@ export default function PanelDragDrop({
           {name}
         </Text>
 
-        {showActions && (
+        {showActions && isChange_control_panel && (
           <Space size={4}>
             {/* Кнопка "Настройки" */}
             <Button

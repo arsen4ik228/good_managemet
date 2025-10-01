@@ -13,7 +13,7 @@ import { useGetSinglePost } from '../../../hooks/Post/useGetSinglePost';
 import { baseUrl } from "@helpers/constants.js";
 import { formatPhone } from './function/functionForPost'
 import { usePanelPreset } from '@hooks';
-import { useRightPanel } from '@hooks';
+import { useRightPanel, useModuleActions } from '@hooks';
 import { homeUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
 
@@ -31,9 +31,7 @@ export default function Post() {
     usePanelPreset(PRESETS["POSTS"]);
 
 
-    const buutonsArr = [
-        { text: 'редактировать', click: () => window.open(homeUrl + '#/' + 'editPost/' + postId, '_blank') },
-    ]
+    const { buutonsArr } = useModuleActions("post", postId);
 
     const {
         currentPost,
@@ -129,8 +127,8 @@ export default function Post() {
                                 <Text type="secondary">Название подразделения</Text>
                                 <Text strong>
                                     {parentPost?.id
-                                    ? parentPost?.divisionName
-                                    : currentPost?.divisionName}
+                                        ? parentPost?.divisionName
+                                        : currentPost?.divisionName}
                                 </Text>
                             </Flex>
 

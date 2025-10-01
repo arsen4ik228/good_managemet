@@ -26,8 +26,9 @@ const apiSlice = createApi({
     "Target",
     "User",
     "Message",
+    "Permissions",
   ],
   endpoints: (builder) => ({}),
 });
-// keepUnusedDataFor: 0
+
 export default apiSlice;

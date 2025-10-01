@@ -5,7 +5,7 @@ import classes from "./Policy.module.css"
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
 import { homeUrl } from '@helpers/constants'
-import { usePanelPreset, useRightPanel, useGetSinglePolicy } from '@hooks';
+import { usePanelPreset, useRightPanel, useGetSinglePolicy, useModuleActions } from '@hooks';
 
 
 export default function Policy() {
@@ -15,9 +15,7 @@ export default function Policy() {
 
   usePanelPreset(PRESETS["POLICIES"]);
 
-  const buutonsArr = [
-    { text: 'редактировать', click: () => window.open(homeUrl + '#/' + 'editPolicy/' + policyId, '_blank') },
-  ]
+ const { buutonsArr } = useModuleActions("policy", policyId);
 
   const {
     refetch,

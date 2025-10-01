@@ -3,7 +3,7 @@ import CustomList from '../../CustomList/CustomList'
 import FilterElement from '../../CustomList/FilterElement'
 import PoliciesMenu from './PoliciesMenu'
 import ListAddButtom from '../../ListAddButton/ListAddButtom';
-import { useGetAllPolicy } from '@hooks'
+import { useGetAllPolicy, useModuleActions } from '@hooks'
 
 import { notEmpty } from '@helpers/helpers'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -51,6 +51,8 @@ export default function PoliciesList() {
         disposalsCompleted,
 
     } = useGetAllPolicy();
+
+      const { isCreate } = useModuleActions("policy");
 
     const arrayActive = instructionsActive
         .concat(directivesActive)
@@ -131,7 +133,7 @@ export default function PoliciesList() {
                 }
 
                 {
-                    !openFilter &&
+                    !openFilter && isCreate &&
                     <ListAddButtom textButton={'Создать политику'} clickFunc={() => setOpenCreatePolicy(true)} />
                 }
 

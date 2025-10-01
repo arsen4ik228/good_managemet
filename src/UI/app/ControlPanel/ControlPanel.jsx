@@ -5,7 +5,7 @@ import Header from "@Custom/Header/Header";
 
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { useControlPanel } from "@hooks";
+import { useControlPanel, useModuleActions } from "@hooks";
 import { ModalSelectRadio } from "@Custom/modalSelectRadio/ModalSelectRadio";
 import { useModalSelectRadio } from "@hooks";
 import HandlerMutation from "@Custom/HandlerMutation.jsx";
@@ -65,6 +65,8 @@ export default function ControlPanel() {
   } = useAllStatistics({
     statisticData: false,
   });
+
+  const { isCreate } = useModuleActions("control_panel");
 
   const {
     reduxSelectedOrganizationId,
@@ -343,9 +345,13 @@ export default function ControlPanel() {
                 ref={provided.innerRef}
                 className={classes.droppableContainer}
               >
-                <Button color="default" variant="outlined" onClick={openCreate}>
-                  Добавить <PlusCircleOutlined />
-                </Button>
+                {
+                  isCreate &&
+                  <Button color="default" variant="outlined" onClick={openCreate}>
+                    Добавить <PlusCircleOutlined />
+                  </Button>
+                }
+
                 {arrayAllControlPanel?.map((item, index) => (
                   <Draggable
                     key={item?.id}

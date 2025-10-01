@@ -3,9 +3,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import classes from "./Svodka.module.css";
 import Header from "@Custom/Header/Header";
 
-import { useAllStatistics, useGetStatisticsForPeriod } from "@hooks";
+import { useAllStatistics, useGetStatisticsForPeriod, useModuleActions } from "@hooks";
 import { useUpdateSvodka } from "@hooks";
-import { Table, Flex, Button, InputNumber, message, Spin } from "antd";
+import { Table, Flex, Button, InputNumber, message, Spin, ConfigProvider } from "antd";
 import _ from "lodash";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -104,6 +104,9 @@ export default function Svodka() {
   const [editingCell, setEditingCell] = useState(null);
   const [saving, setSaving] = useState(false);
 
+
+  const { isChange_svodka } = useModuleActions("statistic");
+
   const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
     useAllStatistics({ statisticData: true, isActive: true });
 
@@ -166,7 +169,7 @@ export default function Svodka() {
           ],
         }).unwrap();
       }
-      
+
       const createdId = response?.createdPointId;
 
       setAllStatistics((prev) =>
@@ -436,14 +439,16 @@ export default function Svodka() {
         </Flex>
       </Header>
       <div className={classes.main}>
-        <Table
-          columns={columns}
-          dataSource={tableData}
-          loading={isLoadingGetStatistics || isFetchingGetStatistics}
-          pagination={false}
-          scroll={{ x: "max-content", y: "calc(100vh - 170px)" }}
-          style={{ width: "100%", height: "100%" }}
-        />
+        <ConfigProvider componentDisabled={!isChange_svodka}>
+          <Table
+            columns={columns}
+            dataSource={tableData}
+            loading={isLoadingGetStatistics || isFetchingGetStatistics}
+            pagination={false}
+            scroll={{ x: "max-content", y: "calc(100vh - 170px)" }}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </ConfigProvider>
       </div>
     </div>
   );
