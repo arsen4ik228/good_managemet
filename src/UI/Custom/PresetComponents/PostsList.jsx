@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import CustomList from '../CustomList/CustomList'
 import ListElem from '../CustomList/ListElem'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
-import { useAllPosts } from '@hooks'
+import { useAllPosts, useModuleActions } from '@hooks'
 import icon_post from '@image/icon _ post.svg'
 import { notEmpty } from '@helpers/helpers'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -23,6 +23,8 @@ export default function PostsList() {
         isFetchingGetPosts,
         isErrorGetPosts,
     } = useAllPosts();
+
+    const { isCreate } = useModuleActions("post");
 
     const filtredPosts = useMemo(() => {
         if (!seacrhPostsSectionsValue?.trim()) {
@@ -75,7 +77,11 @@ export default function PostsList() {
                 searchValue={seacrhPostsSectionsValue}
                 searchFunc={setSeacrhPostssSectionsValue}
             >
-                <ListAddButtom textButton={'Создать пост'} clickFunc={() => setOpenCreatePost(true)} />
+
+                {
+                    isCreate &&
+                    <ListAddButtom textButton={'Создать пост'} clickFunc={() => setOpenCreatePost(true)} />
+                }
 
                 {filtredPosts.map((item, index) => (
                     <React.Fragment key={index}>

@@ -17,6 +17,7 @@ import { homeUrl } from '@helpers/constants'
 import schemaCompany from '@image/schemaCompany.svg';
 import project from '@image/project.svg';
 import strategy from '@image/strategy.svg';
+import workingPlan from '@image/strategy.svg';
 
 export default function RightSider({ config: initialConfig }) {
     const { convertId, contactId } = useParams()
@@ -45,6 +46,7 @@ export default function RightSider({ config: initialConfig }) {
         { id: '8', icon: strategy, text: 'Стратегия', link: 'strategy', isActive: false },
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
         { id: '10', icon: schemaCompany, text: 'Схема компании', link: 'schemaCompany', isActive: false },
+        { id: '10', icon: workingPlan, text: 'Рабочий план', link: 'WorkingPlan', isActive: false },
     ];
 
     const handlerClickHelper = (link) => {

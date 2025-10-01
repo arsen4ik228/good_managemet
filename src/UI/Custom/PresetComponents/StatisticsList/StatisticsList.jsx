@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import CustomList from '../../CustomList/CustomList';
-import { useAllStatistics } from '@hooks'
+import { useAllStatistics, useModuleActions } from '@hooks'
 import ListElem from '../../CustomList/ListElem';
 import statGraph from '@image/statGraph.svg'
 import { notEmpty } from '@helpers/helpers'
@@ -43,6 +43,8 @@ export default function StatisticsList() {
         statisticData: false,
         isActive: isActive,
     });
+
+    const { isCreate } = useModuleActions("statistic");
 
     const filtredStats = useMemo(() => {
         if (!seacrhStatisticsSectionsValue?.trim()) {
@@ -111,7 +113,7 @@ export default function StatisticsList() {
 
 
                 {
-                    !openFilter && <ListAddButtom textButton={'Создать статсиктику'} clickFunc={() => setOpenCreateStatistic(true)} />
+                    !openFilter && isCreate && <ListAddButtom textButton={'Создать статсиктику'} clickFunc={() => setOpenCreateStatistic(true)} />
                 }
 
 

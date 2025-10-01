@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import { ViewingGoal } from './ViewingGoal'
-import { useGoalHook } from "@hooks";
+import { useGoalHook, useModuleActions } from "@hooks";
 import { homeUrl } from '@helpers/constants'
 
 export default function Goal() {
@@ -11,29 +11,26 @@ export default function Goal() {
     refetch
   } = useGoalHook();
 
-  const buutonsArr = [
-    { text: 'Редактировать', click: () => window.open(homeUrl + `#/editGoal`, '_blank') }
-    // { text: 'Поделиться', click: () => navigate('1') },
-    // { text: 'Распечатать', click: () => navigate('1') },
-  ]
+
+  const { buutonsArr } = useModuleActions("goal");
 
 
-useEffect(() => {
-  const channel = new BroadcastChannel("goal_channel"); 
+  useEffect(() => {
+    const channel = new BroadcastChannel("goal_channel");
 
-  const handler = (event) => {
-    if (event.data === "updated") {
-      refetch(); 
-    }
-  };
+    const handler = (event) => {
+      if (event.data === "updated") {
+        refetch();
+      }
+    };
 
-  channel.addEventListener("message", handler);
+    channel.addEventListener("message", handler);
 
-  return () => {
-    channel.removeEventListener("message", handler);
-    channel.close(); 
-  };
-}, [refetch]);
+    return () => {
+      channel.removeEventListener("message", handler);
+      channel.close();
+    };
+  }, [refetch]);
 
 
   return (
