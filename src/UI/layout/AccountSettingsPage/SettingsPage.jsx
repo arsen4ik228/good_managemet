@@ -25,6 +25,7 @@ import { usePostImageMutation } from "@services";
 import { ConfigProvider, Tour } from "antd";
 import ruRU from "antd/locale/ru_RU";
 import MainContentContainer from "../../Custom/MainContentContainer/MainContentContainer";
+import ButtonExit from "./ButtonExit";
 
 function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   return centerCrop(
@@ -467,6 +468,7 @@ export default function SettingsPage() {
         </div>
       </MainContentContainer>
 
+      <ButtonExit />
     </div>
   );
 }
