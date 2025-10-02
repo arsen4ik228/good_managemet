@@ -3,16 +3,16 @@ import {selectedOrganizationName} from './constants'
 
 const props = {
     'posts': {
-        name: selectedOrganizationName,
+        // name: selectedOrganizationName,
     },
     'statistics': {
-        name: selectedOrganizationName,
+        // name: selectedOrganizationName,
     },
     'goal': {
-        name: selectedOrganizationName,
+        // name: selectedOrganizationName,
     },
     'policies': {
-        name: selectedOrganizationName,
+        // name: selectedOrganizationName,
     },
     'helper': {
         name: 'Гудменеджер',

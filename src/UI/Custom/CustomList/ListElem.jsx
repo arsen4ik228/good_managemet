@@ -15,7 +15,7 @@ export default function ListElem({ icon, upperText, bottomText, bage, linkSegmen
                 upperText,
                 bottomText,
                 bage,
-                linkSegment,    
+                linkSegment,
                 clickFunc
             })
         }
@@ -39,17 +39,21 @@ export default function ListElem({ icon, upperText, bottomText, bage, linkSegmen
                     <div
                         className={classes.text}
                     >
-                        <div className={ ` ${classes.upperTxt}   ${ isActive === false && classes.notActive}`}>{upperText}</div>
+                        <div className={` ${classes.upperTxt}   ${isActive === false && classes.notActive}`}>{upperText}</div>
                         {bottomText && (
                             <div className={classes.bottomTxt}>{bottomText}</div>
                         )}
                     </div>
                 </Tooltip>
-                {(Number(bage) > 0) && (
-                    <div className={classes.roundSection}>
-                        <div>{bage}</div>
+                {/* {(Number(bage) > 0) && ( */}
+                    <div
+                        className={classes.roundSection}
+                    >
+                        <div
+                        style={{ visibility: (Number(bage) > 0) ? 'visible' : 'hidden' }}  //
+                        >{bage}</div>
                     </div>
-                )}
+                {/* )} */}
             </div>
         </>
     )
