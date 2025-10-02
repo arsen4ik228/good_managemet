@@ -1,5 +1,5 @@
 import React from 'react'
-import strategy from './strategy.svg'
+import project from './project.svg'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 export function Strategy() {
 
@@ -29,7 +29,7 @@ export function Strategy() {
                     justifyContent: "center",
                     alignItems: "center",
                 }}>
-                    <img src={strategy} alt="strategy" />
+                    <img src={project} alt="strategy" />
 
                     <div
                         style={{

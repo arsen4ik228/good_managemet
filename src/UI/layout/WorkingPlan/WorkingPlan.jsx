@@ -1,5 +1,5 @@
 import React from 'react'
-import workingPlan from './workingPlan.svg'
+import project from './project.svg'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 
 export function WorkingPlan() {
@@ -30,7 +30,7 @@ export function WorkingPlan() {
                     justifyContent: "center",
                     alignItems: "center",
                 }}>
-                    <img src={workingPlan} alt="workingPlan" />
+                    <img src={project} alt="workingPlan" />
 
                     <div
                         style={{
