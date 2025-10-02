@@ -19,6 +19,7 @@ import { ModalCreateOrganization } from '../../Organization/ModalCreateOrganizat
 
 import { baseUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
+import { setSelectedOrganizationName } from '../../../../store/slices/local.storage.slice'
 
 
 export default function LeftSIder() {
@@ -65,6 +66,7 @@ export default function LeftSIder() {
         localStorage.setItem("reportDay", reportDay);
         dispatch(setSelectedOrganizationId(id));
         dispatch(setSelectedOrganizationReportDay(reportDay));
+        dispatch(setSelectedOrganizationName(name))
         navigate(`/${id}`)
         setExpanendOrg(false)
     };
