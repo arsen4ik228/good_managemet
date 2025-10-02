@@ -124,20 +124,21 @@ export default function LeftSIder() {
 
     useEffect(() => {
         if (!notEmpty(socketResponse?.messageCountEvent)) return
+        refetchAllChats()
 
-        const response = socketResponse.messageCountEvent
-        const recepientId = getPostIdRecipientSocketMessage(response.host, response.lastPostInConvert);
-        const newMap = new Map(socketMessagesCount);
+        // const response = socketResponse.messageCountEvent
+        // const recepientId = getPostIdRecipientSocketMessage(response.host, response.lastPostInConvert);
+        // const newMap = new Map(socketMessagesCount);
 
-        if (newMap.has(recepientId.toString())) {
-            newMap.set(recepientId.toString(), newMap.get(recepientId.toString()) + 1);
-        }
-        else {
-            newMap.set(recepientId.toString(), 1);
-        }
+        // if (newMap.has(recepientId.toString())) {
+        //     newMap.set(recepientId.toString(), newMap.get(recepientId.toString()) + 1);
+        // }
+        // else {
+        //     newMap.set(recepientId.toString(), 1);
+        // }
 
-        setCopyChats(getChatsWithTimeOfSocketMessage(copyChats, recepientId))
-        setSocketMessagesCount(newMap);
+        // setCopyChats(getChatsWithTimeOfSocketMessage(copyChats, recepientId))
+        // setSocketMessagesCount(newMap);
     }, [socketResponse?.messageCountEvent])
 
     useEffect(() => {
@@ -245,7 +246,7 @@ export default function LeftSIder() {
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
-                                    bage={calculateUnseenMessages(item, socketMessagesCount)}
+                                    bage={item.unseenMessagesCount}//bage={calculateUnseenMessages(item, socketMessagesCount)}
                                 />
                             </React.Fragment>
                         ))}
