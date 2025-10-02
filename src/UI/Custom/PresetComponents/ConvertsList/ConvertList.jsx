@@ -54,7 +54,7 @@ export default function ConvertList() {
 
         const searchLower = seacrhChatsSectionsValue?.toLowerCase();
         return unseenConverts?.concat(seenConverts)?.filter(item =>
-            item?.name.toLowerCase().includes(searchLower)
+            item?.convertTheme.toLowerCase().includes(searchLower)
         );
     }, [seacrhChatsSectionsValue, seenConverts, unseenConverts]);
 
@@ -100,8 +100,7 @@ export default function ConvertList() {
 
     }, [socketResponse?.convertCreationEvent])
 
-    console.log(contactInfo)
-    console.log(socketResponse)
+    console.log(filtredChats)
     return (
         <>
             <CustomList
