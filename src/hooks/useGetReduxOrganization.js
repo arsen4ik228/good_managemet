@@ -7,8 +7,12 @@ export default function useGetReduxOrganization() {
   const reduxSelectedOrganizationReportDay = useSelector(
     (state) => state.localStorage.reduxSelectedOrganizationReportDay
   );
+  const reduxSelectedOrganizationName = useSelector(
+    (state) => state.localStorage.reduxSelectedOrganizationName
+  )
   return {
     reduxSelectedOrganizationId,
-    reduxSelectedOrganizationReportDay
+    reduxSelectedOrganizationReportDay,
+    reduxSelectedOrganizationName
   }
 }

@@ -18,8 +18,9 @@ import schemaCompany from '@image/schemaCompany.svg';
 import project from '@image/project.svg';
 import strategy from '@image/strategy.svg';
 import workingPlan from '@image/strategy.svg';
+import { useGetReduxOrganization } from '../../../../hooks';
 
-export default function RightSider({ config: initialConfig }) {
+export default function RightSider({ config : initialConfig }) {    //
     const { convertId, contactId } = useParams()
     const location = useLocation()
     const navigate = useNavigate();
@@ -27,13 +28,14 @@ export default function RightSider({ config: initialConfig }) {
     const [selectedItemHelper, setSelectedItemHelper] = useState()
     const [expanendHelper, setExpanendHelper] = useState(true)
 
+    const { reduxSelectedOrganizationName } = useGetReduxOrganization()
+
     // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
     const config = useMemo(() => initialConfig, [
         initialConfig.componentType,
         initialConfig.props?.avatar,
         initialConfig.props?.name,
         initialConfig.props?.postsNames
-        // Добавьте другие зависимости, которые влияют на config
     ]);
 
     const HELPER_SECTIONS = [
@@ -75,14 +77,13 @@ export default function RightSider({ config: initialConfig }) {
         }
     }, [contactId, convertId])
 
-    console.log(location.pathname)
     return (
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>
                 <div className={classes.avatarSection}>
                     <img src={config.props?.avatar ? config.props.avatar : avatar} alt="avatar" />
                 </div>
-                <div className={classes.nameSection}>{config.props?.name}</div>
+                <div className={classes.nameSection}>{config.props?.name ? config.props?.name : reduxSelectedOrganizationName}</div>
                 <div className={classes.postSection}>{config.props?.postsNames}</div>
             </div>
 
