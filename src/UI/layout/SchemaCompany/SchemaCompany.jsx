@@ -1,5 +1,5 @@
 import React from 'react'
-import schemaCompany from './schemaCompany.svg'
+import project from './project.svg'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 
 export function SchemaCompany() {
@@ -30,7 +30,7 @@ export function SchemaCompany() {
                     justifyContent: "center",
                     alignItems: "center",
                 }}>
-                    <img src={schemaCompany} alt="strategy" />
+                    <img src={project} alt="project" />
 
                     <div
                         style={{

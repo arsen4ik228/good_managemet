@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Modal, Form, Input, Select, Avatar, message, Space } from "antd";
+import { Modal, Form, Input, Select, message } from "antd";
 import { useCreatePost, useGetDataForCreatePost } from "@hooks";
-
-import { baseUrl } from "@helpers/constants.js";
 
 const { TextArea } = Input;
 
@@ -14,7 +12,6 @@ export default function ModalCreatePost({ open, setOpen }) {
     const { createPost, reduxSelectedOrganizationId } = useCreatePost();
     const {
         maxDivisionNumber,
-        workers,
         roles
     } = useGetDataForCreatePost();
 
@@ -68,37 +65,6 @@ export default function ModalCreatePost({ open, setOpen }) {
                 >
                     <Input placeholder="Введите название" />
                 </Form.Item>
-
-                <Form.Item
-                    name="responsibleUserId"
-                    label="Сотрудник"
-                    rules={[{ required: true, message: "Выберите сотрудника" }]}
-                >
-                    <Select
-                        showSearch
-                        placeholder="Выберите сотрудника"
-                        optionFilterProp="searchValue"
-                        options={workers.map((w) => ({
-                            label: (
-                                <Space align="center" size="small">
-                                    <Avatar
-                                        src={w?.avatar_url ? `${baseUrl}${w.avatar_url}` : undefined}
-                                        size={24}
-                                    />
-                                    <span>{w?.lastName} {w?.firstName}</span>
-                                </Space>
-                            ),
-                            value: w.id,
-                            searchValue: `${w?.lastName} ${w?.firstName}`, // 👈 поле для поиска
-                        }))}
-                        filterOption={(input, option) =>
-                            option?.searchValue?.toLowerCase().includes(input.toLowerCase())
-                        }
-                    />
-
-                </Form.Item>
-
-
 
                 <Form.Item
                     name="roleId"

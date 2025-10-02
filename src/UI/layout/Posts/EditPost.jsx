@@ -89,7 +89,7 @@ export default function EditPost() {
         try {
             const { statisticsIncludedPost, ...rest } = await form.validateFields();
 
-           // 👇 если есть parentId — не отправляем divisionName на сервер
+            // 👇 если есть parentId — не отправляем divisionName на сервер
             if (rest.parentId) {
                 delete rest.divisionName;
             }
@@ -137,9 +137,6 @@ export default function EditPost() {
             parentId: parentPost.id ?? null,
             postName: currentPost.postName ?? null,
 
-            // divisionName: parentPost.id
-            //     ? parentPost.divisionName
-            //     : currentPost.divisionName ?? null,
             divisionName: currentPost.divisionName ?? null,
 
             roleId: currentPost.role.id ?? null,
@@ -179,7 +176,6 @@ export default function EditPost() {
         }
     };
 
-
     useEffect(() => {
         if (parentId) {
             const parent = posts?.find(p => p.id === parentId);
@@ -195,8 +191,6 @@ export default function EditPost() {
             });
         }
     }, [parentId, posts, form, currentPost]);
-
-
 
     return (
         <>
@@ -320,11 +314,16 @@ export default function EditPost() {
                                                 </Title>
 
                                                 {/* 👇 Form.Item всегда в DOM, но скрыт, если dropdownOpen=false */}
-                                                <Form.Item name="responsibleUserId" style={{ display: dropdownOpen ? "block" : "none" }}>
+                                                <Form.Item
+                                                    name="responsibleUserId"
+                                                    normalize={(value) => value ?? null}
+                                                    style={{ display: dropdownOpen ? "block" : "none" }}
+                                                >
                                                     <Select
                                                         open={dropdownOpen}
                                                         suffixIcon={null}
                                                         style={{ width: 300 }}
+                                                        allowClear
                                                         bordered={false}
                                                         onDropdownVisibleChange={setDropdownOpen}
                                                         getPopupContainer={(trigger) => trigger.parentElement || document.body}

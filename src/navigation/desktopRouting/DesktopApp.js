@@ -27,6 +27,7 @@ import { Strategy } from "../../UI/layout/Strategy/Strategy";
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
 import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
+import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -488,6 +489,7 @@ function DesktopApp() {
             {/* helper */}
             <Route path="helper">
               {/* Основной маршрут helper */}
+
               <Route
                 index
                 element={
@@ -504,6 +506,20 @@ function DesktopApp() {
               />
 
               {/* Вложенный маршрут helper/goal */}
+              <Route
+                path=":pageId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <FuturePages />
+                  </React.Suspense>
+                }
+              />
 
               <Route
                 path="strategy"

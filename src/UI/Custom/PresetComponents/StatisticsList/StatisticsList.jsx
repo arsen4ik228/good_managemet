@@ -113,7 +113,7 @@ export default function StatisticsList() {
 
 
                 {
-                    !openFilter && isCreate && <ListAddButtom textButton={'Создать статсиктику'} clickFunc={() => setOpenCreateStatistic(true)} />
+                    !openFilter && isCreate && <ListAddButtom textButton={'Создать статистику'} clickFunc={() => setOpenCreateStatistic(true)} />
                 }
 
 

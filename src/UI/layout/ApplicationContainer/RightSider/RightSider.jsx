@@ -44,10 +44,17 @@ export default function RightSider({ config: initialConfig }) {
         { id: '2', icon: controlPanel_icon, text: 'Панель управления', link: 'controlPanel' },
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
 
-        { id: '8', icon: strategy, text: 'Стратегия', link: 'strategy', isActive: false },
+        { id: '8', icon: project, text: 'Стратегия', link: 'strategy', isActive: false },
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
-        { id: '10', icon: schemaCompany, text: 'Схема компании', link: 'schemaCompany', isActive: false },
-        { id: '10', icon: workingPlan, text: 'Рабочий план', link: 'WorkingPlan', isActive: false },
+        { id: '10', icon: project, text: 'Схема компании', link: 'schemaCompany', isActive: false },
+        { id: '11', icon: project, text: 'Рабочий план', link: 'WorkingPlan', isActive: false },
+
+        { id: '12', icon: project, text: 'Академия', link: 'academy', isActive: false },
+        { id: '13', icon: project, text: 'Корпоративное обучение', link: 'education', isActive: false },
+        { id: '14', icon: project, text: 'CRM', link: 'CRM', isActive: false },
+        { id: '15', icon: project, text: 'Банк собственника', link: 'bank', isActive: false },
+        { id: '16', icon: project, text: 'Информационный канал', link: 'channel', isActive: false },
+        { id: '17', icon: project, text: 'Финансовые системы', link: 'finance', isActive: false },
     ];
 
     const handlerClickHelper = (link) => {
