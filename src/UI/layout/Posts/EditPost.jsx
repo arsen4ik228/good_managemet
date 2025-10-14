@@ -328,43 +328,6 @@ export default function EditPost() {
                                                     normalize={(value) => value ?? null}
                                                     style={{ display: dropdownOpen ? "block" : "none" }}
                                                 >
-                                                    {/* <Select
-                                                        open={dropdownOpen}
-                                                        suffixIcon={null}
-                                                        style={{ width: 300 }}
-                                                        allowClear
-                                                        bordered={false}
-                                                        onDropdownVisibleChange={setDropdownOpen}
-                                                        getPopupContainer={(trigger) => trigger.parentElement || document.body}
-                                                        onSelect={() => setDropdownOpen(false)} // закрываем после выбора
-                                                    >
-                                                        {workers?.map((worker) => (
-                                                            <Select.Option key={worker.id} value={worker.id}>
-                                                                <Flex align="center" gap={8}>
-                                                                    <Avatar
-                                                                        size={32}
-                                                                        src={
-                                                                            worker.avatar_url
-                                                                                ? `${baseUrl}${worker.avatar_url}`
-                                                                                : default_avatar
-                                                                        }
-                                                                    />
-                                                                    <span
-                                                                        style={{
-                                                                            display: "inline-block",
-                                                                            maxWidth: 250,
-                                                                            whiteSpace: "nowrap",
-                                                                            overflow: "hidden",
-                                                                            textOverflow: "ellipsis",
-                                                                        }}
-                                                                    >
-                                                                        {worker.lastName} {worker.firstName}
-                                                                    </span>
-                                                                </Flex>
-                                                            </Select.Option>
-                                                        ))}
-                                                    </Select> */}
-
                                                     <Select
                                                         open={dropdownOpen}
                                                         suffixIcon={null}
@@ -376,11 +339,11 @@ export default function EditPost() {
                                                         getPopupContainer={(trigger) => trigger.parentElement || document.body}
                                                         onSelect={() => {
                                                             setDropdownOpen(false);
-                                                            setSearch(""); // очищаем поиск после выбора
+                                                            setSearch(""); 
                                                         }}
                                                         dropdownRender={(menu) => (
                                                             <>
-                                                                {/* 👇 Строка поиска поверх списка */}
+                                                           
                                                                 <div style={{ padding: 8 }}>
                                                                     <Input
                                                                         placeholder="Поиск по имени или фамилии"
