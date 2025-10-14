@@ -192,6 +192,15 @@ export default function EditPost() {
         }
     }, [parentId, posts, form, currentPost]);
 
+
+    const [search, setSearch] = useState("");
+
+    const filteredWorkers = workers?.filter((w) =>
+        `${w.lastName} ${w.firstName}`
+            .toLowerCase()
+            .includes(search.toLowerCase())
+    );
+
     return (
         <>
             {
@@ -319,7 +328,7 @@ export default function EditPost() {
                                                     normalize={(value) => value ?? null}
                                                     style={{ display: dropdownOpen ? "block" : "none" }}
                                                 >
-                                                    <Select
+                                                    {/* <Select
                                                         open={dropdownOpen}
                                                         suffixIcon={null}
                                                         style={{ width: 300 }}
@@ -354,7 +363,65 @@ export default function EditPost() {
                                                                 </Flex>
                                                             </Select.Option>
                                                         ))}
+                                                    </Select> */}
+
+                                                    <Select
+                                                        open={dropdownOpen}
+                                                        suffixIcon={null}
+                                                        style={{ width: 300 }}
+                                                        allowClear
+                                                        bordered={false}
+                                                        placeholder="Выберите сотрудника"
+                                                        onDropdownVisibleChange={setDropdownOpen}
+                                                        getPopupContainer={(trigger) => trigger.parentElement || document.body}
+                                                        onSelect={() => {
+                                                            setDropdownOpen(false);
+                                                            setSearch(""); // очищаем поиск после выбора
+                                                        }}
+                                                        dropdownRender={(menu) => (
+                                                            <>
+                                                                {/* 👇 Строка поиска поверх списка */}
+                                                                <div style={{ padding: 8 }}>
+                                                                    <Input
+                                                                        placeholder="Поиск по имени или фамилии"
+                                                                        value={search}
+                                                                        onChange={(e) => setSearch(e.target.value)}
+                                                                        allowClear
+                                                                    />
+                                                                </div>
+                                                                <div style={{ maxHeight: 300, overflowY: "auto" }}>
+                                                                    {menu}
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    >
+                                                        {filteredWorkers?.map((worker) => (
+                                                            <Select.Option key={worker.id} value={worker.id}>
+                                                                <Flex align="center" gap={8}>
+                                                                    <Avatar
+                                                                        size={32}
+                                                                        src={
+                                                                            worker.avatar_url
+                                                                                ? `${baseUrl}${worker.avatar_url}`
+                                                                                : default_avatar
+                                                                        }
+                                                                    />
+                                                                    <span
+                                                                        style={{
+                                                                            display: "inline-block",
+                                                                            maxWidth: 250,
+                                                                            whiteSpace: "nowrap",
+                                                                            overflow: "hidden",
+                                                                            textOverflow: "ellipsis",
+                                                                        }}
+                                                                    >
+                                                                        {worker.lastName} {worker.firstName}
+                                                                    </span>
+                                                                </Flex>
+                                                            </Select.Option>
+                                                        ))}
                                                     </Select>
+
                                                 </Form.Item>
 
                                                 <Divider />
