@@ -443,6 +443,7 @@ export default function Svodka() {
           <Table
             columns={columns}
             dataSource={tableData}
+            bordered
             loading={isLoadingGetStatistics || isFetchingGetStatistics}
             pagination={false}
             scroll={{ x: "max-content", y: "calc(100vh - 170px)" }}
