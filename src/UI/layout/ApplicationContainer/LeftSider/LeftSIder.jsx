@@ -185,7 +185,7 @@ export default function LeftSIder() {
 
                     <CustomList
                         title={'организации'}
-                        addButtonText={'Новая организация'}
+                        // addButtonText={'Новая организация'}
                         addButtonClick={ () => setOpenModalCreateOrganization(true)}
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
