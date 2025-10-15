@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "./AuthPage.module.css"; // Ваши стили
-import { QRCode } from "antd";
+import { Button, QRCode } from "antd";
 import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { isMobile } from "react-device-detect";
@@ -28,6 +28,7 @@ export default function AuthPage() {
     userId: "",
   });
 
+  const [clearCacheVisile, setClearCacheVisible] = useState(false)
   const [tokenForTG, setTokenForTG] = useState("");
   const [socketId, setSocketId] = useState("");
   const [qrUrl, setQrUrl] = useState("");
@@ -184,7 +185,19 @@ export default function AuthPage() {
       );
     }
   }, [socketId, tokenForTG]);
-  console.warn(tokenForTG, ' ----', socket)
+  console.warn(tokenForTG, ' ----', socket, qrUrl)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (tokenForTG.length === 0) {
+        console.log('tokenForTG не существует, выполняем действие...');
+        setClearCacheVisible(true)
+      }
+    }, 10000);
+
+    // Очистка таймера при размонтировании компонента
+    return () => clearTimeout(timer);
+  }, [tokenForTG]); // Зависимость от tokenForTg
 
 
   return isMobile ? (
@@ -253,15 +266,34 @@ export default function AuthPage() {
         ) : (
           <QRCode errorLevel="H" icon={tg} status="loading" />
         )}
+        {clearCacheVisile && (
+          <div className={classes.clearCacheContainer}>
+            <div>Возникла ошибка. Сбросьте кеш приложения!</div>
+            <Button
+              danger
+              onClick={() => {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('fingerprint');
+                localStorage.removeItem('userId');
+
+                window.location.reload();
+              }}
+            >
+              Сбросить кеш
+            </Button>
+          </div>
+        )}
         <div className={classes.text}>Для входа отсканируйте QR-код</div>
-        <a
-          href={qrUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={classes.link}
-        >
-          Или перейдите по ссылке
-        </a>
+        {qrUrl.length > 0 && (
+          <a
+            href={qrUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.link}
+          >
+            Или перейдите по ссылке
+          </a>
+        )}
       </div>
 
     </div>
