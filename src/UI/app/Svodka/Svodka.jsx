@@ -74,7 +74,8 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
     );
 
     if (weekTotalPoint) {
-      week.value = parseFloat(weekTotalPoint.value) || null;
+      const parsed = parseFloat(weekTotalPoint.value);
+      week.value = isNaN(parsed) ? null : parsed; // ✅ сохраняет 0
       week._id = weekTotalPoint.id;
       week.correlationType = "Неделя";
     } else {
@@ -93,8 +94,11 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
 };
 
 const formatNumber = (num) => {
-  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (num === 0 || num === "0") return "0";
+  if (num === null || num === undefined || num === "") return "";
+  return `${num}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
+
 
 // --- Компонент ---
 export default function Svodka() {
@@ -293,7 +297,14 @@ export default function Svodka() {
                 <InputNumber
                   controls={false}
                   autoFocus
-                  value={editingCell.value === "" ? null : editingCell.value}
+                  value={
+                    editingCell.value === "" ||
+                      editingCell.value === null ||
+                      editingCell.value === undefined
+                      ? null
+                      : Number(editingCell.value)
+                  }
+
                   style={{ width: "100%" }}
                   decimalSeparator="."
                   onChange={(newVal) =>
@@ -368,13 +379,8 @@ export default function Svodka() {
             >
               {saving &&
                 editingCell?.rowId === record.id &&
-                editingCell?.colId === index ? (
-                <Spin size="small" />
-              ) : cellValue == null ? (
-                ""
-              ) : (
-                formatNumber(cellValue)
-              )}
+                editingCell?.colId === index ? (<Spin size="small" />) : formatNumber(cellValue)
+              }
             </div>
           );
         },
