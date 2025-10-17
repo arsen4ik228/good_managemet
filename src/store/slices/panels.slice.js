@@ -43,6 +43,12 @@ const initialState = {
         props: {
           ...presetProps("goal")
         }
+    },
+    users: {
+        componentType: 'users',
+        props: {
+          ...presetProps("users")
+        }
     }
   },
 };

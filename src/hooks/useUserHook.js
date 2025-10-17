@@ -1,9 +1,9 @@
-import { useGetUserNewQuery, usePostUserMutation, useGetUserIdQuery, useUpdateUserMutation } from "@services";
+import { useGetUserNewQuery, useGetActiveUsersQuery, useGetFiredUsersQuery,usePostUserMutation, useGetUserIdQuery, useUpdateUserMutation, useGetUsersQuery } from "@services";
 import { useMutationHandler } from "./useMutationHandler";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 import useGetUserId from "./useGetUserId";
 
-export function useUserHook() {
+export function useUserHook({userId = null} = {}) {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
   const { reduxUserId } = useGetUserId()
   console.log(reduxSelectedOrganizationId, reduxUserId)
@@ -22,7 +22,7 @@ export function useUserHook() {
     }
   );
 
-  const { data: userInfo, refetch: refetchUserInfo } = useGetUserIdQuery(reduxUserId);
+  const { data: userInfo, refetch: refetchUserInfo } = useGetUserIdQuery(userId ? userId : reduxUserId);
 
 
   const [
@@ -59,7 +59,53 @@ export function useUserHook() {
     resetUpdateUserMutation
   );
 
+  const {
+    allUsers = [],
+  } = useGetUsersQuery(
+    { organizationId: reduxSelectedOrganizationId },
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        allUsers: data || [],
+        // isLoadingGetUserNew: isLoading,
+        // isErrorGetUserNew: isError,
+      }),
+    }
+  );
+
+  const {
+    activeUsers = [],
+  } = useGetActiveUsersQuery(
+    { organizationId: reduxSelectedOrganizationId },
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        activeUsers: data || [],
+        // isLoadingGetUserNew: isLoading,
+        // isErrorGetUserNew: isError,
+      }),
+    }
+  );
+
+  const {
+    firedUsers = [],
+  } = useGetFiredUsersQuery(
+    { organizationId: reduxSelectedOrganizationId },
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        firedUsers: data || [],
+        // isLoadingGetUserNew: isLoading,
+        // isErrorGetUserNew: isError,
+      }),
+    }
+  );
+  
+
   return {
+    allUsers,
+
+    activeUsers,
+
+    firedUsers,
+
     reduxSelectedOrganizationId,
     postUser,
 
