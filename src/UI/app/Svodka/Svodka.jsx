@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-
 import classes from "./Svodka.module.css";
 import Header from "@Custom/Header/Header";
-
-import { useAllStatistics, useGetStatisticsForPeriod, useModuleActions } from "@hooks";
-import { useUpdateSvodka } from "@hooks";
+import {
+  useAllStatistics,
+  useModuleActions,
+  useUpdateSvodka,
+} from "@hooks";
 import { Table, Flex, Button, InputNumber, message, Spin, ConfigProvider } from "antd";
 import _ from "lodash";
 import dayjs from "dayjs";
@@ -41,11 +42,7 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
   const data = _.cloneDeep(statisticData);
 
   const weeksArray = Array.from({ length: quantity }, (_, i) => {
-    const endDate = dayjs(baseDate)
-      .day(reportDay)
-      .subtract(i, "week")
-      .endOf("day");
-
+    const endDate = dayjs(baseDate).day(reportDay).subtract(i, "week").endOf("day");
     return {
       date: endDate.format("DD.MM.YY"),
       valueDate: endDate.format("YYYY-MM-DD"),
@@ -69,12 +66,11 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
       );
     });
 
-    const weekTotalPoint = weekPoints.find(
-      (p) => p.correlationType === "Неделя"
-    );
+    const weekTotalPoint = weekPoints.find((p) => p.correlationType === "Неделя");
 
     if (weekTotalPoint) {
-      week.value = parseFloat(weekTotalPoint.value) || null;
+      const parsed = parseFloat(weekTotalPoint.value);
+      week.value = isNaN(parsed) ? null : parsed;
       week._id = weekTotalPoint.id;
       week.correlationType = "Неделя";
     } else {
@@ -87,13 +83,13 @@ const generateWeeklyData = (statisticData, quantity, baseDate) => {
     }
   });
 
-  return weeksArray.sort(
-    (a, b) => new Date(b.valueDate) - new Date(a.valueDate)
-  );
+  return weeksArray.sort((a, b) => new Date(b.valueDate) - new Date(a.valueDate));
 };
 
 const formatNumber = (num) => {
-  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (num === 0 || num === "0") return "0";
+  if (num === null || num === undefined || num === "") return "";
+  return `${num}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
 // --- Компонент ---
@@ -102,71 +98,59 @@ export default function Svodka() {
   const [datePoint, setDatePoint] = useState(null);
   const [week, setWeek] = useState("13");
   const [editingCell, setEditingCell] = useState(null);
-  const [saving, setSaving] = useState(false);
 
+  const [saveQueue, setSaveQueue] = useState([]); // очередь сохранений
+  const [savingIds, setSavingIds] = useState([]); // для индикатора спиннера
+  const [isProcessingQueue, setIsProcessingQueue] = useState(false); // флаг обработки очереди
 
   const { isChange_svodka } = useModuleActions("statistic");
-
-  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-    useAllStatistics({ statisticData: true, isActive: true });
-
-
-  // const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } =
-  //   useGetStatisticsForPeriod({ weeks: week, isActive: true });
-
+  const { statistics, isLoadingGetStatistics, isFetchingGetStatistics } = useAllStatistics({ statisticData: true, isActive: true });
   const { updateSvodka } = useUpdateSvodka();
-
   const [messageApi, contextHolder] = message.useMessage();
 
-  // --- Сохранение значения ячейки ---
-  const handleSaveCellValue = async ({
-    rowId,
-    colId,
-    value,
-    originalValue,
-  }) => {
+  // --- Обработка очереди ---
+  useEffect(() => {
+    if (saveQueue.length > 0 && !isProcessingQueue) {
+      processQueue();
+    }
+  }, [saveQueue, isProcessingQueue]);
+
+  const processQueue = async () => {
+    if (!saveQueue.length) return;
+    setIsProcessingQueue(true);
+
+    const [next, ...rest] = saveQueue;
+    setSaveQueue(rest);
+
+    const { rowId, colId, value, originalValue } = next;
     if (value === originalValue) {
-      setEditingCell(null);
+      setIsProcessingQueue(false);
       return;
     }
 
-    const weeklyData = generateWeeklyData(
-      allStatistics.find((item) => item.id === rowId)?.statisticDatas || [],
-      week,
-      datePoint
-    );
-
-    const cell = weeklyData[colId];
-    const valueDate = dayjs(cell.valueDate).toISOString();
+    setSavingIds((prev) => [...prev, `${rowId}_${colId}`]);
 
     try {
-      setSaving(true);
+      const weeklyData = generateWeeklyData(
+        allStatistics.find((item) => item.id === rowId)?.statisticDatas || [],
+        week,
+        datePoint
+      );
+      const cell = weeklyData[colId];
+      const valueDate = dayjs(cell.valueDate).toISOString();
 
       let response;
-
       if (cell._id) {
         response = await updateSvodka({
           statisticId: rowId,
           _id: rowId,
-          statisticDataUpdateDtos: [
-            {
-              _id: cell._id,
-              value: value === "" ? null : value,
-              correlationType: "Неделя",
-            },
-          ],
+          statisticDataUpdateDtos: [{ _id: cell._id, value: value === "" ? null : value, correlationType: "Неделя" }],
         }).unwrap();
       } else {
         response = await updateSvodka({
           statisticId: rowId,
           _id: rowId,
-          statisticDataCreateDtos: [
-            {
-              valueDate,
-              value: value === "" ? null : value,
-              correlationType: "Неделя",
-            },
-          ],
+          statisticDataCreateDtos: [{ valueDate, value: value === "" ? null : value, correlationType: "Неделя" }],
         }).unwrap();
       }
 
@@ -176,12 +160,9 @@ export default function Svodka() {
         prev.map((item) => {
           if (item.id !== rowId) return item;
           const statisticDatas = _.cloneDeep(item.statisticDatas) || [];
-
           if (cell._id) {
             const existingPoint = statisticDatas.find((p) => p.id === cell._id);
-            if (existingPoint) {
-              existingPoint.value = value === "" ? null : value;
-            }
+            if (existingPoint) existingPoint.value = value === "" ? null : value;
           } else {
             statisticDatas.push({
               id: createdId,
@@ -190,20 +171,20 @@ export default function Svodka() {
               valueDate,
             });
           }
-
           return { ...item, statisticDatas };
         })
       );
-
-      messageApi.success("Значение сохранено");
     } catch (err) {
       console.error("Ошибка при обновлении статистики:", err);
       messageApi.error("Ошибка при сохранении");
     } finally {
-      setSaving(false);
-      setEditingCell(null);
+      setSavingIds((prev) => prev.filter((id) => id !== `${rowId}_${colId}`));
+      setIsProcessingQueue(false);
     }
+  };
 
+  const queueSaveCellValue = ({ rowId, colId, value, originalValue }) => {
+    setSaveQueue((prev) => [...prev, { rowId, colId, value, originalValue }]);
   };
 
   // --- Навигация по ячейкам ---
@@ -220,8 +201,7 @@ export default function Svodka() {
     if (direction === "up") newRow -= 1;
 
     if (newRow < 0 || newRow >= tableData.length) return;
-    const maxCols = week;
-    if (newCol < 0 || newCol >= maxCols) return;
+    if (newCol < 0 || newCol >= week) return;
 
     const newRowId = tableData[newRow].id;
     setEditingCell({
@@ -234,7 +214,6 @@ export default function Svodka() {
   // --- Колонки таблицы ---
   const columns = useMemo(() => {
     if (!datePoint) return [];
-
     const weeklyData = generateWeeklyData([], week, datePoint);
 
     return [
@@ -264,71 +243,52 @@ export default function Svodka() {
         ),
       },
       ...weeklyData.map((w, index) => ({
-        title: (
-          <div style={{ textAlign: "center", fontWeight: "bold" }}>
-            {w.date}
-          </div>
-        ),
+        title: <div style={{ textAlign: "center", fontWeight: "bold" }}>{w.date}</div>,
         dataIndex: `week_${index}`,
         key: `week_${index}`,
         width: 160,
         align: "center",
         render: (cellData, record) => {
           const cellValue = cellData?.value ?? null;
-          const isEditing =
-            editingCell?.rowId === record.id && editingCell?.colId === index;
+          const isEditing = editingCell?.rowId === record.id && editingCell?.colId === index;
+          const isCellSaving = savingIds.includes(`${record.id}_${index}`);
 
           const saveAndMove = (direction) => {
-            handleSaveCellValue({
+            queueSaveCellValue({
               ...editingCell,
               originalValue: cellValue ?? "",
-            }).then(() => {
-              moveToCell(record.id, index, direction);
             });
+            moveToCell(record.id, index, direction);
           };
 
           if (isEditing) {
             return (
-              <Spin spinning={saving}>
+              <Spin spinning={isCellSaving}>
                 <InputNumber
                   controls={false}
                   autoFocus
-                  value={editingCell.value === "" ? null : editingCell.value}
+                  value={editingCell.value ?? null}
                   style={{ width: "100%" }}
                   decimalSeparator="."
                   onChange={(newVal) =>
                     setEditingCell((prev) => ({ ...prev, value: newVal ?? "" }))
                   }
-                  onBlur={() =>
-                    handleSaveCellValue({
+                  onBlur={() => {
+                    queueSaveCellValue({
                       ...editingCell,
                       originalValue: cellValue ?? "",
-                    })
-                  }
+                    });
+                    setEditingCell(null);
+                  }}
                   onKeyDown={(e) => {
-
-                    const keyMap = {
-                      Enter: "down",
-                      Tab: "right",
-                      ArrowRight: "right",
-                      ArrowLeft: "left",
-                      ArrowUp: "up",
-                      ArrowDown: "down",
-                    };
-
-                    const shiftKeyMap = {
-                      Enter: "up",
-                      Tab: "left",
-                    };
-
+                    const keyMap = { Enter: "down", Tab: "right", ArrowRight: "right", ArrowLeft: "left", ArrowUp: "up", ArrowDown: "down" };
+                    const shiftKeyMap = { Enter: "up", Tab: "left" };
                     const direction = e.shiftKey ? shiftKeyMap[e.key] : keyMap[e.key];
-
                     if (direction) {
-                      e.preventDefault(); // предотвращаем стандартное поведение сразу
+                      e.preventDefault();
                       saveAndMove(direction);
                     }
                   }}
-
                 />
               </Spin>
             );
@@ -336,73 +296,39 @@ export default function Svodka() {
 
           return (
             <div
-              onDoubleClick={() =>
-                setEditingCell({
-                  rowId: record.id,
-                  colId: index,
-                  value: cellValue ?? "",
-                })
-              }
               onClick={() =>
-                setEditingCell({
-                  rowId: record.id,
-                  colId: index,
-                  value: cellValue ?? "",
-                })
+                setEditingCell({ rowId: record.id, colId: index, value: cellValue ?? "" })
               }
               style={{
                 width: "100%",
                 height: "100%",
                 minHeight: "32px",
                 cursor: "pointer",
-                flex: 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background:
-                  editingCell?.rowId === record.id &&
-                    editingCell?.colId === index
-                    ? "#e6f7ff"
-                    : "transparent",
+                background: isEditing ? "#e6f7ff" : "transparent",
               }}
             >
-              {saving &&
-                editingCell?.rowId === record.id &&
-                editingCell?.colId === index ? (
-                <Spin size="small" />
-              ) : cellValue == null ? (
-                ""
-              ) : (
-                formatNumber(cellValue)
-              )}
+              {isCellSaving ? <Spin size="small" /> : formatNumber(cellValue)}
             </div>
           );
         },
       })),
     ];
-  }, [datePoint, week, editingCell, saving]);
+  }, [datePoint, week, editingCell, savingIds]);
 
   // --- Данные таблицы ---
   const tableData = useMemo(() => {
     if (!allStatistics.length || !datePoint) return [];
 
     return allStatistics.map((statisticItem) => {
-      const rowData = {
-        id: statisticItem.id,
-        name: statisticItem.name,
-        key: statisticItem.id,
-      };
-
-      const weeklyData = generateWeeklyData(
-        statisticItem.statisticDatas || [],
-        week,
-        datePoint
-      );
+      const rowData = { id: statisticItem.id, name: statisticItem.name, key: statisticItem.id };
+      const weeklyData = generateWeeklyData(statisticItem.statisticDatas || [], week, datePoint);
 
       weeklyData.forEach((w, index) => {
-        const cellObj = { value: w.value, statisticId: statisticItem.id };
-        if (w._id) cellObj._id = w._id;
-        rowData[`week_${index}`] = cellObj;
+        rowData[`week_${index}`] = { value: w.value, statisticId: statisticItem.id };
+        if (w._id) rowData[`week_${index}`]._id = w._id;
       });
 
       return rowData;
@@ -453,4 +379,4 @@ export default function Svodka() {
       </div>
     </div>
   );
-} 
+}

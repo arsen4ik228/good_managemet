@@ -43,7 +43,7 @@ export const countDays = (datePoint, statisticData, setDataSource) => {
       return {
         id: item?.id ?? `day-${index}-${dateObj.format("YYYY-MM-DD")}`,
         value: item.value ?? null,
-        valueDate: dateObj.format("YYYY-MM-DD"), 
+        valueDate: dateObj.format("YYYY-MM-DD"),
       };
     });
 
@@ -129,7 +129,8 @@ export const countWeeks = (
     );
 
     if (weekTotalPoint) {
-      week.value = parseFloat(weekTotalPoint.value) || null;
+      const parsed = parseFloat(weekTotalPoint.value);
+      week.value = isNaN(parsed) ? null : parsed;
       week.id = weekTotalPoint.id;
       week.correlationType = "Неделя";
     } else {

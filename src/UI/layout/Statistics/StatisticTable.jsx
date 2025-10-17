@@ -23,7 +23,7 @@ export default function StatisticTable({
   createCorellationPoints,
   setCreateCorellationPoints,
 }) {
-
+  console.log("dataSource = ", dataSource);
   const startDate = dayjs(datePoint).subtract(6, "day").format("DD.MM.YYYY");
   const endDate = dayjs(datePoint).format("DD.MM.YYYY");
 
