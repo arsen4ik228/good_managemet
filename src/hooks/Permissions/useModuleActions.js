@@ -12,6 +12,12 @@ export function useModuleActions(section, id) {
 
   // Все возможные кнопки
   const allButtonsForUpdate = {
+    users: [
+      {
+        text: "Редактировать",
+        click: () => window.open(`${homeUrl}#/editUsers/${id}`, "_blank"),
+      }
+    ],
     goal: [
       {
         text: "Редактировать",

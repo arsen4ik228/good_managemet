@@ -14,6 +14,9 @@ const props = {
     'policies': {
         // name: selectedOrganizationName,
     },
+    'users': {
+
+    },
     'helper': {
         name: 'Гудменеджер',
         postsNames: 'ИИ Помощник',

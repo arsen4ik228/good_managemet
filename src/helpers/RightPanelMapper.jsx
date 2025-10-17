@@ -4,6 +4,7 @@ import PostsList from '../UI/Custom/PresetComponents/PostsList';
 import StatisticsList from '../UI/Custom/PresetComponents/StatisticsList/StatisticsList';
 import PoliciesList from '../UI/Custom/PresetComponents/PoliciesList/PoliciesList';
 import ConvertList from '../UI/Custom/PresetComponents/ConvertsList/ConvertList';
+import UsersList from '../UI/Custom/PresetComponents/UsersList/UsersList';
 // import GoalsPanel from '../components/GoalsPanel';
 
 const componentMap = {
@@ -12,7 +13,8 @@ const componentMap = {
     posts: PostsList,
     policies: PoliciesList,
     statistics: StatisticsList,
-    chats: ConvertList
+    chats: ConvertList,
+    users: UsersList
     // добавьте другие компоненты
 };
 

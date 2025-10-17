@@ -8,7 +8,8 @@ const PRESETS_NAMES = {
     statistics: 'STATISTICS',
     goal: 'GOAL',
     helper: 'HELPER',
-    chat: 'CHATS'
+    chat: 'CHATS',
+    users: 'USERS'
 }
 
 const map = new Map(Object.entries(PRESETS_NAMES))

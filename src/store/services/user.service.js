@@ -3,6 +3,36 @@ import { userId } from '@helpers/constants'
 
 export const userApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
+    getUsers: build.query({
+      query: ({ organizationId }) => ({
+        url: `/users/${organizationId}/organization`
+      }),
+      transformResponse: (response) => {
+
+        return response?.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      }
+    }),
+
+    getActiveUsers: build.query({
+      query: ({ organizationId }) => ({
+        url: `/users/${organizationId}/organization/active`
+      }),
+      transformResponse: (response) => {
+
+        return response?.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      }
+    }),
+
+    getFiredUsers: build.query({
+      query: ({ organizationId }) => ({
+        url: `/users/${organizationId}/organization/fired`
+      }),
+      transformResponse: (response) => {
+
+        return response?.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      }
+    }),
+
     postUser: build.mutation({
       query: (body) => ({
         url: `/users/new`,
@@ -20,10 +50,9 @@ export const userApi = apiSlice.injectEndpoints({
 
     updateUser: build.mutation({
       query: (body) => ({
-        url: `/users/${userId}/update`,
+        url: `/users/${body.id}/update`,
         method: "PATCH",
         body: {
-          id: userId,
           ...body
         },
       }),
@@ -40,4 +69,4 @@ export const userApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { usePostUserMutation, useGetUserNewQuery, useGetUserIdQuery, useUpdateUserMutation } = userApi;
+export const { usePostUserMutation, useGetUserNewQuery, useGetUserIdQuery, useUpdateUserMutation, useGetUsersQuery, useGetActiveUsersQuery, useGetFiredUsersQuery } = userApi;

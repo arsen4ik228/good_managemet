@@ -6,6 +6,7 @@ import ListElem from '../../../Custom/CustomList/ListElem';
 import stat from '@image/statistic_icon.svg';
 import goal from '@image/goal_icon.svg';
 import post from '@image/post_icon.svg';
+import users_icon from '@image/users_icon.svg'
 import policy from '@image/poliycy_icon.svg';
 import controlPanel_icon from '@image/controlPanel_icon.svg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -20,7 +21,7 @@ import strategy from '@image/strategy.svg';
 import workingPlan from '@image/strategy.svg';
 import { useGetReduxOrganization } from '../../../../hooks';
 
-export default function RightSider({ config : initialConfig }) {    //
+export default function RightSider({ config: initialConfig }) {    //
     const { convertId, contactId } = useParams()
     const location = useLocation()
     const navigate = useNavigate();
@@ -42,6 +43,7 @@ export default function RightSider({ config : initialConfig }) {    //
         { id: '7', icon: goal, text: 'Цели', link: 'goal' },
         { id: '6', icon: policy, text: 'Политика', link: 'policy' },
         { id: '1', icon: post, text: 'Посты', link: 'posts' },
+        { id: '4', icon: users_icon, text: 'Cотрудники', link: 'users' },
         { id: '5', icon: stat, text: 'Статистики', link: 'statistics' },
         { id: '2', icon: controlPanel_icon, text: 'Панель управления', link: 'controlPanel' },
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },

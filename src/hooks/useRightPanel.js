@@ -53,7 +53,9 @@ export const useRightPanel = () => {
             POSTS: 'posts',
             POLICIES: 'policies',
             STATISTICS: 'statistics',
-            CHATS: 'chats'
+            CHATS: 'chats',
+            USERS: 'users'
+
         }
     };
 };

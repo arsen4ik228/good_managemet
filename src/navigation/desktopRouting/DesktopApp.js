@@ -28,6 +28,8 @@ import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
 import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
+import Worker from "../../UI/layout/Workers/Worker";
+import EditWorker from "../../UI/layout/Workers/EditWorker";
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
@@ -364,6 +366,21 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
+          <Route
+            path="editUsers/:userId"
+            element={
+              <React.Suspense
+                fallback={
+                  <div className="lazy">
+                    <HandlerMutation Loading={true} />
+                  </div>
+                }
+              >
+                <EditWorker />
+              </React.Suspense>
+            }
+          />
           {/* edit */}
 
           {/* Маршрут для ControlPanel */}
@@ -624,6 +641,38 @@ function DesktopApp() {
                     }
                   >
                     <Policy />
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="users"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <MessageSelectingList
+                      presetName={"USERS"}
+                    ></MessageSelectingList>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="users/:userId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <Worker></Worker>
                   </React.Suspense>
                 }
               />

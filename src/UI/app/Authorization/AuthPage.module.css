@@ -122,6 +122,14 @@
   align-items: center;
 }
 
+.clearCacheContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  gap: 10px;
+}
+
 .link {
   font-size: 16px;
   color: rgba(2, 85, 117, 0.5);
@@ -151,7 +159,7 @@
     width: 0;
   }
   100% {
-    width: 80%; /* 80% ширины loader */
+    width: 100%; /* 80% ширины loader */
   }
 }
 
