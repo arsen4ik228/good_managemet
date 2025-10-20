@@ -3,7 +3,11 @@ import { Button, Result } from "antd";
 
 export default function ErrorPage() {
   const handleButtonClick = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('fingerprint');
+    localStorage.removeItem('userId');
     window.location.href = "#/";
+
   };
 
   return (
