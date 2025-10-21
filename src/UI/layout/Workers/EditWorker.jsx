@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import EditContainer from '../../Custom/EditContainer/EditContainer'
-import { Avatar, Button, Card, Checkbox, DatePicker, Input, message, Tag } from 'antd'
+import { Avatar, Button, Card, Checkbox, DatePicker, Input, message, Tag, Modal } from 'antd'
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import { useUserHook } from '../../../hooks'
 import { useParams } from 'react-router-dom'
 import { formatPhone } from '../Posts/function/functionForPost';
@@ -84,6 +85,32 @@ export default function EditWorker() {
         setIsDismissed(userInfo?.isFired)
     };
 
+    const exitClick = () => {
+        const hasChanges =
+            lastName !== userInfo?.lastName ||
+            firstName !== userInfo?.firstName ||
+            middleName !== userInfo?.middleName ||
+            telephoneNumber !== userInfo?.telephoneNumber ||
+            isDismissed !== userInfo?.isFired;
+
+        if (hasChanges) {
+            Modal.confirm({
+                title: "Есть несохранённые изменения",
+                icon: <ExclamationCircleFilled />,
+                content: "Вы хотите сохранить изменения перед выходом?",
+                okText: "Сохранить",
+                cancelText: "Не сохранять",
+                onOk() {
+                    handleUpdateUserButtonClick().then(() => window.close());
+                },
+                onCancel() {
+                    window.close();
+                },
+            });
+        } else {
+            window.close();
+        }
+    };
 
     useEffect(() => {
         if (!notEmpty(userInfo)) return;
@@ -101,7 +128,7 @@ export default function EditWorker() {
                 header={"Редактирование сотрудника"}
                 saveClick={handleUpdateUserButtonClick}
                 canselClick={handleReset}
-            // exitClick={exitClick}
+                exitClick={exitClick}
             >
                 <Card
                     style={{

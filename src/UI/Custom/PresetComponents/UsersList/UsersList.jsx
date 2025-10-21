@@ -6,7 +6,19 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import default_avatar from '@image/default_avatar.svg'
 import { baseUrl } from "@helpers/constants.js";
 import { notEmpty } from "@helpers/helpers.js"
+import FilterElement from '../../CustomList/FilterElement'
 
+
+const arrayFilter = [
+    {
+        label: "Активные",
+        value: true
+    },
+    {
+        label: "Архивные",
+        value: false
+    }
+]
 
 export default function UsersList() {
 
@@ -14,8 +26,15 @@ export default function UsersList() {
     const location = useLocation()
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
 
+    const [isActive, setIsActive] = useState(true);
+    const [openFilter, setOpenFilter] = useState(false);
 
-    const { activeUsers } = useUserHook()
+    const { activeUsers, firedUsers } = useUserHook();
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        setUsers(isActive ? activeUsers : firedUsers);
+    }, [isActive, activeUsers, firedUsers]);
 
     const openUser = (id) => {
         navigate(`helper/users/${id}`)
@@ -23,19 +42,19 @@ export default function UsersList() {
 
     const filtredPosts = useMemo(() => {
         if (!seacrhUsersSectionsValue?.trim()) {
-            return activeUsers; // Возвращаем все элементы если поиск пустой
+            return users; // Возвращаем все элементы если поиск пустой
         }
 
         const searchLower = seacrhUsersSectionsValue?.toLowerCase();
-        return activeUsers?.filter(item =>
+        return users?.filter(item =>
             item?.lastName.toLowerCase().includes(searchLower) ||
             item?.firstName.toLowerCase().includes(searchLower)
         );
-    }, [seacrhUsersSectionsValue, activeUsers]);
+    }, [seacrhUsersSectionsValue, users]);
 
     useEffect(() => {
 
-        if (!notEmpty(activeUsers)) return;
+        if (!notEmpty(users)) return;
 
         const pathname = location.pathname;
         const parts = pathname.split('/').filter(part => part !== '');
@@ -43,18 +62,30 @@ export default function UsersList() {
 
         if (removedParts[0] !== 'users') return;
 
-        navigate(`helper/users/${activeUsers[0]?.id}`)
-    }, [activeUsers])
+        navigate(`helper/users/${users[0]?.id}`)
+    }, [users])
 
 
-    console.log(activeUsers)
+    console.log(users)
     return (
         <>
             <CustomList
                 title={'Сотрудники'}
+                isFilter={true}
+                setOpenFilter={setOpenFilter}
                 searchValue={seacrhUsersSectionsValue}
                 searchFunc={setSeacrhUsersSectionsValue}
             >
+
+                {
+                    openFilter && <FilterElement
+                        array={arrayFilter}
+                        state={isActive}
+                        setState={setIsActive}
+                        setOpenFilter={setOpenFilter}
+                    />
+                }
+
                 {filtredPosts.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem

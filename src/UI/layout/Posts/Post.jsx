@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import classes from './Post.module.css'
 
-import { Card, Avatar, Typography, Space, Divider, Flex } from "antd";
+import { Card, Avatar, Typography, Space, Divider, Flex, Tag } from "antd";
 import {
     PhoneOutlined,
 } from "@ant-design/icons";
@@ -142,6 +142,10 @@ export default function Post() {
                                 <Text strong>
                                     {currentPost?.role?.roleName}
                                 </Text>
+                            </Flex>
+
+                            <Flex vertical>  
+                                {currentPost?.isArchive && <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
                             </Flex>
 
                             <Flex vertical>
