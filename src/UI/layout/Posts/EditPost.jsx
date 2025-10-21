@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Card, Avatar, Typography, Space, Divider, Select, Input, Form, Modal, Flex, message } from "antd";
+import { Card, Avatar, Typography, Space, Tag, Divider, Select, Input, Form, Modal, Flex, message, Checkbox } from "antd";
 import { PhoneOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 
 import isEqual from "lodash/isEqual";
@@ -75,6 +75,8 @@ export default function EditPost() {
 
                 divisionName: currentPost.divisionName ?? null,
 
+                isArchive: currentPost.isArchive ?? null,
+
                 roleId: currentPost.role.id ?? null,
                 product: currentPost.product ?? null,
                 purpose: currentPost.purpose ?? null,
@@ -138,6 +140,8 @@ export default function EditPost() {
             postName: currentPost.postName ?? null,
 
             divisionName: currentPost.divisionName ?? null,
+
+            isArchive: currentPost.isArchive ?? null,
 
             roleId: currentPost.role.id ?? null,
             product: currentPost.product ?? null,
@@ -339,11 +343,11 @@ export default function EditPost() {
                                                         getPopupContainer={(trigger) => trigger.parentElement || document.body}
                                                         onSelect={() => {
                                                             setDropdownOpen(false);
-                                                            setSearch(""); 
+                                                            setSearch("");
                                                         }}
                                                         dropdownRender={(menu) => (
                                                             <>
-                                                           
+
                                                                 <div style={{ padding: 8 }}>
                                                                     <Input
                                                                         placeholder="Поиск по имени или фамилии"
@@ -434,6 +438,20 @@ export default function EditPost() {
                                                 />
 
                                             </Form.Item>
+
+                                            <Form.Item
+                                                name="isArchive"
+                                                valuePropName="checked"
+                                            >
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    <Checkbox>
+                                                        {!currentPost?.isArchive
+                                                            ? <Tag color="green" style={{ margin: 0 }}>Сделать пост архивным</Tag>
+                                                            : <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
+                                                    </Checkbox>
+                                                </div>
+                                            </Form.Item>
+
 
                                         </Flex>
                                     </Flex>

@@ -7,6 +7,19 @@ import icon_post from '@image/icon _ post.svg'
 import { notEmpty } from '@helpers/helpers'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ModalCreatePost from '../../layout/Posts/ModalCreatePost';
+import FilterElement from '../CustomList/FilterElement'
+
+
+const arrayFilter = [
+    {
+        label: "Активные",
+        value: false
+    },
+    {
+        label: "Архивные",
+        value: true
+    }
+]
 
 export default function PostsList() {
 
@@ -15,6 +28,9 @@ export default function PostsList() {
     const [seacrhPostsSectionsValue, setSeacrhPostssSectionsValue] = useState()
 
     const [openCreatePost, setOpenCreatePost] = useState(false);
+
+    const [isActive, setIsActive] = useState(false);
+    const [openFilter, setOpenFilter] = useState(false);
 
     const {
         allPosts,
@@ -70,20 +86,32 @@ export default function PostsList() {
             channel.close();
         };
     }, [refetch]);
+
     return (
         <>
             <CustomList
                 title={'Посты'}
+                isFilter={true}
+                setOpenFilter={setOpenFilter}
                 searchValue={seacrhPostsSectionsValue}
                 searchFunc={setSeacrhPostssSectionsValue}
             >
 
                 {
-                    isCreate &&
+                    openFilter && <FilterElement
+                        array={arrayFilter}
+                        state={isActive}
+                        setState={setIsActive}
+                        setOpenFilter={setOpenFilter}
+                    />
+                }
+
+                {
+                    !openFilter && isCreate &&
                     <ListAddButtom textButton={'Создать пост'} clickFunc={() => setOpenCreatePost(true)} />
                 }
 
-                {filtredPosts.map((item, index) => (
+                {filtredPosts?.filter(item => item?.isArchive === isActive)?.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
                             icon={icon_post}
