@@ -1,13 +1,13 @@
 import React from 'react'
 import classes from './ChatContainer.module.css'
 import InputMessage from '../Input/InputMessage.jsx'
-import { usePanelPreset,useRightPanel } from '@hooks';
+import { usePanelPreset, useRightPanel } from '@hooks';
 
-export default function ChatContainer({children, onCreate, onCalendar}) {
+export default function ChatContainer({ children, onCreate, onCalendar, isArchive}) {
 
-        // const { PRESETS } = useRightPanel();
-        // console.log(',klvndsjdvnfhdvndjfhvdfjkhv dfjnvhdfvnjdfvjnkdfvjdfvj')
-        // usePanelPreset(PRESETS['CHATS']);
+    // const { PRESETS } = useRightPanel();
+    // console.log(',klvndsjdvnfhdvndjfhvdfjkhv dfjnvhdfvnjdfvjnkdfvjdfvj')
+    // usePanelPreset(PRESETS['CHATS']);
 
     return (
         <div className={classes.wrapper}>
@@ -16,7 +16,9 @@ export default function ChatContainer({children, onCreate, onCalendar}) {
                     {children}
                 </div>
                 <div className={classes.inputContainer}>
-                    <InputMessage onCreate={onCreate} onCalendar={onCalendar}></InputMessage>
+                    {!isArchive && (
+                        <InputMessage onCreate={onCreate} onCalendar={onCalendar}></InputMessage>
+                    )}
                 </div>
             </div>
         </div>

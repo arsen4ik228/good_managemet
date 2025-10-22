@@ -70,6 +70,17 @@ export const postApi = apiSlice.injectEndpoints({
       providesTags: ["Post", "User"],
     }),
 
+    getPostsUserByAccount: build.query({
+      query: () => ({
+        url: `posts/myPosts`,
+      }),
+      // transformResponse: (response) => {
+      //   console.log('getPostsUserByAccount  ', response)
+      //   return response
+      // },
+      providesTags: ["Post", "User"],
+    }),
+
     getPostId: build.query({
       query: ({ postId }) => ({
         url: `posts/${postId}/post`,
@@ -235,4 +246,5 @@ export const {
   useGetPostIdQuery,
   useUpdatePostsMutation,
   useGetUnderPostsQuery,
+  useGetPostsUserByAccountQuery
 } = postApi;

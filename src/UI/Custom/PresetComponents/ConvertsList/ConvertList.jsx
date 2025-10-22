@@ -13,7 +13,20 @@ import { homeUrl } from '@helpers/constants'
 import { useSocket } from '../../../../hooks';
 import default_avatar from '@image/default_avatar.svg'
 import { notEmpty } from '../../../../helpers/helpers';
+import FilterElement from '../../CustomList/FilterElement'
 
+
+
+const arrayFilter = [
+    {
+        label: "Активные",
+        value: true
+    },
+    {
+        label: "Архивные",
+        value: false
+    }
+]
 
 
 export default function ConvertList() {
@@ -21,7 +34,10 @@ export default function ConvertList() {
     const navigate = useNavigate()
 
     const { organizationId, contactId } = useParams()
-    // Получение всех статистик
+
+    const [isActive, setIsActive] = useState(true);
+    const [openFilter, setOpenFilter] = useState(false);
+
 
     const {
         contactInfo,
@@ -49,14 +65,22 @@ export default function ConvertList() {
 
     const filtredChats = useMemo(() => {
         if (!seacrhChatsSectionsValue?.trim()) {
-            return unseenConverts?.concat(seenConverts); // Возвращаем все элементы если поиск пустой
+            return !isActive ? archiveConvaerts : unseenConverts?.concat(seenConverts); // Возвращаем все элементы если поиск пустой
         }
 
         const searchLower = seacrhChatsSectionsValue?.toLowerCase();
-        return unseenConverts?.concat(seenConverts)?.filter(item =>
-            item?.convertTheme.toLowerCase().includes(searchLower)
-        );
-    }, [seacrhChatsSectionsValue, seenConverts, unseenConverts]);
+
+        if (isActive) {
+            return unseenConverts?.concat(seenConverts)?.filter(item =>
+                item?.convertTheme.toLowerCase().includes(searchLower)
+            );
+        }
+        else {
+            return archiveConvaerts?.filter(item =>
+                item?.convertTheme.toLowerCase().includes(searchLower)
+            );
+        }
+    }, [seacrhChatsSectionsValue, seenConverts, unseenConverts, isActive]);
 
     const CONVERT_ICON = {
         'Приказ': order_chat_icon,
@@ -71,6 +95,13 @@ export default function ConvertList() {
         }
 
         return CONVERT_ICON[path]
+    }
+
+    const openChat = (status, id) => {
+        if (status)
+            navigate(`chat/${contactId}/${id}`)
+        else
+            navigate(`chat/${contactId}/archive/${id}`)
     }
 
     useEffect(() => {
@@ -90,7 +121,7 @@ export default function ConvertList() {
         if (!notEmpty(socketResponse?.convertCreationEvent)) return
 
         const response = socketResponse.convertCreationEvent
-        
+
         const hostId = response?.host.id
         // const lastPostId = response?.receiver.id
 
@@ -107,12 +138,29 @@ export default function ConvertList() {
                 title={'Темы'}
                 searchValue={seacrhChatsSectionsValue}
                 searchFunc={setSeacrhChatsSectionsValue}
-                addButtonText={'Новая тема'}
-                addButtonClick={() => navigate(`chat/${contactId}`)}
+                isFilter={true}
+                setOpenFilter={setOpenFilter}
+            // addButtonText={'Новая тема'}
+            // addButtonClick={() => navigate(`chat/${contactId}`)}
             >
 
                 {/* <ListAddButtom textButton={'Новая тема'} /> */}
 
+                {
+                    openFilter && <FilterElement
+                        array={arrayFilter}
+                        state={isActive}
+                        setState={setIsActive}
+                        setOpenFilter={setOpenFilter}
+                    />
+                }
+
+
+                {
+                    !openFilter && <ListAddButtom textButton={'Новая тема'} clickFunc={() => navigate(`chat/${contactId}`)} />
+                }
+
+                {/* {archiveConvaerts?.map((item, index) => ( */}
                 {filtredChats?.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
@@ -121,7 +169,7 @@ export default function ConvertList() {
                             bottomText={item.convertType}
                             linkSegment={item.id}
                             bage={item.unseenMessagesCount}
-                            clickFunc={() => navigate(`chat/${contactId}/${item.id}`)}
+                            clickFunc={() => openChat(item.convertStatus, item.id)}
                         />
                     </React.Fragment>
                 ))}
