@@ -21,7 +21,7 @@ export const CustomComponent = () => {
         setSenderPost,
         setReciverPostId,
         TYPE_OPTIONS,
-        userPosts,
+        userPostsInAccount,
         contactInfo,
         setContactId
     } = useConvertForm();
@@ -29,6 +29,8 @@ export const CustomComponent = () => {
     useEffect(() => {
         setContactId(contactId)
     },[contactId])
+
+    console.log(userPostsInAccount)
 
     return (
         <div className={classes.customContainer}>
@@ -63,7 +65,7 @@ export const CustomComponent = () => {
                     value={senderPost}
                     onChange={(value) => setSenderPost(value)}
                 >
-                    {userPosts?.map((item, index) => (
+                    {userPostsInAccount?.map((item, index) => (
                         <Option key={index} value={item.id}>
                             {item.postName}
                         </Option>

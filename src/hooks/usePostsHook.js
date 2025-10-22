@@ -6,7 +6,8 @@ import {
   useUpdatePostsMutation,
   useGetUnderPostsQuery,
   useGetPostsUserByOrganizationQuery,
-  useGetAllChatsQuery
+  useGetAllChatsQuery,
+  useGetPostsUserByAccountQuery
 } from "../store/services/index";
 import useGetReduxOrganization from "./useGetReduxOrganization";
 import { useMutationHandler } from "./useMutationHandler";
@@ -117,6 +118,8 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
 
   const { data: userPosts } = useGetPostsUserByOrganizationQuery({organizationId: reduxSelectedOrganizationId})
 
+  const { data: userPostsInAccount} = useGetPostsUserByAccountQuery()
+
   const { data: allChats, isLoading: loadingAllChats, refetch: refetchAllChats} = useGetAllChatsQuery({organizationId: reduxSelectedOrganizationId})
 
   const [
@@ -188,6 +191,8 @@ export const usePostsHook = ({postId = null, structure = false} = {}) => {
     isErrorGetNew,
 
     userPosts,
+
+    userPostsInAccount,
 
     allChats,
     loadingAllChats,

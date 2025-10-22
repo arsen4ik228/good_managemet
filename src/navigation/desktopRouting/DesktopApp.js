@@ -21,6 +21,7 @@ import { EditStatisticInformation } from "../../UI/layout/Statistics/EditStatist
 import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSelectingList";
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
 import DesktopDialogPage from "../../UI/layout/Chat/desktop/DesktopDoalogPage";
+import ArchiveDialogPage from "../../UI/layout/Chat/ArchiveDialog/ArchiveDialog";
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
 import { Strategy } from "../../UI/layout/Strategy/Strategy";
@@ -73,9 +74,9 @@ const DesktopConvertsPage = React.lazy(() =>
 const WatcherDialogPage = React.lazy(() =>
   import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
 );
-const ArchiveDialog = React.lazy(() =>
-  import("@app/DialogPage/ArchiveDialog/ArchiveDialog.jsx")
-);
+// const ArchiveDialog = React.lazy(() =>
+//   import("@app/DialogPage/ArchiveDialog/ArchiveDialog.jsx")
+// );
 const AgreementDialogPage = React.lazy(() =>
   import("@app/DialogPage/AgreementDialogPage/AgreementDialogPage.jsx")
 );
@@ -194,7 +195,7 @@ function DesktopApp() {
                         <Panel />
                         <div className="content">
                           <Chat />
-                          <ArchiveDialog />
+                          {/* <ArchiveDialog /> */}
                         </div>
                       </div>
                     }
@@ -497,6 +498,21 @@ function DesktopApp() {
                     }
                   >
                     <DesktopDialogPage></DesktopDialogPage>
+                  </React.Suspense>
+                }
+              />
+
+              <Route
+                path="archive/:convertId"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="lazy">
+                        <HandlerMutation Loading={true} />
+                      </div>
+                    }
+                  >
+                    <ArchiveDialogPage></ArchiveDialogPage>
                   </React.Suspense>
                 }
               />

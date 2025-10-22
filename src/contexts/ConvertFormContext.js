@@ -1,7 +1,7 @@
 // contexts/ConvertFormContext.js
 import React, { createContext, useContext, useState, useEffect, use } from 'react';
 import { useParams } from 'react-router-dom';
-import { usePostsHook, useConvertsHook } from '@hooks';
+import { usePostsHook, useConvertsHook, useGetReduxOrganization } from '@hooks';
 
 const ConvertFormContext = createContext();
 
@@ -18,8 +18,9 @@ export const ConvertFormProvider = ({ children }) => {
     const [reciverPostId, setReciverPostId] = useState();
     const [contactId, setContactId] = useState()
 
-    const { userPosts } = usePostsHook();
+    const { userPostsInAccount } = usePostsHook();
     const { contactInfo } = useConvertsHook({ contactId });
+    const { reduxSelectedOrganizationId } = useGetReduxOrganization()
 
     useEffect(() => {
         if (!contactInfo) return;
@@ -27,10 +28,10 @@ export const ConvertFormProvider = ({ children }) => {
     }, [contactInfo]);
 
     useEffect(() => {
-        if (userPosts?.length > 0 && !senderPost) {
-            setSenderPost(userPosts[0]?.id);
+        if (userPostsInAccount?.length > 0 && !senderPost) {
+            setSenderPost(userPostsInAccount[0]?.id);
         }
-    }, [userPosts, senderPost]);
+    }, [userPostsInAccount, senderPost]);
 
     const value = {
         convertType,
@@ -42,7 +43,7 @@ export const ConvertFormProvider = ({ children }) => {
         setSenderPost,
         setReciverPostId,
         TYPE_OPTIONS,
-        userPosts,
+        userPostsInAccount,
         contactInfo,
         contactId,
         setContactId
