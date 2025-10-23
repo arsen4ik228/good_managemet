@@ -395,9 +395,9 @@ export default function DesktopLayout({
     <Flex vertical gap={"small"}>
       <div className={classes.content}>
         <Flex vertical gap={20}>
-          <Typography style={{ fontWeight: '600' }}>Прикрепите политику</Typography>
+          {/* <Typography style={{ fontWeight: '600' }}>Прикрепите политику</Typography> */}
 
-          <Form form={form}>
+          {/* <Form form={form}>
             <Form.Item name="policyId" style={{ margin: 0 }}>
               <Select
                 placement="topLeft"
@@ -443,7 +443,7 @@ export default function DesktopLayout({
                 )}
               </Select>
             </Form.Item>
-          </Form>
+          </Form> */}
 
           {/* Блок для загрузки файлов */}
           <Card
