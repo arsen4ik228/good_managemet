@@ -81,6 +81,7 @@ const AgreementDialogPage = React.lazy(() =>
   import("@app/DialogPage/AgreementDialogPage/AgreementDialogPage.jsx")
 );
 
+
 function DesktopApp() {
   return (
     <div>
@@ -88,331 +89,112 @@ function DesktopApp() {
         locale={ruRU}
         theme={{
           token: {
-            // Основные цвета
             colorPrimary: "#005475",
             colorSuccess: "#52c41a",
             colorError: "#ff4d4f",
             colorWarning: "#faad14",
             colorInfo: "#1890ff",
-
-            // Hover-эффекты
             colorPrimaryHover: "#003d5c",
             colorPrimaryActive: "#002536",
             colorSuccessHover: "#389e0d",
             colorErrorHover: "#d9363e",
             colorWarningHover: "#d48806",
           },
-
           components: {
             Menu: {
-              itemHoverBg: "#DDEBF1", // фон при наведении
-              itemActiveBg: "#DDEBF1", // фон при клике (active)
-              itemSelectedBg: "#DDEBF1", // фон у выбранного пункта
+              itemHoverBg: "#DDEBF1",
+              itemActiveBg: "#DDEBF1",
+              itemSelectedBg: "#DDEBF1",
             },
           },
         }}
       >
         <Routes>
+          {/* ==== Главная (логин) ==== */}
           <Route
             path="/"
             element={
-              <React.Suspense
-                fallback={<HandlerMutation Loading={true}></HandlerMutation>}
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <AuthPage />
               </React.Suspense>
             }
           />
 
-          <Route
-            path="/*"
-            element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true}></HandlerMutation>
-                  </div>
-                }
-              >
-                <Routes>
-                  <Route
-                    path="account"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          <SettingsPage />
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  {/* Маршрут для чата */}
-                  <Route
-                    path="chat/:contactId"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          <DesktopConvertsPage />
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  <Route
-                    path="chat/:contactId/:convertId"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          {/* <DialogPage /> */}
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  <Route
-                    path="chat/:contactId/watcher/:convertId"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          <WatcherDialogPage />
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  <Route
-                    path="chat/:contactId/archive/:convertId"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          {/* <ArchiveDialog /> */}
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  <Route
-                    path="Chat/:contactId/agreement/:convertId"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          <AgreementDialogPage />
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  {/* Маршрут для пользователя */}
-                  <Route
-                    path="user"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          <User />
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  {/* Маршрут для Pomoshnik и его вложенных маршрутов */}
-                  <Route
-                    path="pomoshnik/*"
-                    element={
-                      <div className="messages">
-                        <Panel />
-                        <div className="content">
-                          <Chat />
-                          <Routes>
-                            <Route path="start" element={<Pomoshnik />} />
-                            <Route path="goal" element={<Goal />} />
-                            {/* <Route
-                              path="policy/:policyId?"
-                              element={<Policy />}
-                            /> */}
-                            <Route path="statistic" element={<Statistic1 />} />
-                            {/* <Route path="svodka" element={<Svodka />} /> */}
-                            <Route path="objective" element={<Objective />} />
-                            {/* <Route path="strategy" element={<Strategy />} /> */}
-                            <Route
-                              path="projectWithProgramm"
-                              element={<ProjectWithProgramm />}
-                            />
-
-                            <Route path="post/:postId?" element={<Post />} />
-                            <Route path="postNew" element={<PostNew />} />
-                            {/* <Route
-                              path="workingPlan"
-                              element={<WorkingPlan />}
-                            /> */}
-                            <Route
-                              path="companySchema"
-                              element={<SchemeСompanies />}
-                            />
-                            <Route
-                              path="postSchema/:organizationId"
-                              element={<PostSchema />}
-                            />
-                            {/* Маршрут для NotFound внутри Pomoshnik */}
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                        </div>
-                      </div>
-                    }
-                  />
-
-                  {/* Маршрут для NotFound на верхнем уровне */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </React.Suspense>
-            }
-          />
-
+          {/* ==== Error ==== */}
           <Route
             path="/error"
             element={
-              <React.Suspense
-                fallback={<HandlerMutation Loading={true}></HandlerMutation>}
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <ErrorPage />
               </React.Suspense>
             }
           />
 
-          {/* edit */}
+          {/* ==== Edit pages ==== */}
           <Route
             path="editGoal"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <EditGoal />
               </React.Suspense>
             }
           />
-
           <Route
             path="editPolicy/:policyId"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <EditPolicy />
               </React.Suspense>
             }
           />
-
           <Route
             path="editStatisticInformation/:id"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <EditStatisticInformation />
               </React.Suspense>
             }
           />
-
           <Route
             path="editStatisticPointsData/:id"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <EditStatisticPointsData />
               </React.Suspense>
             }
           />
-
           <Route
             path="editPost/:postId"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <EditPost />
               </React.Suspense>
             }
           />
-
           <Route
             path="editUsers/:userId"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <EditWorker />
               </React.Suspense>
             }
           />
-          {/* edit */}
 
-          {/* Маршрут для ControlPanel */}
+          {/* ==== Панель управления / Сводка ==== */}
           <Route
             path="controlPanel"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <div className="tab">
                   <ControlPanel />
                 </div>
               </React.Suspense>
             }
           />
-
-          {/* Маршрут для Svodka */}
           <Route
             path="svodka"
             element={
-              <React.Suspense
-                fallback={
-                  <div className="lazy">
-                    <HandlerMutation Loading={true} />
-                  </div>
-                }
-              >
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                 <div className="tab">
                   <Svodka />
                 </div>
@@ -420,360 +202,189 @@ function DesktopApp() {
             }
           />
 
+          {/* ==== Основная ветка организации ==== */}
           <Route
             path=":organizationId/*"
-            element={<ApplicationContainer></ApplicationContainer>}
+            element={<ApplicationContainer />} // ВАЖНО: в ApplicationContainer должен быть <Outlet />
           >
+            {/* При заходе только на /:organizationId перенаправляем в helper */}
             <Route index element={<Navigate to="helper" replace />} />
 
+            {/* Создание пользователя */}
             <Route
               path="createUser"
               element={
-                <React.Suspense
-                  fallback={
-                    <div className="lazy">
-                      <HandlerMutation Loading={true} />
-                    </div>
-                  }
-                >
+                <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                   <User />
                 </React.Suspense>
               }
             />
+
+            {/* Настройки */}
             <Route
               path="accountSettings"
               element={
-                <React.Suspense
-                  fallback={
-                    <div className="lazy">
-                      <HandlerMutation Loading={true} />
-                    </div>
-                  }
-                >
+                <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                   <SettingsPage />
                 </React.Suspense>
               }
             />
 
-            {/* dialog */}
+            {/* ==== Диалоги ==== */}
             <Route path="chat/:contactId/*">
               <Route
                 index
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <CreateNewConvertPage></CreateNewConvertPage>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <CreateNewConvertPage />
                   </React.Suspense>
                 }
               />
-
-              {/* <Route
-                path="new"
-                element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <CreateNewConvertPage></CreateNewConvertPage>
-                  </React.Suspense>
-                }
-              /> */}
-
               <Route
                 path=":convertId"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <DesktopDialogPage></DesktopDialogPage>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <DesktopDialogPage />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="archive/:convertId"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <ArchiveDialogPage></ArchiveDialogPage>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <ArchiveDialogPage />
                   </React.Suspense>
                 }
               />
             </Route>
-            {/* dialog */}
 
-            {/* helper */}
-            <Route path="helper">
-              {/* Основной маршрут helper */}
-
+            {/* ==== Helper ==== */}
+            <Route path="helper/*">
               <Route
                 index
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <HelperChat />
                   </React.Suspense>
                 }
               />
-
-              {/* Вложенный маршрут helper/goal */}
-              <Route
-                path=":pageId"
-                element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <FuturePages />
-                  </React.Suspense>
-                }
-              />
-
               <Route
                 path="strategy"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <Strategy />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="project"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <Project />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="schemaCompany"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <SchemaCompany />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="workingPlan"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <WorkingPlan />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="goal"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <Goal />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="policy"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <MessageSelectingList
-                      presetName={"POLICIES"}
-                    ></MessageSelectingList>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <MessageSelectingList presetName="POLICIES" />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="policy/:policyId"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <Policy />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="users"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <MessageSelectingList
-                      presetName={"USERS"}
-                    ></MessageSelectingList>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <MessageSelectingList presetName="USERS" />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="users/:userId"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <Worker></Worker>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <Worker />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="controlPanel"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <>controlPanel</>
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="statistics"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <MessageSelectingList
-                      presetName={"STATISTICS"}
-                    ></MessageSelectingList>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <MessageSelectingList presetName="STATISTICS" />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="statistics/:statisticId"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <Statistic></Statistic>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <Statistic />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="posts"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <MessageSelectingList
-                      presetName={"POSTS"}
-                    ></MessageSelectingList>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <MessageSelectingList presetName="POSTS" />
                   </React.Suspense>
                 }
               />
-
               <Route
                 path="posts/:postId"
                 element={
-                  <React.Suspense
-                    fallback={
-                      <div className="lazy">
-                        <HandlerMutation Loading={true} />
-                      </div>
-                    }
-                  >
-                    <Post></Post>
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <Post />
                   </React.Suspense>
                 }
               />
             </Route>
-            {/* //helper */}
           </Route>
+
+          {/* ==== Фолбэк ==== */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ConfigProvider>
     </div>
