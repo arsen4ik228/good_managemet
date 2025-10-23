@@ -4,8 +4,8 @@ import { userId } from "@helpers/constants";
 export const postApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     getPosts: build.query({
-      query: ({ organizationId, structure = false }) => ({
-        url: `posts/${organizationId}/?structure=${structure}`,
+      query: ({ organizationId, structure = false, isArchive = false }) => ({
+        url: `posts/${organizationId}/?structure=${structure}&isArchive=${isArchive}`,
       }),
       transformResponse: (response) => {
         // Предполагаем, что response - это массив постов

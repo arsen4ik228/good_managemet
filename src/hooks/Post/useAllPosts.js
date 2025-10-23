@@ -1,7 +1,7 @@
 import { useGetPostsQuery } from "@services/index";
 import useGetReduxOrganization from "@hooks/useGetReduxOrganization";
 
-export const useAllPosts = ({organizationId = null, structure = false} = {}) => {
+export const useAllPosts = ({organizationId = null, structure = false, isArchive = false,} = {}) => {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
   const {
@@ -11,7 +11,7 @@ export const useAllPosts = ({organizationId = null, structure = false} = {}) => 
     isErrorGetPosts,
     refetch,
   } = useGetPostsQuery(
-    { organizationId: organizationId ?? reduxSelectedOrganizationId, structure },
+    { organizationId: organizationId ?? reduxSelectedOrganizationId, structure, isArchive },
     {
       selectFromResult: ({ data, isLoading, isFetching,  isError, refetch }) => ({
         allPosts: data?.originalPosts || [],
