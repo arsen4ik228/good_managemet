@@ -137,7 +137,11 @@ export const postApi = apiSlice.injectEndpoints({
               ...element,
               unseenMessagesCount: +element.unseenMessagesCount ?? 0,
               watcherUnseenCount: +element.watcherUnseenCount ?? 0,
-              postsNames: [element.postName]
+              postsNames: [element.postName],
+              user: {
+                avatar_url: element.userAvatar
+              }
+              // userId: element?.user.id,
             })
           }
         });
