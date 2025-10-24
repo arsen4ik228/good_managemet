@@ -37,7 +37,7 @@ export default function EditWorker() {
             if (lastName !== userInfo?.lastName) Data.lastName = lastName;
             if (middleName !== userInfo?.middleName) Data.middleName = middleName;
             if (telephoneNumber !== userInfo?.telephoneNumber)
-                Data.telephoneNumber = telephoneNumber.replace(/[^\d+]/g, '').slice(0, 12);
+                Data.telephoneNumber = telephoneNumber.replace(/[^\d+]/g, '');
             if (isDismissed !== userInfo?.isFired) Data.isFired = isDismissed;
 
             // if (file) {
@@ -195,9 +195,14 @@ export default function EditWorker() {
                             <InputMask
                                 value={formatPhone(telephoneNumber)}
                                 onChange={(e) => setTelephoneNumber(e.target.value)}
-                                mask="+9 (999) 999-99-99"
-                                placeholder="+9 (999) 999-99-99"
+
                                 disabled={isDismissed}
+
+                                mask="+9 (999) 999-99-99-9999999"  // добавим “запасные” цифры
+                                maskChar={null}                    // не показывает подчёркивани
+                                placeholder="+_ (___) ___-__-__"
+
+
                                 required
                             >
                                 {(inputProps) => (
