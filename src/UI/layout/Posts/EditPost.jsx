@@ -432,7 +432,7 @@ export default function EditPost() {
                                                 <Select
                                                     showSearch
                                                     optionFilterProp="label"
-                                                    options={roles.map((r) => ({
+                                                    options={roles.filter((item) => item.id !== "894559e4-fd79-434b-9c00-f95dee0d10ab" && item.id !== "44514689-427c-46e5-9e60-2d7b90b73fae").map((r) => ({
                                                         label: r.roleName,
                                                         value: r.id,
                                                     }))}
