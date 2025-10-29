@@ -26,7 +26,7 @@ export default function CustomList({
 
     // Определяем, используем ли внешнее управление
     const isControlled = expanded !== undefined;
-    
+
     // Текущее состояние expanded (внешнее или внутреннее)
     const currentExpanded = isControlled ? expanded : internalExpanded;
 
@@ -39,7 +39,7 @@ export default function CustomList({
 
     const toggleDropdown = () => {
         const newExpandedState = !currentExpanded;
-        
+
         if (isControlled) {
             // Если компонент управляется извне - вызываем callback
             onExpandedChange?.(newExpandedState);
@@ -71,6 +71,15 @@ export default function CustomList({
         searchFunc?.(e.target.value);
     };
 
+
+    const searchInputRef = useRef(null);
+
+    useEffect(() => {
+        if (showSearch && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [showSearch]);
+
     return (
         <div className={classes.wrapper}>
             <div className={classes.title}>
@@ -79,6 +88,7 @@ export default function CustomList({
                     <div className={`${classes.searchContainer} ${showSearch ? classes.searchActive : ''}`}>
                         <form className={classes.searchForm}>
                             <input
+                                ref={searchInputRef}
                                 type="text"
                                 placeholder="Поиск..."
                                 value={searchValue || ''}

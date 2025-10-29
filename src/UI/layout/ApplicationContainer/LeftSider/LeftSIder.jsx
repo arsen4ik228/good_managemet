@@ -178,14 +178,15 @@ export default function LeftSIder() {
         <>
             <div className={classes.wrapper}>
                 <div className={classes.header}>
-                    <img src={logo} alt="GOODMANAGEMENT" className = {classes.logo} onClick={() => navigate('accountSettings')} />
+                    {/* className = {classes.logo} */}
+                    <img src={logo} alt="GOODMANAGEMENT"  onClick={() => navigate('accountSettings')} />
                     <div>GOODMANAGEMENT</div>
                 </div>
                 <div className={classes.content}>
 
                     <CustomList
                         title={'организации'}
-                        // addButtonText={'Новая организация'}
+                        addButtonText={'Новая организация'}
                         addButtonClick={ () => setOpenModalCreateOrganization(true)}
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
