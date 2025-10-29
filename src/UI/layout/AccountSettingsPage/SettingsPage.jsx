@@ -176,6 +176,7 @@ export default function SettingsPage() {
     if (!notEmpty(Data)) return;
 
     await updateUser({
+      id: localStorage.getItem("userId"),
       ...Data,
     })
       .unwrap()
