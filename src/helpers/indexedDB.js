@@ -53,6 +53,8 @@
             const draft = event.target.result;
             if (draft) {
                 setContentInput(draft.content);
+            }else{
+                setContentInput(null);
             }
         };
 
