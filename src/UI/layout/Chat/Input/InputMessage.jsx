@@ -91,7 +91,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         // setDeadlineDate(new Date().toISOString().split("T")[0]);
         setContentInput("");
         setSelectedPolicy(false);
-        deleteDraft("DraftDB", "drafts", idTextarea);
+        deleteDraft("DraftDB", "drafts", convertId);
         setContentInputPolicyId("");
         // setConvertTheme('')
         setFiles()
@@ -304,12 +304,14 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     }, [handleGlobalKeyDown]);
 
     useEffect(() => {
-        loadDraft("DraftDB", "drafts", idTextarea, setContentInput);
-    }, []);
+        if(!convertId) return
+        loadDraft("DraftDB", "drafts", convertId, setContentInput);
+    }, [convertId]);
 
     useEffect(() => {
-        saveDraft("DraftDB", "drafts", idTextarea, contentInput);
-    }, [contentInput]);
+         if(!convertId) return
+        saveDraft("DraftDB", "drafts", convertId, contentInput);
+    }, [contentInput, convertId]);
 
     useEffect(() => {
         if (!contactInfo) return
