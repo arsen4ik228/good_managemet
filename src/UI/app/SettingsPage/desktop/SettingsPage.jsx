@@ -282,7 +282,7 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
-    if (firstName && lastName && middleName && telephoneNumber?.length == 12) {
+    if (firstName && lastName && middleName && telephoneNumber?.length >= 12) {
       setIsValid(true);
     } else {
       setIsValid(false);
@@ -415,10 +415,11 @@ export default function SettingsPage() {
 
               <Input name={"Телефон"} isShowInput={true}>
                 <InputMask
-                  mask="+9 (999) 999-99-99"
-                  value={telephoneNumber}
-                  onChange={handleChangeTelephoneNumber}
-                  placeholder="+9 (999) 999-99-99"
+                   mask="+9 (999) 999-99-99-9999999"  // добавим “запасные” цифры
+                    maskChar={null}                    // не показывает подчёркивания
+                    value={telephoneNumber}
+                    onChange={handleChangeTelephoneNumber}
+                    placeholder="+_ (___) ___-__-__"
                   required
                 >
                   {(inputProps) => (

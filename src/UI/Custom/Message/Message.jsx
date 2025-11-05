@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import classes from './Message.module.css';
-import { extractHoursMinutes } from '@helpers/helpers';
+import { extractHoursMinutes, formatDateTime } from '@helpers/helpers';
 import isSeenIcon from '@image/isSeen.svg'
 import notSeenIcon from '@image/notSeen.svg'
 import FilesMessages from './FilesMessages';
+import { baseUrl } from '@helpers/constants'
+import default_avatar from '@image/default_avatar.svg'
 
 const transformText = (text) => {
     const regex = /(.*?)policyId:([^,]+),policyName:([^,]+)(.*)/i;
@@ -26,15 +28,15 @@ const transformText = (text) => {
 
     return (
 
-            <div style={{
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-                lineHeight: '1.4'
-            }}>
-                {before}
-                <a href={`#/pomoshnik/policy/${value}`}>{label}</a>
-                {after}
-            </div>
+        <div style={{
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+            lineHeight: '1.4'
+        }}>
+            {before}
+            <a href={`#/pomoshnik/policy/${value}`}>{label}</a>
+            {after}
+        </div>
 
     );
 };
@@ -49,7 +51,7 @@ const getVisaClassName = (text) => {
     return null;  // Если текст не подошёл — вернём null
 };
 
-export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
+export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
 
 
     return (
@@ -61,34 +63,54 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, senderPost
             }}
             {...props} // Передаем все пропсы, включая data-message-id
         >
-            <div
-                className={
-                    getVisaClassName(children) ||
-                    (userMessage ? classes.userMessageContainer : classes.messageContainer)
-                }
-            >
-                {
-                    attachmentToMessage?.length > 0
-                        ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
-                        : (null)
-                }
-                <div className={classes.senderName}>
-                    {senderPostName}
-                </div>
-                <div className={classes.contentMessage}>
-                    <div className={classes.textMessage}>
-                        {transformText(children)}
+            <div className={classes.messageContainer}>
+                {!userMessage && (
+                    <div className={classes.userAvatar}>
+                        <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
                     </div>
-                    <div className={classes.time}>
+                )}
+                <div>
+                    <div className={classes.messageInfo}>
+                        {formatDateTime(createdMessage)}
+                        {userMessage && (
+                            <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
+                        )}
+                    </div>
+                    <div
+                        className={
+                            getVisaClassName(children) || classes.userMessageContainer
+                        }
+                    >
+                        {
+                            attachmentToMessage?.length > 0
+                                ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
+                                : (null)
+                        }
+                        <div className={classes.senderName}>
+                            {senderPostName}
+                        </div>
+                        <div className={classes.contentMessage}>
+                            <div className={classes.textMessage}>
+                                {transformText(children)}
+                            </div>
+                            {/* <div className={classes.time}>
                         {extractHoursMinutes(createdMessage)}
                     </div>
                     {userMessage && (
                         <div className={classes.isSeen}>
                             <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
                         </div>
-                    )}
+                    )} */}
+                        </div>
+                    </div>
                 </div>
+                {userMessage && (
+                    <div className={classes.userAvatar}>
+                        <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
+                    </div>
+                )}
             </div>
+
         </div >
     );
 });

@@ -66,3 +66,5 @@ export { useGlobalLoading } from "./useGlobalLoading";
 // Pemissions
 export { useGetMyPermissions } from "./Permissions/useGetMyPermissions.js";
 export { useModuleActions } from "./Permissions/useModuleActions.js";
+
+export { default as useGetUserId } from './useGetUserId.js'
