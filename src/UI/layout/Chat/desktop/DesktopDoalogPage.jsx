@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import classes from './DesktopDialogPage.module.css';
 import Headers from "@Custom/Headers/Headers";
-import { useConvertsHook, useMessages, useUnseenMessages, useRightPanel } from '@hooks';
+import { useConvertsHook, useMessages, useUnseenMessages, useRightPanel, useGetUserId } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
 import Input from '../Input';
@@ -74,6 +74,8 @@ export default function DesktopDialogPage() {
         isFetchingUnSeenMessages,
     } = useUnseenMessages(convertId)
 
+    const { reduxUserId } = useGetUserId()
+
     const seenMessagesRef = useRef(seenMessages);
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
@@ -138,7 +140,7 @@ export default function DesktopDialogPage() {
         setSocketMessages(prev => [...prev, {
             id: newMessage.id,
             content: newMessage.content,
-            userMessage: newMessage.sender.id === senderPostId,
+            sender: newMessage.sender,
             attachmentToMessages: newMessage.attachmentToMessages,
             timeSeen: null,
             createdAt: newMessage.createdAt,
@@ -262,17 +264,19 @@ export default function DesktopDialogPage() {
     useEffect(() => {
         if (!notEmpty(currentConvert)) return
 
-        if (currentConvert?.convertPath === 'Согласование') {
-            setButtons([
-                { click: () => setOpenFinishModal(true), text: 'завершить' },
-                { click: () => setOpenAgreementModal(true), text: 'согласовать' }
-            ])
-        } else {
-            setButtons([{ click: () => setOpenFinishModal(true), text: 'завершить' }])
-        }
+        const tempArray = []
+
+        if (currentConvert?.host.user.id === reduxUserId)
+            tempArray.push({ click: () => setOpenFinishModal(true), text: 'завершить' })
+
+        if (currentConvert?.convertPath === 'Согласование')
+            tempArray.push({ click: () => setOpenAgreementModal(true), text: 'согласовать' })
+
+        setButtons(tempArray)
+
     }, [currentConvert])
 
-    console.log(userInfo)
+    console.log(socketMessages)
 
     return (
         <MainContentContainer buttons={buttons}>
@@ -284,11 +288,13 @@ export default function DesktopDialogPage() {
                 <div className={classes.body} ref={bodyRef}>
                     {socketMessages?.slice()?.reverse()?.map((item, index) => (
                         <React.Fragment key={index}>
-                            <Message userMessage={item?.userMessage}
+                            <Message
+                                userMessage={item?.sender.user.id === reduxUserId}
                                 createdMessage={item?.createdAt}
                                 seenStatuses={item?.seenStatuses}
                                 attachmentToMessage={item?.attachmentToMessages}
-                                {...(!item.userMessage && { 'data-message-id': item.id })}
+                                avatar={item?.sender.user.avatar_url}
+                                {...(!item?.sender.user.id === reduxUserId && { 'data-message-id': item.id })}
                             >
                                 {item.content}
                             </Message>
@@ -299,12 +305,13 @@ export default function DesktopDialogPage() {
                             {unSeenMessages?.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <Message
-                                        userMessage={item?.userMessage}
+                                        userMessage={item?.sender.user.id === reduxUserId}
                                         createdMessage={item?.createdAt}
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
                                         attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}
+                                        avatar={item?.sender.user.avatar_url}
 
                                     >
                                         {item.content}
@@ -317,11 +324,12 @@ export default function DesktopDialogPage() {
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
                             <Message key={index}
-                                userMessage={item?.userMessage}
+                                userMessage={item?.sender.user.id === reduxUserId}
                                 seenStatuses={item?.seenStatuses}
                                 senderPost={item?.sender}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 createdMessage={item?.createdAt}
+                                avatar={item?.sender.user.avatar_url}
                             >
                                 {item.content}
                             </Message>

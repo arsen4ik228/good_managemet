@@ -1,44 +1,108 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createConnectionSocket, disconnectSocket } from '@helpers/socket.js';
-import { notEmpty } from '@helpers/helpers'
 
 const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
+    const reconnectTimeoutRef = useRef(null);
+    const reconnectAttemptsRef = useRef(0);
+    const maxReconnectAttempts = 5;
+    const baseReconnectDelay = 1000; // 1 секунда
+
+    const connect = async () => {
+        try {
+            console.log('Creating new socket connection');
+            socketRef.current = await createConnectionSocket();
+            setIsConnected(true);
+            reconnectAttemptsRef.current = 0;
+            
+            // Обработчики событий сокета
+            socketRef.current.on("disconnect", (reason) => {
+                console.log('Socket disconnected:', reason);
+                setIsConnected(false);
+                scheduleReconnect();
+            });
+
+            socketRef.current.on("connect_error", (error) => {
+                console.error('Socket connection error:', error);
+                setIsConnected(false);
+                scheduleReconnect();
+            });
+
+            socketRef.current.on("reconnect", (attemptNumber) => {
+                console.log('Socket reconnected after', attemptNumber, 'attempts');
+                setIsConnected(true);
+                reconnectAttemptsRef.current = 0;
+            });
+
+        } catch (error) {
+            console.error('Failed to connect to socket:', error);
+            scheduleReconnect();
+        }
+    };
+
+    const scheduleReconnect = () => {
+        if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
+            console.warn('Max reconnection attempts reached');
+            return;
+        }
+
+        // Экспоненциальная задержка
+        const delay = baseReconnectDelay * Math.pow(2, reconnectAttemptsRef.current);
+        reconnectAttemptsRef.current++;
+
+        console.log(`Scheduling reconnect in ${delay}ms (attempt ${reconnectAttemptsRef.current})`);
+        
+        reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+        }, delay);
+    };
+
+    const disconnect = () => {
+        if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+        }
+        if (socketRef.current) {
+            disconnectSocket(socketRef.current);
+            socketRef.current = null;
+        }
+        setIsConnected(false);
+    };
 
     useEffect(() => {
-        const initializeSocket = async () => {
-            if (socketRef.current) {
-                console.log('Socket already exists');
-                return;
-            }
-
-            try {
-                console.log('Creating new socket connection');
-                socketRef.current = await createConnectionSocket();
-                setIsConnected(true);
-                console.log('Socket connected:', socketRef.current);
-            } catch (error) {
-                console.error('Failed to connect to socket:', error);
-            }
-        };
-
-        initializeSocket();
+        connect();
 
         return () => {
-            if (socketRef.current) {
-                console.log('Disconnecting socket');
-                disconnectSocket(socketRef.current);
-                socketRef.current = null;
-                setIsConnected(false);
-            }
+            disconnect();
         };
     }, []);
 
+    // Обработчик видимости страницы
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible' && !isConnected && !socketRef.current) {
+                // Если вкладка стала активной и соединение разорвано - переподключаемся
+                console.log('Tab became visible, reconnecting socket...');
+                connect();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [isConnected]);
+
     return (
-        <SocketContext.Provider value={{ socket: socketRef.current, isConnected }}>
+        <SocketContext.Provider value={{ 
+            socket: socketRef.current, 
+            isConnected,
+            reconnect: connect,
+            disconnect 
+        }}>
             {children}
         </SocketContext.Provider>
     );
@@ -47,86 +111,92 @@ export const SocketProvider = ({ children }) => {
 export const useSocket = (eventNames, callback) => {
     const { socket, isConnected } = useContext(SocketContext);
     const [response, setResponse] = useState({});
+    const callbackRef = useRef(callback);
+
+    // Обновляем ref callback при изменении
+    useEffect(() => {
+        callbackRef.current = callback;
+    }, [callback]);
 
     useEffect(() => {
         if (!socket || !isConnected) {
-            console.error('Socket is not connected');
+            console.log('Socket is not connected, skipping event subscription');
             return;
         }
 
-        eventNames.forEach((eventName) => {
-            console.log('Socket: subscribe to', eventName);
-            socket.on(eventName, (data) => {
+        const eventHandlers = eventNames.map((eventName) => {
+            const handler = (data) => {
                 console.log('Data received:', data);
                 setResponse((prev) => ({ ...prev, [eventName]: data }));
-                if (callback) {
-                    callback(eventName, data);
+                if (callbackRef.current) {
+                    callbackRef.current(eventName, data);
                 }
-            });
+            };
+            
+            console.log('Socket: subscribe to', eventName);
+            socket.on(eventName, handler);
+            
+            return { eventName, handler };
         });
 
         return () => {
-            eventNames.forEach((eventName) => {
+            eventHandlers.forEach(({ eventName, handler }) => {
                 console.log('unsubscribe from', eventName);
-                socket.off(eventName);
+                socket.off(eventName, handler);
             });
         };
-    }, [socket, isConnected, eventNames, callback]);
+    }, [socket, isConnected, eventNames]);
 
     return response;
 };
 
-export const useEmitSocket = (eventName, data) => {
+export const useEmitSocket = (eventName, data, options = {}) => {
     const { socket, isConnected } = useContext(SocketContext);
+    const { retry = true, maxRetries = 3 } = options;
+    const retryCountRef = useRef(0);
 
-    // Мемоизируем данные, чтобы избежать лишних вызовов
     const stableData = useMemo(() => data, [JSON.stringify(data)]);
     const stableEventName = useMemo(() => eventName, [eventName]);
 
-    useEffect(() => {
-        if (!socket || !isConnected) {
-            console.error('Socket is not connected');
-            return;
-        }
-
-        const dataNotEmpty = (data) => {
-            return Object.values(data).every(item => {
-                // Базовые проверки для всех типов
-                if (item === null || item === undefined || item === '') {
-                    return false;
+    const emitWithRetry = useMemo(() => {
+        return (event, payload, currentRetry = 0) => {
+            if (!socket || !isConnected) {
+                if (retry && currentRetry < maxRetries) {
+                    console.log(`Socket not connected, retrying in 1s... (${currentRetry + 1}/${maxRetries})`);
+                    setTimeout(() => {
+                        emitWithRetry(event, payload, currentRetry + 1);
+                    }, 1000);
+                } else {
+                    console.error('Socket: Unable to emit event - socket not connected');
                 }
+                return;
+            }
 
-                const type = typeof item;
-
-                if (type === 'object') {
-                    if (Array.isArray(item)) {
-                        return item.length > 0
-                    }
-                    else {
-                        return Object.keys(item).length > 0
-                    }
-                }
-
-                if (type === 'string') {
-                    return item.trim().length > 0
-                }
-
-                // Для остальных типов (number, boolean, function и т.д.) считаем валидными
-                return true
-            });
+            try {
+                socket.emit(event, payload);
+                console.log(`Socket: ${event} event sent with data:`, payload);
+                retryCountRef.current = 0;
+            } catch (error) {
+                console.error(`Socket: Error emitting event ${event}:`, error);
+            }
         };
+    }, [socket, isConnected, retry, maxRetries]);
 
-        if (!stableEventName || !dataNotEmpty(stableData)) {
-            // console.log(!stableEventName, dataNotEmpty(stableData))
-            console.error('Socket: Event name or data is invalid');
+    useEffect(() => {
+        if (!stableEventName || !stableData) {
             return;
         }
 
-        // Отправляем событие на сервер с данными
-        socket.emit(stableEventName, stableData);
-        console.log(`Socket: ${stableEventName} event sent with data:`, stableData);
+        emitWithRetry(stableEventName, stableData);
+    }, [stableEventName, stableData, emitWithRetry]);
 
-        // Очистка не требуется
-        return () => { };
-    }, [socket, isConnected, stableEventName, stableData]);
+    // Функция для ручной отправки
+    const manualEmit = useMemo(() => {
+        return (customData = null) => {
+            const payload = customData !== null ? customData : stableData;
+            emitWithRetry(stableEventName, payload);
+        };
+    }, [stableEventName, stableData, emitWithRetry]);
+
+    return manualEmit;
 };

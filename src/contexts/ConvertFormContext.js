@@ -17,6 +17,7 @@ export const ConvertFormProvider = ({ children }) => {
     const [senderPost, setSenderPost] = useState();
     const [reciverPostId, setReciverPostId] = useState();
     const [contactId, setContactId] = useState()
+    const [isDisabledType, setIsDisabledType] = useState(false)
 
     const { userPostsInAccount } = usePostsHook();
     const { contactInfo } = useConvertsHook({ contactId });
@@ -28,11 +29,32 @@ export const ConvertFormProvider = ({ children }) => {
     }, [contactInfo]);
 
     useEffect(() => {
+        if (!userPostsInAccount?.length > 0) return;
+
         if (userPostsInAccount?.length > 0 && !senderPost) {
             setSenderPost(userPostsInAccount[0]?.id);
         }
     }, [userPostsInAccount, senderPost]);
 
+    useEffect(() => {
+        if (!contactInfo) return;
+        if (!userPostsInAccount?.length > 0) return;
+
+        console.warn('useeff')
+        const postObj = userPostsInAccount?.find(item => item.id === senderPost)
+        console.warn(postObj)
+        console.log(postObj?.organization.id, '   ', reduxSelectedOrganizationId)
+        if (postObj?.organization.id !== reduxSelectedOrganizationId) {
+            setConvertType('Личная')
+            setIsDisabledType(true)
+            console.error('jvdnhvdfhjvbdfhj')
+
+        }
+        else
+            setIsDisabledType(false)
+    }, [contactId, userPostsInAccount, senderPost]);
+
+    console.log('COnvrt COntext')
     const value = {
         convertType,
         convertTheme,
@@ -46,7 +68,8 @@ export const ConvertFormProvider = ({ children }) => {
         userPostsInAccount,
         contactInfo,
         contactId,
-        setContactId
+        setContactId,
+        isDisabledType
     };
 
     return (

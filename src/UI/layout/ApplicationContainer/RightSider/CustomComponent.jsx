@@ -23,14 +23,15 @@ export const CustomComponent = () => {
         TYPE_OPTIONS,
         userPostsInAccount,
         contactInfo,
-        setContactId
+        setContactId,
+        isDisabledType
     } = useConvertForm();
 
     useEffect(() => {
         setContactId(contactId)
     },[contactId])
 
-    console.log(userPostsInAccount)
+    console.log(userPostsInAccount,isDisabledType )
 
     return (
         <div className={classes.customContainer}>
@@ -55,6 +56,7 @@ export const CustomComponent = () => {
                     options={TYPE_OPTIONS}
                     value={convertType}
                     onChange={(value) => setConvertType(value)}
+                    disabled={isDisabledType}
                 />
             </div>
 
