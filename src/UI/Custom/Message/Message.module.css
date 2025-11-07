@@ -2,8 +2,8 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 10px 90px;
-    /* width: 100%; */
+    padding: 15px 0;
+    width: 100%;
 }
 
 /* Общие стили для всех контейнеров */
@@ -12,7 +12,7 @@
 .visaApproved,
 .visaRejected {
     position: relative;
-    max-width: 540px;
+    /* max-width: 540px; */
     max-height: 9300px;
     padding: 10px;
     border-radius: 10px;
@@ -26,8 +26,16 @@
 .messageContainer {
     /* background-color: #ffffff; */
     position: relative;
+    width: 100%;
     display: flex;
+    padding: 0 135px 0 150px;
     padding-top: 10px;
+
+}
+
+.messageWithoutAvatar {
+    /* border: 1px solid red; */
+    min-width: 660px;
 }
 
 .userMessageContainer {
@@ -90,7 +98,9 @@
     display: flex;
     height: 100%;
     align-items: flex-end;
-    padding: 8px 16px;
+    padding: 15px 30px;
+    /* min-width: 520px; */
+    max-width: 640px;
 }
 
 .time {
@@ -112,33 +122,35 @@
     }
 }
 
-.userAvatar{
+.userAvatar {
     position: relative;
-    >img{
+
+    >img {
         position: absolute;
         top: -8px;
-        width: 48px;
-        height: 48px;
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
     }
 }
 
-.userAvatar_receiver{
+.userAvatar_receiver {
     position: relative;
-    >img{
+
+    >img {
         position: absolute;
         top: -8px;
         right: 5px;
-        width: 48px;
-        height: 48px;
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
     }
 }
 
-.messageInfo{
+.messageInfo {
     display: flex;
     justify-content: space-between;
-    padding: 3px 15px;
+    padding: 10px 15px;
     /* border-radius: 10px; */
     /* margin: 10px; */
     padding-top: 0px;
@@ -147,7 +159,17 @@
     color: rgba(153, 153, 153, 1);
 }
 
+@media (max-width: 1559px) {
+    .messageContainer {
+        padding: 0 75px 0 90px;
+    }
 
+    .messageWithoutAvatar {
+        /* border: 1px solid red; */
+        min-width: 540px;
+    }
+
+}
 
 /* 
 .messageContainer {

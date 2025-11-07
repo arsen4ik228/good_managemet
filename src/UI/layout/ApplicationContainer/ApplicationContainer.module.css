@@ -1,40 +1,48 @@
 /* ApplicationContainer.module.css */
 .wrapper {
-    min-height: 100vh;
-  }
-  
+  min-height: 100vh;
+}
+
+.left_panel,
+.right_panel {
+  min-width: 350px !important;
+  /*  max-width: 350px !important; */
+  /* width: 300px !important;  */
+  padding: 0 10px;
+  background: #fff;
+  border-right: 1px solid #f0f0f0;
+  /* padding: 16px; */
+  background-color: var(--grey-light);
+}
+
+.left_panel {
+  padding-left: 0;
+}
+
+.right_panel {
+  border-right: none;
+  border-left: 1px solid #f0f0f0;
+}
+
+.main_content {
+  /* padding: 24px; */
+  min-height: 280px;
+  margin: 0;
+  background: #fff;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+/* Для предотвращения изменения ширины через ресайз */
+.left_panel .ant-layout-sider-trigger,
+.right_panel .ant-layout-sider-trigger {
+  display: none !important;
+}
+
+@media (max-width: 1440px) {
+
   .left_panel,
   .right_panel {
-    min-width: 250px !important;
-    max-width: 350px !important;
-    /* width: 300px !important;  */
-    padding: 0 10px;
-    background: #fff;
-    border-right: 1px solid #f0f0f0;
-    /* padding: 16px; */
-    background-color: var(--grey-light);
+    min-width: 300px !important;
   }
-
-  .left_panel{
-    padding-left: 0;
-  }
-  
-  .right_panel {
-    border-right: none;
-    border-left: 1px solid #f0f0f0;
-  }
-  
-  .main_content {
-    /* padding: 24px; */
-    min-height: 280px;
-    margin: 0;
-    background: #fff;
-    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5); 
-    z-index: 50;
-  }
-  
-  /* Для предотвращения изменения ширины через ресайз */
-  .left_panel .ant-layout-sider-trigger,
-  .right_panel .ant-layout-sider-trigger {
-    display: none !important;
-  }
+}

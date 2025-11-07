@@ -5,7 +5,7 @@
 
 .content {
     height: 100%;
-    width: 690px;
+    width: var(--content-width);
     display: flex;
     flex-direction: column;
     padding-bottom: 3px;

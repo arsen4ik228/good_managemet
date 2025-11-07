@@ -1,7 +1,7 @@
 .wrapper {
-  width: 730px;
+  width: var(--content-width);
   background-color: #ffff;
-  padding: 10px 55px;
+  padding: 10px 50px;
   box-sizing: border-box;
   border-radius: 10px;
   display: flex;

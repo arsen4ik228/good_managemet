@@ -31,7 +31,7 @@ export const CustomComponent = () => {
         setContactId(contactId)
     },[contactId])
 
-    console.log(userPostsInAccount,isDisabledType )
+    console.log(userPostsInAccount,isDisabledType)
 
     return (
         <div className={classes.customContainer}>

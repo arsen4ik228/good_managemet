@@ -31,7 +31,7 @@ export default function Worker() {
             <MainContentContainer buttons={buutonsArr}>
                 <Card
                     style={{
-                        width: 450,
+                        width: 640,
                         maxHeight: 500,
                         marginTop: 20,
                         textAlign: "center",
