@@ -126,43 +126,40 @@ export const postApi = apiSlice.injectEndpoints({
         const result = []
 
         response?.postsWithConverts.forEach(element => {
-          const userExist = result.find(item => item.userId === element.userId)
+          const userExist = result.find(item => item.userId === element.userId);
           if (userExist) {
-            userExist.postsNames = [...userExist.postsNames, element.postName]
-            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (+element.unseenMessagesCount ?? 0)
-            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (+element.watcherUnseenCount ?? 0)
-          }
-          else {
+            userExist.postsNames = [...userExist.postsNames, element.postName];
+            userExist.unseenMessagesCount = (userExist.unseenMessagesCount || 0) + (Number(element.unseenMessagesCount) || 0);
+            userExist.watcherUnseenCount = (userExist.watcherUnseenCount || 0) + (Number(element.watcherUnseenCount) || 0);
+          } else {
             result.push({
               ...element,
-              unseenMessagesCount: +element.unseenMessagesCount ?? 0,
-              watcherUnseenCount: +element.watcherUnseenCount ?? 0,
+              unseenMessagesCount: Number(element.unseenMessagesCount) || 0,
+              watcherUnseenCount: Number(element.watcherUnseenCount) || 0,
               postsNames: [element.postName],
               user: {
                 avatar_url: element.userAvatar
               }
-              // userId: element?.user.id,
-            })
+            });
           }
         });
 
         response?.postsWithoutConverts.forEach(element => {
-          const userExist = result.find(item => item.userId === element.user.id)
+          const userExist = result.find(item => item.userId === element.user.id);
           if (userExist) {
-            userExist.postsNames = [...userExist.postsNames, element.postName]
-            userExist.unseenMessagesCount = +userExist.unseenMessagesCount + (+element.unseenMessagesCount ?? 0)
-            userExist.watcherUnseenCount = +userExist.watcherUnseenCount + (+element.watcherUnseenCount ?? 0)
-          }
-          else {
+            userExist.postsNames = [...userExist.postsNames, element.postName];
+            userExist.unseenMessagesCount = (userExist.unseenMessagesCount || 0) + (Number(element.unseenMessagesCount) || 0);
+            userExist.watcherUnseenCount = (userExist.watcherUnseenCount || 0) + (Number(element.watcherUnseenCount) || 0);
+          } else {
             result.push({
               ...element,
-              unseenMessagesCount: +element.unseenMessagesCount ?? 0,
-              watcherUnseenCount: +element.watcherUnseenCount ?? 0,
+              unseenMessagesCount: Number(element.unseenMessagesCount) || 0,
+              watcherUnseenCount: Number(element.watcherUnseenCount) || 0,
               postsNames: [element.postName],
               userId: element?.user.id,
               userLastName: element?.user.lastName,
               userFirstName: element?.user.firstName
-            })
+            });
           }
         });
 

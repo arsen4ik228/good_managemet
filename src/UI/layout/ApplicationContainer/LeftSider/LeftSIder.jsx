@@ -4,7 +4,7 @@ import logo from '@image/big_logo.svg'
 import helper_icon from "@image/helper_icon.svg"
 import org_icon from '@image/org_icon.svg'
 import CustomList from '../../../Custom/CustomList/CustomList'
-import { useOrganizationHook, useGetReduxOrganization, usePostsHook, useRightPanel } from '@hooks'
+import { useOrganizationHook, useGetReduxOrganization, usePostsHook, useRightPanel, useUserHook } from '@hooks'
 import { useDispatch } from 'react-redux'
 import {
     setSelectedOrganizationId,
@@ -19,6 +19,7 @@ import { ModalCreateOrganization } from '../../Organization/ModalCreateOrganizat
 
 import { baseUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
+import logo_svg from '@image/logo_svg.svg'
 import { setSelectedOrganizationName } from '../../../../store/slices/local.storage.slice'
 
 
@@ -57,6 +58,8 @@ export default function LeftSIder() {
 
     const { allChats, loadingAllChats, refetchAllChats } = usePostsHook()
 
+    const { userInfo } = useUserHook()
+    console.log(userInfo)
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
@@ -71,8 +74,8 @@ export default function LeftSIder() {
         setExpanendOrg(false)
     };
 
-    const handlerHelper = () => {
-        navigate('helper')
+    const handlerUser = () => {
+        navigate('accountSettings')
     }
 
     const handlerCreateUser = () => {
@@ -159,7 +162,7 @@ export default function LeftSIder() {
 
                 navigate(`/${defaultOrg.id}`)
             }
-            else { 
+            else {
                 navigate(`/${localStorage.getItem("selectedOrganizationId")}`)
             }
 
@@ -177,16 +180,17 @@ export default function LeftSIder() {
     return (
         <>
             <div className={classes.wrapper}>
-                <div className={classes.header}>
-                    <img src={logo} alt="GOODMANAGEMENT" className = {classes.logo} onClick={() => navigate('accountSettings')} />
+                {/* <div className={classes.header}>
+                    <img src={logo} alt="GOODMANAGEMENT" className={classes.logo}  />
                     <div>GOODMANAGEMENT</div>
-                </div>
+                </div> */}
+                <img src={logo_svg} alt="alt" />
                 <div className={classes.content}>
 
                     <CustomList
                         title={'организации'}
                         // addButtonText={'Новая организация'}
-                        addButtonClick={ () => setOpenModalCreateOrganization(true)}
+                        addButtonClick={() => setOpenModalCreateOrganization(true)}
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
                         selectedItem={selectedOrgSectionValue}
@@ -212,7 +216,7 @@ export default function LeftSIder() {
                     </CustomList>
 
                     {
-                      openModalCreateOrganization && 
+                        openModalCreateOrganization &&
                         <ModalCreateOrganization
                             open={openModalCreateOrganization}
                             setOpen={setOpenModalCreateOrganization}
@@ -230,17 +234,17 @@ export default function LeftSIder() {
                         selectedItem={selectedContactsSectionValue}
                     >
                         <ListElem
-                            icon={helper_icon}
-                            linkSegment={'helper'}
-                            upperText={'Гудменеджер'}
-                            bottomText={'ИИ Помощник'}
-                            clickFunc={handlerHelper}
+                            icon={userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}`: default_avatar}
+                            linkSegment={'accountSettings'}
+                            upperText={userInfo?.lastName + ' ' + userInfo?.firstName}
+                            bottomText={userInfo?.posts.map(item => item.postName).join(', ')}
+                            clickFunc={handlerUser}
                         />
 
                         {filtredContacts?.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
-                                    icon={item?.user?.avatar_url ? `${baseUrl + item?.user?.avatar_url }` : default_avatar}
+                                    icon={item?.user?.avatar_url ? `${baseUrl + item?.user?.avatar_url}` : default_avatar}
                                     upperText={item.userFirstName + ' ' + item.userLastName}
                                     bottomText={item.postsNames.join(', ')}
                                     linkSegment={`${item.userId}`}

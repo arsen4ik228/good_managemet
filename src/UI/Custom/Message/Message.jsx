@@ -65,7 +65,7 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
         >
             <div className={classes.messageContainer}>
                 {!userMessage && (
-                    <div className={classes.userAvatar}>
+                    <div className={classes.userAvatar_receiver}>
                         <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
                     </div>
                 )}

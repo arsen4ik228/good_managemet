@@ -2,7 +2,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 5px 10px;
+    padding: 10px 90px;
     /* width: 100%; */
 }
 
@@ -25,7 +25,9 @@
 /* Индивидуальные стили */
 .messageContainer {
     /* background-color: #ffffff; */
+    position: relative;
     display: flex;
+    padding-top: 10px;
 }
 
 .userMessageContainer {
@@ -81,13 +83,14 @@
     max-height: 9280px;
     word-break: keep-all;
     height: 100%;
-    padding: 1px;
+    font-size: 16px;
 }
 
 .contentMessage {
     display: flex;
     height: 100%;
     align-items: flex-end;
+    padding: 8px 16px;
 }
 
 .time {
@@ -110,9 +113,25 @@
 }
 
 .userAvatar{
+    position: relative;
     >img{
+        position: absolute;
+        top: -8px;
         width: 48px;
         height: 48px;
+        border-radius: 50%;
+    }
+}
+
+.userAvatar_receiver{
+    position: relative;
+    >img{
+        position: absolute;
+        top: -8px;
+        right: 5px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
     }
 }
 
