@@ -180,8 +180,10 @@ export default function LeftSIder() {
     return (
         <>
             <div className={classes.wrapper}>
+
                 {/* <div className={classes.header}>
                     <img src={logo} alt="GOODMANAGEMENT" className={classes.logo}  />
+
                     <div>GOODMANAGEMENT</div>
                 </div> */}
                 <img src={logo_svg} alt="alt" />
@@ -189,8 +191,10 @@ export default function LeftSIder() {
 
                     <CustomList
                         title={'организации'}
-                        // addButtonText={'Новая организация'}
-                        addButtonClick={() => setOpenModalCreateOrganization(true)}
+
+                        addButtonText={'Новая организация'}
+                        addButtonClick={ () => setOpenModalCreateOrganization(true)}
+
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
                         selectedItem={selectedOrgSectionValue}

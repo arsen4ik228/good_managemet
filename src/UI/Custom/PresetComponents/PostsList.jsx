@@ -38,7 +38,7 @@ export default function PostsList() {
         isLoadingGetPosts,
         isFetchingGetPosts,
         isErrorGetPosts,
-    } = useAllPosts();
+    } = useAllPosts({isArchive: isActive });
 
     const { isCreate } = useModuleActions("post");
 

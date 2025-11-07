@@ -75,7 +75,7 @@ export default function EditPost() {
 
                 divisionName: currentPost.divisionName ?? null,
 
-                isArchive: currentPost.isArchive ?? null,
+                isArchive: Boolean(currentPost.isArchive),
 
                 roleId: currentPost.role.id ?? null,
                 product: currentPost.product ?? null,
@@ -141,7 +141,7 @@ export default function EditPost() {
 
             divisionName: currentPost.divisionName ?? null,
 
-            isArchive: currentPost.isArchive ?? null,
+            isArchive: Boolean(currentPost.isArchive),
 
             roleId: currentPost.role.id ?? null,
             product: currentPost.product ?? null,
@@ -205,6 +205,8 @@ export default function EditPost() {
             .includes(search.toLowerCase())
     );
 
+
+    console.log("initialValues = ", initialValues);
     return (
         <>
             {
@@ -232,7 +234,9 @@ export default function EditPost() {
                             <Form
                                 form={form}
                                 initialValues={initialValues}
-                                layout="vertical">
+                                layout="vertical"
+                                disabled={currentPost.isArchive}
+                            >
 
                                 {/* Руководящий пост */}
 
@@ -428,7 +432,7 @@ export default function EditPost() {
                                                 <Select
                                                     showSearch
                                                     optionFilterProp="label"
-                                                    options={roles.map((r) => ({
+                                                    options={roles.filter((item) => item.id !== "894559e4-fd79-434b-9c00-f95dee0d10ab" && item.id !== "44514689-427c-46e5-9e60-2d7b90b73fae").map((r) => ({
                                                         label: r.roleName,
                                                         value: r.id,
                                                     }))}
@@ -438,19 +442,19 @@ export default function EditPost() {
                                                 />
 
                                             </Form.Item>
-
+                                            
                                             <Form.Item
                                                 name="isArchive"
                                                 valuePropName="checked"
+                                                noStyle
                                             >
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                                    <Checkbox>
-                                                        {!currentPost?.isArchive
-                                                            ? <Tag color="green" style={{ margin: 0 }}>Сделать пост архивным</Tag>
-                                                            : <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
-                                                    </Checkbox>
-                                                </div>
+                                                <Checkbox disabled={false}>
+                                                    {!currentPost?.isArchive
+                                                        ? <Tag color="green" style={{ margin: 0 }}>Сделать пост архивным</Tag>
+                                                        : <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
+                                                </Checkbox>
                                             </Form.Item>
+
 
 
                                         </Flex>
