@@ -168,7 +168,17 @@ h6 {
     --grey-light: #F0F0F0;
     --dark: #3A3A3A;
     --second-primary:#3E7B94;
+
+    --content-width: 880px;
+    /* --content-width: 640px; */
+
 }
+
+@media (max-width: 1599px) {
+    :root {
+      --content-width: 640px;
+    }
+  }
 
 /*--------------------*/
 ::-webkit-scrollbar {

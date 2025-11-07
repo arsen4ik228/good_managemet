@@ -1,5 +1,5 @@
 .textArea {
-    width: 690px;
+    width: var(--content-width);
     overflow: hidden;
     min-height: 150px;
     background-color: #ffff;

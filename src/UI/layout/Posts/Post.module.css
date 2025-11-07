@@ -2,7 +2,7 @@
   position: relative;
 
   width: auto;
-  max-width: 690px;
+  max-width: var(--content-width);
 
   flex: 1 0 120px;
 

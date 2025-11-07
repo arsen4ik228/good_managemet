@@ -58,18 +58,20 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
         <div
             ref={ref}
             className={classes.wrapper}
-            style={{
-                justifyContent: userMessage ? 'flex-end' : 'flex-start',
-            }}
+
             {...props} // Передаем все пропсы, включая data-message-id
         >
-            <div className={classes.messageContainer}>
+            <div className={classes.messageContainer}
+                style={{
+                    justifyContent: userMessage ? 'flex-end' : 'flex-start',
+                }}
+            >
                 {!userMessage && (
-                    <div className={classes.userAvatar}>
+                    <div className={classes.userAvatar_receiver}>
                         <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
                     </div>
                 )}
-                <div>
+                <div className={classes.messageWithoutAvatar}>
                     <div className={classes.messageInfo}>
                         {formatDateTime(createdMessage)}
                         {userMessage && (

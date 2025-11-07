@@ -2,8 +2,8 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 5px 10px;
-    /* width: 100%; */
+    padding: 15px 0;
+    width: 100%;
 }
 
 /* Общие стили для всех контейнеров */
@@ -12,7 +12,7 @@
 .visaApproved,
 .visaRejected {
     position: relative;
-    max-width: 540px;
+    /* max-width: 540px; */
     max-height: 9300px;
     padding: 10px;
     border-radius: 10px;
@@ -25,7 +25,17 @@
 /* Индивидуальные стили */
 .messageContainer {
     /* background-color: #ffffff; */
+    position: relative;
+    width: 100%;
     display: flex;
+    padding: 0 135px 0 150px;
+    padding-top: 10px;
+
+}
+
+.messageWithoutAvatar {
+    /* border: 1px solid red; */
+    min-width: 660px;
 }
 
 .userMessageContainer {
@@ -81,13 +91,16 @@
     max-height: 9280px;
     word-break: keep-all;
     height: 100%;
-    padding: 1px;
+    font-size: 16px;
 }
 
 .contentMessage {
     display: flex;
     height: 100%;
     align-items: flex-end;
+    padding: 15px 30px;
+    /* min-width: 520px; */
+    max-width: 640px;
 }
 
 .time {
@@ -109,17 +122,35 @@
     }
 }
 
-.userAvatar{
-    >img{
-        width: 48px;
-        height: 48px;
+.userAvatar {
+    position: relative;
+
+    >img {
+        position: absolute;
+        top: -8px;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
     }
 }
 
-.messageInfo{
+.userAvatar_receiver {
+    position: relative;
+
+    >img {
+        position: absolute;
+        top: -8px;
+        right: 5px;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+    }
+}
+
+.messageInfo {
     display: flex;
     justify-content: space-between;
-    padding: 3px 15px;
+    padding: 10px 15px;
     /* border-radius: 10px; */
     /* margin: 10px; */
     padding-top: 0px;
@@ -128,7 +159,17 @@
     color: rgba(153, 153, 153, 1);
 }
 
+@media (max-width: 1559px) {
+    .messageContainer {
+        padding: 0 75px 0 90px;
+    }
 
+    .messageWithoutAvatar {
+        /* border: 1px solid red; */
+        min-width: 540px;
+    }
+
+}
 
 /* 
 .messageContainer {
