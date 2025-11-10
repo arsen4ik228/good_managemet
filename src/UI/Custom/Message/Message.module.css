@@ -36,6 +36,7 @@
 .messageWithoutAvatar {
     /* border: 1px solid red; */
     min-width: 660px;
+    max-width: 660px;
 }
 
 .userMessageContainer {
@@ -161,12 +162,13 @@
 
 @media (max-width: 1599px) {
     .messageContainer {
-        padding: 0 75px 0 90px;
+        padding: 0 10px;
     }
 
     .messageWithoutAvatar {
         /* border: 1px solid red; */
         min-width: 540px;
+        max-width: 540px;
     }
 
 }
