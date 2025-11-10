@@ -27,6 +27,7 @@ const apiSlice = createApi({
     "User",
     "Message",
     "Permissions",
+    "Chats",
   ],
   endpoints: (builder) => ({}),
 });

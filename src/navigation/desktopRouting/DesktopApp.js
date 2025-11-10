@@ -208,7 +208,7 @@ function DesktopApp() {
             element={<ApplicationContainer />} // ВАЖНО: в ApplicationContainer должен быть <Outlet />
           >
             {/* При заходе только на /:organizationId перенаправляем в helper */}
-            <Route index element={<Navigate to="helper" replace />} />
+            <Route index element={<Navigate to="accountSettings" replace />} />
 
             {/* Создание пользователя */}
             <Route
@@ -260,14 +260,14 @@ function DesktopApp() {
 
             {/* ==== Helper ==== */}
             <Route path="helper/*">
-              <Route
+              {/* <Route
                 index
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <HelperChat />
                   </React.Suspense>
                 }
-              />
+              /> */}
               <Route
                 path="strategy"
                 element={

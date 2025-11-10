@@ -159,7 +159,7 @@
     color: rgba(153, 153, 153, 1);
 }
 
-@media (max-width: 1559px) {
+@media (max-width: 1599px) {
     .messageContainer {
         padding: 0 75px 0 90px;
     }

@@ -74,7 +74,7 @@ export default function AuthPage() {
 
         if (serverData.isLogged && localStorage.getItem("accessToken")) {
           localStorage.setItem("fingerprint", fp.visitorId);
-          window.location.href = isMobile ? `#/Main` : "#/1";
+          window.location.href = isMobile ? `#/Main` : "#/accountSettings";
         }
         console.log("Ответ от /:", serverData);
         setTokenForTG(serverData.tokenForTG);
@@ -161,7 +161,7 @@ export default function AuthPage() {
         .then((response) => {
           if (response.ok) {
             console.log("Куки установлены");
-            window.location.href = isMobile ? `#/Main` : `#/pomoshnik/start`;
+            window.location.href = isMobile ? `#/Main` : `#/accountSettings`;
           } else {
             console.error("Ошибка установки куки");
             alert("Не удалось выполнить аутентификацию. Попробуйте снова.");
