@@ -304,14 +304,29 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     }, [handleGlobalKeyDown]);
 
     useEffect(() => {
-        if(!convertId) return
+        if (!convertId) return
         loadDraft("DraftDB", "drafts", convertId, setContentInput);
     }, [convertId]);
 
     useEffect(() => {
-         if(!convertId) return
+        if (!convertId) return
         saveDraft("DraftDB", "drafts", convertId, contentInput);
     }, [contentInput, convertId]);
+
+
+
+    useEffect(() => {
+        if (convertId) return
+        if (!contactId) return
+        loadDraft("DraftDB", "drafts", contactId, setContentInput);
+    }, [contactId]);
+
+    useEffect(() => {
+        if (convertId) return
+        if (!contactId) return
+        saveDraft("DraftDB", "drafts", contactId, contentInput);
+    }, [contentInput, contactId]);
+
 
     useEffect(() => {
         if (!contactInfo) return
