@@ -68,3 +68,4 @@ export { useGetMyPermissions } from "./Permissions/useGetMyPermissions.js";
 export { useModuleActions } from "./Permissions/useModuleActions.js";
 
 export { default as useGetUserId } from './useGetUserId.js'
+export { useChats } from "./useChats.js"

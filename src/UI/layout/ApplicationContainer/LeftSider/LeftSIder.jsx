@@ -13,7 +13,7 @@ import {
 import ListElem from '../../../Custom/CustomList/ListElem'
 import { useNavigate } from 'react-router-dom'
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
-import { useSocket } from '../../../../hooks'
+import { useChats, useSocket } from '../../../../hooks'
 
 import { ModalCreateOrganization } from '../../Organization/ModalCreateOrganization'
 
@@ -56,7 +56,7 @@ export default function LeftSIder() {
         isErrorOrganization
     } = useOrganizationHook();
 
-    const { allChats, loadingAllChats, refetchAllChats } = usePostsHook()
+    const { allChats, loadingAllChats, refetchAllChats } = useChats()
 
     const { userInfo } = useUserHook()
     console.log(userInfo)
