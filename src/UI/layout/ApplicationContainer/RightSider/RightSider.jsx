@@ -13,6 +13,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import RightPanelMapper from '@helpers/RightPanelMapper';
 import CustomComponent from './CustomComponent';
 import { homeUrl } from '@helpers/constants'
+import org_icon from '@image/org_icon.svg'
 
 
 import schemaCompany from '@image/schemaCompany.svg';
@@ -90,7 +91,7 @@ export default function RightSider({ config: initialConfig }) {    //
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>
                 <div className={classes.avatarSection}>
-                    <img src={config.props?.avatar ? config.props.avatar : avatar} alt="avatar" />
+                    <img src={config.props?.avatar ? config.props.avatar : org_icon} alt="avatar" />
                 </div>
                 <div className={classes.nameSection}>{config.props?.name ? config.props?.name : reduxSelectedOrganizationName}</div>
                 <div className={classes.postSection}>{config.props?.postsNames}</div>
