@@ -66,7 +66,7 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                     justifyContent: userMessage ? 'flex-end' : 'flex-start',
                 }}
             >
-                {!userMessage && (
+                {userMessage && (
                     <div className={classes.userAvatar_receiver}>
                         <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
                     </div>
@@ -82,6 +82,7 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                         className={
                             getVisaClassName(children) || classes.userMessageContainer
                         }
+                        style={{"border-radius": userMessage ? "15px 0 15px 0" : 'none'}}
                     >
                         {
                             attachmentToMessage?.length > 0
@@ -106,7 +107,7 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                         </div>
                     </div>
                 </div>
-                {userMessage && (
+                {!userMessage && (
                     <div className={classes.userAvatar}>
                         <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
                     </div>
