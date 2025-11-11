@@ -269,9 +269,11 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 await send();
             else if (convertType === 'Личная') {
                 await createPersonalLetter();
+                  deleteDraft("Convert", "messages", contactId);
             }
             else {
                 await createOrder();
+                 deleteDraft("Convert", "messages", contactId);
             }
         } catch (error) {
             console.error('Ошибка отправки:', error);

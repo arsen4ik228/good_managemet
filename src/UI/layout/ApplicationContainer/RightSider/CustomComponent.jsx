@@ -40,7 +40,6 @@ export const CustomComponent = () => {
 
     useEffect(() => {
         if (!contactId) return
-        if (!convertTheme) return
         saveDraft("Convert", "messages", contactId, convertTheme);
     }, [convertTheme, contactId]);
 
