@@ -4,6 +4,7 @@ import { Input, Select } from 'antd';
 import classes from './CustomComponent.module.css';
 import { useConvertForm } from '../../../../contexts/ConvertFormContext';
 import { useParams } from 'react-router-dom';
+import { loadDraft, saveDraft } from "@helpers/indexedDB";
 
 const { Option } = Select;
 
@@ -29,9 +30,22 @@ export const CustomComponent = () => {
 
     useEffect(() => {
         setContactId(contactId)
-    },[contactId])
+    }, [contactId])
 
-    console.log(userPostsInAccount,isDisabledType)
+
+    useEffect(() => {
+        if (!contactId) return
+        loadDraft("Convert", "messages", contactId, setConvertTheme);
+    }, [contactId]);
+
+    useEffect(() => {
+        if (!contactId) return
+        if (!convertTheme) return
+        saveDraft("Convert", "messages", contactId, convertTheme);
+    }, [convertTheme, contactId]);
+
+
+    console.log(userPostsInAccount, isDisabledType)
 
     return (
         <div className={classes.customContainer}>
