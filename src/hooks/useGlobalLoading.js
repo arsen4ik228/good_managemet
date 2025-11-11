@@ -5,21 +5,28 @@ import { useLocation, matchPath } from "react-router-dom";
 export const useGlobalLoading = (delay = 1000) => {
   const location = useLocation();
 
-  // ✅ Проверяем, находимся ли мы в диалоговой странице
+  // ✅ Проверяем, находимся ли мы в диалоге
   const isDialogRoute =
     matchPath("/:organizationId/chat/:contactId/:convertId", location.pathname) ||
     matchPath("/chat/:contactId/:convertId", location.pathname);
 
-  // 🧠 Проверяем, есть ли хоть один запрос со статусом "pending"
+  // 🧠 Проверяем, есть ли pending-запросы, кроме chatApi.getAllChats
   const isLoading = useSelector((state) => {
     const queries = state.api?.queries || {};
-    return Object.values(queries).some((query) => query?.status === "pending");
+
+    return Object.entries(queries).some(([key, query]) => {
+      if (!query || query.status !== "pending") return false;
+
+      // 🚫 Игнорируем загрузку chatApi (например, getAllChats)
+      const isChatQuery = key.startsWith("getAllChats");
+      return !isChatQuery;
+    });
   });
 
   const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
-    // 🛑 Если мы находимся в диалоге — никогда не показываем загрузку
+    // 🛑 Если мы в диалоге — не показываем загрузку
     if (isDialogRoute) {
       setShowSpinner(false);
       return;
