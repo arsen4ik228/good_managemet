@@ -54,6 +54,21 @@
 
 }
 
+
+fieldset {
+  border: 3px solid #CCCCCC; 
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 0;
+}
+
+legend {
+  font-size: 14px;
+  font-weight: 500;
+  color: #999999;
+  padding: 0 8px;
+}
+
 /* index.css */
 
 /*Обнуление*/
