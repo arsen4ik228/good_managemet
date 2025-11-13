@@ -15,6 +15,8 @@ import { formatPhone } from './function/functionForPost'
 
 import default_avatar from '@image/default_avatar.svg'
 
+import classes from './EditPost.module.css'
+import phone from '@image/phone.svg'
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -230,7 +232,7 @@ export default function EditPost() {
 
                         overflowY: "auto",
                     }}>
-                        <Card style={{ borderRadius: 8, padding: 16, width: "800px" }} bodyStyle={{ padding: 0 }}>
+                        <div style={{ borderRadius: 8, padding: 16, width: "800px" }} bodyStyle={{ padding: 0 }}>
                             <Form
                                 form={form}
                                 initialValues={initialValues}
@@ -240,288 +242,347 @@ export default function EditPost() {
 
                                 {/* Руководящий пост */}
 
-                                <Flex vertical align="center">
-                                    <Space size="small" align="center" >
-                                        <Avatar
-                                            size={48}
-                                            src={selectedParent?.user?.avatar_url ? `${baseUrl}${selectedParent?.user?.avatar_url}` : default_avatar}
-                                        />
-
-                                        <Form.Item
-                                            name="parentId"
-                                            label="Руководящий пост"
-                                            normalize={(value) => value ?? null}
-                                            style={{ flex: 1, marginBottom: 0 }}
-                                        >
-                                            <Select
-                                                style={{ width: 350 }}
-                                                placeholder="Выберите руководителя"
-                                                allowClear
-                                                showSearch
-                                                filterOption={(input, option) => {
-                                                    const searchText = (option?.searchText || "").toLowerCase();
-                                                    return searchText.includes(input.toLowerCase());
-                                                }}
-                                                options={posts.map((post) => {
-                                                    const user = post?.user;
-                                                    const fullName = [user?.lastName, user?.firstName].filter(Boolean).join(" "); // убираем null/undefined
-
-                                                    return {
-                                                        value: post.id,
-                                                        searchText: `${post.postName} ${fullName}`,
-                                                        label: (
-                                                            <Flex align="center" gap={8}>
-                                                                <Avatar
-                                                                    size={24}
-                                                                    src={user?.avatar_url ? `${baseUrl}${user.avatar_url}` : default_avatar}
-                                                                />
-                                                                <span style={{
-                                                                    display: "inline-block",
-                                                                    maxWidth: 280,
-                                                                    whiteSpace: "nowrap",
-                                                                    overflow: "hidden",
-                                                                    textOverflow: "ellipsis",
-                                                                }}>
-                                                                    {post.postName}
-                                                                    {fullName && (
-                                                                        <span style={{ color: "#888", marginLeft: 4 }}>({fullName})</span>
-                                                                    )}
-                                                                </span>
-                                                            </Flex>
-                                                        ),
-
-                                                    };
-                                                })}
+                                <Flex vertical align="center" style={{ marginBottom: 24 }}>
+                                    <div className={classes.fieldset} style={{
+                                        border: "3px solid #d9d9d9",
+                                        borderRadius: 12,
+                                        padding: "24px 16px 16px",
+                                        position: "relative",
+                                        width: "100%",
+                                        maxWidth: 450
+                                    }}>
+                                        <div style={{
+                                            position: "absolute",
+                                            top: -15,
+                                            left: 16,
+                                            background: "white",
+                                            padding: "0 8px",
+                                            fontSize: 14,
+                                            color: "rgba(0, 0, 0, 0.45)"
+                                        }}>
+                                            руководящий пост
+                                        </div>
+                                        <Space size="small" align="start" >
+                                            <Avatar
+                                                size={48}
+                                                src={selectedParent?.user?.avatar_url ? `${baseUrl}${selectedParent?.user?.avatar_url}` : default_avatar}
                                             />
 
-                                        </Form.Item>
-                                    </Space>
-                                </Flex>
-
-
-                                <Divider />
-
-                                <Flex vertical gap={6}>
-                                    {/* Верхняя часть: сотрудник + блок с полями */}
-                                    <Flex gap={24} align="start">
-
-                                        <div style={{ position: "relative" }}>
-                                            <Card
-                                                style={{
-                                                    width: 250,
-                                                    textAlign: "center",
-                                                    borderRadius: 8,
-                                                    backgroundColor: "#fafafa",
-                                                    cursor: "pointer",
-                                                    position: "relative",
-                                                }}
-                                                onClick={() => setDropdownOpen(true)}
-                                            >
-                                                <Avatar
-                                                    size={96}
-                                                    src={
-                                                        selectedWorker?.avatar_url
-                                                            ? `${baseUrl}${selectedWorker?.avatar_url}`
-                                                            : default_avatar
-                                                    }
-                                                    style={{ marginBottom: 12 }}
-                                                />
-                                                <Title level={5} style={{ marginBottom: 8 }}>
-                                                    {selectedWorker?.lastName} {selectedWorker?.firstName}
-                                                </Title>
-
-                                                {/* 👇 Form.Item всегда в DOM, но скрыт, если dropdownOpen=false */}
-                                                <Form.Item
-                                                    name="responsibleUserId"
-                                                    normalize={(value) => value ?? null}
-                                                    style={{ display: dropdownOpen ? "block" : "none" }}
-                                                >
-                                                    <Select
-                                                        open={dropdownOpen}
-                                                        suffixIcon={null}
-                                                        style={{ width: 300 }}
-                                                        allowClear
-                                                        bordered={false}
-                                                        placeholder="Выберите сотрудника"
-                                                        onDropdownVisibleChange={setDropdownOpen}
-                                                        getPopupContainer={(trigger) => trigger.parentElement || document.body}
-                                                        onSelect={() => {
-                                                            setDropdownOpen(false);
-                                                            setSearch("");
-                                                        }}
-                                                        dropdownRender={(menu) => (
-                                                            <>
-
-                                                                <div style={{ padding: 8 }}>
-                                                                    <Input
-                                                                        placeholder="Поиск по имени или фамилии"
-                                                                        value={search}
-                                                                        onChange={(e) => setSearch(e.target.value)}
-                                                                        allowClear
-                                                                    />
-                                                                </div>
-                                                                <div style={{ maxHeight: 300, overflowY: "auto" }}>
-                                                                    {menu}
-                                                                </div>
-                                                            </>
-                                                        )}
-                                                    >
-                                                        {filteredWorkers?.map((worker) => (
-                                                            <Select.Option key={worker.id} value={worker.id}>
-                                                                <Flex align="center" gap={8}>
-                                                                    <Avatar
-                                                                        size={32}
-                                                                        src={
-                                                                            worker.avatar_url
-                                                                                ? `${baseUrl}${worker.avatar_url}`
-                                                                                : default_avatar
-                                                                        }
-                                                                    />
-                                                                    <span
-                                                                        style={{
-                                                                            display: "inline-block",
-                                                                            maxWidth: 250,
-                                                                            whiteSpace: "nowrap",
-                                                                            overflow: "hidden",
-                                                                            textOverflow: "ellipsis",
-                                                                        }}
-                                                                    >
-                                                                        {worker.lastName} {worker.firstName}
-                                                                    </span>
-                                                                </Flex>
-                                                            </Select.Option>
-                                                        ))}
-                                                    </Select>
-
-                                                </Form.Item>
-
-                                                <Divider />
-                                                <Flex vertical gap={8} align="flex-start">
-                                                    <Space>
-                                                        <PhoneOutlined />
-                                                        <Text>{formatPhone(selectedWorker?.telephoneNumber)}</Text>
-                                                    </Space>
-                                                </Flex>
-                                            </Card>
-                                        </div>
-
-
-                                        {/* Правая колонка с полями */}
-                                        <Flex vertical gap={6} style={{ flex: 1 }}>
                                             <Form.Item
-                                                label="Название подразделения"
-                                                name="divisionName"
-                                                rules={[{ required: true, message: 'Введите название подразделения' }]}
-                                            >
-                                                <Input placeholder="Название подразделения" disabled={!!parentId} />
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                label="Название поста"
-                                                name="postName"
-                                                rules={[{ required: true, message: 'Введите название поста' }]}
-                                            >
-                                                <Input placeholder="Название поста" />
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                name="roleId"
-                                                label="Роль поста"
-                                                rules={[{ required: true, message: "Назначьте роль посте" }]}
+                                                name="parentId"
+                                                normalize={(value) => value ?? null}
+                                                style={{ flex: 1, marginBottom: 0 }}
                                             >
                                                 <Select
+                                                    style={{ width: 350 }}
+                                                    placeholder="Выберите руководителя"
+                                                    allowClear
                                                     showSearch
-                                                    optionFilterProp="label"
-                                                    options={roles.filter((item) => item.id !== "894559e4-fd79-434b-9c00-f95dee0d10ab" && item.id !== "44514689-427c-46e5-9e60-2d7b90b73fae").map((r) => ({
-                                                        label: r.roleName,
-                                                        value: r.id,
-                                                    }))}
-                                                    filterOption={(input, option) =>
-                                                        option?.label?.toLowerCase().includes(input.toLowerCase())
-                                                    }
+                                                    filterOption={(input, option) => {
+                                                        const searchText = (option?.searchText || "").toLowerCase();
+                                                        return searchText.includes(input.toLowerCase());
+                                                    }}
+                                                    options={posts.map((post) => {
+                                                        const user = post?.user;
+                                                        const fullName = [user?.lastName, user?.firstName].filter(Boolean).join(" "); // убираем null/undefined
+
+                                                        return {
+                                                            value: post.id,
+                                                            searchText: `${post.postName} ${fullName}`,
+                                                            label: (
+                                                                <Flex align="center" gap={8}>
+                                                                    <Avatar
+                                                                        size={24}
+                                                                        src={user?.avatar_url ? `${baseUrl}${user.avatar_url}` : default_avatar}
+                                                                    />
+                                                                    <span style={{
+                                                                        display: "inline-block",
+                                                                        maxWidth: 280,
+                                                                        whiteSpace: "nowrap",
+                                                                        overflow: "hidden",
+                                                                        textOverflow: "ellipsis",
+                                                                    }}>
+                                                                        {post.postName}
+                                                                        {fullName && (
+                                                                            <span style={{ color: "#888", marginLeft: 4 }}>({fullName})</span>
+                                                                        )}
+                                                                    </span>
+                                                                </Flex>
+                                                            ),
+
+                                                        };
+                                                    })}
                                                 />
 
                                             </Form.Item>
-                                            
-                                            <Form.Item
-                                                name="isArchive"
-                                                valuePropName="checked"
-                                                noStyle
-                                            >
-                                                <Checkbox disabled={false}>
-                                                    {!currentPost?.isArchive
-                                                        ? <Tag color="green" style={{ margin: 0 }}>Сделать пост архивным</Tag>
-                                                        : <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
-                                                </Checkbox>
-                                            </Form.Item>
-
-
-
-                                        </Flex>
-                                    </Flex>
-
-                                    {/* Нижняя часть — на всю ширину */}
-                                    <Flex vertical gap={6}>
-
-                                        <Flex gap={6}>
-                                            <Form.Item
-                                                label="Продукт поста"
-                                                name="product"
-                                                rules={[{ required: true, message: 'Введите продукт поста' }]}
-                                                style={{ flex: 1 }}
-                                            >
-                                                <TextArea rows={3} placeholder="Описание продукта поста" />
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                label="Предназначение поста"
-                                                name="purpose"
-                                                rules={[{ required: true, message: 'Введите предназначение поста' }]}
-                                                style={{ flex: 1 }}
-                                            >
-                                                <TextArea rows={3} placeholder="Предназначение поста" />
-                                            </Form.Item>
-                                        </Flex>
-
-
-                                        <Form.Item
-                                            label="Политика поста"
-                                            name="policyId"
-                                            normalize={(value) => value ?? null}
-                                        >
-                                            <Select
-                                                placeholder="Выберите политику"
-                                                allowClear
-                                                showSearch
-                                                optionFilterProp="label"
-                                                options={policiesActive.map((p) => ({
-                                                    label: p.policyName,
-                                                    value: p.id,
-                                                }))}
-                                            />
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Статистика поста"
-                                            name="statisticsIncludedPost"
-                                        >
-                                            <Select
-                                                mode="multiple"
-                                                showSearch
-                                                placeholder="Выберите статистики"
-                                                optionFilterProp="label"
-                                                options={statistics?.map((p) => ({
-                                                    label: p.name,
-                                                    value: p.id,
-                                                    disabled: initialValues?.statisticsIncludedPost?.includes(p.id),
-                                                }))}
-                                            />
-                                        </Form.Item>
-
-                                    </Flex>
+                                        </Space>
+                                    </div>
                                 </Flex>
+
+
+                                <div style={
+                                    {
+                                        position: "relative"
+                                    }
+                                }>
+
+                                    <div className={classes.fieldset2} style={{
+                                        border: "3px solid #d9d9d9",
+                                        borderRadius: 12,
+                                        padding: "24px 16px 16px",
+                                        position: "relative",
+                                        width: "100%"
+                                    }}>
+                                        <div style={{
+                                            position: "absolute",
+                                            top: -15,
+                                            left: 16,
+                                            background: "white",
+                                            padding: "0 8px",
+                                            fontSize: 14,
+                                            color: "rgba(0, 0, 0, 0.45)"
+                                        }}>
+                                            пост
+                                        </div>
+                                        <Flex vertical gap={6}>
+                                            <Flex gap={24} align="start">
+
+                                                <div style={{ position: "relative" }}>
+                                                    <Card
+                                                        bodyStyle={{ padding: 0 }}
+                                                        style={{
+                                                            width: 250,
+                                                            minHeight: 310,
+                                                            textAlign: "center",
+                                                            borderRadius: 8,
+                                                            backgroundColor: "#fffff",
+                                                            cursor: "pointer",
+                                                            position: "relative",
+                                                            borderColor: "#CCCCCC"
+                                                        }}
+                                                        onClick={() => setDropdownOpen(true)}
+                                                    >
+
+                                                        <div style={{ padding: 12, textAlign: "center" }}>
+                                                            <Avatar
+                                                                size={154}
+                                                                src={
+                                                                    selectedWorker?.avatar_url
+                                                                        ? `${baseUrl}${selectedWorker?.avatar_url}`
+                                                                        : default_avatar
+                                                                }
+                                                                style={{ margin: 0 }}
+                                                            />
+                                                        </div>
+
+                                                        <Divider style={{ margin: 0, borderColor: "#CCCCCC" }} />
+
+                                                        <div style={{ padding: 24, textAlign: "center" }}>
+                                                            <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
+                                                                {selectedWorker?.firstName}
+                                                            </Title>
+
+                                                            <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2, marginBottom: 12 }}>
+                                                                {selectedWorker?.lastName}
+                                                            </Title>
+
+                                                            {/* 👇 Form.Item всегда в DOM, но скрыт, если dropdownOpen=false */}
+                                                            <Form.Item
+                                                                name="responsibleUserId"
+                                                                normalize={(value) => value ?? null}
+                                                                style={{ display: dropdownOpen ? "block" : "none" }}
+                                                            >
+                                                                <Select
+                                                                    open={dropdownOpen}
+                                                                    suffixIcon={null}
+                                                                    style={{ width: 300 }}
+                                                                    allowClear
+                                                                    bordered={false}
+                                                                    placeholder="Выберите сотрудника"
+                                                                    onDropdownVisibleChange={setDropdownOpen}
+                                                                    getPopupContainer={(trigger) => trigger.parentElement || document.body}
+                                                                    onSelect={() => {
+                                                                        setDropdownOpen(false);
+                                                                        setSearch("");
+                                                                    }}
+                                                                    dropdownRender={(menu) => (
+                                                                        <>
+
+                                                                            <div style={{ padding: 8 }}>
+                                                                                <Input
+                                                                                    placeholder="Поиск по имени или фамилии"
+                                                                                    value={search}
+                                                                                    onChange={(e) => setSearch(e.target.value)}
+                                                                                    allowClear
+                                                                                />
+                                                                            </div>
+                                                                            <div style={{ maxHeight: 300, overflowY: "auto" }}>
+                                                                                {menu}
+                                                                            </div>
+                                                                        </>
+                                                                    )}
+                                                                >
+                                                                    {filteredWorkers?.map((worker) => (
+                                                                        <Select.Option key={worker.id} value={worker.id}>
+                                                                            <Flex align="center" gap={8}>
+                                                                                <Avatar
+                                                                                    size={32}
+                                                                                    src={
+                                                                                        worker.avatar_url
+                                                                                            ? `${baseUrl}${worker.avatar_url}`
+                                                                                            : default_avatar
+                                                                                    }
+                                                                                />
+                                                                                <span
+                                                                                    style={{
+                                                                                        display: "inline-block",
+                                                                                        maxWidth: 250,
+                                                                                        whiteSpace: "nowrap",
+                                                                                        overflow: "hidden",
+                                                                                        textOverflow: "ellipsis",
+                                                                                    }}
+                                                                                >
+                                                                                    {worker.lastName} {worker.firstName}
+                                                                                </span>
+                                                                            </Flex>
+                                                                        </Select.Option>
+                                                                    ))}
+                                                                </Select>
+
+                                                            </Form.Item>
+
+                                                            <Divider style={{ borderColor: '#005475', margin: 0, marginBottom: "30px" }} />
+                                                            <Flex vertical gap={8} align="flex-start">
+                                                                <Space>
+
+                                                                    <img src={phone} alt="телефон" />
+                                                                    <Text style={{ borderBottom: "1px solid black" }}>{formatPhone(selectedWorker?.telephoneNumber)}</Text>
+                                                                </Space>
+                                                            </Flex>
+                                                        </div>
+                                                    </Card>
+                                                </div>
+
+
+                                                {/* Правая колонка с полями */}
+                                                <Flex vertical gap={6} style={{ flex: 1 }}>
+                                                    <Form.Item
+                                                        label="Название подразделения"
+                                                        name="divisionName"
+                                                        rules={[{ required: true, message: 'Введите название подразделения' }]}
+                                                    >
+                                                        <Input placeholder="Название подразделения" disabled={!!parentId} />
+                                                    </Form.Item>
+
+                                                    <Form.Item
+                                                        label="Название поста"
+                                                        name="postName"
+                                                        rules={[{ required: true, message: 'Введите название поста' }]}
+                                                    >
+                                                        <Input placeholder="Название поста" />
+                                                    </Form.Item>
+
+                                                    <Form.Item
+                                                        name="roleId"
+                                                        label="Роль поста"
+                                                        rules={[{ required: true, message: "Назначьте роль посте" }]}
+                                                    >
+                                                        <Select
+                                                            showSearch
+                                                            optionFilterProp="label"
+                                                            options={roles.filter((item) => item.id !== "894559e4-fd79-434b-9c00-f95dee0d10ab" && item.id !== "44514689-427c-46e5-9e60-2d7b90b73fae").map((r) => ({
+                                                                label: r.roleName,
+                                                                value: r.id,
+                                                            }))}
+                                                            filterOption={(input, option) =>
+                                                                option?.label?.toLowerCase().includes(input.toLowerCase())
+                                                            }
+                                                        />
+
+                                                    </Form.Item>
+
+                                                    <Form.Item
+                                                        name="isArchive"
+                                                        valuePropName="checked"
+                                                        noStyle
+                                                    >
+                                                        <Checkbox disabled={false}>
+                                                            {!currentPost?.isArchive
+                                                                ? <Tag color="green" style={{ margin: 0 }}>Сделать пост архивным</Tag>
+                                                                : <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
+                                                        </Checkbox>
+                                                    </Form.Item>
+
+
+
+                                                </Flex>
+                                            </Flex>
+
+                                            {/* Нижняя часть — на всю ширину */}
+                                            <Flex vertical gap={6}>
+
+                                                <Flex gap={6}>
+                                                    <Form.Item
+                                                        label="Продукт поста"
+                                                        name="product"
+                                                        rules={[{ required: true, message: 'Введите продукт поста' }]}
+                                                        style={{ flex: 1 }}
+                                                    >
+                                                        <TextArea rows={3} placeholder="Описание продукта поста" />
+                                                    </Form.Item>
+
+                                                    <Form.Item
+                                                        label="Предназначение поста"
+                                                        name="purpose"
+                                                        rules={[{ required: true, message: 'Введите предназначение поста' }]}
+                                                        style={{ flex: 1 }}
+                                                    >
+                                                        <TextArea rows={3} placeholder="Предназначение поста" />
+                                                    </Form.Item>
+                                                </Flex>
+
+
+                                                <Form.Item
+                                                    label="Политика поста"
+                                                    name="policyId"
+                                                    normalize={(value) => value ?? null}
+                                                >
+                                                    <Select
+                                                        placeholder="Выберите политику"
+                                                        allowClear
+                                                        showSearch
+                                                        optionFilterProp="label"
+                                                        options={policiesActive.map((p) => ({
+                                                            label: p.policyName,
+                                                            value: p.id,
+                                                        }))}
+                                                    />
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    label="Статистика поста"
+                                                    name="statisticsIncludedPost"
+                                                >
+                                                    <Select
+                                                        mode="multiple"
+                                                        showSearch
+                                                        placeholder="Выберите статистики"
+                                                        optionFilterProp="label"
+                                                        options={statistics?.map((p) => ({
+                                                            label: p.name,
+                                                            value: p.id,
+                                                            disabled: initialValues?.statisticsIncludedPost?.includes(p.id),
+                                                        }))}
+                                                    />
+                                                </Form.Item>
+
+                                            </Flex>
+                                        </Flex>
+                                    </div>
+                                </div>
+
                             </Form>
-                        </Card>
+                        </div>
                     </div>
                 </EditContainer >
             }

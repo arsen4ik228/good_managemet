@@ -1,37 +1,13 @@
-.main {
-  position: relative;
-
-  width: auto;
-  max-width: var(--content-width);
-
-  flex: 1 0 120px;
-
-  background-color: #fff;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  margin: 20px 5px;
-  padding: 10px;
-
-  border: 1px solid #CCCCCC;
-  border-radius: 5px;
-
-  overflow-y: auto;
-}
-
-
 .fieldset::after {
   content: "";
   position: absolute;
 
-  bottom: -35px; 
+  bottom: -32px; 
   left: 50%;
   transform: translateX(-50%);
   
   width: 4px;          
-  height: 35px;         
+  height: 30px;         
   background-color: #CCCCCC;
   
 }
@@ -54,7 +30,7 @@
   position: absolute;
 
 
-  top: 2px;
+  top: -5px;
   left: 50%;
   transform: translateX(-50%);
 
@@ -64,25 +40,16 @@
   background-color: #CCCCCC;
 }
 
-
 .text{
   font-size: 14px !important;
 }
 
 .title {
-  font-size: 12px !important;
-  color: #999999;
+  font-size: 14px !important;
+  color: #999999 !important;
 }
-
 
 .subtitle {
   font-size: 16px !important;
-  color: #333333;
-}
-
-
-@media screen and (max-width: 1301px) {
-  .main {
-    max-width: 620px;
-  }
+  color: #333333 !important;
 }
