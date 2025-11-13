@@ -1,0 +1,15 @@
+
+
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    min-width: var(--content-width);
+    max-width: var(--content-width);
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 0 0 15px 15px;
+}
+
+.taskContainer{
+    flex: 1;
+}
