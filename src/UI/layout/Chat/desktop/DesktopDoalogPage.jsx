@@ -294,7 +294,7 @@ export default function DesktopDialogPage() {
                                 seenStatuses={item?.seenStatuses}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 avatar={item?.sender.user.avatar_url}
-                                {...(!item?.sender.user.id === reduxUserId && { 'data-message-id': item.id })}
+                                {...(item?.sender.user.id !== reduxUserId && { 'data-message-id': item.id })}
                             >
                                 {item.content}
                             </Message>

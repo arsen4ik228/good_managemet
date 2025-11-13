@@ -10,7 +10,7 @@ export const useGlobalLoading = (delay = 1000) => {
     matchPath("/:organizationId/chat/:contactId/:convertId", location.pathname) ||
     matchPath("/chat/:contactId/:convertId", location.pathname) ||
     matchPath("/:organizationId/chat/:contactId", location.pathname) ||
-    matchPath("/chat/:contactId/", location.pathname);
+    matchPath("/chat/:contactId", location.pathname);
 
   // 🧠 Проверяем, есть ли pending-запросы, кроме chatApi.getAllChats
   const isLoading = useSelector((state) => {
