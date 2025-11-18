@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Card, Avatar, Typography, Space, Tag, Divider, Select, Input, Form, Modal, Flex, message, Checkbox } from "antd";
-import { PhoneOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import isEqual from "lodash/isEqual";
 
 import { useGetSinglePost, useUpdateSinglePost, useAllStatistics, useUpdateStatisticsToPostId, useGetDataForCreatePost, useAllPosts } from '@hooks';
+import {
+    useUpdateSingleStatistic
+} from "@hooks";
+
 import EditContainer from "@Custom/EditContainer/EditContainer";
 
 import { baseUrl } from "@helpers/constants.js";
@@ -59,7 +63,9 @@ export default function EditPost() {
 
     const {
         statistics = [],
-    } = useAllStatistics();
+    } = useAllStatistics({ isActive: true });
+
+    console.log("statistics =", statistics);
 
     const {
         updatePost
@@ -73,7 +79,7 @@ export default function EditPost() {
         if (currentPost?.id) {
             setInitialValues({
                 parentId: parentPost.id ?? null,
-                postName: currentPost.postName ?? null,
+                postName: currentPost.postName?.trim() === "" ? "" : currentPost.postName ?? null,
 
                 divisionName: currentPost.divisionName ?? null,
 
@@ -84,7 +90,7 @@ export default function EditPost() {
                 purpose: currentPost.purpose ?? null,
                 responsibleUserId: currentPost?.user?.id ?? null,
                 policyId: selectedPolicyIDInPost ?? null,
-                statisticsIncludedPost: statisticsIncludedPost?.map(stat => stat.id) ?? [],
+                statisticsIncludedPost: statisticsIncludedPost?.filter(s => s.isActive === true).map(stat => stat.id) ?? [],
             });
         }
     }, [currentPost, selectedPolicyIDInPost]);
@@ -103,18 +109,18 @@ export default function EditPost() {
                 ...rest,
             }).unwrap();
 
-            if (statisticsIncludedPost?.length > 0) {
-                await updateStatisticsToPostId({
-                    postId,
-                    ids: statisticsIncludedPost,
-                }).unwrap();
-            }
 
             channel.postMessage("updated");
 
             if (rest.postName !== currentPost.postName) {
                 channelName.postMessage("name");
             }
+
+            await updateStatisticsToPostId({
+                postId,
+                ids: statisticsIncludedPost,
+            }).unwrap();
+
 
 
             message.success("Данные успешно обновлены!");
@@ -150,7 +156,7 @@ export default function EditPost() {
             purpose: currentPost.purpose ?? null,
             responsibleUserId: currentPost?.user?.id ?? null,
             policyId: selectedPolicyIDInPost ?? null,
-            statisticsIncludedPost: statisticsIncludedPost?.map(stat => stat.id) ?? [],
+            statisticsIncludedPost: statisticsIncludedPost?.filter(s => s.isActive === true).map(stat => stat.id) ?? [],
         };
 
         setInitialValues(values);
@@ -209,10 +215,57 @@ export default function EditPost() {
 
 
     console.log("initialValues = ", initialValues);
+
+
+    const initialSelected = initialValues?.statisticsIncludedPost || [];
+    const [selected, setSelected] = useState(initialSelected);
+
+    const handleChangeStatistics = (newValue) => {
+        // находим удаленные значения
+        const removed = selected.filter(id => !newValue.includes(id));
+
+        removed.forEach(id => {
+            // вызываем функцию только если это серверное значение
+            if (initialSelected.includes(id)) {
+                handleArchiveStatistics(id);
+            }
+        });
+
+        setSelected(newValue);
+    };
+
+    const { updateStatistics } = useUpdateSingleStatistic();
+
+    const handleArchiveStatistics = async (statisticId) => {
+        try {
+            await updateStatistics({
+                _id: statisticId,
+                statisticId: statisticId,
+                isActive: false
+            }).unwrap();
+            message.success("Данные успешно обновлены!");
+        } catch (err) {
+            message.error("Ошибка при сохранении");
+        }
+    };
     return (
         <>
             {
-                initialValues && <EditContainer header={"Офис собственника"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
+                initialValues && <EditContainer header={"Офис собственника"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}
+                    aditionalbtns={[{
+                        name: "В архив", colorBtn: "#D07400", onClick: async () => {
+                            try {
+                                await updatePost({
+                                    _id: postId,
+                                    isArchive: true
+                                }).unwrap();
+
+                                message.success("Пост отправлен в архив");
+                            } catch (err) {
+                                message.error("Ошибка при обновлении");
+                            }
+                        }
+                    }]}>
                     <div style={{
                         position: "relative",
 
@@ -262,7 +315,7 @@ export default function EditPost() {
                                         }}>
                                             руководящий пост
                                         </div>
-                                        <Space size="small" align="start" >
+                                        <Space size={0} align="start" >
                                             <Avatar
                                                 size={48}
                                                 src={selectedParent?.user?.avatar_url ? `${baseUrl}${selectedParent?.user?.avatar_url}` : default_avatar}
@@ -274,10 +327,12 @@ export default function EditPost() {
                                                 style={{ flex: 1, marginBottom: 0 }}
                                             >
                                                 <Select
+                                                    bordered={false}
                                                     style={{ width: 350 }}
                                                     placeholder="Выберите руководителя"
                                                     allowClear
                                                     showSearch
+                                                    optionLabelProp="valueForSelected"
                                                     filterOption={(input, option) => {
                                                         const searchText = (option?.searchText || "").toLowerCase();
                                                         return searchText.includes(input.toLowerCase());
@@ -288,7 +343,19 @@ export default function EditPost() {
 
                                                         return {
                                                             value: post.id,
+
+                                                            // Для поиска:
                                                             searchText: `${post.postName} ${fullName}`,
+
+                                                            // *** То, что показывается В ВЫБРАННОМ значении ***
+                                                            valueForSelected: (
+                                                                <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+                                                                    <span className={classes.text}>{fullName}</span>
+                                                                    <span className={classes.title}>{post.postName}</span>
+                                                                </div>
+                                                            ),
+
+                                                            // *** То, что показывается В СПИСКЕ ***
                                                             label: (
                                                                 <Flex align="center" gap={8}>
                                                                     <Avatar
@@ -344,15 +411,15 @@ export default function EditPost() {
                                         }}>
                                             пост
                                         </div>
-                                        <Flex vertical gap={6}>
-                                            <Flex gap={24} align="start">
-
-                                                <div style={{ position: "relative" }}>
+                                        <Flex vertical gap={24}>
+                                            <Flex gap={24} align="stretch">
+                                                {/* Карточка */}
+                                                <div style={{ position: "relative", display: "flex" }}>
                                                     <Card
                                                         bodyStyle={{ padding: 0 }}
                                                         style={{
-                                                            width: 250,
-                                                            minHeight: 310,
+                                                            height: "100%",
+                                                            width: 300,
                                                             textAlign: "center",
                                                             borderRadius: 8,
                                                             backgroundColor: "#fffff",
@@ -380,6 +447,10 @@ export default function EditPost() {
                                                         <div style={{ padding: 24, textAlign: "center" }}>
                                                             <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
                                                                 {selectedWorker?.firstName}
+                                                            </Title>
+
+                                                            <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
+                                                                {selectedWorker?.middleName}
                                                             </Title>
 
                                                             <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2, marginBottom: 12 }}>
@@ -451,7 +522,7 @@ export default function EditPost() {
 
                                                             </Form.Item>
 
-                                                            <Divider style={{ borderColor: '#005475', margin: 0, marginBottom: "30px" }} />
+                                                            <Divider style={{ borderColor: '#005475', margin: 0, marginBottom: "15px" }} />
                                                             <Flex vertical gap={8} align="flex-start">
                                                                 <Space>
 
@@ -463,118 +534,146 @@ export default function EditPost() {
                                                     </Card>
                                                 </div>
 
-
                                                 {/* Правая колонка с полями */}
-                                                <Flex vertical gap={6} style={{ flex: 1 }}>
+                                                <Flex vertical gap={24} style={{ flex: 1 }}>
                                                     <Form.Item
+                                                        style={{
+                                                            marginBottom: 0,
+                                                            border: 'none',
+                                                            borderBottom: '2px solid #CCCCCC',
+                                                            borderRadius: 0,
+                                                            paddingLeft: 0,
+                                                            paddingRight: 0
+                                                        }}
                                                         label="Название подразделения"
                                                         name="divisionName"
-                                                        rules={[{ required: true, message: 'Введите название подразделения' }]}
                                                     >
-                                                        <Input placeholder="Название подразделения" disabled={!!parentId} />
+                                                        <Input bordered={false} placeholder="Название подразделения" disabled={!!parentId} />
                                                     </Form.Item>
 
                                                     <Form.Item
+                                                        style={{
+                                                            marginBottom: 0,
+                                                            border: 'none',
+                                                            borderBottom: '2px solid #CCCCCC',
+                                                            borderRadius: 0,
+                                                            paddingLeft: 0,
+                                                            paddingRight: 0
+                                                        }}
                                                         label="Название поста"
                                                         name="postName"
                                                         rules={[{ required: true, message: 'Введите название поста' }]}
                                                     >
-                                                        <Input placeholder="Название поста" />
-                                                    </Form.Item>
-
-                                                    <Form.Item
-                                                        name="roleId"
-                                                        label="Роль поста"
-                                                        rules={[{ required: true, message: "Назначьте роль посте" }]}
-                                                    >
-                                                        <Select
-                                                            showSearch
-                                                            optionFilterProp="label"
-                                                            options={roles.filter((item) => item.id !== "894559e4-fd79-434b-9c00-f95dee0d10ab" && item.id !== "44514689-427c-46e5-9e60-2d7b90b73fae").map((r) => ({
-                                                                label: r.roleName,
-                                                                value: r.id,
-                                                            }))}
-                                                            filterOption={(input, option) =>
-                                                                option?.label?.toLowerCase().includes(input.toLowerCase())
-                                                            }
-                                                        />
-
-                                                    </Form.Item>
-
-                                                    <Form.Item
-                                                        name="isArchive"
-                                                        valuePropName="checked"
-                                                        noStyle
-                                                    >
-                                                        <Checkbox disabled={false}>
-                                                            {!currentPost?.isArchive
-                                                                ? <Tag color="green" style={{ margin: 0 }}>Сделать пост архивным</Tag>
-                                                                : <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
-                                                        </Checkbox>
+                                                        <Input bordered={false} placeholder="Название поста" />
                                                     </Form.Item>
 
 
+                                                    <div className={classes.frame}>
+                                                        <div className={classes.frameName}>
+                                                            <span style={{ color: 'red' }}>*</span> Роль поста
+                                                        </div>
+                                                        <Form.Item
+                                                            style={{ marginBottom: 0 }}
+                                                            name="roleId"
+                                                            rules={[{ required: true, message: "Назначьте роль посте" }]}
+                                                        >
+                                                            <Select
+                                                                bordered={false}
+                                                                showSearch
+                                                                optionFilterProp="label"
+                                                                options={roles.filter((item) => item.id !== "894559e4-fd79-434b-9c00-f95dee0d10ab" && item.id !== "44514689-427c-46e5-9e60-2d7b90b73fae").map((r) => ({
+                                                                    label: r.roleName,
+                                                                    value: r.id,
+                                                                }))}
+                                                                filterOption={(input, option) =>
+                                                                    option?.label?.toLowerCase().includes(input.toLowerCase())
+                                                                }
+                                                            />
+
+                                                        </Form.Item>
+                                                    </div>
+
+
+                                                    <div className={classes.frame}>
+                                                        <div className={classes.frameName}>
+                                                            Продукт поста
+                                                        </div>
+                                                        <Form.Item
+                                                            style={{ marginBottom: 0 }}
+                                                            name="product"
+                                                        >
+                                                            <TextArea bordered={false} style={{ resize: 'none' }} rows={3} placeholder="Описание продукта поста" />
+                                                        </Form.Item>
+                                                    </div>
+
+                                                    <div className={classes.frame}>
+                                                        <div className={classes.frameName}>
+                                                            Предназначение поста
+                                                        </div>
+                                                        <Form.Item
+                                                            style={{ marginBottom: 0 }}
+                                                            name="purpose"
+                                                        >
+                                                            <TextArea bordered={false} style={{ resize: 'none' }} rows={3} placeholder="Предназначение поста" />
+                                                        </Form.Item>
+                                                    </div>
 
                                                 </Flex>
+
                                             </Flex>
 
                                             {/* Нижняя часть — на всю ширину */}
-                                            <Flex vertical gap={6}>
+                                            <Flex vertical gap={24}>
 
-                                                <Flex gap={6}>
+                                                <div className={classes.frame}>
+                                                    <div className={classes.frameName}>
+                                                        Статистика поста
+                                                    </div>
                                                     <Form.Item
-                                                        label="Продукт поста"
-                                                        name="product"
-                                                        rules={[{ required: true, message: 'Введите продукт поста' }]}
-                                                        style={{ flex: 1 }}
+                                                        style={{ marginBottom: 0 }}
+                                                        name="statisticsIncludedPost"
                                                     >
-                                                        <TextArea rows={3} placeholder="Описание продукта поста" />
+                                                        <Select
+                                                            onChange={handleChangeStatistics}
+                                                            bordered={false}
+                                                            mode="multiple"
+                                                            showSearch
+                                                            placeholder="Выберите статистики"
+                                                            optionFilterProp="label"
+                                                            options={statistics
+                                                                ?.filter(p => p.isActive === true)
+                                                                .map(p => ({
+                                                                    label: p.name,
+                                                                    value: p.id
+                                                                }))
+                                                            }
+                                                        />
                                                     </Form.Item>
+                                                </div>
 
+
+                                                <div className={classes.frame}>
+                                                    <div className={classes.frameName}>
+                                                        Политика поста
+                                                    </div>
                                                     <Form.Item
-                                                        label="Предназначение поста"
-                                                        name="purpose"
-                                                        rules={[{ required: true, message: 'Введите предназначение поста' }]}
-                                                        style={{ flex: 1 }}
+                                                        style={{ marginBottom: 0 }}
+                                                        name="policyId"
+                                                        normalize={(value) => value ?? null}
                                                     >
-                                                        <TextArea rows={3} placeholder="Предназначение поста" />
+                                                        <Select
+                                                            bordered={false}
+                                                            placeholder="Выберите политику"
+                                                            allowClear
+                                                            showSearch
+                                                            optionFilterProp="label"
+                                                            options={policiesActive.map((p) => ({
+                                                                label: p.policyName,
+                                                                value: p.id,
+                                                            }))}
+                                                        />
                                                     </Form.Item>
-                                                </Flex>
-
-
-                                                <Form.Item
-                                                    label="Политика поста"
-                                                    name="policyId"
-                                                    normalize={(value) => value ?? null}
-                                                >
-                                                    <Select
-                                                        placeholder="Выберите политику"
-                                                        allowClear
-                                                        showSearch
-                                                        optionFilterProp="label"
-                                                        options={policiesActive.map((p) => ({
-                                                            label: p.policyName,
-                                                            value: p.id,
-                                                        }))}
-                                                    />
-                                                </Form.Item>
-
-                                                <Form.Item
-                                                    label="Статистика поста"
-                                                    name="statisticsIncludedPost"
-                                                >
-                                                    <Select
-                                                        mode="multiple"
-                                                        showSearch
-                                                        placeholder="Выберите статистики"
-                                                        optionFilterProp="label"
-                                                        options={statistics?.map((p) => ({
-                                                            label: p.name,
-                                                            value: p.id,
-                                                            disabled: initialValues?.statisticsIncludedPost?.includes(p.id),
-                                                        }))}
-                                                    />
-                                                </Form.Item>
+                                                </div>
 
                                             </Flex>
                                         </Flex>

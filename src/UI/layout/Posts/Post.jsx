@@ -14,6 +14,7 @@ import { usePanelPreset } from '@hooks';
 import { useRightPanel, useModuleActions } from '@hooks';
 import default_avatar from '@image/default_avatar.svg'
 import phone from '@image/phone.svg'
+import TextArea from 'antd/es/input/TextArea';
 
 
 
@@ -71,7 +72,7 @@ export default function Post() {
                                     size={48}
                                     src={parentPost.user?.avatar_url ? `${baseUrl}${parentPost.user.avatar_url}` : default_avatar}
                                 />
-                                <Flex vertical style={{ margin: 0, marginTop:"5px", gap: 0 }}>
+                                <Flex vertical style={{ margin: 0, marginTop: "5px", gap: 0 }}>
                                     <Text
                                         strong
                                         className={classes.text}
@@ -97,24 +98,27 @@ export default function Post() {
 
                 <div style={
                     {
-                        position: "relative"
+                        position: "relative",
                     }
                 }>
 
                     <fieldset className={classes.fieldset2} style={{
                         borderRadius: "10px",
+                        display: "flex",
+                        flexDirection: "column",
+                        rowGap: "20px",
+                        padding: "24px 24px 30px 24px",
                     }}>
                         <legend>пост</legend>
                         <Flex gap={24}>
                             {/* Левая часть — сотрудник */}
 
                             <div style={{
-                                minHeight: "460px",
-                                width: "250px",
+                                width: "275px",
                                 display: "flex",
                                 flexDirection: "column",
                                 borderRadius: "10px",
-                                backgroundColor: "#fafafa",
+                                backgroundColor: "#f0f0f0",
                             }}>
                                 <div style={{
                                     height: "174px",
@@ -138,17 +142,21 @@ export default function Post() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                     padding: "26px",
-                                    backgroundColor: "#fafafa",
+                                    backgroundColor: "#f0f0f0",
                                 }}>
                                     <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
                                         {currentPost?.user?.firstName}
+                                    </Title>
+
+                                    <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
+                                        {currentPost?.user?.middleName}
                                     </Title>
 
                                     <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2, marginBottom: 12 }}>
                                         {currentPost?.user?.lastName}
                                     </Title>
 
-                                    <Divider style={{ borderColor: '#005475', margin: 0, marginBottom: "30px" }} />
+                                    <Divider style={{ borderColor: '#005475', margin: 0, marginBottom: "15px" }} />
 
 
                                     <Flex direction="column" gap={8} align="flex-start" style={{ width: '100%' }}>
@@ -161,8 +169,8 @@ export default function Post() {
                             </div>
 
                             {/* Правая часть — информация о посте */}
-                            <Flex vertical gap={12} style={{ flex: 1 }}>
-                                <Flex vertical>
+                            <Flex vertical gap={16} style={{ flex: 1 }}>
+                                <Flex vertical style={{ marginLeft: "27px" }}>
                                     <Text className={classes.title}>Название подразделения</Text>
                                     <Text className={classes.subtitle}>
                                         {parentPost?.id
@@ -171,53 +179,49 @@ export default function Post() {
                                     </Text>
                                 </Flex>
 
-                                <Flex vertical>
+                                <Flex vertical style={{ marginLeft: "27px" }}>
                                     <Text className={classes.title}>Название поста</Text>
                                     <Text className={classes.subtitle}>{currentPost?.postName}</Text>
                                 </Flex>
 
-                                <Flex vertical>
-                                    <Text className={classes.title}>Роль поста</Text>
-                                    <Text className={classes.subtitle}>
+
+                                <fieldset style={{ border: "1px solid #d9d9d9" }}>
+                                    <legend className={classes.title}>Роль поста</legend>
+                                    <Text className={classes.subtitle} style={{paddingLeft:"5px"}}>
                                         {currentPost?.role?.roleName}
                                     </Text>
-                                </Flex>
+                                </fieldset>
 
-                                <Flex vertical>
-                                    {currentPost?.isArchive && <Tag style={{ margin: 0 }}>Пост в архиве</Tag>}
-                                </Flex>
 
-                                <Flex vertical>
-                                    <Text className={classes.title}>Продукт поста</Text>
-                                    <Text className={classes.subtitle}>
-                                        {currentPost?.product}
-                                    </Text>
-                                </Flex>
+                                <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: " 1px solid #d9d9d9" }}>
+                                    <legend className={classes.title} >Продукт поста</legend>
+                                     <TextArea value=  {currentPost?.product} bordered={false} style={{ resize: 'none' }} rows={2} />
+                                </fieldset>
 
-                                <Flex vertical>
-                                    <Text className={classes.title}>Предназначение поста</Text>
-                                    <Text className={classes.subtitle}>
-                                        {currentPost?.purpose}
-                                    </Text>
-                                </Flex>
 
-                                <Flex vertical>
-                                    <Text className={classes.title}>Статистики поста</Text>
-                                    <Text className={classes.subtitle}>
-                                        {currentPost?.statistics?.length
-                                            ? currentPost.statistics.map((item) => item.name).join(", ")
-                                            : <Text className={classes.subtitle}>—</Text>}
-                                    </Text>
-                                </Flex>
-
-                                <Flex vertical>
-                                    <Text className={classes.title}>Политика поста</Text>
-                                    <Text className={classes.subtitle}>
-                                        {currentPost?.policy?.policyName || <Text className={classes.subtitle}>—</Text>}
-                                    </Text>
-                                </Flex>
+                                <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: " 1px solid #d9d9d9" }}>
+                                    <legend className={classes.title} >Предназначение поста</legend>
+                                      <TextArea value={currentPost?.purpose} bordered={false} style={{ resize: 'none' }} rows={2} placeholder="Описание продукта поста" />
+                                </fieldset>
 
                             </Flex>
+
+                        </Flex>
+
+                        <Flex vertical gap={16}>
+                            <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: "1px solid #d9d9d9" }}>
+                                <legend className={classes.title}>Статистики поста</legend>
+                                <TextArea value= {currentPost?.statistics?.length > 0
+                                        ? currentPost.statistics.map((item) => item.name).join(", ")
+                                        : "—"} bordered={false} style={{ resize: 'none' }} rows={2} placeholder="Описание продукта поста" />
+                            </fieldset>
+
+                            <fieldset style={{ border: "1px solid #d9d9d9" }}>
+                                <legend className={classes.title} >Политика поста</legend>
+                                <Text className={classes.subtitle} style={{paddingLeft:"5px"}}>
+                                    {currentPost?.policy?.policyName || <Text className={classes.subtitle}>—</Text>}
+                                </Text>
+                            </fieldset>
                         </Flex>
                     </fieldset>
                 </div>

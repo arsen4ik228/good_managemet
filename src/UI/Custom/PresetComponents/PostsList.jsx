@@ -6,7 +6,7 @@ import { useAllPosts, useModuleActions } from '@hooks'
 import icon_post from '@image/icon _ post.svg'
 import { notEmpty } from '@helpers/helpers'
 import { useLocation, useNavigate } from 'react-router-dom'
-import ModalCreatePost from '../../layout/Posts/ModalCreatePost';
+import {useCreatePostAction} from '../../layout/Posts/useCreatePostAction';
 import FilterElement from '../CustomList/FilterElement'
 
 
@@ -27,17 +27,15 @@ export default function PostsList() {
     const location = useLocation()
     const [seacrhPostsSectionsValue, setSeacrhPostssSectionsValue] = useState()
 
-    const [openCreatePost, setOpenCreatePost] = useState(false);
 
     const [isActive, setIsActive] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
 
+    const createPostHandler = useCreatePostAction();
+
     const {
         allPosts,
         refetch,
-        isLoadingGetPosts,
-        isFetchingGetPosts,
-        isErrorGetPosts,
     } = useAllPosts({isArchive: isActive });
 
     const { isCreate } = useModuleActions("post");
@@ -108,7 +106,7 @@ export default function PostsList() {
 
                 {
                     !openFilter && isCreate &&
-                    <ListAddButtom textButton={'Создать пост'} clickFunc={() => setOpenCreatePost(true)} />
+                    <ListAddButtom textButton={'Создать пост'} clickFunc={createPostHandler} />
                 }
 
                 {filtredPosts?.filter(item => item?.isArchive === isActive)?.map((item, index) => (
@@ -121,11 +119,6 @@ export default function PostsList() {
                         />
                     </React.Fragment>
                 ))}
-
-                <ModalCreatePost
-                    open={openCreatePost}
-                    setOpen={setOpenCreatePost}
-                ></ModalCreatePost>
             </CustomList>
         </>
     )
