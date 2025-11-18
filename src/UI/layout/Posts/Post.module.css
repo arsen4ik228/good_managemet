@@ -13,7 +13,7 @@
   align-items: center;
 
   margin: 20px 5px;
-  padding: 10px;
+  padding: 25px 46px;
 
   border: 1px solid #CCCCCC;
   border-radius: 5px;
@@ -26,22 +26,24 @@
   content: "";
   position: absolute;
 
-  bottom: -35px; 
+  bottom: -35px;
   left: 50%;
   transform: translateX(-50%);
-  
-  width: 4px;          
-  height: 35px;         
+
+  width: 4px;
+  height: 35px;
   background-color: #CCCCCC;
-  
+
 }
+
 .fieldset::before {
   content: "";
   position: absolute;
-  bottom: -5px;           /* внизу линии */
+  bottom: -5px;
+  /* внизу линии */
   left: 50%;
   transform: translateX(-50%);
-  
+
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -65,7 +67,7 @@
 }
 
 
-.text{
+.text {
   font-size: 14px !important;
 }
 

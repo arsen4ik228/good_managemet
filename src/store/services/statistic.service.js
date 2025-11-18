@@ -27,6 +27,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
             return {
               id: item.id || "",
               name: item.name || "",
+              isActive: item.isActive,
               ...(item.post && {
                 post: {
                   id: item?.post?.id || "",

@@ -2,22 +2,24 @@
   content: "";
   position: absolute;
 
-  bottom: -32px; 
+  bottom: -32px;
   left: 50%;
   transform: translateX(-50%);
-  
-  width: 4px;          
-  height: 30px;         
+
+  width: 4px;
+  height: 30px;
   background-color: #CCCCCC;
-  
+
 }
+
 .fieldset::before {
   content: "";
   position: absolute;
-  bottom: -5px;           /* внизу линии */
+  bottom: -5px;
+  /* внизу линии */
   left: 50%;
   transform: translateX(-50%);
-  
+
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -40,12 +42,39 @@
   background-color: #CCCCCC;
 }
 
-.text{
+.frame {
+  position: relative;
+
+  width: 100%;
+
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+
+  padding: 10px;
+}
+
+.frameName {
+  position: absolute;
+
+  top: -15px;
+  left: 16px;
+
+  background: white;
+
+  padding: 0 8px;
+
+  font-size: 14px;
+  color: #999999;
+}
+
+
+.text {
   font-size: 14px !important;
+  font-weight: 600;
 }
 
 .title {
-  font-size: 14px !important;
+  font-size: 12px !important;
   color: #999999 !important;
 }
 
