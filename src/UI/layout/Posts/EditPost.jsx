@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Card, Avatar, Typography, Space, Tag, Divider, Select, Input, Form, Modal, Flex, message, Checkbox } from "antd";
+import { Card, Avatar, Typography, Space, Tag, Divider, Select, Input, Form, Modal, Flex, message, Checkbox, Button } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import isEqual from "lodash/isEqual";
@@ -217,26 +217,19 @@ export default function EditPost() {
     console.log("initialValues = ", initialValues);
 
 
-    const initialSelected = initialValues?.statisticsIncludedPost || [];
-    const [selected, setSelected] = useState(initialSelected);
-
     const handleChangeStatistics = (newValue) => {
-        // находим удаленные значения
-        const removed = selected.filter(id => !newValue.includes(id));
+        const initial = initialValues.statisticsIncludedPost || [];
 
-        removed.forEach(id => {
-            // вызываем функцию только если это серверное значение
-            if (initialSelected.includes(id)) {
-                handleArchiveStatistics(id);
-            }
-        });
+        const removed = initial.filter(id => !newValue.includes(id));
 
-        setSelected(newValue);
+        removed.forEach(id => handleArchiveStatistics(id));
     };
+
 
     const { updateStatistics } = useUpdateSingleStatistic();
 
     const handleArchiveStatistics = async (statisticId) => {
+        console.log("handleArchiveStatistics");
         try {
             await updateStatistics({
                 _id: statisticId,
@@ -493,6 +486,22 @@ export default function EditPost() {
                                                                         </>
                                                                     )}
                                                                 >
+
+                                                                    <Select.Option key="remove-user" value={null}>
+                                                                        <Button
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation(); // чтобы не ломать выбор других опций
+                                                                                form.setFieldsValue({ responsibleUserId: null });
+                                                                                setDropdownOpen(false);
+                                                                                setSearch("");
+                                                                            }}
+                                                                           
+                                                                        >
+                                                                            убрать сотрудника
+                                                                        </Button>
+                                                                    </Select.Option>
+
+
                                                                     {filteredWorkers?.map((worker) => (
                                                                         <Select.Option key={worker.id} value={worker.id}>
                                                                             <Flex align="center" gap={8}>
