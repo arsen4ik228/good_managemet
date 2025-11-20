@@ -212,7 +212,7 @@ export default function Post() {
                             <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: "1px solid #d9d9d9" }}>
                                 <legend className={classes.title}>Статистики поста</legend>
                                 <TextArea value= {currentPost?.statistics?.length > 0
-                                        ? currentPost.statistics.map((item) => item.name).join(", ")
+                                        ? currentPost.statistics?.filter(s => s.isActive === true).map((item) => item.name).join(", ")
                                         : "—"} bordered={false} style={{ resize: 'none' }} rows={2} placeholder="Описание продукта поста" />
                             </fieldset>
 
