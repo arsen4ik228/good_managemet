@@ -19,7 +19,7 @@ export const useRightPanel = () => {
     };
 
     const setPreset = (presetKey) => {
-        console.log('use right panel setPreset() ', presetKey ) 
+        //('use right panel setPreset() ', presetKey ) 
         dispatch(setPanelPreset(presetKey));
     };
 

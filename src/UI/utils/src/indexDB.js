@@ -43,7 +43,7 @@
 //           // Создаём новое хранилище, если его ещё нет
 //           if (!db.objectStoreNames.contains(orgName)) {
 //             db.createObjectStore(orgName, { keyPath: "id" });
-//             console.log(`Хранилище ${orgName} создано.`);
+//             //(`Хранилище ${orgName} создано.`);
 //           }
 //         };
 
@@ -122,7 +122,7 @@
 //           store.add(newItem);
 //         });
 
-//         console.log("Данные успешно сохранены в IndexedDB");
+//         //("Данные успешно сохранены в IndexedDB");
 //         resolve();
 //       };
 
@@ -153,7 +153,7 @@
 //       const deleteRequest = store.delete(id);
 
 //       deleteRequest.onsuccess = () => {
-//         console.log(
+//         //(
 //           `Объект с id ${id} успешно удалён из ${orgName} в IndexedDB`
 //         );
 //         resolve();
@@ -197,7 +197,7 @@ export const initDB = (orgName) => {
           const upgradedDB = e.target.result;
           if (!doesStoreExist(upgradedDB, orgName)) {
             upgradedDB.createObjectStore(orgName, { keyPath: "id" });
-            console.log(`Создано новое хранилище: ${orgName}`);
+            //(`Создано новое хранилище: ${orgName}`);
           }
         };
 
@@ -274,7 +274,7 @@ export const saveToIndexedDB = async (orgName, dataArray, activeId) => {
           store.put(newItem);
         });
 
-        console.log("Данные успешно сохранены в IndexedDB");
+        //("Данные успешно сохранены в IndexedDB");
         resolve();
       };
 
@@ -303,7 +303,7 @@ export const deleteFromIndexedDB = async (orgName, id) => {
       const deleteRequest = store.delete(id);
 
       deleteRequest.onsuccess = () => {
-        console.log(`Объект с id ${id} удалён из ${orgName}`);
+        //(`Объект с id ${id} удалён из ${orgName}`);
         resolve();
       };
 

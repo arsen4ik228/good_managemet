@@ -83,7 +83,7 @@ export default function ArchiveDialogPage() {
     // Инициализация socket подписок 
     // const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
     // const handleEventData = useCallback((eventName, data) => {
-    //     console.log(`Data from ${eventName}:`, data);
+    //     //(`Data from ${eventName}:`, data);
     // }, []);
     // const socketResponse = useSocket(eventNames, handleEventData);
 
@@ -134,7 +134,7 @@ export default function ArchiveDialogPage() {
     //     if (!notEmpty(socketResponse?.messageCreationEvent)) return;
 
     //     const newMessage = socketResponse.messageCreationEvent
-    //     console.log(newMessage)
+    //     //(newMessage)
     //     setSocketMessages(prev => [...prev, {
     //         id: newMessage.id,
     //         content: newMessage.content,
@@ -158,9 +158,9 @@ export default function ArchiveDialogPage() {
     //     // Функция для обновления сообщений
     //     const updateMessages = (messages) => {
     //         return messages.map(message => {
-    //             console.log(socketResponse.messagesAreSeen.messageIds)
+    //             //(socketResponse.messagesAreSeen.messageIds)
     //             if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-    //                 console.log('bam')
+    //                 //('bam')
     //                 return {
     //                     ...message,
     //                     seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
@@ -272,7 +272,7 @@ export default function ArchiveDialogPage() {
     //     }
     // }, [currentConvert])
 
-    console.log(userInfo)
+    //(userInfo)
 
     return (
         <MainContentContainer buttons={buttons}>

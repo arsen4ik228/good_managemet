@@ -47,7 +47,7 @@ export default function WorkingPlanPage() {
 
     }, [location.pathname])
 
-    console.log(personalTargets, orderTargets, projectTragets, futureTargets)
+    //(personalTargets, orderTargets, projectTragets, futureTargets)
 
     return (
         <>

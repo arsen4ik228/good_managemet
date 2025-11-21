@@ -66,7 +66,7 @@ export default function WorkingPlanInput() {
                     .map(element => element.id)
             }
 
-            console.log(Data)
+            //(Data)
 
             await postTargets({
                 ...Data

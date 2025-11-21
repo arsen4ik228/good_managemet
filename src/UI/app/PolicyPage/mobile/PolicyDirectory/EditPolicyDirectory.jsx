@@ -99,7 +99,7 @@ export default function EditPolicyDirectories() {
       });
   };
 
-  console.log(policyDirectory);
+  //(policyDirectory);
   return (
     <>
       <div className={classes.wrapper}>

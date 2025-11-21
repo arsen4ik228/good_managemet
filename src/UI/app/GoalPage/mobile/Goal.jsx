@@ -113,7 +113,7 @@ function MobileGoal(props) {
   }, [currentGoal]);
 
 
-  console.log(pressedIndex)
+  //(pressedIndex)
   return (
     <>
       <div className={classes.wrapper}>

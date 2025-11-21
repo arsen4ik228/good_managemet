@@ -116,7 +116,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 
     const send = async () => {
         if (contentInput.trim() === "" && (!files || files?.length < 1)) return;
-        console.log(contentInput, contentInput?.trim(), files?.length)
+        //(contentInput, contentInput?.trim(), files?.length)
         // Удаляем черновик
         // deleteDraft("DraftDB", "drafts", idTextArea);
 
@@ -177,7 +177,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
 
         const Data = {}
-        console.log(senderPost, reciverPostId, convertType, convertTheme)
+        //(senderPost, reciverPostId, convertType, convertTheme)
 
         Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Переписка"
@@ -217,7 +217,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 .filter(item => !unpinFiles.includes(item.id)) // Фильтруем файлы
                 .map(element => element.id); // Преобразуем в массив ID
         }
-        console.log(senderPost, reciverPostId, convertType, convertTheme)
+        //(senderPost, reciverPostId, convertType, convertTheme)
         const Data = {}
 
         Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
@@ -347,7 +347,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     //         setSenderPost(userPosts[0]?.id);
     //     }
     // }, [userPosts, senderPost]);
-    console.log(senderPost)
+    //(senderPost)
     return (
 
         <div className={classes.wrapper}>

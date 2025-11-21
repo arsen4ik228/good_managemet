@@ -60,7 +60,7 @@ export default function Panel() {
   };
 
 
-  console.log(userInfo)
+  //(userInfo)
   return (
     <div className={classes.block}>
       <Avatar

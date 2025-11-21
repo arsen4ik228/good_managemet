@@ -27,7 +27,7 @@ export default function Mdxeditor({ editorState, setEditorState, isArchive}) {
     // Функция для обновления содержимого редактора и состояния
     const updateEditorContent = (newContent) => {
         if (editorRef.current && !isArchive) {
-            console.log('updateEditorContent')
+            //('updateEditorContent')
             editorRef.current.setMarkdown(newContent); // Обновляем содержимое через setMarkdown
             setEditorState(newContent); // Обновляем состояние редактора
         }
@@ -53,7 +53,7 @@ export default function Mdxeditor({ editorState, setEditorState, isArchive}) {
                 throw new Error("filePath не найден в ответе сервера");
             }
 
-            console.log("Успешно загружено:", filePath);
+            //("Успешно загружено:", filePath);
 
             return `${baseUrl}${filePath}`;
 

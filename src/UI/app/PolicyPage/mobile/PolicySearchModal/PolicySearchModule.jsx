@@ -21,7 +21,7 @@ function PolicySearchModule({ setSelectedId, setModalOpen, firstArray, firstTitl
             isErrorNewSpeedGoal: isError,
         }),
     });
-    console.log(data)
+    //(data)
     useEffect(() => {
         
     }, [])

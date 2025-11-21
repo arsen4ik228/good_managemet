@@ -23,7 +23,7 @@ export default function EditWorker() {
     const [telephoneNumber, setTelephoneNumber] = useState()
     const [isDismissed, setIsDismissed] = useState()
 
-    console.log(userInfo)
+    //(userInfo)
 
     const handleUpdateUserButtonClick = async () => {
         const Data = {};

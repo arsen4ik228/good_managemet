@@ -61,7 +61,7 @@ export default function SettingsPage() {
 
     const formattedValue =
       lettersOnly.charAt(0).toUpperCase() + lettersOnly.slice(1);
-    console.log(formattedValue);
+    //(formattedValue);
     setMiddleName(formattedValue);
   };
 
@@ -267,7 +267,7 @@ export default function SettingsPage() {
 
   const navigate = useNavigate();
 
-  console.log(userInfo);
+  //(userInfo);
 
   useEffect(() => {
     if (!notEmpty(userInfo)) return;

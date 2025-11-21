@@ -8,7 +8,7 @@ export const chatApi = apiSlice.injectEndpoints({
         url: `posts/${organizationId}/contacts`,
       }),
       transformResponse: (response) => {
-        console.log('getAllChats  ', response);
+        //('getAllChats  ', response);
         const result = []
 
         response?.postsWithConverts.forEach(element => {
@@ -68,7 +68,7 @@ export const chatApi = apiSlice.injectEndpoints({
         //   return countB - countA; // по убыванию количества
         // });
         result.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt));
-        console.log(result);
+        //(result);
 
         return result
         // response?.postsWithConverts.concat(

@@ -44,7 +44,7 @@ export const CustomComponent = () => {
     }, [convertTheme, contactId]);
 
 
-    console.log(userPostsInAccount, isDisabledType)
+    //(userPostsInAccount, isDisabledType)
 
     return (
         <div className={classes.customContainer}>

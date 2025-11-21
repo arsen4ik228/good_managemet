@@ -27,7 +27,7 @@ const PodSchema = ({
     event.stopPropagation(); // Останавливаем всплытие события
     const newElement = _.cloneDeep(element);
     newElement.color = baseColor;
-    console.log(newElement);
+    //(newElement);
     setOnePost([newElement]);
     setHeader({
       postName: post?.postName ?? "Не указано",
@@ -121,7 +121,7 @@ export default function BlockSchema({
     event.stopPropagation(); // Останавливаем всплытие события
     const newElement = _.cloneDeep(element);
     newElement.color = selectedColor || colorPostFromBD;
-    console.log(newElement);
+    //(newElement);
     setOnePost([newElement]);
     setHeader({
       postName: post?.postName ?? "Не указано",

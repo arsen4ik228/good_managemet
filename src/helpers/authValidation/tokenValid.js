@@ -6,8 +6,8 @@ export const isTokenValid = (token) => {
     try {
       const decoded = jwtDecode(token); // Декодируем токен
       const currentTime = Date.now() / 1000; // Текущее время в секундах
-      // console.log('Decoded token:', decoded); 
-      // console.log(decoded.exp > currentTime);
+      // //('Decoded token:', decoded); 
+      // //(decoded.exp > currentTime);
       return decoded.exp > currentTime; // Сравниваем срок действия
     } catch (e) {
       console.error('Ошибка при проверке токена:', e);

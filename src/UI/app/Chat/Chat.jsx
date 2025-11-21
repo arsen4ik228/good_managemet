@@ -30,7 +30,7 @@ export default function Chat() {
   ); // Мемоизация массива событий
 
   const handleEventData = useCallback((eventName, data) => {
-    console.log(`Data from ${eventName}:`, data);
+    //(`Data from ${eventName}:`, data);
   }, []); // Мемоизация callbac
 
   const socketResponse = useSocket(eventNames, handleEventData);

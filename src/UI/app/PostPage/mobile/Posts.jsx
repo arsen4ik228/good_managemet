@@ -133,7 +133,7 @@ const Posts = () => {
     if (policy !== currentPost?.policyId) {
       updatedData.policyId = policy;
     }
-    console.log(JSON.stringify(updatedData));
+    //(JSON.stringify(updatedData));
     // Проверяем, если есть данные для обновления
     if (Object.keys(updatedData).length > 0) {
       await updatePost({
@@ -153,7 +153,7 @@ const Posts = () => {
           console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
     } else {
-      console.log("Нет изменений для обновления");
+      //("Нет изменений для обновления");
     }
   };
 

@@ -45,7 +45,7 @@ export default function LeftSIder() {
     ); // Мемоизация массива событий
 
     const handleEventData = useCallback((eventName, data) => {
-        console.log(`Data from ${eventName}:`, data);
+        //(`Data from ${eventName}:`, data);
     }, []); // Мемоизация callbac
 
     const socketResponse = useSocket(eventNames, handleEventData);
@@ -59,7 +59,7 @@ export default function LeftSIder() {
     const { allChats, loadingAllChats, refetchAllChats } = useChats()
 
     const { userInfo } = useUserHook()
-    console.log(userInfo)
+    //(userInfo)
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
@@ -176,7 +176,7 @@ export default function LeftSIder() {
         setCopyChats([...allChats])
     }, [allChats])
 
-    console.log('filtredContacts   ', filtredContacts)
+    //('filtredContacts   ', filtredContacts)
     return (
         <>
             <div className={classes.wrapper}>

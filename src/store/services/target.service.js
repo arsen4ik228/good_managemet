@@ -10,7 +10,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 url: `targets`,
             }),
             transformResponse: (response) => {
-                console.log('getTargets:    ', response)
+                //('getTargets:    ', response)
 
                 const transformArray = (array) => {
                     const currentDate = new Date().toISOString().split('T')[0];
@@ -55,12 +55,12 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 };
 
                 const [personalTargets, futurePersonalTargets] = transformArray(response?.personalTargets || []);
-                console.log(personalTargets, futurePersonalTargets)
+                //(personalTargets, futurePersonalTargets)
                 const [orderTargets, futureOrderTargets] = transformArray(response?.ordersTargets || [])
-                console.log(orderTargets, futureOrderTargets)
+                //(orderTargets, futureOrderTargets)
                 const [projectTargets, futureProjectTargets] = transformArray(response?.projectTargets || [])
                 const futureTargets = mergeAndTransformFutureTargets(futurePersonalTargets, futureOrderTargets, futureProjectTargets)
-                console.log(futureTargets)
+                //(futureTargets)
                 // const transformTargetsArray = (array, marker) => {
                 //     const currentDate = new Date().toISOString().split('T')[0];
                 //     const groupedItems = {};
@@ -69,7 +69,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 //     array.forEach(item => {
                 //         // Создаём копию объекта item, чтобы не мутировать исходные данные
                 //         const itemCopy = JSON.parse(JSON.stringify(item)); // Глубокая копия
-                //         console.log('item', itemCopy)
+                //         //('item', itemCopy)
                 //         const dateStart = itemCopy.dateStart;
                 //         const dateWithoutTime = new Date(dateStart).toISOString().split('T')[0];
                 //         const isFutureOrPastCurrent = dateWithoutTime > currentDate;
@@ -83,7 +83,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 //             isFutureOrPastCurrent: isFutureOrPastCurrent
                 //         });
                 //     });
-                //     console.log(groupedItems)
+                //     //(groupedItems)
                 //     const _groupedItems = JSON.parse(JSON.stringify(groupedItems))
                 //     const groupedItems1 = JSON.parse(JSON.stringify(groupedItems))
 
@@ -91,14 +91,14 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 //         .filter(items => !items.some(item => item.isFutureOrPastCurrent))
                 //         .flat()
                 //         .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-                //     console.log(currentTargets)
+                //     //(currentTargets)
                 //     const _futureTargets = Object.values(groupedItems1)
                 //         .filter(items => items.some(item => item.isFutureOrPastCurrent))
                 //         .map(elem => ({
                 //             date: formattedDate(elem[0].dateStart).slice(0, 5),
                 //             items: elem
                 //         }))
-                //     console.log(_futureTargets)
+                //     //(_futureTargets)
 
                 //     const futureTargets = Object.values(_groupedItems)
                 //         .filter(items => items.some(item => item.isFutureOrPastCurrent))
@@ -106,7 +106,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 //             date: formattedDate(elem[0].dateStart).slice(0, 5),
                 //             items: elem
                 //         }))
-                //     console.log(futureTargets)
+                //     //(futureTargets)
 
                 //     return {
                 //         currentTargets,
@@ -159,8 +159,8 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 // const newOrdersTargets = transformTargetsArray(response?.ordersTargets, 'order')
 
 
-                // console.log(' Orders   ', newOrdersTargets.futureTargets)
-                // console.log('personal  ', newPersonalTargets.futureTargets)
+                // //(' Orders   ', newOrdersTargets.futureTargets)
+                // //('personal  ', newPersonalTargets.futureTargets)
                 // const otherTargets = merdgeOtherTargets(newOrdersTargets.futureTargets, newPersonalTargets.futureTargets)
 
                 const _userPosts = response?.userPosts.map(item => ({ ...item, organization: item.organization.id }))
@@ -194,7 +194,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 url: 'targets/archive',
             }),
             transformResponse: (response) => {
-                console.log('getArchiveTargets    ', response)
+                //('getArchiveTargets    ', response)
                 return response
             },
             providesTags: result =>

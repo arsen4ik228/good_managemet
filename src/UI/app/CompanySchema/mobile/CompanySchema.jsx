@@ -32,7 +32,7 @@ const PostTree = ({
   setHeader,
 }) => {
   const tree = buildTree(posts);
-  console.log(tree);
+  //(tree);
   return (
     <div className={classes.wrapper}>
       {tree.map((post) => (
@@ -128,8 +128,8 @@ export default function CompanySchema() {
     );
   };
 
-  console.log("onePost");
-  console.log(onePost);
+  //("onePost");
+  //(onePost);
 
   return (
     <div className={classes.wrapper}>

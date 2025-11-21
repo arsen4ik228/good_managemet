@@ -34,7 +34,7 @@
         const request = store.put({ id: idTextarea, content });
 
         request.onsuccess = () => {
-            //console.log('Draft saved successfully');
+            ////('Draft saved successfully');
         };
 
         request.onerror = (event) => {
@@ -70,7 +70,7 @@
         const request = store.delete(idTextarea);
 
         request.onsuccess = () => {
-            //console.log('Draft deleted successfully');
+            ////('Draft deleted successfully');
         };
 
         request.onerror = (event) => {

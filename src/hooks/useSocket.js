@@ -12,7 +12,7 @@ export const useSocket = (eventNames, callback) => {
             try {
                 socketRef.current = await createConnectionSocket();
                 eventNames.forEach((eventName) => {
-                    console.log('subscribe to', eventName);
+                    //('subscribe to', eventName);
                     socketRef.current.on(eventName, (data) => {
                         setResponse((prev) => ({ ...prev, [eventName]: data }));
                         if (callback) {
@@ -30,7 +30,7 @@ export const useSocket = (eventNames, callback) => {
         return () => {
             if (socketRef.current) {
                 eventNames.forEach((eventName) => {
-                    console.log('unsubscribe from', eventName);
+                    //('unsubscribe from', eventName);
                     socketRef.current.off(eventName);
                 });
                 disconnectSocket(socketRef.current);

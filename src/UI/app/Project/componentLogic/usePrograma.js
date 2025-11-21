@@ -235,14 +235,14 @@ export default function usePrograma({ activeTabTypesProgram, styleMessages }) {
       (target) => target.type === "Продукт"
     )?.holderPostId;
 
-      console.log("holderProductPostId", holderProductPostId);
+      //("holderProductPostId", holderProductPostId);
 
-      console.log( "projectId: ",  currentProgram.id,);
-      console.log( " _id:",  currentProgram.id,);
-      console.log(" content:",  descriptionProgram, );
-      console.log( "targetUpdateDtos, ", targetUpdateDtos,);
-      console.log(  "targetCreateDtos ", targetCreateDtos,);
-      console.log( " projectIds: ", selectedProjectIdsValues,);
+      //( "projectId: ",  currentProgram.id,);
+      //( " _id:",  currentProgram.id,);
+      //(" content:",  descriptionProgram, );
+      //( "targetUpdateDtos, ", targetUpdateDtos,);
+      //(  "targetCreateDtos ", targetCreateDtos,);
+      //( " projectIds: ", selectedProjectIdsValues,);
 
       await updateProject({
         projectId: currentProgram.id,
@@ -314,7 +314,7 @@ export default function usePrograma({ activeTabTypesProgram, styleMessages }) {
                 tableContainer.scrollLeft +
                 containerRect.width / 2;
 
-              console.log("scrollLeft", scrollLeft);
+              //("scrollLeft", scrollLeft);
               // 4. Применяем прокрутку
               tableContainer.scrollTo({
                 left: scrollLeft,

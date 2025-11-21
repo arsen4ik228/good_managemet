@@ -25,7 +25,7 @@ const props = {
 
 export const presetProps = (componentType) => {
 
-    console.log(componentType)
+    // //(componentType)
 
     return props[componentType]
 

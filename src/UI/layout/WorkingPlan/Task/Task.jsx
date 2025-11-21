@@ -113,7 +113,7 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                 handleDeletionTarget()
         }
         catch (err) {
-            console.log("Ошибка: ", err)
+            //("Ошибка: ", err)
         }
 
         //     .then(() => {
@@ -124,7 +124,7 @@ export default function Task({ id, content, deadline, type, state, completeDate,
 
     }
 
-    console.log(underPosts)
+    //(underPosts)
     return (
         <>
             <div className={classes.wrapper}>

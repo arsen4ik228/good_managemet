@@ -43,7 +43,7 @@ const ModalStatistic = ({
   //       const newHeight = windowHeight - 160;
   //       const newWidth = windowWidth + 40;
 
-  //       console.log(newHeight)
+  //       //(newHeight)
   //       setWidth(newWidth)
   //       setHeight(newHeight);
   //     }
@@ -54,7 +54,7 @@ const ModalStatistic = ({
   //       const newHeight = windowWidth + 25;
   //       const newWidth = windowHeight - 105;
 
-  //       // console.log(newHeight)
+  //       // //(newHeight)
   //       setWidth(newWidth)
   //       setHeight(newHeight);
   //     }
@@ -618,13 +618,13 @@ const ModalStatistic = ({
 
       // Перемещаем currentDate на первый выбранный день недели
       while (currentDate.getDay() !== selectedDayOfWeek) {
-        console.log("11111111111111");
+        //("11111111111111");
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
       // Цикл по неделям
       while (currentDate <= end) {
-        console.log("2222222222222222");
+        //("2222222222222222");
         const nextDate = new Date(currentDate);
         nextDate.setDate(currentDate.getDate() + 7);
 

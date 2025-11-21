@@ -40,21 +40,17 @@ export const ConvertFormProvider = ({ children }) => {
         if (!contactInfo) return;
         if (!userPostsInAccount?.length > 0) return;
 
-        console.warn('useeff')
         const postObj = userPostsInAccount?.find(item => item.id === senderPost)
-        console.warn(postObj)
-        console.log(postObj?.organization.id, '   ', reduxSelectedOrganizationId)
+
         if (postObj?.organization.id !== reduxSelectedOrganizationId) {
             setConvertType('Личная')
             setIsDisabledType(true)
-            console.error('jvdnhvdfhjvbdfhj')
 
         }
         else
             setIsDisabledType(false)
     }, [contactId, userPostsInAccount, senderPost]);
 
-    console.log('COnvrt COntext')
     const value = {
         convertType,
         convertTheme,

@@ -27,7 +27,7 @@ export const useSetPresets = () => {
 
         if (preset) {
             presetName = preset
-            console.log('prsesetName in useSetPresets  ', preset)
+            //('prsesetName in useSetPresets  ', preset)
             break;
         }
     }

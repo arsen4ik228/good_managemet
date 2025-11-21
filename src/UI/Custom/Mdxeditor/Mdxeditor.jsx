@@ -63,7 +63,7 @@ export default function Mdxeditor({
         throw new Error("filePath не найден в ответе сервера");
       }
 
-      console.log("Успешно загружено:", filePath);
+      //("Успешно загружено:", filePath);
 
       return `${baseUrl}${filePath}`;
     } catch (error) {

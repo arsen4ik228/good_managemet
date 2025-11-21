@@ -106,7 +106,7 @@ export default function AuthPage() {
 
     // Очистка при размонтировании компонента
     return () => {
-      console.log("Отключаем сокет...");
+      //("Отключаем сокет...");
       socket.off("connect");
       socket.off("disconnect");
       socket.disconnect();

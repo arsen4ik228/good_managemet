@@ -211,7 +211,7 @@ export default function ControlPanel() {
         }))
       );
 
-      console.log("Данные успешно сохранены в IndexedDB");
+      //("Данные успешно сохранены в IndexedDB");
     } catch (error) {
       console.error("Ошибка при сохранении данных в IndexedDB:", error);
     }
@@ -283,7 +283,7 @@ export default function ControlPanel() {
             return allControlPanel
               .map((panel) => {
                 const matchingData = data.find((item) => item.id === panel.id);
-                console.log("matchingData", matchingData);
+                //("matchingData", matchingData);
                 if (matchingData) {
                   if (matchingData.isActive) {
                     setSelectedControlPanelId(matchingData.id);

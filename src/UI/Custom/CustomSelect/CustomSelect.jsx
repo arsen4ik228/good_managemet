@@ -7,7 +7,7 @@ export default function CustomSelect({organizations, requestFunc, isToOrganizati
     const [selectedItems, setSelectedItems] = useState();
     const [extractedOrganizations, setExtractedOrganizations] = useState([]);
 
-    console.log('custom:  ',isToOrganizations)
+    //('custom:  ',isToOrganizations)
 
     // const handleSelectItem = (id) => {
     //     setToOrganizations(prevIsToOrganizations =>
@@ -33,7 +33,7 @@ export default function CustomSelect({organizations, requestFunc, isToOrganizati
 
     // }, [isToOrganizations]);
 
-    console.log('selectedItems:   ', selectedItems);
+    //('selectedItems:   ', selectedItems);
 
     const buttonClick = async () => {
         try {

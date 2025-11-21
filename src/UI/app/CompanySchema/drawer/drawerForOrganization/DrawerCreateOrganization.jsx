@@ -48,7 +48,7 @@ export default function DrawerCreateOrganization({
 
       const response = await form.validateFields();
 
-      console.log(response);
+      //(response);
       await createOrganization({
         ...response,
         organizationColor: selectedColor,

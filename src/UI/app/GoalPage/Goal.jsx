@@ -231,7 +231,7 @@ export default function Goal() {
   }, []);
 
 
-  console.log(currentGoal.content)
+  //(currentGoal.content)
   return (
     <div className={classes.dialog}>
       <Headers name={"цели"} funcActiveHint={() => setOpen(true)}>

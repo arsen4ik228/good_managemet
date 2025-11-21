@@ -216,7 +216,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
         (target) => target.type === "Продукт"
       )?.holderPostId;
 
-      console.log("holderProductPostId", holderProductPostId);
+      //("holderProductPostId", holderProductPostId);
 
       await updateProject({
         projectId: currentProject.id,
@@ -288,7 +288,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
                 tableContainer.scrollLeft +
                 containerRect.width / 2;
 
-              console.log("scrollLeft", scrollLeft);
+              //("scrollLeft", scrollLeft);
               // 4. Применяем прокрутку
               tableContainer.scrollTo({
                 left: scrollLeft,
@@ -442,7 +442,7 @@ export default function useProject({ activeTabTypes, styleMessages }) {
 
   useEffect(() => {
     if (currentProject?.content) {
-      console.log(currentProject?.content);
+      //(currentProject?.content);
       setDescriptionProduct(currentProject?.content);
     }
   }, [currentProject]);

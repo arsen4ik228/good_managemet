@@ -36,7 +36,7 @@ export default function PanelDragDrop({
 
       deleteFromIndexedDB(reduxSelectedOrganizationId, id)
         .then(() => {
-          console.log(`Панель управления с id ${id} успешно удалена из IndexedDB.`);
+          //(`Панель управления с id ${id} успешно удалена из IndexedDB.`);
         })
         .catch((error) => {
           console.error("Ошибка при удалении из IndexedDB:", error);

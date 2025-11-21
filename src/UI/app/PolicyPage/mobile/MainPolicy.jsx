@@ -22,7 +22,7 @@ const MainPolicy = () => {
   const [typeDisplayInstruction, setTypeDisplayInstruction] = useState(1);
 
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
-  console.log(reduxSelectedOrganizationId);
+  //(reduxSelectedOrganizationId);
   const {
     activeDirectives,
     draftDirectives,
@@ -67,7 +67,7 @@ const MainPolicy = () => {
     isErrorPolicyDirectories,
   } = usePolicyDirectoriesHook();
 
-  console.log("policyDirectories ", policyDirectories);
+  //("policyDirectories ", policyDirectories);
   const savePolicy = async () => {
     await postPolicy({ organizationId: reduxSelectedOrganizationId })
       .unwrap()
