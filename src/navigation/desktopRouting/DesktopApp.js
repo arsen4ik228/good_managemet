@@ -297,12 +297,36 @@ function DesktopApp() {
                 path="workingPlan"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                    <MainWorkingPlan />
+                    <WorkingPlanPage />
                   </React.Suspense>
                 }
               />
               <Route
-                path="workingPlan/new"
+                path="workingPlan/currentTasks"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              />
+              <Route  
+                path="workingPlan/currentOrders"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="workingPlan/allTasks"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              /> 
+              <Route
+                path="workingPlan/archiveTasks"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <WorkingPlanPage />

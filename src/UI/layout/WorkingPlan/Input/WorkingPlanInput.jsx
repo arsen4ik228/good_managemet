@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import classes from './WorkingPlanInput.module.css'
 import TextArea from 'antd/es/input/TextArea'
 import { Select, Input, Spin, message } from 'antd';
 import sendIcon from '@Custom/icon/send.svg';
 import FilesModal from '@app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import { useTargetsHook, useConvertsHook } from '@hooks';
+import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext';
 
 
 export default function WorkingPlanInput() {
@@ -26,10 +27,24 @@ export default function WorkingPlanInput() {
         isLoadingPostTargetsMutation,
         isSuccessPostTargetsMutation,
         isErrorPostTargetsMutation,
-        ErrorPostTargetsMutation
+        ErrorPostTargetsMutation,
+
+        updateTargets,
+        isLoadingUpdateTargetsMutation,
+        isSuccessUpdateTargetsMutation,
+        isErrorUpdateTargetsMutation,
+        ErrorUpdateTargetsMutation,
     } = useTargetsHook();
 
+    const {
+        dateStart,
+        deadline,
+        senderPost,
+    } = useWorkingPlanForm()
+
     const createTargets = async () => {
+        setIsRequestInProgress(true);
+
 
         try {
             if (!contentInput) return
@@ -39,9 +54,10 @@ export default function WorkingPlanInput() {
             Data.type = 'Личная'
             Data.orderNumber = 1
             Data.content = contentInput
-            // Data.holderPostId = selectedPost
-            // Data.dateStart = startDate
-            // Data.deadline = deadlineDate
+            Data.holderPostId = senderPost
+            Data.dateStart = dateStart
+            Data.deadline = deadline
+            Data.targetState = 'Активная'
             if (selectedPolicy)
                 Data.policyId = selectedPolicy
             if (files) {
@@ -57,7 +73,7 @@ export default function WorkingPlanInput() {
             })
                 .unwrap()
                 .then(() => {
-                    // reset()
+                    reset()
                 })
                 .catch((error) => {
                     console.error("Ошибка:", JSON.stringify(error, null, 2));
@@ -68,10 +84,32 @@ export default function WorkingPlanInput() {
         } catch (error) {
             message.error(`Произошла ошибка при создании задачи: ${error?.data?.message || ""}`);
         } finally {
-            // setIsUpdating(false);
+            setIsRequestInProgress(false);
 
         }
     }
+
+    const reset = () => {
+        setContentInput('')
+    }
+
+    const handleGlobalKeyDown = useCallback((e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (contentInput.trim() && !isRequestInProgress) {
+                createTargets();
+            }
+        }
+    }, [contentInput, isRequestInProgress]);
+
+    // Регистрируем глобальный обработчик
+    useLayoutEffect(() => {
+        document.addEventListener('keydown', handleGlobalKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleGlobalKeyDown);
+        };
+    }, [handleGlobalKeyDown]);
 
     return (
         <div className={classes.wrapper}>
@@ -98,13 +136,13 @@ export default function WorkingPlanInput() {
                         ref={textAreaRef}
                         autoFocus
                         disabled={isLoadingPostTargetsMutation}
-                        style={{height: "48px"}}
+                        style={{ height: "48px" }}
                         autoSize={{
                             minRows: 1,
                             maxRows: 6
                         }}
                         value={contentInput} onChange={(e) => setContentInput(e.target.value)}
-                        placeholder='Напишите сообщение'
+                        placeholder='Напишите задачу'
                     />
                     {(isLoadingPostTargetsMutation) && (
                         <div className={classes.spin}>

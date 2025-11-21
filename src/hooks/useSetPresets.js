@@ -9,7 +9,8 @@ const PRESETS_NAMES = {
     goal: 'GOAL',
     helper: 'HELPER',
     chat: 'CHATS',
-    users: 'USERS'
+    users: 'USERS',
+    workingPlan: 'WORKINGPLAN'
 }
 
 const map = new Map(Object.entries(PRESETS_NAMES))
@@ -26,6 +27,7 @@ export const useSetPresets = () => {
 
         if (preset) {
             presetName = preset
+            console.log('prsesetName in useSetPresets  ', preset)
             break;
         }
     }

@@ -19,6 +19,7 @@ export const useRightPanel = () => {
     };
 
     const setPreset = (presetKey) => {
+        console.log('use right panel setPreset() ', presetKey ) 
         dispatch(setPanelPreset(presetKey));
     };
 
@@ -54,8 +55,8 @@ export const useRightPanel = () => {
             POLICIES: 'policies',
             STATISTICS: 'statistics',
             CHATS: 'chats',
-            USERS: 'users'
-
+            USERS: 'users',
+            WORKINGPLAN: 'workingPlan'
         }
     };
 };

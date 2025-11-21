@@ -253,7 +253,7 @@ export default function AuthPage() {
       </div> */}
       <div className={classes.firstContainer}>
         <img src={GM} alt="GM" />
-        <div className={classes.title}>GOODMANAGMENT</div>
+        <div className={classes.title}>GOODMANAGEMENT</div>
         <div className={classes.loader}>
           <div className={classes.line}></div>
         </div>

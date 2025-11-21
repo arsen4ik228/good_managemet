@@ -277,6 +277,7 @@ export default function DesktopDialogPage() {
     }, [currentConvert])
 
     console.log(socketMessages)
+    console.warn(reduxUserId, messagesArray)
 
     return (
         <MainContentContainer buttons={buttons}>

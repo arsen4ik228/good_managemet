@@ -1,24 +1,153 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import classes from './Task.module.css'
 import delegate_icon from '@image/delegate_icon.svg'
 import round_check_icon from '@image/round_check_icon.svg'
 import round_check_complete_icon from '@image/round_check_complete_icon.svg'
-import { Tooltip } from 'antd'
+import { Spin, Tooltip } from 'antd'
 import { formatDateWithDay } from '@helpers/helpers.js'
+import { useTargetsHook, useConvertsHook } from '@hooks';
+import DelegateModal from './DelegateModal'
+import { usePostsHook } from '../../../../hooks'
 
-export default function Task({ content, deadline }) {
+
+export default function Task({ id, content, deadline, type, state, completeDate, dateStart, holderPostId }) {
+
+    const [isHovered, setIsHovered] = useState(false);
+    const [openModal, setOpenModal] = useState(false)
+    const [modalDeadline, setModalDeadline] = useState()
+    const [convertTheme, setConvertTheme] = useState()
+    const [reciverPostId, setReciverPostId] = useState()
+    const buttonRef = useRef();
+
+    const {
+        postConvert,
+        isLoadingPostConvertMutation,
+        isSuccessPostConvertMutation,
+        isErrorPostConvertMutation,
+        ErrorPostConvertMutation,
+    } = useConvertsHook();
+
+    const {
+
+        updateTargets,
+        isLoadingUpdateTargetsMutation,
+        isSuccessUpdateTargetsMutation,
+        isErrorUpdateTargetsMutation,
+        ErrorUpdateTargetsMutation,
+
+        deleteTarget,
+    } = useTargetsHook();
+
+    const {
+        underPosts,
+        isLoadingGetUnderPosts,
+        isErrorGetUnderPosts,
+        isFetchingGetUnderPosts,
+    } = usePostsHook({ postId: holderPostId })
+
+
+    const finishTarget = async (id) => {
+
+        if (state === 'Завершена') return;
+
+        await updateTargets({
+            _id: id,
+            targetState: 'Завершена',
+            type: 'Личная',
+        })
+            .unwrap()
+            .then(() => {
+                // reset()
+            })
+            .catch((error) => {
+                console.error("Ошибка:", JSON.stringify(error, null, 2));
+            });
+    }
+
+
+    const handleDeletionTarget = async () => {
+        await deleteTarget({
+            targetId: id,
+        })
+            .unwrap()
+            .then(() => {
+            })
+            .catch((error) => {
+                console.error("Ошибка:", JSON.stringify(error, null, 2));
+            });
+    }
+
+    const createOrder = async () => {
+
+        let attachmentIds = [];
+        // if (taskData?.attachmentToTargets?.length > 0) {
+        //     attachmentIds = taskData.attachmentToTargets
+        //         .map(element => element.attachment.id);
+        // }
+
+        const Data = {}
+
+        Data.convertTheme = convertTheme
+        Data.convertType = "Приказ"
+        Data.deadline = deadline ? deadline : modalDeadline
+        Data.senderPostId = holderPostId
+        Data.reciverPostId = reciverPostId
+        Data.messageContent = content
+        Data.targetCreateDto = {
+            type: "Приказ",
+            orderNumber: 1,
+            content: content,
+            holderPostId: reciverPostId,
+            dateStart: dateStart,
+            deadline: deadline ? deadline : modalDeadline,
+            //     ...(attachmentIds.length > 0 && {
+            //         attachmentIds: attachmentIds
+            //     })
+        }
+        try {
+            const result = await postConvert({
+                ...Data
+            }).unwrap()
+
+            if (result)
+                handleDeletionTarget()
+        }
+        catch (err) {
+            console.log("Ошибка: ", err)
+        }
+
+        //     .then(() => {
+        // })
+        // .catch((error) => {
+        //     console.error("Ошибка:", JSON.stringify(error, null, 2));
+        // });
+
+    }
+
+    console.log(underPosts)
     return (
         <>
             <div className={classes.wrapper}>
                 <div className={classes.leftContainer}>
-                    <img src={round_check_icon} alt="round_check_icon" />
+                    {isLoadingUpdateTargetsMutation ? (
+                        <Spin size='small'></Spin>
+                    ) : (
+                        <img src={state === 'Завершена' ? round_check_complete_icon : round_check_icon} alt="round_check_icon" onClick={() => finishTarget(id)} />
+                    )}
                 </div>
-                <div className={classes.rightContainer}>
+                <div
+                    className={classes.rightContainer}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
                     <div className={classes.infoContainer}>
-                        <div className={classes.taskType}>Приказ</div>
-                        <div className={classes.date}>Завершить: {formatDateWithDay(deadline)}</div>
+                        <div className={classes.taskType}>{type === 'Личная' ? "" : type}</div>
+                        <div className={classes.date}> {state === 'Завершена' ? `Завершено: ${formatDateWithDay(completeDate)}` : `Завершить: ${formatDateWithDay(deadline)}`}</div>
                     </div>
-                    <div className={classes.contentContainer}>
+                    <div
+                        className={classes.contentContainer}
+                        style={{ backgroundColor: state === 'Завершена' ? '#F0F0F0' : '' }}
+                    >
                         <Tooltip
                             title={content}
                             mouseEnterDelay={0.6} // 1 секунда задержки
@@ -27,17 +156,40 @@ export default function Task({ content, deadline }) {
                             destroyTooltipOnHide={true}
                             overlayStyle={{ maxWidth: 400 }}
                         >
-                            <div className={classes.textContainer}>
+                            <div
+                                className={classes.textContainer}
+                                style={{ color: state === 'Завершена' ? '#999999' : '' }}
+                            >
                                 {content}
                             </div>
                         </Tooltip>
-                        <div className={classes.delegateContainer}>
-                            <img src={delegate_icon} alt="delegate_icon" />
+                        <div
+                            className={classes.delegateContainer}
+                            onClick={() => setOpenModal(true)}
+                            ref={buttonRef}
+                        >
+                            {state !== 'Завершена' && isHovered && (<img src={delegate_icon} alt="delegate_icon" />)}
                         </div>
                     </div>
                 </div>
 
             </div>
+
+            {openModal && (
+                <DelegateModal
+                    onClose={() => setOpenModal(false)}
+                    triggerRef={buttonRef}
+                    convertTheme={convertTheme}
+                    setConvertTheme={setConvertTheme}
+                    modalDeadline={modalDeadline}
+                    setModalDeadline={setModalDeadline}
+                    deadline={deadline}
+                    underPosts={underPosts}
+                    reciverPostId={reciverPostId}
+                    setReciverPostId={setReciverPostId}
+                    clickFunc={createOrder}
+                ></DelegateModal>
+            )}
         </>
     )
 }
