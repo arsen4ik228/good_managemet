@@ -7,7 +7,7 @@ import {
 export default function SocketComponent() {
 
     const response = useSocket('convertCreationEvent', (data) => {
-        console.log('Data received:', data);
+        //('Data received:', data);
     });
 
     return (

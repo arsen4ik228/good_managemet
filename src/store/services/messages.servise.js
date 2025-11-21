@@ -12,7 +12,7 @@ export const messageApi = apiSlice.injectEndpoints({
             keepUnusedDataFor: 0,
             cacheTime: 0,
             transformResponse: response => {
-                console.log('getSeenMessages', response)
+                //('getSeenMessages', response)
                 let unSeenMessageExist = false
                 const sortedMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -71,7 +71,7 @@ export const messageApi = apiSlice.injectEndpoints({
             keepUnusedDataFor: 0, // данные удаляются сразу после unmount
             cacheTime: 0,
             transformResponse: response => {
-                console.log('getWatcherSeenMessages:  ', response)
+                //('getWatcherSeenMessages:  ', response)
                 let unseenWatcherMessageExist = false
                 const sortedWatcherMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -101,7 +101,7 @@ export const messageApi = apiSlice.injectEndpoints({
 
             }),
             transformResponse: response => {
-                console.log('getWatcherUnSeenMessages:  ', response)
+                //('getWatcherUnSeenMessages:  ', response)
 
                 const unSeenMessagesIds = []
                 const sortedMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

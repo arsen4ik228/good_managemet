@@ -32,7 +32,7 @@ export default function ModalFolder({
         : arrayDirectives;
 
     return directivesToRender?.map((item) => {
-         console.log("item", item);
+         //("item", item);
       return(
       <div
         key={item.id}

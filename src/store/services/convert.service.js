@@ -12,7 +12,7 @@ export const convertApi = apiSlice.injectEndpoints({
       keepUnusedDataFor: 0, // данные удаляются сразу после unmount
       //cacheTime: 0,
       transformResponse: response => {
-        console.log('getConverts', response);
+        //('getConverts', response);
 
         const transformContactInfo = (contact) => {
           return {
@@ -68,7 +68,7 @@ export const convertApi = apiSlice.injectEndpoints({
             else
               seen.push(item)
           })
-          console.log(seen)
+          //(seen)
           return { seen, unseen }
         }
 
@@ -105,7 +105,7 @@ export const convertApi = apiSlice.injectEndpoints({
       keepUnusedDataFor: 0, // данные удаляются сразу после unmount
       //cacheTime: 0,
       transformResponse: response => {
-        console.log('getArchiveConverts', response);
+        //('getArchiveConverts', response);
 
         const transformCopiesConvert = (copiesArray) => {
           if (!notEmpty(copiesArray)) return []
@@ -166,7 +166,7 @@ export const convertApi = apiSlice.injectEndpoints({
       }),
 
       transformResponse: response => {
-        console.log('getConvertId', response);
+        //('getConvertId', response);
 
         const {
           convert: {
@@ -247,7 +247,7 @@ export const convertApi = apiSlice.injectEndpoints({
 
         const { id: senderPostId, postName: senderPostName, senderPostForSocket } = selectSenderPostId(convertToPosts, userId);
         const userInfo = extractUserInfo(hostPost, convertToPosts)
-        console.log(userInfo, 'user info service')
+        //(userInfo, 'user info service')
         const watcherPostForSocket = !senderPostId ? selectWatcherPost(watchersToConvert) : null
         const recipientPost = selectRecipientPost(convertToPosts, hostPost)
 

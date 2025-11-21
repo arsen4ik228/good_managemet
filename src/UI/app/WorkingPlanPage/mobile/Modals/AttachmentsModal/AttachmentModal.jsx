@@ -96,7 +96,7 @@ export default function AttachmentModal({
 
   const handlePreview = async (file) => {
     // Для новых файлов (еще не загруженных)
-    console.log(file)
+    //(file)
     if (file.originFileObj) {
       const preview = await getBase64(file.originFileObj);
       setPreviewImage(preview);

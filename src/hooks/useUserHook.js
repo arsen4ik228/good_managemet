@@ -6,7 +6,7 @@ import useGetUserId from "./useGetUserId";
 export function useUserHook({userId = null} = {}) {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
   const { reduxUserId } = useGetUserId()
-  console.log(reduxSelectedOrganizationId, reduxUserId)
+  //(reduxSelectedOrganizationId, reduxUserId)
   const {
     postsWithoutUser = [],
     isLoadingGetUserNew,

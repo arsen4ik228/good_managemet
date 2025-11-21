@@ -21,7 +21,7 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
     }, [])
 
     const finalConvert = async () => {
-        console.log(userIsHost)
+        //(userIsHost)
         const Data = {
             pathOfUsers: pathOfUsers,
             convertId: convertId

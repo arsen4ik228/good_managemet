@@ -65,7 +65,7 @@ export default function EditPost() {
         statistics = [],
     } = useAllStatistics({ isActive: true });
 
-    console.log("statistics =", statistics);
+    //("statistics =", statistics);
 
     const {
         updatePost
@@ -214,7 +214,7 @@ export default function EditPost() {
     );
 
 
-    console.log("initialValues = ", initialValues);
+    //("initialValues = ", initialValues);
 
 
     const handleChangeStatistics = (newValue) => {
@@ -229,7 +229,7 @@ export default function EditPost() {
     const { updateStatistics } = useUpdateSingleStatistic();
 
     const handleArchiveStatistics = async (statisticId) => {
-        console.log("handleArchiveStatistics");
+        //("handleArchiveStatistics");
         try {
             await updateStatistics({
                 _id: statisticId,

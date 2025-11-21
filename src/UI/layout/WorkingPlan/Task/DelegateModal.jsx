@@ -57,11 +57,6 @@ export default function DelegatePopup({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [onClose, triggerRef]);
 
-    const handleSubmit = () => {
-        console.log('Делегирование:', {
-        });
-        onClose();
-    };
 
     return (
         <div ref={popupRef} className={classes.popupContainer}>

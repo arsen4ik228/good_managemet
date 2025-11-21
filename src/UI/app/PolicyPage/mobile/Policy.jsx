@@ -52,7 +52,7 @@ const MobilePolicy = () => {
     if (policyState !== currentPolicy.state) Data.state = policyState;
     if (valueType !== currentPolicy.type) Data.type = valueType;
     if (editorState !== currentPolicy.content) Data.content = editorState;
-    console.log(Data);
+    //(Data);
     if (notEmpty(Data)) {
       await updatePolicy({
         _id: policyId,
@@ -63,7 +63,7 @@ const MobilePolicy = () => {
           console.error("Ошибка:", JSON.stringify(error, null, 2)); // выводим детализированную ошибку
         });
     } else {
-      console.log("Проверка не прошла");
+      //("Проверка не прошла");
       setOpenAlertModal(true);
     }
   };

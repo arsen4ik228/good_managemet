@@ -88,8 +88,8 @@ export default function DrawerUpdatePost({ postId }) {
         formStatistics.validateFields(),
       ]);
 
-      console.log("valuesPost");
-      console.log(valuesPost);
+      //("valuesPost");
+      //(valuesPost);
 
       const [responsePost, responseStatistics] = await Promise.all([
         updatePost({

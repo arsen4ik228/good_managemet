@@ -58,7 +58,7 @@ export default function ConvertList() {
     ); // Мемоизация массива событий
 
     const handleEventData = useCallback((eventName, data) => {
-        console.log(`Data from ${eventName}:`, data);
+        //(`Data from ${eventName}:`, data);
     }, []); // Мемоизация callbac
 
     const socketResponse = useSocket(eventNames, handleEventData);
@@ -131,7 +131,7 @@ export default function ConvertList() {
 
     }, [socketResponse?.convertCreationEvent])
 
-    console.log(filtredChats)
+    //(filtredChats)
     return (
         <>
             <CustomList

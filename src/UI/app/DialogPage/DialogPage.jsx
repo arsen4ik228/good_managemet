@@ -66,7 +66,7 @@ export default function DialogPage() {
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
     const handleEventData = useCallback((eventName, data) => {
-        console.log(`Data from ${eventName}:`, data);
+        //(`Data from ${eventName}:`, data);
     }, []);
     const socketResponse = useSocket(eventNames, handleEventData);
 
@@ -135,9 +135,9 @@ export default function DialogPage() {
         // Функция для обновления сообщений
         const updateMessages = (messages) => {
             return messages.map(message => {
-                console.log(socketResponse.messagesAreSeen.messageIds)
+                //(socketResponse.messagesAreSeen.messageIds)
                 if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-                    console.log('bam')
+                    //('bam')
                     return {
                         ...message,
                         seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,

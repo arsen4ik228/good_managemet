@@ -105,7 +105,7 @@ export default function AttachStatistics() {
     }
 
 
-    console.log('selectedStatistics', selectedStatistics)
+    //('selectedStatistics', selectedStatistics)
 
     return (
         <div className={classes.wrapper}>

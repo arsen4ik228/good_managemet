@@ -150,6 +150,11 @@ export const useSocket = (eventNames, callback) => {
     return response;
 };
 
+export const useSocketConnection = () => {
+  const { isConnected, reconnect, disconnect } = useContext(SocketContext);
+  return { isConnected, reconnect, disconnect };
+};
+
 export const useEmitSocket = (eventName, data, options = {}) => {
     const { socket, isConnected } = useContext(SocketContext);
     const { retry = true, maxRetries = 3 } = options;

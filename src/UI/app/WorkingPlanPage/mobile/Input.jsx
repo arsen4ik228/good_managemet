@@ -69,7 +69,7 @@ const Input = ({ userPosts }) => {
                     .map(element => element.id)
             }
 
-            console.log(Data)
+            //(Data)
 
             await postTargets({
                 ...Data
@@ -154,7 +154,7 @@ const Input = ({ userPosts }) => {
         saveDraft('DraftDB', 'drafts', idTextarea, contentInput);
     }, [contentInput]);
 
-    console.log(reciverPostId)
+    //(reciverPostId)
 
     return (
         <>

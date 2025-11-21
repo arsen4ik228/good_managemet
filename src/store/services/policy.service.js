@@ -12,7 +12,7 @@ export const policyApi = apiSlice.injectEndpoints({
       }),
 
       transformResponse: (response) => {
-        console.log("getPolicies    ", response);
+        //("getPolicies    ", response);
         const directivesDB = response.directives;
         const instructionsDB = response.instructions;
         const disposalsDB = response.disposals;
@@ -103,7 +103,7 @@ export const policyApi = apiSlice.injectEndpoints({
         url: `policies/${policyId}/policy`,
       }),
       transformResponse: (response) => {
-        console.log(response); // Отладка ответа
+        //(response); // Отладка ответа
         return {
           currentPolicy: response || {},
         };

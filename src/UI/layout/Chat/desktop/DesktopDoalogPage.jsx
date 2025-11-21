@@ -136,7 +136,7 @@ export default function DesktopDialogPage() {
         if (!notEmpty(socketResponse?.messageCreationEvent)) return;
 
         const newMessage = socketResponse.messageCreationEvent
-        console.log(newMessage)
+        //(newMessage)
         setSocketMessages(prev => [...prev, {
             id: newMessage.id,
             content: newMessage.content,
@@ -160,9 +160,9 @@ export default function DesktopDialogPage() {
         // Функция для обновления сообщений
         const updateMessages = (messages) => {
             return messages.map(message => {
-                console.log(socketResponse.messagesAreSeen.messageIds)
+                //(socketResponse.messagesAreSeen.messageIds)
                 if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-                    console.log('bam')
+                    //('bam')
                     return {
                         ...message,
                         seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
@@ -276,8 +276,7 @@ export default function DesktopDialogPage() {
 
     }, [currentConvert])
 
-    console.log(socketMessages)
-    console.warn(reduxUserId, messagesArray)
+    //(socketMessages)
 
     return (
         <MainContentContainer buttons={buttons}>

@@ -31,9 +31,9 @@ export const policyDirectoriesApi = apiSlice.injectEndpoints({
               return 0;
             }),
         }));
-        console.log("foldersSort     ", foldersSort);
+        //("foldersSort     ", foldersSort);
         //Илюша
-        console.log("getPolicyDirectories     ", response);
+        //("getPolicyDirectories     ", response);
         let Data = [];
         if (Array.isArray(response) && response.length > 0) {
           Data = response.map((item) => ({
@@ -68,7 +68,7 @@ export const policyDirectoriesApi = apiSlice.injectEndpoints({
         url: `policyDirectory/${organizationId}/${policyDirectoryId}/policyDirectory`,
       }),
       transformResponse: (response) => {
-        console.log("getPolicyDirectoriesId     ", response);
+        //("getPolicyDirectoriesId     ", response);
         const Data = {
           id: response?.policyDirectory?.id,
           directoryName: response?.policyDirectory?.directoryName,

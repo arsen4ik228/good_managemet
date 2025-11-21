@@ -166,14 +166,14 @@ export default function PostNew() {
     setDivisionNameDB(`Подразделение №${maxDivisionNumber}`);
   }, [maxDivisionNumber]);
 
-  console.log(`worker = ${userRole}`);
+  //(`worker = ${userRole}`);
 
 
   const parentPostsWithDefault = [{ label: '-', value: null }, ...parentPosts.map((post) => ({
     label: post.postName,
     value: post.id,
   })).sort((a, b) => a.label.localeCompare(b.label))]
-  console.log(parentPostsWithDefault[1]?.value)
+  //(parentPostsWithDefault[1]?.value)
 
   return (
     <div className={classes.dialog}>

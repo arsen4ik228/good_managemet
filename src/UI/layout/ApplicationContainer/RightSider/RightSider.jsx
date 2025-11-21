@@ -90,7 +90,7 @@ export default function RightSider({ config: initialConfig }) {    //
         }
     }, [contactId, convertId])
 
-    console.log('right sider config component type:  ', config.componentType)
+    //('right sider config component type:  ', config.componentType)
     return (
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>

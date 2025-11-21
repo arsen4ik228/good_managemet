@@ -13,7 +13,7 @@ export default function ConfirmCompleteModal({ setTargetState, setOpenModal, ite
     }, [item])
 
     const buttonClick = (flag) => {
-        console.log('clich change state')
+        //('clich change state')
         setTargetState('Завершена')
         setOpenModal(false)
     }

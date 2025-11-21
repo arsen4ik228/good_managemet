@@ -7,7 +7,7 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `projects/${organizationId}/projects`,
       }),
       transformResponse: (response) => {
-        console.log("getProject    ", response); // Отладка ответа
+        //("getProject    ", response); // Отладка ответа
         return {
           projects:
             response?.filter((item) => {
@@ -61,7 +61,7 @@ export const projectApi = apiSlice.injectEndpoints({
                   (target.targetState === "Активная" ||
                     target.targetState === "Черновик")
                 );
-                console.log(hasProductType);
+                //(hasProductType);
                 return hasProductType;
               }
             }) || [],
@@ -78,7 +78,7 @@ export const projectApi = apiSlice.injectEndpoints({
                     (target.targetState === "Завершена" ||
                       target.isExpired === true)
                 );
-                console.log(hasProductType);
+                //(hasProductType);
                 return hasProductType;
               }
             }) || [],
@@ -131,7 +131,7 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `projects/${projectId}`,
       }),
       transformResponse: (response) => {
-        console.log("getProjectId   ", response);
+        //("getProjectId   ", response);
         return {
           currentProject: response.project || {},
           targets:
@@ -163,7 +163,7 @@ export const projectApi = apiSlice.injectEndpoints({
       //     dispatch(
       //       projectApi.endpoints.getProjectId.initiate({ projectId })
       //     );
-      //     console.log("пипец ggggggggggggggggggggggggggggggg");
+      //     //("пипец ggggggggggggggggggggggggggggggg");
       //   } catch (error) {
       //     console.error("Ошибка при автоматическом запросе getProjectId:", error);
       //   }
@@ -175,7 +175,7 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `projects/${organizationId}/new`,
       }),
       transformResponse: (response) => {
-        console.log(response); // Отладка ответа
+        //(response); // Отладка ответа
         return {
           posts: response?.posts || [],
           strategies: response?.strategies || [],
@@ -205,7 +205,7 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `/projects/${organizationId}/program/new`,
       }),
       transformResponse: (response) => {
-        console.log(response); // Отладка ответа
+        //(response); // Отладка ответа
         return {
           posts: response?.posts || [],
           strategies: response?.strategies || [],

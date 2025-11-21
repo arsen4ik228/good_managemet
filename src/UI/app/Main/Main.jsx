@@ -26,11 +26,11 @@ const MobileMain = () => {
   const eventNames = useMemo(() => ['convertCreationEvent', 'messageCountEvent'], []); // Мемоизация массива событий
 
   const handleEventData = useCallback((eventName, data) => {
-    console.log(`Data from ${eventName}:`, data);
+    //(`Data from ${eventName}:`, data);
   }, []); // Мемоизация callback
 
   const socketResponse = useSocket(eventNames, handleEventData);
-  // console.log(socketResponse)
+  // //(socketResponse)
 
 
   const selectOrganization = (id, reportDay) => {
@@ -41,7 +41,7 @@ const MobileMain = () => {
 
       window.localStorage.setItem("selectedOrganizationId", id.toString());
     }
-    console.log('bam-bam')
+    //('bam-bam')
     setSelectedOrg(id)
     localStorage.setItem("reportDay", reportDay);
     dispatch(setSelectedOrganizationId(id));
@@ -146,7 +146,7 @@ const MobileMain = () => {
     setCopyChats([...allChats])
   }, [allChats])
 
-  console.log(copyChats)
+  //(copyChats)
 
   return (
     <div className={classes.wrapper}>

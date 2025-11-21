@@ -22,7 +22,7 @@ const PodSchema = ({
     event.stopPropagation(); // Останавливаем всплытие события
     const newElement = _.cloneDeep(element);
     newElement.color = backgroundColor;
-    console.log(newElement);
+    //(newElement);
     setOnePost([newElement]);
     setHeader({
       postName: post?.postName ?? "Не указано",
@@ -102,7 +102,7 @@ export default function PostSchema({
     event.stopPropagation(); // Останавливаем всплытие события
     const newElement = _.cloneDeep(element);
     newElement.color = backgroundColor;
-    console.log(newElement);
+    //(newElement);
     setOnePost([newElement]);
     setHeader({
       postName: post?.postName ?? "Не указано",

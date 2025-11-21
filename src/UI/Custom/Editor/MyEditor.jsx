@@ -23,7 +23,7 @@ export default function MyEditor({
 //         policyId,
 //         formData,
 //       }).unwrap();
-//       console.log("Успешно загружено:", response);
+//       //("Успешно загружено:", response);
 //       return response; // Можно вернуть ответ, если это нужно
 //     } catch (error) {
 //       console.error("Ошибка загрузки изображения:", error);

@@ -15,7 +15,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         };
       },
       transformResponse: (response, meta, arg) => {
-        console.log("getStatistics:  ", response);
+        //("getStatistics:  ", response);
 
         if (!Array.isArray(response)) {
           console.error("Response is not an array");
@@ -42,7 +42,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
           })
           .sort((a, b) => a.name.localeCompare(b.name));
 
-        console.log("Transform Data:  ", transformData);
+        //("Transform Data:  ", transformData);
         return transformData;
       },
       providesTags: (result) =>
@@ -65,7 +65,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
         url: `/statistics/${organizationId}/allWithPeriod?weeks=${weeks}&isActive=${isActive}`,
       }),
       transformResponse: (response) => {
-        console.log("getStatistics:  ", response);
+        //("getStatistics:  ", response);
 
         if (!Array.isArray(response)) {
           console.error("Response is not an array");
@@ -91,7 +91,7 @@ export const statisticsApi = apiSlice.injectEndpoints({
           })
           .sort((a, b) => a.name.localeCompare(b.name));
 
-        console.log("Transform Data:  ", transformData);
+        //("Transform Data:  ", transformData);
         return transformData;
       },
       providesTags: (result) =>

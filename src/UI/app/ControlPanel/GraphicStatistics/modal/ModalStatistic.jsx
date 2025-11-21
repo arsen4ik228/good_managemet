@@ -242,7 +242,7 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
 
     setModalDatePoint((prev) => {
       const currentDate = dayjs(prev);
-      console.log("currentDate", currentDate.format("YYYY-MM-DD"));
+      //("currentDate", currentDate.format("YYYY-MM-DD"));
       let newDate;
 
       switch (chartType) {

@@ -154,7 +154,7 @@ export default function Task({ taskData, userPosts, isArchive }) {
                 handleDeletionTarget()
         }
         catch (err) {
-            console.log("Ошибка: ", err)
+            //("Ошибка: ", err)
         }
 
         //     .then(() => {

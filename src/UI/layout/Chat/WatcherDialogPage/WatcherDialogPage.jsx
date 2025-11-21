@@ -52,7 +52,7 @@ export default function WatcherDialogPage() {
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
     const handleEventData = useCallback((eventName, data) => {
-        console.log(`Data from ${eventName}:`, data);
+        //(`Data from ${eventName}:`, data);
     }, []);
     const socketResponse = useSocket(eventNames, handleEventData);
 
@@ -158,9 +158,9 @@ export default function WatcherDialogPage() {
     //     // Функция для обновления сообщений
     //     const updateMessages = (messages) => {
     //         return messages.map(message => {
-    //             console.log(socketResponse.messagesAreSeen.messageIds)
+    //             //(socketResponse.messagesAreSeen.messageIds)
     //             if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-    //                 console.log('bam')
+    //                 //('bam')
     //                 return {
     //                     ...message,
     //                     seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
@@ -222,7 +222,7 @@ export default function WatcherDialogPage() {
                         testFunction(messageNumber, setLastSeenMessageNumber)
                     }
                 });
-                console.log('observer', historySeenIds)
+                //('observer', historySeenIds)
                 // Обновляем состояние массива visibleUnSeenMessageIds
                 // setVisibleUnSeenMessageIds(cutOfHistoryIds(visibleIds, historySeenIds));
                 setVisibleUnSeenMessageIds(messageForSocket)
@@ -245,7 +245,7 @@ export default function WatcherDialogPage() {
         };
     }, [watcherUnseenMessages, socketMessages]);
 
-    console.log(socketResponse?.messageCreationEvent)
+    //(socketResponse?.messageCreationEvent)
     console.warn(globalHistorySeenIds)
 
 

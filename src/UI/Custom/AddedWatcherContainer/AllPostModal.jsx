@@ -18,7 +18,7 @@ export default function AllPostModal({ setOpenModal, watchers, buttonClick, sele
         });
     };
 
-    console.log(watchers)
+    //(watchers)
 
     return (
         <>

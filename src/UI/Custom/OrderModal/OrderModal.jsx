@@ -72,7 +72,7 @@ export default function OrderModal({ setModalOpen, setTheme, convertTheme, setRe
                         className={`${classes.listItem} ${selectedReceiverPost === item.id ? classes.selectedItem : ''
                             }`}
                         onClick={() => {
-                            console.log('Selected post:', item.id);
+                            //('Selected post:', item.id);
                             selectPost(item.id);
                         }}
                     >

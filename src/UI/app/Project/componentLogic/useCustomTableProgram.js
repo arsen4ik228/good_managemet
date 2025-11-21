@@ -294,8 +294,8 @@ export default function useCustomTableProgram({
   // Добавление новой строки в таблицу
   const handleAddRow = (event, groupName) => {
     event.stopPropagation();
-    console.log("tables", tables);
-    console.log("groupName", groupName);
+    //("tables", tables);
+    //("groupName", groupName);
 
     const newRow = {
       id: uuidv4(),
@@ -365,7 +365,7 @@ export default function useCustomTableProgram({
 
   // добавление к программе проектов
   const addProjectTables = () => {
-    console.log("addProjectTables");
+    //("addProjectTables");
 
     // Получаем массив только ID выбранных проектов
     const selectedProjectIdsValues = selectedProjectIds.map(

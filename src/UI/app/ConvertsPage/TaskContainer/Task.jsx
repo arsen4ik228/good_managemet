@@ -29,7 +29,7 @@ export default function Task({ taskData, isArchive }) {
         navigate(link)
     }
 
-    console.log(taskData)
+    //(taskData)
 
     return (
         <div

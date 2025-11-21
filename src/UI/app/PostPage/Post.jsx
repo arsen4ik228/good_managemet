@@ -282,7 +282,7 @@ export default function Post() {
     if (currentPost.roleId !== userRole) {
       updatedData.roleId = userRole
     }
-    console.log(JSON.stringify(updatedData));
+    //(JSON.stringify(updatedData));
     // Проверяем, если есть данные для обновления
     if (Object.keys(updatedData).length > 0) {
       await updatePost({
@@ -295,7 +295,7 @@ export default function Post() {
           console.error("Ошибка:", JSON.stringify(error, null, 2));
         });
     } else {
-      console.log("Нет изменений для обновления");
+      //("Нет изменений для обновления");
     }
   };
 

@@ -33,7 +33,7 @@ function MobileObjective(props) {
     localIsResponseUpdateObjectiveMutation,
   } = useObjectiveHook(selectedStrategyId);
 
-  console.log(currentObjective);
+  //(currentObjective);
 
   const {
     activeAndDraftStrategies,

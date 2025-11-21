@@ -49,7 +49,7 @@ export const postApi = apiSlice.injectEndpoints({
         url: `posts/${organizationId}/new`,
       }),
       transformResponse: (response) => {
-        console.log(response); // Отладка ответа
+        //(response); // Отладка ответа
         return {
           workers: response?.workers || [],
           policies: response?.policies || [],
@@ -75,7 +75,7 @@ export const postApi = apiSlice.injectEndpoints({
         url: `posts/myPosts`,
       }),
       // transformResponse: (response) => {
-      //   console.log('getPostsUserByAccount  ', response)
+      //   //('getPostsUserByAccount  ', response)
       //   return response
       // },
       providesTags: ["Post", "User"],
@@ -86,7 +86,7 @@ export const postApi = apiSlice.injectEndpoints({
         url: `posts/${postId}/post`,
       }),
       transformResponse: (response) => {
-        console.log("getPostId    ", response); // Отладка ответа
+        //("getPostId    ", response); // Отладка ответа
         const sortWorkers = response?.workers?.sort((a, b) => {
           const lastNameComparison = a.lastName.localeCompare(b.lastName);
           if (lastNameComparison !== 0) {
@@ -122,7 +122,7 @@ export const postApi = apiSlice.injectEndpoints({
     //     url: `posts/${organizationId}/contacts`,
     //   }),
     //   transformResponse: (response) => {
-    //     console.log('getAllChats  ', response);
+    //     //('getAllChats  ', response);
     //     const result = []
 
     //     response?.postsWithConverts.forEach(element => {
@@ -182,7 +182,7 @@ export const postApi = apiSlice.injectEndpoints({
     //     //   return countB - countA; // по убыванию количества
     //     // });
     //     result.sort((a, b) => new Date(b.latestMessageCreatedAt) - new Date(a.latestMessageCreatedAt));
-    //     console.log(result);
+    //     //(result);
 
     //     return result
     //     // response?.postsWithConverts.concat(
@@ -210,7 +210,7 @@ export const postApi = apiSlice.injectEndpoints({
       }),
       providesTags: (result, error, arg) => [{ type: "Post", id: arg.postId }],
       transformResponse: (response) => {
-        console.log("getUnderPosts    ", response); // Отладка ответа
+        //("getUnderPosts    ", response); // Отладка ответа
         return {
           // currentPost: response?.currentPost || {},
           // parentPost: response?.parentPost || {},

@@ -7,7 +7,7 @@ export const objectiveApi = apiSlice.injectEndpoints({
         url: `objectives/${strategyId}/objective`,
       }),
       transformResponse: (response) => {
-        console.log(response);
+        //(response);
         return {
           currentObjective: response || {},
         };
