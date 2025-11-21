@@ -235,3 +235,25 @@ export const findSelectedChild = (children, selectedItemId) => {
 
   return null;
 };
+
+
+export function formatDateWithDay(dateString) {
+  try {
+    const date = new Date(dateString);
+    
+    // Проверка валидности даты
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date');
+    }
+    
+    const daysOfWeek = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    
+    return `${day}.${month} ${dayOfWeek}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Invalid date';
+  }
+}

@@ -1,0 +1,143 @@
+.popupContainer {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 380px;
+    max-height: 80vh;
+    overflow: hidden;
+    z-index: 1000;
+    border: 1px solid #e0e0e0;
+    animation: slideInLeft 0.2s ease-out;
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  /* Остальные стили остаются такими же */
+  .popupHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+  }
+  
+  .popupTitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+  }
+  
+  .closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #8c8c8c;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .closeButton:hover {
+    background: #f0f0f0;
+    color: #262626;
+  }
+  
+  .popupContent {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  
+  .inputSection {
+    margin-bottom: 16px;
+  }
+  
+  .themeInput :global(.ant-input) {
+    border-radius: 8px;
+    border: 1px solid #d9d9d9;
+  }
+  
+  .datePicker :global(.ant-picker) {
+    border-radius: 8px;
+    border: 1px solid #d9d9d9;
+  }
+  
+  .sectionLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: #262626;
+    margin-bottom: 12px;
+  }
+  
+  .employeesList {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+  }
+  
+  .employeeItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background-color 0.2s;
+  }
+  
+  .employeeItem:last-child {
+    border-bottom: none;
+  }
+  
+  .employeeItem:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .employeeItem.selected {
+    background-color: #e6f7ff;
+    border-left: 3px solid #1890ff;
+  }
+  
+  .employeeInfo {
+    margin-left: 12px;
+    flex: 1;
+  }
+  
+  .employeeName {
+    font-weight: 500;
+    color: #262626;
+    margin-bottom: 2px;
+  }
+  
+  .employeePosition {
+    font-size: 12px;
+    color: #8c8c8c;
+  }
+  
+  .footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .submitButton {
+    width: 100%;
+    border-radius: 8px;
+    height: 40px;
+    font-weight: 500;
+  }

@@ -7,6 +7,7 @@ import { ConvertFormProvider } from '../contexts/ConvertFormContext.js';
 
 import { useGlobalLoading } from "@hooks";
 import Loader from "../UI/Custom/Loader/Loader";
+import { WorkingPlanProvider } from "../contexts/WorkingPlanContext.js";
 
 
 function App() {
@@ -18,7 +19,9 @@ function App() {
 
       <SocketProvider>
         <ConvertFormProvider>
-          {isMobile ? <MobileApp /> : <DesktopApp />}
+          <WorkingPlanProvider>
+            {isMobile ? <MobileApp /> : <DesktopApp />}
+          </WorkingPlanProvider>
         </ConvertFormProvider>
       </SocketProvider>
     </>

@@ -106,6 +106,7 @@ export default function CustomList({
                             onClick={toggleFilter}
                         />
                     )}
+                    {searchFunc && (
 
                     <img
                         src={search}
@@ -113,6 +114,7 @@ export default function CustomList({
                         className={classes.searchIcon}
                         onClick={toggleSearch}
                     />
+                    )}
                     <img
                         src={dropdown}
                         alt="dropdown"

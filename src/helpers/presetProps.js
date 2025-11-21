@@ -1,4 +1,4 @@
-import {selectedOrganizationName} from './constants'
+import { selectedOrganizationName } from './constants'
 
 
 const props = {
@@ -17,10 +17,9 @@ const props = {
     'users': {
 
     },
-    'helper': {
-        name: 'Гудменеджер',
-        postsNames: 'ИИ Помощник',
-    }
+    'workingPlan': {
+
+    },
 }
 
 

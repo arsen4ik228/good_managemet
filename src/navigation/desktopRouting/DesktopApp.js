@@ -27,11 +27,12 @@ import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/Crea
 import { Strategy } from "../../UI/layout/Strategy/Strategy";
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
-import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
+// import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
 import Worker from "../../UI/layout/Workers/Worker";
 import EditWorker from "../../UI/layout/Workers/EditWorker";
-
+import MainWorkingPlan from "../../UI/app/WorkingPlanPage/MainWorkingPlan"
+import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
@@ -296,7 +297,39 @@ function DesktopApp() {
                 path="workingPlan"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                    <WorkingPlan />
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="workingPlan/currentTasks"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              />
+              <Route  
+                path="workingPlan/currentOrders"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="workingPlan/allTasks"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              /> 
+              <Route
+                path="workingPlan/archiveTasks"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
                   </React.Suspense>
                 }
               />

@@ -27,6 +27,13 @@ const initialState = {
 
       },
     },
+    workingPlan: {
+      componentType: "workingPlan",
+      props: {
+        ...presetProps("workingPlan")
+
+      },
+    },
     statistics: {
       componentType: "statistics",
       props: {

@@ -7,7 +7,7 @@ export const usePanelPreset = (presetKey, cleanup = true) => {
 
     useEffect(() => {
         setPanelPreset(presetKey);
-
+        console.warn('usePanelPreset   ', presetKey)
         return () => {
             if (cleanup) {
                 resetRightPanel();

@@ -14,13 +14,14 @@ import RightPanelMapper from '@helpers/RightPanelMapper';
 import CustomComponent from './CustomComponent';
 import { homeUrl } from '@helpers/constants'
 import org_icon from '@image/org_icon.svg'
-
+import workingPlan_icon from '@image/workingPlan_icon.svg'
 
 import schemaCompany from '@image/schemaCompany.svg';
 import project from '@image/project.svg';
 import strategy from '@image/strategy.svg';
 import workingPlan from '@image/strategy.svg';
 import { useGetReduxOrganization } from '../../../../hooks';
+import WorkingPlanCreationComponent from './WorkingPlanCreationComponent';
 
 export default function RightSider({ config: initialConfig }) {    //
     const { convertId, contactId } = useParams()
@@ -48,11 +49,11 @@ export default function RightSider({ config: initialConfig }) {    //
         { id: '5', icon: stat, text: 'Статистики', link: 'statistics' },
         { id: '2', icon: controlPanel_icon, text: 'Панель управления', link: 'controlPanel' },
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
+        // { id: '11', icon: workingPlan_icon, text: 'Рабочий план', link: 'workingPlan' },
 
         { id: '8', icon: project, text: 'Стратегия', link: 'strategy', isActive: false },
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
         { id: '10', icon: project, text: 'Схема компании', link: 'schemaCompany', isActive: false },
-        { id: '11', icon: project, text: 'Рабочий план', link: 'WorkingPlan', isActive: false },
 
         { id: '12', icon: project, text: 'Академия', link: 'academy', isActive: false },
         { id: '13', icon: project, text: 'Корпоративное обучение', link: 'education', isActive: false },
@@ -66,6 +67,8 @@ export default function RightSider({ config: initialConfig }) {    //
         if (link === 'controlPanel' || link === 'svodka') {
             window.open(homeUrl + `#/${link}`, '_blank')
         }
+        else if (link === 'workingPlan')
+            navigate(`helper/${link}/allTasks`)
         else
             navigate(`helper/${link}`);
     };
@@ -87,6 +90,7 @@ export default function RightSider({ config: initialConfig }) {    //
         }
     }, [contactId, convertId])
 
+    console.log('right sider config component type:  ', config.componentType)
     return (
         <div className={classes.wrapper}>
             <div className={classes.contactInfo}>
@@ -128,6 +132,8 @@ export default function RightSider({ config: initialConfig }) {    //
                 {(!convertId && contactId) && (
                     <CustomComponent></CustomComponent>
                 )}
+
+                <WorkingPlanCreationComponent></WorkingPlanCreationComponent>
                 {/* </div> */}
             </div>
         </div>
