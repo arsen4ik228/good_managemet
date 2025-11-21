@@ -17,7 +17,9 @@ export default function EditContainer({ header, saveClick, canselClick, exitClic
           <Button type='outlined' onClick={saveClick}>Сохранить</Button>
           <Button type='outlined' onClick={canselClick}>Отмена</Button>
           <Button type='outlined' onClick={exitClick}>Выйти</Button>
-          {aditionalbtns.map((item) => (
+
+          {
+            aditionalbtns && aditionalbtns?.map((item) => (
             <Button
               key={item.name}
               type="outlined"
@@ -26,8 +28,8 @@ export default function EditContainer({ header, saveClick, canselClick, exitClic
             >
               {item.name}
             </Button>
-          ))}
-
+          ))
+          }
         </footer>
       </div>
     </>
