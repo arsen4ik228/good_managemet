@@ -17,6 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRightPanel } from '../../../../hooks';
 import default_avatar from '@image/default_avatar.svg'
 import { baseUrl } from '../../../../helpers/constants';
+import AttachedPolicy from "./attachedPolicy/AttachedPolicy.jsx";
 
 
 const TYPE_OPTIONS = [
@@ -24,18 +25,17 @@ const TYPE_OPTIONS = [
     { value: 'Приказ', label: 'Приказ' },
 ]
 
-export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert }) {
+export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert, hiddenPopconfirm }) {
 
     const { contactId, convertId } = useParams()
-    const navigate = useNavigate()
-
+    const navigate = useNavigate();
     const idTextarea = 745264
     const textAreaRef = useRef(null);
     const [openFilesModal, setOpenFilesModal] = useState(false);
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [contentInputPolicyId, setContentInputPolicyId] = useState("");
     const [contentInput, setContentInput] = useState("");
-    const [selectedPolicy, setSelectedPolicy] = useState(false);
+    const [selectedPolicies, setSelectedPolicies] = useState([]);
     const [files, setFiles] = useState();
     const [unpinFiles, setUnpinFiles] = useState([]);
     const [isRequestInProgress, setIsRequestInProgress] = useState(false);
@@ -90,7 +90,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         // setStartDate(new Date().toISOString().split("T")[0]);
         // setDeadlineDate(new Date().toISOString().split("T")[0]);
         setContentInput("");
-        setSelectedPolicy(false);
+        selectedPolicies([]);
         deleteDraft("DraftDB", "drafts", convertId);
         setContentInputPolicyId("");
         // setConvertTheme('')
@@ -132,6 +132,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 convertId,
                 content: transformText(contentInput, convertStatusChange),
                 postId: senderPostId,
+                policyId: selectedPolicies,
                 ...Data,
             }).unwrap();
 
@@ -235,7 +236,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
             deadline: deadlineDate,
             ...(attachmentIds.length > 0 && {
                 attachmentIds: attachmentIds
-            })
+            }),
+            // policyId: selectedPolicies, 
         }
 
         await postConvert({
@@ -269,11 +271,11 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 await send();
             else if (convertType === 'Личная') {
                 await createPersonalLetter();
-                  deleteDraft("Convert", "messages", contactId);
+                deleteDraft("Convert", "messages", contactId);
             }
             else {
                 await createOrder();
-                 deleteDraft("Convert", "messages", contactId);
+                deleteDraft("Convert", "messages", contactId);
             }
         } catch (error) {
             console.error('Ошибка отправки:', error);
@@ -391,6 +393,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                     {/* <img src={icon_attachPpolicy} alt="icon_attachPpolicy" />
                     <img src={attachIcon} alt="attachIcon" />
                     <img src={calenderIcon} alt="calenderIcon" /> */}
+
+
                     {onCalendar && (
                         <CalendarModal
                             openModal={openCalendarModal}
@@ -402,20 +406,32 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                         // disableDateStart={disableDateStart}
                         />
                     )}
-                    <FilesModal
-                        openModal={openFilesModal}
-                        setOpenModal={setOpenFilesModal}
-                        policyId={selectedPolicy}
-                        setPolicyId={setSelectedPolicy}
-                        // postOrganizationId={selectedPostOrganizationId}
-                        files={files}
-                        setFiles={setFiles}
-                        unpinFiles={unpinFiles}
-                        setUnpinFiles={setUnpinFiles}
-                        organizationId={organizationId}
-                        setContentInput={setContentInput}
-                        setContentInputPolicyId={setContentInputPolicyId}
-                    />
+
+
+
+                    {
+                        !hiddenPopconfirm && (
+                            <>
+                                <FilesModal
+                                    openModal={openFilesModal}
+                                    setOpenModal={setOpenFilesModal}
+                                    // postOrganizationId={selectedPostOrganizationId}
+                                    files={files}
+                                    setFiles={setFiles}
+                                    unpinFiles={unpinFiles}
+                                    setUnpinFiles={setUnpinFiles}
+                                    organizationId={organizationId}
+                                    setContentInput={setContentInput}
+                                    setContentInputPolicyId={setContentInputPolicyId}
+                                />
+
+                                <AttachedPolicy
+                                    selectedPolicies={selectedPolicies}
+                                    onChange={setSelectedPolicies}
+                                /></>
+                        )
+                    }
+
 
                 </div>
                 <div className={classes.textInputSection}>

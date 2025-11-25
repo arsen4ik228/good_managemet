@@ -5,7 +5,7 @@ import ChatContainer from '../ChatContainer/ChatContainer'
 export default function CreateNewConvertPage() {
     return (
         <MainContentContainer>
-            <ChatContainer onCalendar={true} onCreate={true}></ChatContainer>
+            <ChatContainer onCalendar={true} onCreate={true} hiddenPopconfirm={true}></ChatContainer>
         </MainContentContainer>
     )
 }
