@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Input, Modal, List, Avatar } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
-import { useGetPostsUserByOrganization, useCreateStatistic } from "@hooks";
+import { useGetPostsUserByOrganization, useCreateStatistic, useAllPosts } from "@hooks";
 
 
 export default function ModalCreateStatistic({
@@ -18,8 +18,8 @@ export default function ModalCreateStatistic({
 
   // Получение всех постов для создания статистики
   const {
-    userPosts,
-  } = useGetPostsUserByOrganization();
+    allPosts,
+  } = useAllPosts();
 
   // Создание статистики
   const {
@@ -44,13 +44,13 @@ export default function ModalCreateStatistic({
 
   // Фильтрация статистик по поисковому запросу
   const filteredPosts = useMemo(() => {
-    if (!searchText) return userPosts;
+    if (!searchText) return allPosts;
 
-    return userPosts.filter((item) => {
+    return allPosts.filter((item) => {
       const searchLower = searchText.toLowerCase();
       return item.postName.toLowerCase().includes(searchLower);
     });
-  }, [userPosts, searchText]);
+  }, [allPosts, searchText]);
 
   return (
     <>
