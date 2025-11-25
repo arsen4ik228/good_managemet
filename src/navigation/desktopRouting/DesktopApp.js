@@ -82,7 +82,6 @@ const AgreementDialogPage = React.lazy(() =>
   import("@app/DialogPage/AgreementDialogPage/AgreementDialogPage.jsx")
 );
 
-
 function DesktopApp() {
   return (
     <div>
@@ -111,6 +110,15 @@ function DesktopApp() {
         }}
       >
         <Routes>
+          <Route
+            path="/projectWithProgramm"
+            element={
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                <ProjectWithProgramm />
+              </React.Suspense>
+            }
+          />
+
           {/* ==== Главная (логин) ==== */}
           <Route
             path="/"

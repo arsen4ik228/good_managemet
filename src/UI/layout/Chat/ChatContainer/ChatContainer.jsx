@@ -3,7 +3,7 @@ import classes from './ChatContainer.module.css'
 import InputMessage from '../Input/InputMessage.jsx'
 import { usePanelPreset, useRightPanel } from '@hooks';
 
-export default function ChatContainer({ children, onCreate, onCalendar, isArchive}) {
+export default function ChatContainer({ children, onCreate, onCalendar, isArchive, hiddenPopconfirm}) {
 
     // const { PRESETS } = useRightPanel();
     // //(',klvndsjdvnfhdvndjfhvdfjkhv dfjnvhdfvnjdfvjnkdfvjdfvj')
@@ -17,7 +17,7 @@ export default function ChatContainer({ children, onCreate, onCalendar, isArchiv
                 </div>
                 <div className={classes.inputContainer}>
                     {!isArchive && (
-                        <InputMessage onCreate={onCreate} onCalendar={onCalendar}></InputMessage>
+                        <InputMessage onCreate={onCreate} onCalendar={onCalendar} hiddenPopconfirm={hiddenPopconfirm}></InputMessage>
                     )}
                 </div>
             </div>
