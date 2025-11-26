@@ -1,7 +1,10 @@
 import { useGetConvertsQuery, useGetArchiveConvertsQuery, usePostConvertMutation, useUpdateConvertMutation, useGetConvertIdQuery, useSendMessageMutation, useFinishConvertMutation, useApproveConvertMutation } from "@services"
+import useGetUserId from "./useGetUserId";
 
 
 export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => {
+
+    const { reduxUserId } = useGetUserId()
 
     const {
         data: allConvertsAndContactInfo = [],
@@ -34,7 +37,7 @@ export const useConvertsHook = ({ convertId = null, contactId = null } = {}) => 
         isLoadingGetConvertId,
         isFetchingGetConvartId,
         isErrorGetConvertId,
-    } = useGetConvertIdQuery({ convertId }, {
+    } = useGetConvertIdQuery({ convertId: convertId, userId: reduxUserId }, {
         selectFromResult: ({ data, isError, isFetching, isLoading, refetch }) => ({
             currentConvert: data?.currentConvert || {},
             userIsHost: data?.userIsHost || false,

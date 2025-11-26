@@ -20,7 +20,7 @@ export const convertApi = apiSlice.injectEndpoints({
             postName: contact[0].postName,
             userName: contact[0]?.user?.firstName + ' ' + contact[0]?.user?.lastName,
             avatar: contact[0]?.user?.avatar_url,
-            postsNames : contact.map(item => item.postName),
+            postsNames: contact.map(item => item.postName),
             posts: contact
           }
         }
@@ -80,7 +80,7 @@ export const convertApi = apiSlice.injectEndpoints({
           contactInfo: transformContactInfo(response?.contact),
           seenConverts: finalArray.seen,
           unseenConverts: finalArray.unseen,
-          finalyArray : finalArray.seen.concat(finalArray.unseen)
+          finalyArray: finalArray.seen.concat(finalArray.unseen)
         }
       },
 
@@ -161,11 +161,12 @@ export const convertApi = apiSlice.injectEndpoints({
     }),
 
     getConvertId: build.query({
-      query: ({ convertId }) => ({
-        url: `converts/${convertId}`
+      query: ({ convertId, userId }) => ({
+        url: `converts/${convertId}`,
+        params: { userId } // или в body, если нужно
       }),
 
-      transformResponse: response => {
+      transformResponse: (response, meta, { userId }) => {
         //('getConvertId', response);
 
         const {

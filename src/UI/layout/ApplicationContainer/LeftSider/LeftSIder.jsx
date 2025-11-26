@@ -176,7 +176,7 @@ export default function LeftSIder() {
         setCopyChats([...allChats])
     }, [allChats])
 
-    //('filtredContacts   ', filtredContacts)
+    // console.log('filtredContacts   ', filtredContacts)
     return (
         <>
             <div className={classes.wrapper}>
@@ -255,6 +255,7 @@ export default function LeftSIder() {
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
                                     bage={item.unseenMessagesCount}//bage={calculateUnseenMessages(item, socketMessagesCount)}
+                                    greyBage={item?.hasUnrepliedMessage}
                                 />
                             </React.Fragment>
                         ))}

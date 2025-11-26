@@ -1,7 +1,6 @@
 
-
-.wrapper{
-    /* overflow: hidden; */
+.wrapper {
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     min-width: var(--content-width);
@@ -11,13 +10,15 @@
     border-radius: 0 0 15px 15px;
 }
 
-.taskContainer{
+.taskContainer {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    flex-direction: column-reverse;
     flex: 1;
-    overflow: scroll;
+    /* justify-content: flex-end; */
+    overflow-y: auto; /* вертикальный скролл */
+    overflow-x: hidden; /* скрываем горизонтальный */
     padding: 15px 0;
+
 }
 
 .dayContainer {

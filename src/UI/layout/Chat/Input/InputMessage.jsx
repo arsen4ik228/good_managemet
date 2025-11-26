@@ -347,7 +347,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     //         setSenderPost(userPosts[0]?.id);
     //     }
     // }, [userPosts, senderPost]);
-    //(senderPost)
+    console.log(senderPostId)
     return (
 
         <div className={classes.wrapper}>

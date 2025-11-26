@@ -8,16 +8,23 @@ import { formatDateWithDay } from '@helpers/helpers.js'
 import { useTargetsHook, useConvertsHook } from '@hooks';
 import DelegateModal from './DelegateModal'
 import { usePostsHook } from '../../../../hooks'
+import SimpleCommunicationModal from './SimpleCommunicationModal'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext'
+import dayjs from 'dayjs';
 
 
-export default function Task({ id, content, deadline, type, state, completeDate, dateStart, holderPostId }) {
+export default function Task({ id, content, deadline, type, state, completeDate, dateStart, holderPostId, contactId, convertId }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const [openModal, setOpenModal] = useState(false)
     const [modalDeadline, setModalDeadline] = useState()
     const [convertTheme, setConvertTheme] = useState()
     const [reciverPostId, setReciverPostId] = useState()
+    const [openCommunicationModal, setOpenCommunicationModal] = useState()
     const buttonRef = useRef();
+    const navigate = useNavigate()
+    const { organizationId } = useParams()
 
     const {
         postConvert,
@@ -26,6 +33,20 @@ export default function Task({ id, content, deadline, type, state, completeDate,
         isErrorPostConvertMutation,
         ErrorPostConvertMutation,
     } = useConvertsHook();
+
+    const {
+        // dateStart,
+        setDateStart,
+        // deadline,
+        setDeadline,
+        senderPost,
+        setSenderPost,
+        setContentInput,
+        userPostsInAccount,
+        setIsEdit,
+        taskId,
+        setTaskId
+    } = useWorkingPlanForm();
 
     const {
 
@@ -46,9 +67,33 @@ export default function Task({ id, content, deadline, type, state, completeDate,
     } = usePostsHook({ postId: holderPostId })
 
 
+    const navigateToCommunication = (contactId, convertId) => {
+        navigate(`/${organizationId}/chat/${contactId}/${convertId}`)
+    }
+
+    const setDataForUpdate = () => {
+
+        if (type === 'Приказ') return setOpenCommunicationModal(true)
+        if (state === 'Завершена') return;
+
+        setDateStart(dayjs(dateStart))
+        setDeadline(deadline ? dayjs(deadline) : null)
+        setSenderPost(holderPostId)
+        setContentInput(content)
+        setIsEdit(true)
+        setTaskId(id)
+    }
+
+    const handleDelegateClick = (e) => {
+        e.stopPropagation(); // останавливаем всплытие
+        e.preventDefault(); // на всякий случай
+        setOpenModal(true)
+    };
+
     const finishTarget = async (id) => {
 
         if (state === 'Завершена') return;
+        if (state !== 'Завершена' && type === 'Приказ') return setOpenCommunicationModal(true);
 
         await updateTargets({
             _id: id,
@@ -124,7 +169,6 @@ export default function Task({ id, content, deadline, type, state, completeDate,
 
     }
 
-    //(underPosts)
     return (
         <>
             <div className={classes.wrapper}>
@@ -139,14 +183,18 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                     className={classes.rightContainer}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
+                    onClick={() => setDataForUpdate()}
                 >
                     <div className={classes.infoContainer}>
                         <div className={classes.taskType}>{type === 'Личная' ? "" : type}</div>
-                        <div className={classes.date}> {state === 'Завершена' ? `Завершено: ${formatDateWithDay(completeDate)}` : `Завершить: ${formatDateWithDay(deadline)}`}</div>
+                        <div className={classes.date}> {state === 'Завершена' ? `Завершено: ${formatDateWithDay(completeDate)}` : (deadline ? `Завершить: ${formatDateWithDay(deadline)}` : '')}</div>
                     </div>
                     <div
                         className={classes.contentContainer}
-                        style={{ backgroundColor: state === 'Завершена' ? '#F0F0F0' : '' }}
+                        style={{
+                            backgroundColor: state === 'Завершена' ? '#F0F0F0' : '',
+                            border: id === taskId ? '2px solid #005475' : 'none'
+                        }}
                     >
                         <Tooltip
                             title={content}
@@ -165,10 +213,10 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                         </Tooltip>
                         <div
                             className={classes.delegateContainer}
-                            onClick={() => setOpenModal(true)}
+                            onClick={handleDelegateClick}
                             ref={buttonRef}
                         >
-                            {state !== 'Завершена' && isHovered && (<img src={delegate_icon} alt="delegate_icon" />)}
+                            {state !== 'Завершена' && type !== 'Приказ' && isHovered && (<img src={delegate_icon} alt="delegate_icon" />)}
                         </div>
                     </div>
                 </div>
@@ -189,6 +237,14 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                     setReciverPostId={setReciverPostId}
                     clickFunc={createOrder}
                 ></DelegateModal>
+            )}
+
+            {openCommunicationModal && (
+                <SimpleCommunicationModal
+                    isOpen={openCommunicationModal}
+                    onClose={() => setOpenCommunicationModal(false)}
+                    onConfirm={() => navigateToCommunication(contactId, convertId)}
+                ></SimpleCommunicationModal>
             )}
         </>
     )

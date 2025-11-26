@@ -14,7 +14,6 @@ export default function WorkingPlanInput() {
     const [openFilesModal, setOpenFilesModal] = useState(false);
     const [openCalendarModal, setOpenCalendarModal] = useState(false);
     const [contentInputPolicyId, setContentInputPolicyId] = useState("");
-    const [contentInput, setContentInput] = useState("");
     const [selectedPolicy, setSelectedPolicy] = useState(false);
     const [files, setFiles] = useState();
     const [unpinFiles, setUnpinFiles] = useState([]);
@@ -40,7 +39,47 @@ export default function WorkingPlanInput() {
         dateStart,
         deadline,
         senderPost,
+        contentInput,
+        setContentInput,
+        setDeadline,
+        isEdit,
+        taskId,
+        setTaskId,
+        setIsEdit
     } = useWorkingPlanForm()
+
+
+    const sendClick = () => {
+        if (isEdit)
+            handleUpdateTask()
+        else
+            createTargets()
+    }
+
+
+    const handleUpdateTask = async () => {
+        try {
+            const updateData = {
+                _id: taskId,
+                type: 'Личная',
+                content: contentInput,
+                holderPostId: senderPost,
+                dateStart: dateStart.format('YYYY-MM-DD'),
+                deadline: deadline.format('YYYY-MM-DD'),
+                // policyId: values.policy === 'null' ? null : values.policy,
+                // attachmentIds: attachments.map(att => att.attachment.id)
+            };
+
+            await updateTargets(updateData).unwrap();
+            message.success('Задача успешно обновлена');
+            
+        } catch (error) {
+            console.error("Ошибка:", error);
+            message.error('Произошла ошибка при обновлении задачи');
+        } finally{
+            reset()
+        }
+    };
 
     const createTargets = async () => {
         setIsRequestInProgress(true);
@@ -91,6 +130,9 @@ export default function WorkingPlanInput() {
 
     const reset = () => {
         setContentInput('')
+        setDeadline(null)
+        setIsEdit(false)
+        setTaskId(null)
     }
 
     const handleGlobalKeyDown = useCallback((e) => {
@@ -154,7 +196,7 @@ export default function WorkingPlanInput() {
                     {(isLoadingPostTargetsMutation) ? (
                         <Spin size="small" />
                     ) : (
-                        <img src={sendIcon} alt="calenderIcon" onClick={() => createTargets()} />
+                        <img src={sendIcon} alt="calenderIcon" onClick={() => sendClick()} />
                     )}
                 </div>
             </div>

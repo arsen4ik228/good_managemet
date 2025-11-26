@@ -20,19 +20,76 @@ export default function DelegatePopup({
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const popupRef = useRef();
 
-    // Позиционирование попапа слева от кнопки
-    useEffect(() => {
-        if (triggerRef.current && popupRef.current) {
-            const triggerRect = triggerRef.current.getBoundingClientRect();
-            const popup = popupRef.current;
-            const popupWidth = 380; // Ширина попапа
 
-            // Позиционируем слева от кнопки
-            popup.style.position = 'fixed';
-            popup.style.top = `${triggerRect.top}px`;
-            popup.style.left = `${triggerRect.left - popupWidth - 10}px`; // Слева с отступом 10px
+useEffect(() => {
+    if (!triggerRef.current || !popupRef.current) return;
+
+    const updatePosition = () => {
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+        const popup = popupRef.current;
+        const popupWidth = 380; // Фиксированная ширина из CSS
+        const popupHeight = 400; // Фиксированная высота из CSS
+
+        console.log('Trigger position:', {
+            top: triggerRect.top,
+            bottom: triggerRect.bottom,
+            windowHeight: window.innerHeight
+        });
+
+        let leftPosition = triggerRect.left - popupWidth - 10;
+        
+        // РАСЧЕТ ВЕРТИКАЛЬНОЙ ПОЗИЦИИ
+        let topPosition;
+
+        // Пробуем позиционировать СВЕРХУ от триггера
+        const topAbove = triggerRect.top - popupHeight - 10;
+        
+        // Пробуем позиционировать СНИЗУ от триггера
+        const topBelow = triggerRect.bottom + 10;
+
+        // Проверяем, какая позиция лучше подходит
+        if (topAbove >= 10) {
+            // Если сверху достаточно места
+            topPosition = topAbove;
+            console.log('Positioning ABOVE trigger');
+        } else if (topBelow + popupHeight <= window.innerHeight - 10) {
+            // Если снизу достаточно места
+            topPosition = topBelow;
+            console.log('Positioning BELOW trigger');
+        } else {
+            // Если ни сверху, ни снизу нет места - прижимаем к краям
+            if (triggerRect.top > window.innerHeight / 2) {
+                // Триггер в нижней части экрана - показываем сверху
+                topPosition = 10;
+                console.log('Positioning TOP of screen');
+            } else {
+                // Триггер в верхней части экрана - показываем снизу
+                topPosition = window.innerHeight - popupHeight - 10;
+                console.log('Positioning BOTTOM of screen');
+            }
         }
-    }, [triggerRef]);
+
+        // Горизонтальная корректировка
+        if (leftPosition < 10) {
+            leftPosition = triggerRect.right + 10;
+            
+            // Если и справа не хватает места
+            if (leftPosition + popupWidth > window.innerWidth - 10) {
+                leftPosition = 10;
+            }
+        }
+
+        popup.style.position = 'fixed';
+        popup.style.top = `${topPosition}px`;
+        popup.style.left = `${leftPosition}px`;
+        popup.style.zIndex = '1000';
+
+        console.log('Final position:', { top: topPosition, left: leftPosition });
+    };
+
+    const timer = setTimeout(updatePosition, 10);
+    return () => clearTimeout(timer);
+}, [triggerRef]);
 
     // Закрытие при клике вне попапа
     useEffect(() => {
@@ -120,7 +177,7 @@ export default function DelegatePopup({
                     <Button
                         type="primary"
                         onClick={clickFunc}
-                        // disabled={!theme || !selectedEmployee}
+                        disabled={!reciverPostId || !convertTheme}
                         className={classes.submitButton}
                         size="large"
                     >

@@ -2,7 +2,7 @@ import { formattedDate } from "@helpers/helpers";
 import apiSlice from "./api";
 
 
-export const targetsApi =  apiSlice.injectEndpoints({
+export const targetsApi = apiSlice.injectEndpoints({
 
     endpoints: (build) => ({
         getTargets: build.query({
@@ -10,7 +10,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 url: `targets`,
             }),
             transformResponse: (response) => {
-                //('getTargets:    ', response)
+                console.log('getTargets:    ', response)
 
                 const transformArray = (array) => {
                     const currentDate = new Date().toISOString().split('T')[0];
@@ -164,29 +164,34 @@ export const targetsApi =  apiSlice.injectEndpoints({
                 // const otherTargets = merdgeOtherTargets(newOrdersTargets.futureTargets, newPersonalTargets.futureTargets)
 
                 const _userPosts = response?.userPosts.map(item => ({ ...item, organization: item.organization.id }))
-
+                const filteredOrderTargets = orderTargets?.filter(orderTarget =>
+                    !response?.sendedTargets?.some(sendedTarget =>
+                        String(sendedTarget.id) === String(orderTarget.id)
+                    )
+                ) || [];
                 return {
                     userPosts: _userPosts,
                     personalTargets,
-                    orderTargets,
+                    orderTargets: filteredOrderTargets,
+                    sendedTargets: response?.sendedTargets,
                     futureTargets
                 }
             },
             providesTags: result =>
                 result
-                  ? [
-                      ...result?.personalTargets.map(({ id }) => ({
-                        type: 'Target',
-                        id,
-                      })),
-                      'Target',
-                      ...result?.orderTargets.map(({ id }) => ({
-                        type: 'Target',
-                        id,
-                      })),
-                      'Target',
+                    ? [
+                        ...result?.personalTargets.map(({ id }) => ({
+                            type: 'Target',
+                            id,
+                        })),
+                        'Target',
+                        ...result?.orderTargets.map(({ id }) => ({
+                            type: 'Target',
+                            id,
+                        })),
+                        'Target',
                     ]
-                  : ['Target']
+                    : ['Target']
         }),
 
         getArchiveTargets: build.query({
@@ -199,24 +204,24 @@ export const targetsApi =  apiSlice.injectEndpoints({
             },
             providesTags: result =>
                 result
-                  ? [
-                      ...result?.ordersArchiveTargets.map(({ id }) => ({
-                        type: 'Target',
-                        id,
-                      })),
-                      'Target',
-                      ...result?.personalArchiveTargets.map(({ id }) => ({
-                        type: 'Target',
-                        id,
-                      })),
-                      'Target',
-                      ...result?.projectArchiveTargets.map(({ id }) => ({
-                        type: 'Target',
-                        id,
-                      })),
-                      'Target',
+                    ? [
+                        ...result?.ordersArchiveTargets.map(({ id }) => ({
+                            type: 'Target',
+                            id,
+                        })),
+                        'Target',
+                        ...result?.personalArchiveTargets.map(({ id }) => ({
+                            type: 'Target',
+                            id,
+                        })),
+                        'Target',
+                        ...result?.projectArchiveTargets.map(({ id }) => ({
+                            type: 'Target',
+                            id,
+                        })),
+                        'Target',
                     ]
-                  : ['Target'],
+                    : ['Target'],
 
         }),
 
@@ -247,7 +252,7 @@ export const targetsApi =  apiSlice.injectEndpoints({
             // transformResponse: (response) => ({
             //     id: response.id
             // }),
-            invalidatesTags:['Target'] ,
+            invalidatesTags: ['Target'],
         }),
     })
 })

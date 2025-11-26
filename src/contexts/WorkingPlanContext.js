@@ -11,6 +11,9 @@ export const WorkingPlanProvider = ({ children }) => {
     const [senderPost, setSenderPost] = useState();
     const [dateStart, setDateStart] = useState(dayjs())
     const [deadline, setDeadline] = useState()
+    const [contentInput, setContentInput] = useState("");
+    const [isEdit, setIsEdit] = useState(false)
+    const [taskId, setTaskId] = useState()
 
     const { userPostsInAccount } = usePostsHook();
     const { reduxSelectedOrganizationId } = useGetReduxOrganization()
@@ -32,6 +35,12 @@ export const WorkingPlanProvider = ({ children }) => {
         senderPost,
         setSenderPost,
         userPostsInAccount,
+        contentInput,
+        setContentInput,
+        isEdit,
+        setIsEdit,
+        taskId,
+        setTaskId
 
     };
 
