@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 
 
 export default function EditWorker() {
+
     const { userId } = useParams()
     const { userInfo, updateUser } = useUserHook({ userId })
 
@@ -65,9 +66,9 @@ export default function EditWorker() {
             .unwrap()
             .then(() => {
                 message.success("Данные успешно обновлены!");
-                setTimeout(() => {
-                    window.close(); // убрать return
-                }, 1000);
+                // setTimeout(() => {
+                //     window.close(); 
+                // }, 1000);
                 // refetchUserInfo() 
             })
             .catch((error) => {

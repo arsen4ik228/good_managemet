@@ -10,6 +10,7 @@ import {
     PhoneOutlined,
 } from "@ant-design/icons";
 import { useModuleActions, usePanelPreset, useRightPanel } from '../../../hooks';
+import { homeUrl } from "@helpers/constants";
 
 
 export default function Worker() {
@@ -23,12 +24,17 @@ export default function Worker() {
 
     usePanelPreset(PRESETS["USERS"]);
 
-    const { buutonsArr } = useModuleActions("users", userId);
+    // const { buutonsArr } = useModuleActions("users", userId);
+
+    const buttonsArr = [{
+        text: "Редактировать",
+        click: () => window.open(`${homeUrl}#/editUsers/${userId}`, "_blank"),
+    }]
 
 
     return (
         <>
-            <MainContentContainer buttons={buutonsArr}>
+            <MainContentContainer buttons={buttonsArr}>
                 <Card
                     style={{
                         width: 640,
