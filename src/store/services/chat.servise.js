@@ -8,7 +8,7 @@ export const chatApi = apiSlice.injectEndpoints({
         url: `posts/${organizationId}/contacts`,
       }),
       transformResponse: (response) => {
-        //('getAllChats  ', response);
+        console.warn('getAllChats  ', response);
         const result = []
 
         response?.postsWithConverts.forEach(element => {

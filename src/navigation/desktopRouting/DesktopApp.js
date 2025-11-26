@@ -325,6 +325,14 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
+              <Route  
+                path="workingPlan/myOrder"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WorkingPlanPage />
+                  </React.Suspense>
+                }
+              />
               <Route
                 path="workingPlan/allTasks"
                 element={

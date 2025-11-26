@@ -131,7 +131,7 @@ export default function ConvertList() {
 
     }, [socketResponse?.convertCreationEvent])
 
-    //(filtredChats)
+    console.log(filtredChats)
     return (
         <>
             <CustomList
@@ -169,6 +169,7 @@ export default function ConvertList() {
                             bottomText={item.convertType}
                             linkSegment={item.id}
                             bage={item.unseenMessagesCount}
+                            greyBage={item?.hasUnrepliedMessage}
                             clickFunc={() => openChat(item.convertStatus, item.id)}
                         />
                     </React.Fragment>

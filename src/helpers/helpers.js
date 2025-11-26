@@ -109,30 +109,30 @@ export function compareArraysWithObjects(arr1, arr2) {
 
 // export function formatDateTime(isoString) {
 //     const date = new Date(isoString);
-    
+
 //     // Получаем компоненты даты
 //     const day = String(date.getDate()).padStart(2, '0');
 //     const month = String(date.getMonth() + 1).padStart(2, '0');
 //     const year = String(date.getFullYear()).slice(-2); // Последние 2 цифры года
-    
+
 //     const hours = String(date.getHours()).padStart(2, '0');
 //     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
+
 //     return `${day}.${month}.${year} ${hours}:${minutes}`;
 // }
 
 export function formatDateTime(isoString) {
-    const date = new Date(isoString);
-    
-    // Используем UTC методы для получения правильного времени
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const year = String(date.getUTCFullYear()).slice(-2); // Последние 2 цифры года
-    
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    
-    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  const date = new Date(isoString);
+
+  // Используем UTC методы для получения правильного времени
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = String(date.getUTCFullYear()).slice(-2); // Последние 2 цифры года
+
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
 
@@ -240,17 +240,17 @@ export const findSelectedChild = (children, selectedItemId) => {
 export function formatDateWithDay(dateString) {
   try {
     const date = new Date(dateString);
-    
+
     // Проверка валидности даты
     if (isNaN(date.getTime())) {
       throw new Error('Invalid date');
     }
-    
+
     const daysOfWeek = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const dayOfWeek = daysOfWeek[date.getDay()];
-    
+
     return `${day}.${month} ${dayOfWeek}`;
   } catch (error) {
     console.error('Error formatting date:', error);
