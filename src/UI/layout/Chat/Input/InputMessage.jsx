@@ -132,7 +132,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 convertId,
                 content: transformText(contentInput, convertStatusChange),
                 postId: senderPostId,
-                policyId: selectedPolicies,
+                // policyId: selectedPolicies,
                 ...Data,
             }).unwrap();
 
@@ -425,10 +425,11 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                                     setContentInputPolicyId={setContentInputPolicyId}
                                 />
 
-                                <AttachedPolicy
+                                {/* <AttachedPolicy
                                     selectedPolicies={selectedPolicies}
                                     onChange={setSelectedPolicies}
-                                /></>
+                                /> */}
+                                </>
                         )
                     }
 
