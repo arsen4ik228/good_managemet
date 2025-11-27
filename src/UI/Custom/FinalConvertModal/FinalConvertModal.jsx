@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { Modal, notification } from 'antd'
 import { ExclamationCircleFilled } from '@ant-design/icons'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useConvertsHook } from '@hooks'
+import { useConvertsHook, useTargetsHook } from '@hooks'
 import classes from './FinalConvertModal.module.css'
 
-export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers }) {
+export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers, targetId }) {
     const navigate = useNavigate()
     const { contactId, organizationId } = useParams()
 
@@ -15,35 +15,94 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
         userIsHost
     } = useConvertsHook({ convertId })
 
+        const {
+    
+            updateTargets,
+            isLoadingUpdateTargetsMutation,
+            isSuccessUpdateTargetsMutation,
+            isErrorUpdateTargetsMutation,
+            ErrorUpdateTargetsMutation,
+    
+            deleteTarget,
+        } = useTargetsHook();
+
     useEffect(() => {
         // Показываем модальное окно при монтировании компонента
         showConfirmationModal()
     }, [])
 
-    const finalConvert = async () => {
-        //(userIsHost)
-        const Data = {
-            pathOfUsers: pathOfUsers,
-            convertId: convertId
-        }
+    const finishTarget = async (id) => {
 
-        await finishConvert({ ...Data })
+        await updateTargets({
+            _id: id,
+            targetState: 'Завершена',
+            type: 'Личная',
+        })
             .unwrap()
             .then(() => {
-                navigate(`/${organizationId}/chat/${contactId}`)
+                // reset()
             })
             .catch((error) => {
-                console.error('Ошибка при завершении конверта:', error)
-                notification.error({
-                    message: 'Ошибка',
-                    description: 'Не удалось завершить конверт',
-                    placement: 'topRight',
-                })
-            })
-            .finally(() => {
-                setOpenModal(false)
-            })
+                console.error("Ошибка:", JSON.stringify(error, null, 2));
+            });
     }
+
+    // const finalConvert = async () => {
+    //     //(userIsHost)
+    //     const Data = {
+    //         pathOfUsers: pathOfUsers,
+    //         convertId: convertId
+    //     }
+
+    //     await finishConvert({ ...Data })
+    //         .unwrap()
+    //         .then(() => {
+    //             navigate(`/${organizationId}/chat/${contactId}`)
+    //         })
+    //         .catch((error) => {
+    //             console.error('Ошибка при завершении конверта:', error)
+    //             notification.error({
+    //                 message: 'Ошибка',
+    //                 description: 'Не удалось завершить конверт',
+    //                 placement: 'topRight',
+    //             })
+    //         })
+    //         .finally(() => {
+    //             setOpenModal(false)
+    //         })
+    // }
+
+    const finalConvert = async () => {
+        try {
+            const Data = {
+                pathOfUsers: pathOfUsers,
+                convertId: convertId
+            }
+    
+            // Сначала выполняем updateTargets
+            await updateTargets({
+                _id: targetId, 
+                targetState: 'Завершена',
+                type: 'Приказ',
+            }).unwrap();
+    
+            // Только после успешного выполнения updateTargets выполняем finishConvert
+            await finishConvert({ ...Data }).unwrap();
+            
+            navigate(`/${organizationId}/chat/${contactId}`);
+            
+        } catch (error) {
+            console.error('Ошибка:', error);
+            notification.error({
+                message: 'Ошибка',
+                description: 'Не удалось завершить операцию',
+                placement: 'topRight',
+            });
+        } finally {
+            setOpenModal(false);
+        }
+    }
+
     const showConfirmationModal = () => {
 
         if (!userIsHost) {

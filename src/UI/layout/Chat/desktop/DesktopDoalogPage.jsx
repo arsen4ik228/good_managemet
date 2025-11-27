@@ -269,14 +269,14 @@ export default function DesktopDialogPage() {
         if (currentConvert?.host.user.id === reduxUserId)
             tempArray.push({ click: () => setOpenFinishModal(true), text: 'завершить' })
 
-        if (currentConvert?.convertPath === 'Согласование')
+        if (currentConvert?.convertPath === 'Согласование' || currentConvert?.convertPath === 'Запрос')
             tempArray.push({ click: () => setOpenAgreementModal(true), text: 'согласовать' })
 
         setButtons(tempArray)
 
     }, [currentConvert])
 
-    //(socketMessages)
+    console.log('socketMessages   ', socketMessages, '   ', 'unSeenMessages   ', unSeenMessages, 'messagesArray   ', messagesArray)
 
     return (
         <MainContentContainer buttons={buttons}>
@@ -358,6 +358,7 @@ export default function DesktopDialogPage() {
                     setOpenModal={setOpenFinishModal}
                     convertId={convertId}
                     pathOfUsers={pathOfUsers}
+                    targetId={currentConvert?.target?.id}
                 ></FinalConvertModal>
             )}
             {openAgreementModal && (

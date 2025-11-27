@@ -41,8 +41,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
     // const [convertTheme, setConvertTheme] = useState()
-    const [startDate, setStartDate] = useState()
-    const [deadlineDate, setDeadlineDate] = useState()
+    const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0])
+    const [deadlineDate, setDeadlineDate] = useState(new Date().toISOString().split("T")[0])
     // const [senderPost, setSenderPost] = useState(null)
     // const [reciverPostId, setReciverPostId] = useState()
     // const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
@@ -87,10 +87,10 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     } = useConvertsHook({ convertId: convertId, contactId: contactId });
 
     const reset = () => {
-        // setStartDate(new Date().toISOString().split("T")[0]);
-        // setDeadlineDate(new Date().toISOString().split("T")[0]);
+        setStartDate(new Date().toISOString().split("T")[0]);
+        setDeadlineDate(new Date().toISOString().split("T")[0]);
         setContentInput("");
-        selectedPolicies([]);
+        setSelectedPolicies([]);
         deleteDraft("DraftDB", "drafts", convertId);
         setContentInputPolicyId("");
         // setConvertTheme('')
@@ -230,6 +230,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         Data.targetCreateDto = {
             type: "Приказ",
             orderNumber: 1,
+            targetState: 'Активная',
             content: contentInput,
             holderPostId: reciverPostId,
             dateStart: startDate,

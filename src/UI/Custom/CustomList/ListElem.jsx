@@ -3,6 +3,7 @@ import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
 import { useFindPathSegment } from '@helpers/helpers'
 import { Tooltip } from 'antd'
+import nuber_mark from '@image/nuber_mark.svg'
 
 export default function ListElem({ icon, upperText, bottomText, bage, greyBage, linkSegment, isActive, clickFunc, setSelectedItemData }) {
     const isSelected = useFindPathSegment(linkSegment)
@@ -50,11 +51,11 @@ export default function ListElem({ icon, upperText, bottomText, bage, greyBage, 
                 >
                     {greyBage && !(Number(bage) > 0) ? (
                         <div
-                        style={{
-                            backgroundColor: 'grey'
-                        }}
+                            style={{
+                                backgroundColor: '#F0F0F0',
+                            }}
                         >
-                            {/* {bage} */}
+                            <img src={nuber_mark} alt="nuber_mark" />
                         </div>
                     ) : (
                         <div
