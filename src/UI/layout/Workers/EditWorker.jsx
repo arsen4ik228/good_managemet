@@ -15,6 +15,9 @@ import dayjs from 'dayjs';
 
 export default function EditWorker() {
 
+    const channel = new BroadcastChannel("worker_channel");
+
+
     const { userId } = useParams()
     const { userInfo, updateUser } = useUserHook({ userId })
 
@@ -66,9 +69,12 @@ export default function EditWorker() {
             .unwrap()
             .then(() => {
                 message.success("Данные успешно обновлены!");
-                // setTimeout(() => {
-                //     window.close(); 
-                // }, 1000);
+
+                channel.postMessage("updated");
+                setTimeout(() => {
+                    window.close(); // убрать return
+                }, 1000);
+
                 // refetchUserInfo() 
             })
             .catch((error) => {

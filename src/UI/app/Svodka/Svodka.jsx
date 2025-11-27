@@ -222,17 +222,22 @@ export default function Svodka() {
         dataIndex: "name",
         key: "name",
         fixed: "left",
-        width: 150,
+        width: 320,
         ellipsis: true,
+        onCell: () => ({
+          style: {
+            padding: "5px",
+          }
+        }),
         render: (text) => (
           <div
+            className={classes.cell}
             style={{
               width: "100%",
-              maxWidth: "250px",
+              maxWidth: "320px",
               wordWrap: "break-word",
               whiteSpace: "normal",
               lineHeight: "1.2",
-              padding: "8px 4px",
               overflow: "hidden",
               display: "block",
             }}

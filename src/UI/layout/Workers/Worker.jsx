@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
-import { Avatar, Card, Divider, Flex, Typography, Space } from 'antd'
+import { Avatar, Card, Divider, Flex, Typography, Space, Tag, DatePicker } from 'antd'
 import { useParams } from 'react-router-dom';
 import { useUserHook } from '@hooks'
 import default_avatar from '@image/default_avatar.svg'
@@ -10,7 +10,11 @@ import {
     PhoneOutlined,
 } from "@ant-design/icons";
 import { useModuleActions, usePanelPreset, useRightPanel } from '../../../hooks';
+
 import { homeUrl } from "@helpers/constants";
+
+
+import dayjs from 'dayjs';
 
 
 export default function Worker() {
@@ -18,7 +22,7 @@ export default function Worker() {
 
     const { Title, Text } = Typography;
 
-    const { userInfo } = useUserHook({ userId })
+    const { userInfo, refetchUserInfo } = useUserHook({ userId })
 
     const { PRESETS } = useRightPanel();
 
@@ -31,6 +35,23 @@ export default function Worker() {
         click: () => window.open(`${homeUrl}#/editUsers/${userId}`, "_blank"),
     }]
 
+
+    useEffect(() => {
+        const channel = new BroadcastChannel("worker_channel");
+
+        const handler = (event) => {
+            if (event.data === "updated") {
+                refetchUserInfo();
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => {
+            channel.removeEventListener("message", handler);
+            channel.close();
+        };
+    }, [refetchUserInfo]);
 
     return (
         <>
@@ -61,6 +82,57 @@ export default function Worker() {
                             <Text>{formatPhone(userInfo?.telephoneNumber)}</Text>
                         </Space>
                     </Flex>
+
+
+
+                    {
+                        userInfo?.isFired && (
+
+                            <div style={{ marginBottom: 16, marginTop: 16 }}>
+                                <div style={{
+                                    maxWidth: "350px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    // alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '12px 16px',
+                                    gap: '5px',
+                                    border: '1px solid #d9d9d9',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#fafafa'
+                                }}>
+
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        {userInfo?.isFired && (
+                                            <Tag
+                                                color="red"
+                                                style={{
+                                                    margin: 0,
+                                                    fontSize: '14px',
+                                                    padding: '4px 8px'
+                                                }}
+                                            >
+                                                Сотрудник уволен
+                                            </Tag>
+                                        )}
+                                    </div>
+
+                                    {userInfo?.isFired && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span style={{ fontSize: '14px', color: '#666' }}>Дата увольнения:</span>
+                                            <DatePicker
+                                                value={userInfo?.updatedAt ? dayjs(userInfo.updatedAt) : null}
+                                                format="DD.MM.YYYY"
+                                                style={{ width: '150px' }}
+                                                disabled
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )
+                    }
+                    
                 </Card>
             </MainContentContainer>
         </>

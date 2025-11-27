@@ -48,7 +48,7 @@ const User = React.lazy(() => import("@app/UserPage/User"));
 const Statistic1 = React.lazy(() => import("@app/StatisticsPage/Statistic"));
 const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
 const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
-// const Strategy = React.lazy(() => import("@app/StrategyPage/Strategy"));
+const StrategyOLD = React.lazy(() => import("@app/StrategyPage/Strategy"));
 const ProjectWithProgramm = React.lazy(() =>
   import("@app/Project/desktop/Main")
 );
@@ -110,6 +110,16 @@ function DesktopApp() {
         }}
       >
         <Routes>
+          StrategyOLD
+
+            <Route
+            path="/StrategyOLD"
+            element={
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                <StrategyOLD />
+              </React.Suspense>
+            }
+          />
           <Route
             path="/projectWithProgramm"
             element={
