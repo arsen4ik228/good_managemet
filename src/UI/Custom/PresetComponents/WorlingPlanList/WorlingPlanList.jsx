@@ -29,7 +29,7 @@ export default function WorlingPlanList() {
     const listElems = [
         { icon: icon_task, upperText: 'Все задачи', linkSegment: 'allTasks' },
         { icon: icon_task, upperText: 'Мои текущие задачи', linkSegment: 'currentTasks' },
-        { icon: icon_task, upperText: 'Все мои приказы', linkSegment: 'myOrder' },
+        { icon: icon_task, upperText: 'Отправленные приказы', linkSegment: 'myOrder' },
         { icon: icon_task, upperText: 'Текущие приказы', linkSegment: 'currentOrders' },
         { icon: icon_task_finished, upperText: 'Завершенные задачи', linkSegment: 'archiveTasks', isActive: false },
         // { icon: icon_task_finished, upperText: 'Выполненные приказы', linkSegment: '', isActive: false },

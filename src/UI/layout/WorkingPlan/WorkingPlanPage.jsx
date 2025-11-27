@@ -98,8 +98,10 @@ export default function WorkingPlanPage() {
                                                 content={item.content}
                                                 deadline={item.deadline}
                                                 type={item.type}
-                                                convertId={item.convert.id}
-                                                contactId={item.convert.host.user.id}
+                                                convertId={item?.convert?.id}
+                                                contactId={item?.convert?.host?.user?.id}
+                                                state={item.targetState}
+                                                completeDate={item.dateComplete}
                                             />
                                         </React.Fragment>
                                     ))}
