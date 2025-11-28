@@ -51,7 +51,7 @@ export default function FilesMessages({ attachmentToMessage }) {
 
   return (
     <div className={classes.container}>
-      <div className={`${classes.imageGrid} ${getGridClass(images.length)}`}>
+      <div className={`${classes.imageGrid} ${getGridClass(images?.length)}`}>
         {images?.map((image, idx) => (
           <div key={idx} className={classes.imageWrapper}>
             <img
@@ -65,7 +65,7 @@ export default function FilesMessages({ attachmentToMessage }) {
         ))}
       </div>
 
-      {files.length > 0 && (
+      {files?.length > 0 && (
         <div className={classes.fileList}>
           <ul>
             {files.map((file, index) => (

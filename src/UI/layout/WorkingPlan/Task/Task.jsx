@@ -12,9 +12,10 @@ import SimpleCommunicationModal from './SimpleCommunicationModal'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext'
 import dayjs from 'dayjs';
+import FilesMessages from '../../../Custom/Message/FilesMessages'
 
 
-export default function Task({ id, content, deadline, type, state, completeDate, dateStart, holderPostId, contactId, convertId }) {
+export default function Task({ id, content, deadline, type, state, completeDate, dateStart, holderPostId, contactId, convertId, attachmentToTargets }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const [openModal, setOpenModal] = useState(false)
@@ -219,6 +220,9 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                             {state !== 'Завершена' && type !== 'Приказ' && isHovered && (<img src={delegate_icon} alt="delegate_icon" />)}
                         </div>
                     </div>
+                    {/* <div>
+                        <FilesMessages attachmentToMessage={attachmentToTargets}></FilesMessages>
+                    </div> */}
                 </div>
 
             </div>

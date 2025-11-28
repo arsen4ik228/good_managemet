@@ -15,16 +15,16 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
         userIsHost
     } = useConvertsHook({ convertId })
 
-        const {
-    
-            updateTargets,
-            isLoadingUpdateTargetsMutation,
-            isSuccessUpdateTargetsMutation,
-            isErrorUpdateTargetsMutation,
-            ErrorUpdateTargetsMutation,
-    
-            deleteTarget,
-        } = useTargetsHook();
+    const {
+
+        updateTargets,
+        isLoadingUpdateTargetsMutation,
+        isSuccessUpdateTargetsMutation,
+        isErrorUpdateTargetsMutation,
+        ErrorUpdateTargetsMutation,
+
+        deleteTarget,
+    } = useTargetsHook();
 
     useEffect(() => {
         // Показываем модальное окно при монтировании компонента
@@ -78,19 +78,21 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
                 pathOfUsers: pathOfUsers,
                 convertId: convertId
             }
-    
-            // Сначала выполняем updateTargets
-            await updateTargets({
-                _id: targetId, 
-                targetState: 'Завершена',
-                type: 'Приказ',
-            }).unwrap();
-    
-            // Только после успешного выполнения updateTargets выполняем finishConvert
+
+            // Если targetId существует, выполняем updateTargets
+            if (targetId) {
+                await updateTargets({
+                    _id: targetId,
+                    targetState: 'Завершена',
+                    type: 'Приказ',
+                }).unwrap();
+            }
+
+            // Затем всегда выполняем finishConvert
             await finishConvert({ ...Data }).unwrap();
-            
+
             navigate(`/${organizationId}/chat/${contactId}`);
-            
+
         } catch (error) {
             console.error('Ошибка:', error);
             notification.error({
