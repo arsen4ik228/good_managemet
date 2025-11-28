@@ -23,6 +23,7 @@ export default function WorkingPlanPage() {
         projectTragets,
         futureTargets,
         sendedTargets,
+        futureSendedTargets,
         userPosts,
         isLoadingGetTargets,
         isErrorGetTargets,
@@ -57,7 +58,7 @@ export default function WorkingPlanPage() {
         }
     }, []);
 
-    console.log(personalTargets, orderTargets, projectTragets, futureTargets, sendedTargets)
+    console.log(personalTargets)
 
     return (
         <>
@@ -79,17 +80,16 @@ export default function WorkingPlanPage() {
                                             completeDate={item.dateComplete}
                                             dateStart={item.dateStart}
                                             holderPostId={item.holderPostId}
+                                            attachmentToTargets={item?.attachmentToTargets}
                                         />
                                     </React.Fragment>
                                 ))
                             )}
 
                         {((path === 'currentTasks') ||
-                            (path === 'currentOrders') ||
                             (path === 'allTasks')
                         ) && (
                                 <>  {/* Используем Fragment вместо лишнего div */}
-
 
                                     {orderTargets?.map((item, index) => (
                                         <React.Fragment key={index}>
@@ -136,22 +136,51 @@ export default function WorkingPlanPage() {
                             )}
 
 
-                        {((path === 'myOrder')) &&
+
+                        {((path === 'currentOrders') || (path === 'myOrder')) &&
                             (
-                                sendedTargets?.map((item, index) => (
-                                    <React.Fragment key={index}>
+                                <>
+                                    {sendedTargets?.map((item, index) => (
+                                        <React.Fragment key={index}>
+                                            <Task
+                                                id={item.id}
+
+                                                content={item.content}
+                                                deadline={item.deadline}
+                                                type={item.type}
+                                                convertId={item.convert.id}
+                                                contactId={item.convert.host.user.id}
+                                            />
+                                        </React.Fragment>
+                                    ))}
+
+                                    <div className={classes.dayContainer}>
+                                        <div>ТЕКУЩИЕ</div>
+                                    </div>
+                                </>
+                            )}
+
+                        {(path === 'myOrder') && (
+                            futureSendedTargets.map((elem, elemIndex) => (
+                                <>
+                                    {elem?.items?.map((item, index) => (
                                         <Task
                                             id={item.id}
-
                                             content={item.content}
                                             deadline={item.deadline}
                                             type={item.type}
-                                            convertId={item.convert.id}
-                                            contactId={item.convert.host.user.id}
-                                        />
-                                    </React.Fragment>
-                                ))
-                            )}
+                                            state={item.targetState}
+                                            completeDate={item.dateComplete}
+                                            dateStart={item.dateStart}
+                                            holderPostId={item.holderPostId}
+                                        ></Task>
+                                    ))}
+                                    <div key={elemIndex} className={classes.dayContainer}>
+                                        <div>Начать: {elem.date}</div>
+                                    </div>
+                                </>
+                            ))
+                        )}
 
                         {((path === 'archiveTasks')
                         ) && (

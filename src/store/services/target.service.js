@@ -54,10 +54,18 @@ export const targetsApi = apiSlice.injectEndpoints({
                     );
                 };
 
+                const filteredOrderTargets = response?.ordersTargets?.filter(orderTarget =>
+                    !response?.sendedTargets?.some(sendedTarget =>
+                        String(sendedTarget.id) === String(orderTarget.id)
+                    )
+                ) || [];
+
                 const [personalTargets, futurePersonalTargets] = transformArray(response?.personalTargets || []);
                 //(personalTargets, futurePersonalTargets)
-                const [orderTargets, futureOrderTargets] = transformArray(response?.ordersTargets || [])
+                const [orderTargets, futureOrderTargets] = transformArray(filteredOrderTargets || [])
                 //(orderTargets, futureOrderTargets)
+                const [sendedTargets, futureSendedTargets] = transformArray(response?.sendedTargets || [])
+                const transformFutureSendedTargets = mergeAndTransformFutureTargets(futureSendedTargets)
                 const [projectTargets, futureProjectTargets] = transformArray(response?.projectTargets || [])
                 const futureTargets = mergeAndTransformFutureTargets(futurePersonalTargets, futureOrderTargets, futureProjectTargets)
                 //(futureTargets)
@@ -164,16 +172,13 @@ export const targetsApi = apiSlice.injectEndpoints({
                 // const otherTargets = merdgeOtherTargets(newOrdersTargets.futureTargets, newPersonalTargets.futureTargets)
 
                 const _userPosts = response?.userPosts.map(item => ({ ...item, organization: item.organization.id }))
-                const filteredOrderTargets = orderTargets?.filter(orderTarget =>
-                    !response?.sendedTargets?.some(sendedTarget =>
-                        String(sendedTarget.id) === String(orderTarget.id)
-                    )
-                ) || [];
+                
                 return {
                     userPosts: _userPosts,
                     personalTargets,
-                    orderTargets: filteredOrderTargets,
-                    sendedTargets: response?.sendedTargets,
+                    orderTargets: orderTargets,
+                    sendedTargets: sendedTargets,
+                    futureSendedTargets: transformFutureSendedTargets,
                     futureTargets
                 }
             },

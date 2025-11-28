@@ -276,7 +276,7 @@ export default function DesktopDialogPage() {
 
     }, [currentConvert])
 
-    console.log('socketMessages   ', socketMessages, '   ', 'unSeenMessages   ', unSeenMessages, 'messagesArray   ', messagesArray)
+    console.log('socketMessages   ', socketMessages, '   ', 'unSeenMessages   ', unSeenMessages, 'messagesArray   ', messagesArray, currentConvert)
 
     return (
         <MainContentContainer buttons={buttons}>
