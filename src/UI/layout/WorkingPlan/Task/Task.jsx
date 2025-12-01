@@ -197,21 +197,28 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                             border: id === taskId ? '2px solid #005475' : 'none'
                         }}
                     >
-                        <Tooltip
-                            title={content}
-                            mouseEnterDelay={0.6} // 1 секунда задержки
-                            placement="right"
-                            autoAdjustOverflow={true}
-                            destroyTooltipOnHide={true}
-                            overlayStyle={{ maxWidth: 400 }}
-                        >
-                            <div
-                                className={classes.textContainer}
-                                style={{ color: state === 'Завершена' ? '#999999' : '' }}
+                        <div className={classes.messageContentContainer}>
+
+                            <Tooltip
+                                title={content}
+                                mouseEnterDelay={0.6} // 1 секунда задержки
+                                placement="right"
+                                autoAdjustOverflow={true}
+                                destroyTooltipOnHide={true}
+                                overlayStyle={{ maxWidth: 400 }}
                             >
-                                {content}
+                                <div
+                                    className={classes.textContainer}
+                                    style={{ color: state === 'Завершена' ? '#999999' : '' }}
+                                >
+                                    {content}
+                                </div>
+                            </Tooltip>
+                            <div className={classes.filesSection}>
+                                <FilesMessages attachmentToMessage={attachmentToTargets}></FilesMessages>
+
                             </div>
-                        </Tooltip>
+                        </div>
                         <div
                             className={classes.delegateContainer}
                             onClick={handleDelegateClick}
@@ -219,10 +226,9 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                         >
                             {state !== 'Завершена' && type !== 'Приказ' && isHovered && (<img src={delegate_icon} alt="delegate_icon" />)}
                         </div>
+
                     </div>
-                    {/* <div>
-                        <FilesMessages attachmentToMessage={attachmentToTargets}></FilesMessages>
-                    </div> */}
+
                 </div>
 
             </div>
