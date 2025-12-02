@@ -11,7 +11,7 @@ import {
     setSelectedOrganizationReportDay,
 } from "@slices";
 import ListElem from '../../../Custom/CustomList/ListElem'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { notEmpty, getPostIdRecipientSocketMessage } from '@helpers/helpers'
 import { useChats, useSocket } from '../../../../hooks'
 
@@ -38,6 +38,8 @@ export default function LeftSIder() {
 
     const [openModalCreateOrganization, setOpenModalCreateOrganization] = useState(false)
     const [expanendOrg, setExpanendOrg] = useState(false)
+
+    const { organizationId } = useParams()
 
     const eventNames = useMemo(
         () => ["convertCreationEvent", "messageCountEvent"],
@@ -145,6 +147,9 @@ export default function LeftSIder() {
     }, [socketResponse?.messageCountEvent])
 
     useEffect(() => {
+
+        if (organizationId) return;
+
         if (
             !isLoadingOrganization &&
             !isErrorOrganization &&
@@ -193,7 +198,7 @@ export default function LeftSIder() {
                         title={'организации'}
 
                         addButtonText={'Новая организация'}
-                        addButtonClick={ () => setOpenModalCreateOrganization(true)}
+                        addButtonClick={() => setOpenModalCreateOrganization(true)}
 
                         searchValue={seacrhOrganizationsSectionsValue}
                         searchFunc={setSearchOrganizationsSectionsValue}
@@ -238,7 +243,7 @@ export default function LeftSIder() {
                         selectedItem={selectedContactsSectionValue}
                     >
                         <ListElem
-                            icon={userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}`: default_avatar}
+                            icon={userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}` : default_avatar}
                             linkSegment={'accountSettings'}
                             upperText={userInfo?.lastName + ' ' + userInfo?.firstName}
                             bottomText={userInfo?.posts.map(item => item.postName).join(', ')}
