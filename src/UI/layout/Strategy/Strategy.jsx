@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom';
 import classes from './Strategy.module.css'
 
@@ -8,9 +8,13 @@ import { useGetSingleObjective } from '../../../hooks/Objective/useGetSingleObje
 import { useGetSingleStrategy } from '../../../hooks/Strategy/useGetSingleStrategy';
 
 import org_icon from "@image/org_icon.svg"
-import { message } from "antd";
+import { message, Modal } from "antd";
 import { useUpdateSingleStrategy } from '../../../hooks/Strategy/useUpdateSingleStrategy';
 import { useAllStrategy } from '../../../hooks/Strategy/useAllStrategy';
+
+import { ExclamationCircleFilled } from "@ant-design/icons";
+
+import { useReactToPrint } from 'react-to-print';
 
 export function Strategy() {
 
@@ -44,67 +48,87 @@ export function Strategy() {
 
     const updateStrategyHandler = async () => {
         try {
-            await updateStrategy({
-                _id: activeStrategyId,
-                state: "Завершено",
-            }).unwrap();
+            if (activeStrategyId) {
+                Modal.confirm({
+                    title: "Есть активная стратегия",
+                    icon: <ExclamationCircleFilled />,
+                    content: "Чтобы сделать текущую стратегию активной нужно завершить старую.",
+                    okText: "Сделать",
+                    cancelText: "Не изменять",
+                    onOk: () => {
+                        // возвращаем Promise
+                        return (async () => {
+                            await updateStrategy({
+                                _id: activeStrategyId,
+                                state: "Завершено",
+                            }).unwrap();
 
-            await updateStrategy({
-                _id: strategyId,
-                state: "Активный",
-            }).unwrap();
-            message.success("Стратегия обновлена!");
+                            await updateStrategy({
+                                _id: strategyId,
+                                state: "Активный",
+                            }).unwrap();
+
+                            message.success("Стратегия обновлена!");
+                        })();
+                    }
+                });
+            }
         } catch (err) {
             message.error("Ошибка!");
         }
     };
 
+    const contentRef = useRef(null);
+    const reactToPrintFn = useReactToPrint({ contentRef });
+
+
     return (
-        <MainContentContainer buttons={[...buutonsArr, buutonsArr.length > 0 && {
-            text: "начать выполнение",
-            click: () => updateStrategyHandler(),
-        }]}>
-            <div className={classes.main}>
+        <MainContentContainer buttons={[
+            ...buutonsArr,
+            ...(buutonsArr.length > 0 ? [{ text: "начать выполнение", click: () => updateStrategyHandler() }] : []),
+            { text: "печать", click: reactToPrintFn }
+        ]}
+
+        >
+                <div ref={contentRef} className={classes.main}>
+                    <div className={classes.title}>
+                        <img src={org_icon} alt="картинка" width={"100px"} height={"100px"} className={classes.image} />
+                        <h3 className={classes.h3}>{localStorage.getItem("name")}</h3>
+                    </div>
+
+                    <h3 className={classes.h3}>Стратегия №{currentStrategy?.strategyNumber}</h3>
+
+                    <div>
+                        <h4 className={classes.h4}>Ситуация</h4>
+                        <p>{currentObjective?.situation}</p>
+                    </div>
 
 
-                <div className={classes.title}>
-                    <img src={org_icon} alt="картинка" width={"100px"} height={"100px"} className={classes.image} />
-                    <h3 className={classes.h3}>{localStorage.getItem("name")}</h3>
+                    <div className="">
+                        <h4 className={classes.h4}>Причина</h4>
+                        <p>{currentObjective?.rootCause}</p>
+                    </div>
+
+
+                    <div className="">
+                        <h4 className={classes.h4}>Краткосрочная цель</h4>
+
+
+                        <h5 className={classes.h5}>из ситуации</h5>
+                        <p>{currentObjective?.content?.[0]}</p>
+
+                        <h5 className={classes.h5}>из причины</h5>
+                        <p>{currentObjective?.content?.[1]}</p>
+
+                    </div>
+
+
+                    <div className="">
+                        <h4 className={classes.h4}>Стратегия</h4>
+                        <p>{currentStrategy?.content}</p>
+                    </div>
                 </div>
 
-                <h3 className={classes.h3}>Стратегия №17</h3>
-
-                <div>
-                    <h4 className={classes.h4}>Ситуация</h4>
-                    <p>{currentObjective?.situation}</p>
-                </div>
-
-
-                <div className="">
-                    <h4 className={classes.h4}>Причина</h4>
-                    <p>{currentObjective?.rootCause}</p>
-                </div>
-
-
-                <div className="">
-                    <h4 className={classes.h4}>Краткосрочная цель</h4>
-
-
-                    <h5 className={classes.h5}>из ситуации</h5>
-                    <p>{currentObjective?.content?.[0]}</p>
-
-                    <h5 className={classes.h5}>из причины</h5>
-                    <p>{currentObjective?.content?.[1]}</p>
-
-                </div>
-
-
-                <div className="">
-                    <h4 className={classes.h4}>Стратегия</h4>
-                    <p>{currentStrategy?.content}</p>
-                </div>
-
-            </div>
         </MainContentContainer>
     )
 }
