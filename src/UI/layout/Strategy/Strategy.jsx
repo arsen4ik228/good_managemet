@@ -11,6 +11,7 @@ import org_icon from "@image/org_icon.svg"
 import { message, Modal } from "antd";
 import { useUpdateSingleStrategy } from '../../../hooks/Strategy/useUpdateSingleStrategy';
 import { useAllStrategy } from '../../../hooks/Strategy/useAllStrategy';
+import { usePanelPreset } from '../../../hooks';
 
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
@@ -24,6 +25,9 @@ export function Strategy() {
 
     const { currentStrategy, refetchStrategy } = useGetSingleStrategy(strategyId)
     const { currentObjective, refetchObjective } = useGetSingleObjective(strategyId);
+
+    const { PRESETS } = useRightPanel();
+    usePanelPreset(PRESETS["STRATEGY"]);
 
     useEffect(() => {
         const channel = new BroadcastChannel("strategy_channel");

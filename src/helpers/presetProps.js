@@ -20,6 +20,9 @@ const props = {
     'workingPlan': {
 
     },
+    'strategy': {
+        
+    }
 }
 
 

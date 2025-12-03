@@ -10,7 +10,8 @@ const PRESETS_NAMES = {
     helper: 'HELPER',
     chat: 'CHATS',
     users: 'USERS',
-    workingPlan: 'WORKINGPLAN'
+    workingPlan: 'WORKINGPLAN',
+    strategy: 'STRATEGY'
 }
 
 const map = new Map(Object.entries(PRESETS_NAMES))

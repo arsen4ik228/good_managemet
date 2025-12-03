@@ -56,7 +56,8 @@ export const useRightPanel = () => {
             STATISTICS: 'statistics',
             CHATS: 'chats',
             USERS: 'users',
-            WORKINGPLAN: 'workingPlan'
+            WORKINGPLAN: 'workingPlan',
+            STRATEGY: 'strategy',
         }
     };
 };

@@ -17,8 +17,9 @@ const componentMap = {
     policies: PoliciesList,
     statistics: StatisticsList,
     chats: ConvertList,
-    users: StrategyList,
-    workingPlan: WorlingPlanList
+    users: UsersList,
+    workingPlan: WorlingPlanList,
+    strategy: StrategyList,
     // добавьте другие компоненты
 };
 
