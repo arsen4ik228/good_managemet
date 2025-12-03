@@ -34,6 +34,13 @@ const initialState = {
 
       },
     },
+    strategy: {
+      componentType: "strategy",
+      props: {
+        ...presetProps("strategy")
+
+      },
+    },
     statistics: {
       componentType: "statistics",
       props: {
