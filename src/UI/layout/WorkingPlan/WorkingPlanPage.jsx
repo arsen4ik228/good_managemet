@@ -102,6 +102,7 @@ export default function WorkingPlanPage() {
                                                 contactId={item?.convert?.host?.user?.id}
                                                 state={item.targetState}
                                                 completeDate={item.dateComplete}
+                                                attachmentToTargets={item?.attachmentToTargets}
                                             />
                                         </React.Fragment>
                                     ))}
@@ -126,6 +127,7 @@ export default function WorkingPlanPage() {
                                                 completeDate={item.dateComplete}
                                                 dateStart={item.dateStart}
                                                 holderPostId={item.holderPostId}
+                                                attachmentToTargets={item?.attachmentToTargets}
                                             ></Task>
                                         ))}
                                         <div key={elemIndex} className={classes.dayContainer}>
@@ -150,6 +152,7 @@ export default function WorkingPlanPage() {
                                                 type={item.type}
                                                 convertId={item.convert.id}
                                                 contactId={item.convert.host.user.id}
+                                                attachmentToTargets={item?.attachmentToTargets}
                                             />
                                         </React.Fragment>
                                     ))}
@@ -173,6 +176,7 @@ export default function WorkingPlanPage() {
                                             completeDate={item.dateComplete}
                                             dateStart={item.dateStart}
                                             holderPostId={item.holderPostId}
+                                            attachmentToTargets={item?.attachmentToTargets}
                                         ></Task>
                                     ))}
                                     <div key={elemIndex} className={classes.dayContainer}>
@@ -193,6 +197,7 @@ export default function WorkingPlanPage() {
                                             type={item.type}
                                             state={item.targetState}
                                             completeDate={item.dateComplete}
+                                            attachmentToTargets={item?.attachmentToTargets}
                                         />
                                     </React.Fragment>
                                 ))

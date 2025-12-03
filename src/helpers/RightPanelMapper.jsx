@@ -6,6 +6,8 @@ import PoliciesList from '../UI/Custom/PresetComponents/PoliciesList/PoliciesLis
 import ConvertList from '../UI/Custom/PresetComponents/ConvertsList/ConvertList';
 import UsersList from '../UI/Custom/PresetComponents/UsersList/UsersList';
 import WorlingPlanList from '../UI/Custom/PresetComponents/WorlingPlanList/WorlingPlanList';
+import StrategyList from '../UI/Custom/PresetComponents/StartegyList/StrategyList';
+
 // import GoalsPanel from '../components/GoalsPanel';
 
 const componentMap = {
@@ -15,7 +17,7 @@ const componentMap = {
     policies: PoliciesList,
     statistics: StatisticsList,
     chats: ConvertList,
-    users: UsersList,
+    users: StrategyList,
     workingPlan: WorlingPlanList
     // добавьте другие компоненты
 };

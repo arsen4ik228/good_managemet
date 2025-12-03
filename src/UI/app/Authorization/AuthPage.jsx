@@ -74,7 +74,12 @@ export default function AuthPage() {
 
         if (serverData.isLogged && localStorage.getItem("accessToken")) {
           localStorage.setItem("fingerprint", fp.visitorId);
-          window.location.href = isMobile ? `#/Main` : "#/accountSettings";
+          
+          let path = '#/accountSettings'
+          if (localStorage.getItem("lastVisitedPath"))
+            path = `#${localStorage.getItem("lastVisitedPath")}`
+
+          window.location.href = isMobile ? `#/Main` : `${path}`;
         }
         console.log("Ответ от /:", serverData);
         setTokenForTG(serverData.tokenForTG);
@@ -161,7 +166,11 @@ export default function AuthPage() {
         .then((response) => {
           if (response.ok) {
             console.log("Куки установлены");
-            window.location.href = isMobile ? `#/Main` : `#/accountSettings`;
+            let path = '#/accountSettings'
+            if (localStorage.getItem("lastVisitedPath"))
+              path = `#${localStorage.getItem("lastVisitedPath")}`
+
+            window.location.href = isMobile ? `#/Main` : `${path}`;
           } else {
             console.error("Ошибка установки куки");
             alert("Не удалось выполнить аутентификацию. Попробуйте снова.");
@@ -275,6 +284,7 @@ export default function AuthPage() {
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('fingerprint');
                 localStorage.removeItem('userId');
+                localStorage.removeItem("lastVisitedPath");
 
                 window.location.reload();
               }}

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { selectRightPanel } from '../../../store/slices/panels.slice';
 import { useSetPresets } from '@hooks'
 import { ConnectionStatusProvider } from '../../../helpers/ConnectionStatusProvider';
+import RoutePersist from '../../../helpers/RoutePersist';
 
 
 const { Sider, Content } = Layout;
@@ -21,6 +22,7 @@ export default function ApplicationContainer() {
 
     return (
         <ConnectionStatusProvider>
+            <RoutePersist />
             <Layout className={classes.wrapper}>
                 <Sider
                     className={classes.left_panel}
