@@ -57,3 +57,15 @@ p {
   height: 100px;
   margin-bottom: 15px;
 }
+
+
+@media print {
+  .main {
+    border: none !important;      /* убираем рамку */
+    border-radius: 0 !important;  /* убираем скругление */
+    margin: 0 auto !important;    /* горизонтальное центрирование */
+    padding: 40px !important;     /* внутренние отступы */
+    width: 210mm;                 /* ширина листа A4 (можно чуть меньше, например 190mm) */
+    max-width: 100%;
+  }
+}
