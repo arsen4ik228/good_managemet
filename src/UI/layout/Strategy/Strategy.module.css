@@ -1,0 +1,59 @@
+.main {
+  position: relative;
+
+  width: auto;
+  max-width: var(--content-width);
+
+  flex: 1 0 120px;
+
+  background-color: #fff;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 30px;
+
+  margin: 20px 5px;
+  padding: 20px 60px;
+
+  border: 1px solid #CCCCCC;
+  border-radius: 5px;
+
+  overflow-y: auto;
+}
+
+.h3 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.h4 {
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.h5 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+p {
+  font-family: "Montserrat";
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.title{
+  align-self: center;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 15px;
+}

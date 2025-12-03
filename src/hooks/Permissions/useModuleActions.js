@@ -10,13 +10,14 @@ export function useModuleActions(section, id) {
   const canUpdate = permissions.find((p) => p.module === section)?.canUpdate;
   const canCreate = permissions.find((p) => p.module === section)?.canCreate;
 
+
   // Все возможные кнопки
   const allButtonsForUpdate = {
     users: [
       {
         text: "Редактировать",
         click: () => window.open(`${homeUrl}#/editUsers/${id}`, "_blank"),
-      }
+      },
     ],
     goal: [
       {
@@ -34,6 +35,12 @@ export function useModuleActions(section, id) {
       {
         text: "Редактировать",
         click: () => window.open(`${homeUrl}#/editPost/${id}`, "_blank"),
+      },
+    ],
+    strategy: [
+      {
+        text: "Редактировать",
+        click: () => window.open(`${homeUrl}#/editStrategy/${id}`, "_blank"),
       },
     ],
     statistic: [

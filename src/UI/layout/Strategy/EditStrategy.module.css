@@ -1,0 +1,21 @@
+.frame {
+  width: 600px;
+  max-width: 600px;
+
+  border: 2px solid #d9d9d9;
+  border-radius: 5px;
+}
+
+.childFrame {
+  width: 560px;
+  max-width: 560px;
+
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+}
+
+.title {
+  font-size: 12px !important;
+  color: #999999;
+  text-transform: uppercase;
+}

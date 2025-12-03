@@ -25,38 +25,31 @@ import ArchiveDialogPage from "../../UI/layout/Chat/ArchiveDialog/ArchiveDialog"
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
 import { Strategy } from "../../UI/layout/Strategy/Strategy";
+import {EditStrategy}  from "../../UI/layout/Strategy/EditStrategy";
+
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
 // import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
 import Worker from "../../UI/layout/Workers/Worker";
 import EditWorker from "../../UI/layout/Workers/EditWorker";
-import MainWorkingPlan from "../../UI/app/WorkingPlanPage/MainWorkingPlan"
+import MainWorkingPlan from "../../UI/app/WorkingPlanPage/MainWorkingPlan";
 import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
+
+
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
 const NotFound = React.lazy(() => import("@app/NotFound/NotFound"));
 
 // Добавил
-const Panel = React.lazy(() => import("@app/Panel/Panel"));
-const Chat = React.lazy(() => import("@app/Chat/Chat"));
 
-const Pomoshnik = React.lazy(() => import("@app/Pomoshnik/Pomoshnik"));
 const ControlPanel = React.lazy(() => import("@app/ControlPanel/ControlPanel"));
 const User = React.lazy(() => import("@app/UserPage/User"));
-// const Goal = React.lazy(() => import("@app/GoalPage/Goal"));
-// const Policy = React.lazy(() => import("@app/PolicyPage/Policy"));
-const Statistic1 = React.lazy(() => import("@app/StatisticsPage/Statistic"));
+
 const Svodka = React.lazy(() => import("@app/Svodka/Svodka"));
-const Objective = React.lazy(() => import("@app/ObjectivePage/Objective"));
-const StrategyOLD = React.lazy(() => import("@app/StrategyPage/Strategy"));
 const ProjectWithProgramm = React.lazy(() =>
   import("@app/Project/desktop/Main")
 );
-// const Post = React.lazy(() => import("@app/PostPage/Post"));
-const PostNew = React.lazy(() => import("@app/PostPage/PostNew"));
-// const WorkingPlan = React.lazy(() =>
-//   import("@app/WorkingPlanPage/MainWorkingPlan")
-// );
+
 const PostSchema = React.lazy(() =>
   import("@app/CompanySchema/desktop/CompanySchema")
 );
@@ -110,16 +103,6 @@ function DesktopApp() {
         }}
       >
         <Routes>
-          StrategyOLD
-
-            <Route
-            path="/StrategyOLD"
-            element={
-              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                <StrategyOLD />
-              </React.Suspense>
-            }
-          />
           <Route
             path="/projectWithProgramm"
             element={
@@ -128,7 +111,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-
           {/* ==== Главная (логин) ==== */}
           <Route
             path="/"
@@ -138,7 +120,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-
           {/* ==== Error ==== */}
           <Route
             path="/error"
@@ -148,7 +129,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-
           {/* ==== Edit pages ==== */}
           <Route
             path="editGoal"
@@ -198,7 +178,14 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-
+          <Route
+            path="editStrategy/:strategyId"
+            element={
+              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                <EditStrategy />
+              </React.Suspense>
+            }
+          />
           {/* ==== Панель управления / Сводка ==== */}
           <Route
             path="controlPanel"
@@ -220,7 +207,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-
           {/* ==== Основная ветка организации ==== */}
           <Route
             path=":organizationId/*"
@@ -288,7 +274,7 @@ function DesktopApp() {
                 }
               /> */}
               <Route
-                path="strategy"
+                path="strategy/:strategyId"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <Strategy />
@@ -327,7 +313,7 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
-              <Route  
+              <Route
                 path="workingPlan/currentOrders"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
@@ -335,7 +321,7 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
-              <Route  
+              <Route
                 path="workingPlan/myOrder"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
@@ -350,7 +336,7 @@ function DesktopApp() {
                     <WorkingPlanPage />
                   </React.Suspense>
                 }
-              /> 
+              />
               <Route
                 path="workingPlan/archiveTasks"
                 element={
@@ -400,14 +386,6 @@ function DesktopApp() {
                 }
               />
               <Route
-                path="controlPanel"
-                element={
-                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                    <>controlPanel</>
-                  </React.Suspense>
-                }
-              />
-              <Route
                 path="statistics"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
@@ -441,7 +419,6 @@ function DesktopApp() {
               />
             </Route>
           </Route>
-
           {/* ==== Фолбэк ==== */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
