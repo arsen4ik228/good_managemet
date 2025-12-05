@@ -442,7 +442,7 @@ export const EditStatisticPointsData = () => {
             ))}
           </Flex>
         </div>
-      </ConfigProvider >
+      </ConfigProvider>
     </EditContainer>
   );
 };

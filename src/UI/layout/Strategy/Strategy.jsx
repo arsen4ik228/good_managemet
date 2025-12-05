@@ -23,7 +23,7 @@ export function Strategy() {
     const { buutonsArr } = useModuleActions("strategy", strategyId);
 
 
-    const { currentStrategy, refetchStrategy } = useGetSingleStrategy(strategyId)
+    const { currentStrategy, refetchStrategy } = useGetSingleStrategy(strategyId);
     const { currentObjective, refetchObjective } = useGetSingleObjective(strategyId);
 
     const { PRESETS } = useRightPanel();
@@ -92,46 +92,50 @@ export function Strategy() {
             ...(buutonsArr.length > 0 ? [{ text: "начать выполнение", click: () => updateStrategyHandler() }] : []),
             { text: "печать", click: reactToPrintFn }
         ]}
-
         >
-                <div ref={contentRef} className={classes.main}>
-                    <div className={classes.title}>
-                        <img src={org_icon} alt="картинка" width={"100px"} height={"100px"} className={classes.image} />
-                        <h3 className={classes.h3}>{localStorage.getItem("name")}</h3>
-                    </div>
-
-                    <h3 className={classes.h3}>Стратегия №{currentStrategy?.strategyNumber}</h3>
-
-                    <div>
-                        <h4 className={classes.h4}>Ситуация</h4>
-                        <p>{currentObjective?.situation}</p>
-                    </div>
-
-
-                    <div className="">
-                        <h4 className={classes.h4}>Причина</h4>
-                        <p>{currentObjective?.rootCause}</p>
-                    </div>
-
-
-                    <div className="">
-                        <h4 className={classes.h4}>Краткосрочная цель</h4>
-
-
-                        <h5 className={classes.h5}>из ситуации</h5>
-                        <p>{currentObjective?.content?.[0]}</p>
-
-                        <h5 className={classes.h5}>из причины</h5>
-                        <p>{currentObjective?.content?.[1]}</p>
-
-                    </div>
-
-
-                    <div className="">
-                        <h4 className={classes.h4}>Стратегия</h4>
-                        <p>{currentStrategy?.content}</p>
-                    </div>
+            <div ref={contentRef} className={classes.main}>
+                <div className={classes.title}>
+                    <img src={org_icon} alt="картинка" width={"100px"} height={"100px"} className={classes.image} />
+                    <h3 className={classes.h3}>{localStorage.getItem("name")}</h3>
                 </div>
+
+                <h3 className={classes.h3}>Стратегия №{currentStrategy?.strategyNumber}</h3>
+
+                <div>
+                    <h4 className={classes.h4}>Ситуация</h4>
+                    <p>{currentObjective?.situation}</p>
+                </div>
+
+
+                <div className="">
+                    <h4 className={classes.h4}>Причина</h4>
+                    <p>{currentObjective?.rootCause}</p>
+                </div>
+
+
+                <div className="">
+                    <h4 className={classes.h4}>Краткосрочная цель</h4>
+
+
+                    <h5 className={classes.h5}>из ситуации</h5>
+                    <p>{currentObjective?.content?.[0]}</p>
+
+                    <h5 className={classes.h5}>из причины</h5>
+                    <p>{currentObjective?.content?.[1]}</p>
+
+                </div>
+
+
+                <div className="">
+                    <h4 className={classes.h4}>Стратегия</h4>
+                    <p>{currentStrategy?.content}</p>
+                </div>
+
+                <div className="">
+                    <h4 className={classes.h4}>Проекты:</h4>
+                    <p>Раздел в разработке</p>
+                </div>
+            </div>
 
         </MainContentContainer>
     )
