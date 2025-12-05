@@ -20,15 +20,15 @@ export default function EditContainer({ header, saveClick, canselClick, exitClic
 
           {
             aditionalbtns && aditionalbtns?.map((item) => (
-            <Button
-              key={item.name}
-              type="outlined"
-              style={{ color: item.colorBtn }}
-              onClick={item.onClick}
-            >
-              {item.name}
-            </Button>
-          ))
+              <Button
+                key={item.name}
+                type="outlined"
+                style={{ height: "100%", color: item.colorBtn, backgroundColor: item?.isBackgroundColor && item?.backgroundColor }}
+                onClick={item.onClick}
+              >
+                {item.name}
+              </Button>
+            ))
           }
         </footer>
       </div>

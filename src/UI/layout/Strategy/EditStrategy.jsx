@@ -16,6 +16,7 @@ import { useUpdateSingleStrategy } from '../../../hooks/Strategy/useUpdateSingle
 import { useGetSingleObjective } from '../../../hooks/Objective/useGetSingleObjective';
 import { useUpdateSingleObjective } from '../../../hooks/Objective/useUpdateSingleObjective';
 import { isEqual } from "lodash";
+import ViewProject from './ViewProject';
 
 export function EditStrategy() {
 
@@ -30,6 +31,7 @@ export function EditStrategy() {
     const [rootCauseEditors, setRootCauseEditors] = useState([]);
 
     const [editMode, setEditMode] = useState(true);
+    const [isViewProject, setIsViewProject] = useState(false);
 
 
     const { currentObjective } = useGetSingleObjective(strategyId);
@@ -183,132 +185,188 @@ export function EditStrategy() {
             saveClick={handleSave}
             canselClick={handleReset}
             exitClick={exitClick}
+            aditionalbtns={[{
+                name: "Проекты и прграммы",
+                colorBtn: "#333333",
+                backgroundColor: "#CFDEE5",
+                onClick: () => setIsViewProject(!isViewProject),
+                isBackgroundColor:isViewProject,
+            }]}
         >
 
-            <div style={{
-                position: "relative",
+            <div className={classes.wrapper}>
 
-                width: "700px",
+                {
+                    isViewProject ? (
+                        <>
+                            <ViewProject />
 
-                flex: "1 0 120px",
+                            <div style={{
+                                position: "relative",
 
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                                width: "700px",
 
-                gap: "40px",
-                padding: "10px",
+                                flex: "1 0 120px",
 
-                backgroundColor: "#fff",
-                border: "1px solid #CCCCCC",
-                borderRadius: "5px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
 
-                overflowY: "auto",
-            }}>
+                                gap: "40px",
+                                padding: "10px",
 
-                <fieldset className={classes.frame}>
-                    <legend className={classes.title}>Ситуация</legend>
-                    {situationEditors.map((item, index) => (
-                        <TextArea
-                            style={{
-                                resize: "none",
-                                border: "none",
-                            }}
-                            value={item}
-                            onChange={(e) =>
-                                handleEditorChange(index, e.target.value, "situation")
-                            }
-                            readOnly={!editMode}
-                            autoSize={true}
-                        ></TextArea>
-                    ))}
-                </fieldset>
+                                backgroundColor: "#fff",
+                                border: "1px solid #CCCCCC",
+                                borderRadius: "5px",
+
+                                overflowY: "auto",
+                            }}>
+                                <fieldset className={classes.frame}>
+                                    <legend className={classes.title}>Стратегия</legend>
+                                    <TextArea
+                                        style={{
+                                            resize: "none",
+                                            border: "none",
+                                        }}
+                                        key={currentStrategy.id}
+                                        value={editorState}
+                                        onChange={(e) => setEditorState(e.target.value)}
+                                        readOnly={!editMode}
+                                        autoSize={true}
+                                    ></TextArea>
+                                </fieldset>
+                            </div>
+                        </>
+                    )
+                        : (
+                            <div style={{
+                                position: "relative",
+
+                                width: "700px",
+
+                                flex: "1 0 120px",
+
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+
+                                gap: "40px",
+                                padding: "10px",
+
+                                backgroundColor: "#fff",
+                                border: "1px solid #CCCCCC",
+                                borderRadius: "5px",
+
+                                overflowY: "auto",
+                            }}>
+
+                                <fieldset className={classes.frame}>
+                                    <legend className={classes.title}>Ситуация</legend>
+                                    {situationEditors.map((item, index) => (
+                                        <TextArea
+                                            style={{
+                                                resize: "none",
+                                                border: "none",
+                                            }}
+                                            value={item}
+                                            onChange={(e) =>
+                                                handleEditorChange(index, e.target.value, "situation")
+                                            }
+                                            readOnly={!editMode}
+                                            autoSize={true}
+                                        ></TextArea>
+                                    ))}
+                                </fieldset>
 
 
-                <fieldset className={classes.frame}>
-                    <legend className={classes.title}>Причина</legend>
-                    {rootCauseEditors.map((item, index) => (
-                        <TextArea
-                            style={{
-                                resize: "none",
-                                border: "none",
-                            }}
-                            value={item}
-                            onChange={(e) =>
-                                handleEditorChange(index, e.target.value, "rootCause")
-                            }
-                            readOnly={!editMode}
-                            autoSize={true}
-                        ></TextArea>
-                    ))}
-                </fieldset>
+                                <fieldset className={classes.frame}>
+                                    <legend className={classes.title}>Причина</legend>
+                                    {rootCauseEditors.map((item, index) => (
+                                        <TextArea
+                                            style={{
+                                                resize: "none",
+                                                border: "none",
+                                            }}
+                                            value={item}
+                                            onChange={(e) =>
+                                                handleEditorChange(index, e.target.value, "rootCause")
+                                            }
+                                            readOnly={!editMode}
+                                            autoSize={true}
+                                        ></TextArea>
+                                    ))}
+                                </fieldset>
 
 
-                <fieldset className={classes.frame} style={{
-                    padding: "10px",
+                                <fieldset className={classes.frame} style={{
+                                    padding: "10px",
 
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
 
-                    gap: "25px",
-                }}>
-                    <legend className={classes.title}>Краткосрочная цель</legend>
+                                    gap: "25px",
+                                }}>
+                                    <legend className={classes.title}>Краткосрочная цель</legend>
 
-                    <fieldset className={classes.childFrame}>
-                        <legend className={classes.title} style={{
-                            textTransform: "lowercase"
-                        }}>из ситуации</legend>
+                                    <fieldset className={classes.childFrame}>
+                                        <legend className={classes.title} style={{
+                                            textTransform: "lowercase"
+                                        }}>из ситуации</legend>
 
-                        <TextArea
-                            style={{
-                                resize: "none",
-                                border: "none",
-                            }}
-                            value={contentEditors[0]}
-                            onChange={(e) =>
-                                handleEditorChange(0, e.target.value, "content")
-                            }
-                            readOnly={!editMode}
-                            autoSize={true}
-                        ></TextArea>
-                    </fieldset>
+                                        <TextArea
+                                            style={{
+                                                resize: "none",
+                                                border: "none",
+                                            }}
+                                            value={contentEditors[0]}
+                                            onChange={(e) =>
+                                                handleEditorChange(0, e.target.value, "content")
+                                            }
+                                            readOnly={!editMode}
+                                            autoSize={true}
+                                        ></TextArea>
+                                    </fieldset>
 
-                    <fieldset className={classes.childFrame} >
-                        <legend className={classes.title} style={{
-                            textTransform: "lowercase"
-                        }}>из цели</legend>
-                        <TextArea
-                            style={{
-                                resize: "none",
-                                border: "none",
-                            }}
-                            value={contentEditors[1]}
-                            onChange={(e) =>
-                                handleEditorChange(1, e.target.value, "content")
-                            }
-                            readOnly={!editMode}
-                            autoSize={true}
-                        ></TextArea>
-                    </fieldset>
+                                    <fieldset className={classes.childFrame} >
+                                        <legend className={classes.title} style={{
+                                            textTransform: "lowercase"
+                                        }}>из цели</legend>
+                                        <TextArea
+                                            style={{
+                                                resize: "none",
+                                                border: "none",
+                                            }}
+                                            value={contentEditors[1]}
+                                            onChange={(e) =>
+                                                handleEditorChange(1, e.target.value, "content")
+                                            }
+                                            readOnly={!editMode}
+                                            autoSize={true}
+                                        ></TextArea>
+                                    </fieldset>
 
-                </fieldset>
+                                </fieldset>
 
-                <fieldset className={classes.frame}>
-                    <legend className={classes.title}>Стратегия</legend>
-                    <TextArea
-                        style={{
-                            resize: "none",
-                            border: "none",
-                        }}
-                        key={currentStrategy.id}
-                        value={editorState}
-                        onChange={(e) => setEditorState(e.target.value)}
-                        readOnly={!editMode}
-                        autoSize={true}
-                    ></TextArea>
-                </fieldset>
+                                <fieldset className={classes.frame}>
+                                    <legend className={classes.title}>Стратегия</legend>
+                                    <TextArea
+                                        style={{
+                                            resize: "none",
+                                            border: "none",
+                                        }}
+                                        key={currentStrategy.id}
+                                        value={editorState}
+                                        onChange={(e) => setEditorState(e.target.value)}
+                                        readOnly={!editMode}
+                                        autoSize={true}
+                                    ></TextArea>
+                                </fieldset>
+                            </div>
+                        )
+                }
             </div>
+
 
         </EditContainer>
     )
