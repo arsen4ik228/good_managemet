@@ -241,6 +241,7 @@ export default function LeftSIder() {
                         searchValue={searchContactsSectionsValue}
                         searchFunc={setContactSectionsValue}
                         selectedItem={selectedContactsSectionValue}
+                        isLoading={loadingAllChats && (!allChats || allChats?.length === 0)}
                     >
                         <ListElem
                             icon={userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}` : default_avatar}
