@@ -5,6 +5,7 @@ import search from '@image/search.svg'
 import icon_filter from '@image/icon_filter.svg'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
 import ListElem from './ListElem';
+import { Skeleton } from 'antd';
 
 export default function CustomList({
     title,
@@ -17,7 +18,8 @@ export default function CustomList({
     onExpandedChange, // опциональный callback для управления извне
     selectedItem,
     expanded, // опциональное внешнее управление состоянием
-    children
+    children,
+    isLoading
 }) {
     // Внутреннее состояние используется только если expanded не передано извне
     const [internalExpanded, setInternalExpanded] = useState(true);
@@ -108,12 +110,12 @@ export default function CustomList({
                     )}
                     {searchFunc && (
 
-                    <img
-                        src={search}
-                        alt="search"
-                        className={classes.searchIcon}
-                        onClick={toggleSearch}
-                    />
+                        <img
+                            src={search}
+                            alt="search"
+                            className={classes.searchIcon}
+                            onClick={toggleSearch}
+                        />
                     )}
                     <img
                         src={dropdown}
@@ -149,7 +151,63 @@ export default function CustomList({
                 ref={listRef}
                 className={`${classes.listContainer} ${!currentExpanded ? classes.collapsed : ''}`}
             >
-                {children}
+
+                {isLoading ?
+                    <div style={{ padding: '8px' }}>
+                        {[1, 2, 3, 4, 5].map((item) => (
+                            <div
+                                key={item}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    marginBottom: 8,
+                                    borderRadius: 8,
+                                    // border: '1px solid red'
+                                }}
+                            >
+                                {/* Аватар */}
+                                <Skeleton.Avatar
+                                    active
+                                    size={40}
+                                    style={{ marginRight: 12 }}
+                                />
+
+                                {/* Текст */}
+                                <div style={{ flex: 1, display: 'block', minWidth: 0  }}>
+                                    <Skeleton.Input
+                                        active
+                                        size="small"
+                                        style={{
+                                            width: '170px',
+                                            height: 18,
+                                            marginBottom: 5 // Минимальный отступ
+                                        }}
+                                    />
+                                    {/* Нижняя строка */}
+                                    <Skeleton.Input
+                                        active
+                                        size="small"
+                                        style={{
+                                            width: '40%',
+                                            height: 12
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Бейдж */}
+                                <Skeleton.Button
+                                    active
+                                    size="small"
+                                    shape="circle"
+                                    style={{ width: 24, height: 24 }}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    :
+                    children
+                }
+
             </div>
         </div>
     )
