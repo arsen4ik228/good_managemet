@@ -48,7 +48,7 @@ p {
   line-height: 1.2;
 }
 
-.title{
+.title {
   align-self: center;
 }
 
@@ -58,14 +58,34 @@ p {
   margin-bottom: 15px;
 }
 
+.itemProject {
+  margin-top: 8px;
+
+  display: flex;
+  gap: 10px;
+
+  color: #005475;
+
+  & button {
+    color: #005475;
+    font-size: 16px !important;
+    border-bottom: 1px solid #005475;
+    background-color: transparent;
+  }
+}
 
 @media print {
   .main {
-    border: none !important;      /* убираем рамку */
-    border-radius: 0 !important;  /* убираем скругление */
-    margin: 0 auto !important;    /* горизонтальное центрирование */
-    padding: 40px !important;     /* внутренние отступы */
-    width: 210mm;                 /* ширина листа A4 (можно чуть меньше, например 190mm) */
+    border: none !important;
+    /* убираем рамку */
+    border-radius: 0 !important;
+    /* убираем скругление */
+    margin: 0 auto !important;
+    /* горизонтальное центрирование */
+    padding: 40px !important;
+    /* внутренние отступы */
+    width: 210mm;
+    /* ширина листа A4 (можно чуть меньше, например 190mm) */
     max-width: 100%;
   }
 }
