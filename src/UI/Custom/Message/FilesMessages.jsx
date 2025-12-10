@@ -144,7 +144,7 @@ export default function FilesMessages({ attachmentToMessage }) {
           {attachmentToMessage.map((item, idx) => {
             const isImg = isImage(item);
             const url = `${baseUrl}${item?.attachment?.attachmentPath}`;
-            const name = item?.attachment?.attachmentName;
+            const name = item?.attachment?.originalName;
 
             return (
               <div key={idx} className={classes.attachmentItem}>

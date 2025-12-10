@@ -1,154 +1,39 @@
-// import React, { useState, useRef } from "react";
-// import classes from "./FilesModal.module.css";
-// import ModalContainer from "@Custom/ModalContainer/ModalContainer";
-// import { usePolicyHook, useGetReduxOrganization } from "@hooks";
-// import { usePostFilesMutation } from "@services";
-// import { baseUrl } from "@helpers/constants";
-// import { notEmpty } from "@helpers/helpers";
-// import { isMobile } from "react-device-detect";
-// import DesktopLayout from "./desktopLayout/DesktopLayout";
-// import {
-//   message,
-// } from 'antd';
-
-// export default function FilesModal({
-//   openModal,
-//   setOpenModal,
-//   policyId,
-//   setPolicyId,
-//   postOrganizationId,
-//   files,
-//   setFiles,
-//   setUnpinFiles,
-//   organizationId,
-//   setContentInput,
-//   setContentInputPolicyId,
-// }) {
-//   const [selectedFiles, setSelectedFiles] = useState([]);
-//   const [postFiles] = usePostFilesMutation();
-//   const [deleteFile, setDeleteFile] = useState([]);
-//   const fileInputRef = useRef(null);
-//   const [uploadProgress, setUploadProgress] = useState(0);
-//   const [isUploading, setIsUploading] = useState(false);
-
-//   const {reduxSelectedOrganizationId} = useGetReduxOrganization()
-//   const { activeDirectives, activeInstructions, disposalsActive } = usePolicyHook({
-//     organizationId: reduxSelectedOrganizationId
-//   });
-
-//   const handleFileChange = (e) => {
-//     const files = Array.from(e.target.files);
-//     if (files) {
-//       setSelectedFiles(files);
-//     }
-//   };
-
-//   const handleUpload = async () => {
-//     setIsUploading(true);
-//     setUploadProgress(0);
-
-//     try {
-//       if (selectedFiles.length > 0) {
-//         const formData = new FormData();
-//         selectedFiles.forEach((file) => {
-//           formData.append("files", file);
-//         });
-
-//         const response = await postFiles({
-//           formData,
-//           onUploadProgress: (progressEvent) => {
-//             const percentCompleted = Math.round(
-//               (progressEvent.loaded * 100) / progressEvent.total
-//             );
-//             setUploadProgress(percentCompleted);
-//           }
-//         }).unwrap();
-
-//         setFiles(prev => [...(prev || []), ...response]);
-
-//       }
-
-//       setSelectedFiles([]);
-//       setOpenModal(false);
-//       message.success("Изменения успешно сохранены!");
-//     } catch (error) {
-//       message.error(`Произошла ошибка при сохранении: ${error.data.message}`);
-//       console.error(error.data);
-//     } finally {
-//       setIsUploading(false);
-
-//     }
-//   };
-
-//   return (
-//     <>
-//       <DesktopLayout
-//         setOpenModal={setOpenModal}
-//         policyId={policyId}
-//         setPolicyId={setPolicyId}
-//         files={files}
-//         handleUpload={handleUpload}
-//         activeDirectives={activeDirectives}
-//         activeInstructions={activeInstructions}
-//         disposalsActive={disposalsActive}
-//         fileInputRef={fileInputRef}
-//         handleFileChange={handleFileChange}
-//         selectedFiles={selectedFiles}
-//         setSelectedFiles={setSelectedFiles}
-//         deleteFile={deleteFile}
-//         setDeleteFile={setDeleteFile}
-//         setContentInput={setContentInput}
-//         setContentInputPolicyId={setContentInputPolicyId}
-//         isUploading={isUploading} // статус загрузки можно юзать в некст 
-//         uploadProgress={uploadProgress} // статус загрузки можно юзать в некст 
-//       />
-//     </>
-//   );
-// }
-
 import React, { useState, useRef, useEffect } from "react";
-import classes from "./FilesModal.module.css";
-import ModalContainer from "@Custom/ModalContainer/ModalContainer";
-import { usePolicyHook, useGetReduxOrganization } from "@hooks";
-import { usePostFilesMutation } from "@services";
-import { baseUrl } from "@helpers/constants";
-import { notEmpty } from "@helpers/helpers";
-import { isMobile } from "react-device-detect";
-import DesktopLayout from "./desktopLayout/DesktopLayout";
 import { message } from 'antd';
+import { usePostFilesMutation, useDeleteFileMutation } from "@services";
+import { usePolicyHook, useGetReduxOrganization } from "@hooks";
+import DesktopLayout from "./desktopLayout/DesktopLayout";
 
 export default function FilesModal({
   openModal,
   setOpenModal,
   policyId,
   setPolicyId,
-  postOrganizationId,
-  files,
+  files = [],
   setFiles,
   setUnpinFiles,
-  organizationId,
   setContentInput,
   setContentInputPolicyId,
 }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [postFiles] = usePostFilesMutation();
-  const [deleteFile, setDeleteFile] = useState([]);
-  const fileInputRef = useRef(null);
+  const [filesToDelete, setFilesToDelete] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-
-  const {reduxSelectedOrganizationId} = useGetReduxOrganization()
+  
+  const [postFiles] = usePostFilesMutation();
+  // const [deleteFile] = useDeleteFileMutation();
+  
+  const { reduxSelectedOrganizationId } = useGetReduxOrganization();
   const { activeDirectives, activeInstructions, disposalsActive } = usePolicyHook({
     organizationId: reduxSelectedOrganizationId
   });
 
-  // Автоматическая загрузка при изменении selectedFiles
+  // Обработка загрузки новых файлов
   useEffect(() => {
-    const uploadFiles = async () => {
+    const uploadSelectedFiles = async () => {
       if (selectedFiles.length > 0 && !isUploading) {
         setIsUploading(true);
-        setUploadProgress(0);
-
+        
         try {
           const formData = new FormData();
           selectedFiles.forEach((file) => {
@@ -165,13 +50,13 @@ export default function FilesModal({
             }
           }).unwrap();
 
+          // Добавляем новые файлы
           setFiles(prev => [...(prev || []), ...response]);
-          setSelectedFiles([]); // Очищаем после успешной загрузки
+          setSelectedFiles([]);
+          
           message.success("Файлы успешно загружены!");
-
         } catch (error) {
           message.error(`Ошибка при загрузке: ${error.data?.message || error.message}`);
-          console.error(error);
         } finally {
           setIsUploading(false);
           setUploadProgress(0);
@@ -179,37 +64,75 @@ export default function FilesModal({
       }
     };
 
-    uploadFiles();
+    uploadSelectedFiles();
   }, [selectedFiles, isUploading, postFiles, setFiles]);
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setSelectedFiles(files);
-    }
+  // Обработка удаления файлов
+  useEffect(() => {
+    const deleteSelectedFiles = async () => {
+      if (filesToDelete.length > 0) {
+        try {
+          for (const fileId of filesToDelete) {
+            // await deleteFile({ fileId }).unwrap();
+          }
+          
+          // Обновляем список файлов, удаляя те, которые были удалены
+          setFiles(prev => prev.filter(file => !filesToDelete.includes(file.id)));
+          setFilesToDelete([]);
+          
+          message.success("Файлы успешно удалены!");
+        } catch (error) {
+          message.error(`Ошибка при удалении: ${error.data?.message || error.message}`);
+        }
+      }
+    };
+
+    deleteSelectedFiles();
+  }, [filesToDelete, setFiles]); //deleteFile
+
+  // Обработчик изменения выбранных файлов
+  const handleFileSelect = (files) => {
+    setSelectedFiles(prev => [...prev, ...files]);
+  };
+
+  // Обработчик удаления файла
+  const handleFileDelete = (fileId) => {
+    setFilesToDelete(prev => [...prev, fileId]);
+  };
+
+  // Отмена удаления файла
+  const handleCancelDelete = (fileId) => {
+    setFilesToDelete(prev => prev.filter(id => id !== fileId));
   };
 
   return (
-    <>
-      <DesktopLayout
-        setOpenModal={setOpenModal}
-        policyId={policyId}
-        setPolicyId={setPolicyId}
-        files={files}
-        activeDirectives={activeDirectives}
-        activeInstructions={activeInstructions}
-        disposalsActive={disposalsActive}
-        fileInputRef={fileInputRef}
-        handleFileChange={handleFileChange}
-        selectedFiles={selectedFiles}
-        setSelectedFiles={setSelectedFiles}
-        deleteFile={deleteFile}
-        setDeleteFile={setDeleteFile}
-        setContentInput={setContentInput}
-        setContentInputPolicyId={setContentInputPolicyId}
-        isUploading={isUploading}
-        uploadProgress={uploadProgress}
-      />
-    </>
+    <DesktopLayout
+      openModal={openModal}
+      setOpenModal={setOpenModal}
+      policyId={policyId}
+      setPolicyId={setPolicyId}
+      
+      // Файлы
+      files={files.filter(file => !filesToDelete.includes(file.id))}
+      selectedFiles={selectedFiles}
+      
+      // Обработчики
+      onFileSelect={handleFileSelect}
+      onFileDelete={handleFileDelete}
+      onCancelDelete={handleCancelDelete}
+      
+      // Состояние загрузки
+      isUploading={isUploading}
+      uploadProgress={uploadProgress}
+      
+      // Политики
+      activeDirectives={activeDirectives}
+      activeInstructions={activeInstructions}
+      disposalsActive={disposalsActive}
+      
+      // Дополнительные обработчики
+      setContentInput={setContentInput}
+      setContentInputPolicyId={setContentInputPolicyId}
+    />
   );
 }
