@@ -170,6 +170,7 @@ export default function Task({ id, content, deadline, type, state, completeDate,
 
     }
 
+    console.log(attachmentToTargets && attachmentToTargets)
     return (
         <>
             <div className={classes.wrapper}>

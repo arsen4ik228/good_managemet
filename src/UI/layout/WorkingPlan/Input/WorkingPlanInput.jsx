@@ -6,7 +6,9 @@ import sendIcon from '@Custom/icon/send.svg';
 import FilesModal from '@app/WorkingPlanPage/mobile/Modals/FilesModal/FilesModal';
 import { useTargetsHook, useConvertsHook } from '@hooks';
 import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext';
-
+import icon_attach from '@image/icon_ attach.svg'
+import { SimpleFileUploadModal } from '../../../Custom/SimpleFilesUploadModal/SimpleFilesUploadModal';
+import FilesMessages from '../../../Custom/Message/FilesMessages';
 
 export default function WorkingPlanInput() {
 
@@ -72,11 +74,11 @@ export default function WorkingPlanInput() {
 
             await updateTargets(updateData).unwrap();
             message.success('Задача успешно обновлена');
-            
+
         } catch (error) {
             console.error("Ошибка:", error);
             message.error('Произошла ошибка при обновлении задачи');
-        } finally{
+        } finally {
             reset()
         }
     };
@@ -153,12 +155,19 @@ export default function WorkingPlanInput() {
         };
     }, [handleGlobalKeyDown]);
 
+    console.log(files)
+
     return (
         <div className={classes.wrapper}>
+            <div>
+                {files && (
+                    <FilesMessages attachmentToMessage={files}></FilesMessages>
+                )}
+            </div>
             <div className={classes.bottomContainer}>
                 <div className={classes.iconSection}>
 
-                    <FilesModal
+                    {/* <FilesModal
                         openModal={openFilesModal}
                         setOpenModal={setOpenFilesModal}
                         policyId={selectedPolicy}
@@ -170,8 +179,9 @@ export default function WorkingPlanInput() {
                         // organizationId={organizationId}
                         setContentInput={setContentInput}
                         setContentInputPolicyId={setContentInputPolicyId}
-                    />
-
+                    /> */}
+                    {/* <img src={icon_attach} alt="icon_attach" /> */}
+                    <SimpleFileUploadModal setParentFiles={setFiles}></SimpleFileUploadModal>
                 </div>
                 <div className={classes.textInputSection}>
                     <TextArea
