@@ -5,7 +5,7 @@ import { useFindPathSegment } from '@helpers/helpers'
 import { Tooltip } from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
 
-export default function ListElem({ icon, upperText, bottomText, bage, greyBage, linkSegment, isActive, clickFunc, setSelectedItemData }) {
+export default function ListElem({ icon, upperText, bottomText, upperLabel, bage, greyBage, linkSegment, isActive, clickFunc, setSelectedItemData }) {
     const isSelected = useFindPathSegment(linkSegment)
 
 
@@ -25,7 +25,10 @@ export default function ListElem({ icon, upperText, bottomText, bage, greyBage, 
 
     return (
         <>
-            <div className={`${classes.content} ${isSelected && classes.selected}`} onClick={() => clickFunc()}>
+            <div className={`${classes.content} ${isSelected && classes.selected}`}
+                onClick={() => clickFunc()}
+                data-after={upperLabel}
+            >
                 <div className={classes.imgContainer}>
                     <img src={icon ?? avatar} alt="avatar" />
                 </div>

@@ -18,6 +18,15 @@
     filter: brightness(0.85);
 }
 
+.content::after{
+    position: absolute;
+    content: attr(data-after);
+    top: 0;
+    left: 58px;
+    color: #999999;
+    font-size: 12px;
+}
+
 .imgContainer{
     >img{
         height: 40px;

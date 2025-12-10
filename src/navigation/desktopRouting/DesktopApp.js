@@ -25,7 +25,7 @@ import ArchiveDialogPage from "../../UI/layout/Chat/ArchiveDialog/ArchiveDialog"
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
 import { Strategy } from "../../UI/layout/Strategy/Strategy";
-import {EditStrategy}  from "../../UI/layout/Strategy/EditStrategy";
+import { EditStrategy } from "../../UI/layout/Strategy/EditStrategy";
 
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
@@ -273,6 +273,15 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               /> */}
+              <Route
+                path="strategy"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <MessageSelectingList presetName="STRATEGY" />
+                  </React.Suspense>
+                }
+              />
+
               <Route
                 path="strategy/:strategyId"
                 element={

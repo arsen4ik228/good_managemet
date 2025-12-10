@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCreatePost, useGetReduxOrganization, useStrategyHook } from '../../../../hooks'
 import CustomList from '../../CustomList/CustomList'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -8,6 +8,7 @@ import active_strategy from '@image/active_strategy.svg'
 import finaly_strategy from '@image/finaly_strategy.svg'
 import { baseUrl } from "@helpers/constants.js";
 import { useCreateStrategy } from '../../../../hooks/Strategy/useCreateStrategy'
+import { notEmpty } from "@helpers/helpers.js"
 import { message } from 'antd';
 
 export default function StrategyList() {
@@ -33,9 +34,15 @@ export default function StrategyList() {
     const { postStrategy } = useCreateStrategy()
 
     const getIcon = (state) => {
-        if (state === 'Завершена') return draft_strategy
-        else if (state === 'Активная') return active_strategy
+        if (state === 'Черновик') return draft_strategy
+        else if (state === 'Активный') return active_strategy
         else return finaly_strategy
+    }
+
+    const getLabel = (state) => {
+        if (state === 'Черновик') return 'Черновик стратегии'
+        else if (state === 'Активный') return 'Активная стратегия'
+        else return 'Завершенная стратегия'
     }
 
     const openStrategy = (id) => {
@@ -57,6 +64,20 @@ export default function StrategyList() {
                 message.error(error.data.message || 'Произошла ошибка');
             });
     };
+
+
+        useEffect(() => {
+    
+            if (!notEmpty(activeAndDraftStrategies)) return;
+    
+            const pathname = location.pathname;
+            const parts = pathname.split('/').filter(part => part !== '');
+            const removedParts = parts.slice(-1);
+    
+            if (removedParts[0] !== 'strategy') return;
+    
+            navigate(`helper/strategy/${activeAndDraftStrategies[0]?.id}`)
+        }, [activeAndDraftStrategies])
 
     console.log(activeAndDraftStrategies)
 
@@ -82,10 +103,11 @@ export default function StrategyList() {
                 {activeAndDraftStrategies.map((item, index) => (
                     <React.Fragment key={index}>
                         <ListElem
-                            icon={getIcon()}
+                            icon={getIcon(item?.state)}
                             upperText={`№${item?.strategyNumber}`}
                             linkSegment={item.id}
                             clickFunc={() => openStrategy(item.id)}
+                            upperLabel={getLabel(item?.state)}
                         />
                     </React.Fragment>
                 ))}
@@ -97,6 +119,7 @@ export default function StrategyList() {
                             upperText={`№${item?.strategyNumber}`}
                             linkSegment={item.id}
                             clickFunc={() => openStrategy(item.id)}
+                            upperLabel={getLabel(item?.state)}
                         />
                     </React.Fragment>
                 ))}
