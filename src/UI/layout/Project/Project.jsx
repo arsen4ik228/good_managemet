@@ -1,58 +1,106 @@
 import React from 'react'
-import project from './project.svg'
+import classes from "./Project.module.css";
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
-export function Project() {
 
+
+
+const arrayTasks = [
+    {
+        title: "Продукт",
+        tasks: [{
+            task: "Автоматизированная линия розлива жидких продуктов производительностью 3 000 ед./час с системой контроля качества и маркировкой.",
+            date: "24.01.2024",
+            people: "Андрей Тыртышный",
+            post: "Начальник службы заказов"
+        }]
+
+    },
+    {
+        title: "Задачи",
+        tasks: [
+            {
+                task: "Заключить договор на покупку станка ВР-350 ТЕ",
+                date: "19.11.2023",
+                people: "Андрей Тыртышный",
+                post: "Начальник службы заказов"
+            },
+            {
+                task: "Подготовить место в цехе №2 для установки станка ВР-350 ТЕ",
+                date: "27.11.2023",
+                people: "Андрей Макаров",
+                post: "Начальник цеха №2"
+            },
+            {
+                task: "Провести кабель питания до места усановки станка ВР-350 ТЕ",
+                date: "19.11.2023",
+                people: "Алксей Любимов",
+                post: "Электрик"
+            },
+        ],
+    },
+];
+
+const Task = ({ title, task, date, people, post, index }) => {
     return (
-
-        <MainContentContainer>
-            <div style={{
-                width: "630px",
-                minHeight: "100%",
-
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-
-                backgroundColor: "#fff",
-                border: "1px solid #CCCCCC",
-                borderRadius: "5px",
-
-                padding: "0 20px",
-
-                overflow: "hidden",
-            }}>
-                <div style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
-                    <img src={project} alt="strategy" />
-
-                    <div
-                        style={{
-                            padding: "15px 0",
-                            fontWeight: 600,
-                            fontSize: "20px",
-                            color: "#333333",
-                        }}
-                    >
-                        Проекты
+        <>
+            {
+                title === "Продукт" ? (
+                    <div className={classes.wrapper}>
+                        <div className={classes.leftBlock}>
+                            <span>{task}</span>
+                        </div>
+                        <div className={classes.rightBlock}>
+                            <span>{date}</span>
+                            <span>{people}</span>
+                            <span className={classes.light}>{post}</span>
+                        </div>
                     </div>
-
-                    <div
-                        style={{
-                            fontWeight: 200,
-                            fontSize: "14px",
-                            color: "#333333",
-                        }}
-                    >
-                        Раздел находится в разработке
-                    </div>
-                </div>
-            </div>
-        </MainContentContainer >
+                )
+                    : (
+                        <div className={classes.wrapperBorder}>
+                            <div className={classes.leftBlock}>
+                                <span className={classes.strong}>{index}</span>
+                                <span>{task}</span>
+                            </div>
+                            <div className={classes.rightBlock}>
+                                <span>{date}</span>
+                                <span>{people}</span>
+                                <span className={classes.light}>{post}</span>
+                            </div>
+                        </div>
+                    )
+            }
+        </>
     )
 }
+
+const TasksContainer = ({ title, tasks}) => {
+    return (
+        <div className={classes.container}>
+            <span className={`${classes.strong}`}>{title}:</span>
+            {
+                tasks?.map((item, index) => <Task title={title} task={item.task} date={item.date} people={item.people} post={item.post} index={++index} />)
+            }
+        </div>
+    )
+}
+
+export function Project() {
+    return (
+        <MainContentContainer>
+            <div className={classes.main}>
+                <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
+                <span className={classes.strong}>Андрей Макаров</span>
+                <span className={classes.margin}> Начальник службы расходов</span>
+
+                <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>Проект</h2>
+                <h2 className={`${classes.strong} ${classes.center}`}>Закупка оборудования</h2>
+                {
+                    arrayTasks?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
+                }
+            </div>
+        </MainContentContainer>
+    )
+}
+
+
