@@ -131,12 +131,13 @@ export function Strategy() {
                 <div className="">
                     <h4 className={classes.h4}>Краткосрочная цель</h4>
 
+                    <p className={classes.marginLeft}>
+                        1. <div>{currentObjective?.content?.[0]}</div>
+                    </p>
 
-                    <h5 className={classes.h5}>из ситуации</h5>
-                    <p>{currentObjective?.content?.[0]}</p>
-
-                    <h5 className={classes.h5}>из причины</h5>
-                    <p>{currentObjective?.content?.[1]}</p>
+                    <p className={classes.marginLeft}>
+                        2.<div>{currentObjective?.content?.[1]}</div> 
+                    </p>
 
                 </div>
 
