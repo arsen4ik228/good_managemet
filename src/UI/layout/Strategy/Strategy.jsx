@@ -144,10 +144,10 @@ export function Strategy() {
 
                 <div className="">
                     <h4 className={classes.h4}>Проекты:</h4>
-                    {/* <p>Раздел в разработке</p> */}
-                    {
+                    <p>Раздел в разработке</p>
+                    {/* {
                         projects.map((item) => <StyleProject title={item} />)
-                    }
+                    } */}
                 </div>
             </div>
 

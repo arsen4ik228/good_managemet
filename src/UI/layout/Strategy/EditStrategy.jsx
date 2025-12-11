@@ -181,46 +181,28 @@ export function EditStrategy() {
 
     return (
         <EditContainer
-            header={"редактирование"}
+            header={`Стратегия №${currentStrategy?.strategyNumber}`}
             saveClick={handleSave}
             canselClick={handleReset}
             exitClick={exitClick}
-            aditionalbtns={[{
-                name: "Проекты и прграммы",
-                colorBtn: "#333333",
-                backgroundColor: "#CFDEE5",
-                onClick: () => setIsViewProject(!isViewProject),
-                isBackgroundColor:isViewProject,
-            }]}
+            // aditionalbtns={[{
+            //     name: "Проекты и прграммы",
+            //     colorBtn: "#333333",
+            //     backgroundColor: "#CFDEE5",
+            //     onClick: () => setIsViewProject(!isViewProject),
+            //     isBackgroundColor:isViewProject,                
+            // }]}
         >
 
             <div className={classes.wrapper}>
 
                 {
-                    isViewProject ? (
+                    isViewProject 
+                    ? (
                         <>
                             <ViewProject />
 
-                            <div style={{
-                                position: "relative",
-
-                                width: "700px",
-
-                                flex: "1 0 120px",
-
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-
-                                gap: "40px",
-                                padding: "10px",
-
-                                backgroundColor: "#fff",
-                                border: "1px solid #CCCCCC",
-                                borderRadius: "5px",
-
-                                overflowY: "auto",
-                            }}>
+                            <div className={classes.main}>
                                 <fieldset className={classes.frame}>
                                     <legend className={classes.title}>Стратегия</legend>
                                     <TextArea
@@ -238,28 +220,8 @@ export function EditStrategy() {
                             </div>
                         </>
                     )
-                        : (
-                            <div style={{
-                                position: "relative",
-
-                                width: "700px",
-
-                                flex: "1 0 120px",
-
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-
-                                gap: "40px",
-                                padding: "10px",
-
-                                backgroundColor: "#fff",
-                                border: "1px solid #CCCCCC",
-                                borderRadius: "5px",
-
-                                overflowY: "auto",
-                            }}>
-
+                    : (
+                            <div className={classes.main}>
                                 <fieldset className={classes.frame}>
                                     <legend className={classes.title}>Ситуация</legend>
                                     {situationEditors.map((item, index) => (
@@ -363,7 +325,7 @@ export function EditStrategy() {
                                     ></TextArea>
                                 </fieldset>
                             </div>
-                        )
+                    )
                 }
             </div>
 
