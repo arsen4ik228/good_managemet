@@ -53,10 +53,11 @@ export default function GraphicForCard({ dataStatistics, datePoint, type }) {
         );
 
         if (weekTotalPoint) {
-          week.value = parseFloat(weekTotalPoint.value) || null;
+          const parsed = parseFloat(weekTotalPoint.value);
+          week.value = isNaN(parsed) ? null : parsed;
           week.id = weekTotalPoint.id;
           week.correlationType = "Неделя";
-        } else{
+        } else {
           week.value = weekPoints.reduce((sum, point) => {
             const pointValue = parseFloat(point.value);
 
@@ -75,5 +76,7 @@ export default function GraphicForCard({ dataStatistics, datePoint, type }) {
     return countWeeks();
   }, [dataStatistics, datePoint]);
 
-  return <Graphic data={dataSource} type={type}/>;
+
+  console.log("dataSource = ", dataSource);
+  return <Graphic data={dataSource} type={type} />;
 }
