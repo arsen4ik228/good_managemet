@@ -30,18 +30,18 @@ const typeViewStatistic = [
 ];
 
 const widthMap = {
-    fifty_two: {
-         height:"calc(100vh - 200px)", 
-         width: "100%",
-    },
-    twenty_six: {
-        height:"calc(100vh - 200px)", 
-        width: "calc((100vh - 200px)*1.4)",
-    },
-    default: {
-        height:"calc(100vh - 200px)", 
-        width: "calc((100vh - 200px)/1.4)",
-    },
+  fifty_two: {
+    height: "calc(100vh - 200px)",
+    width: "100%",
+  },
+  twenty_six: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)*1.4)",
+  },
+  default: {
+    height: "calc(100vh - 200px)",
+    width: "calc((100vh - 200px)/1.4)",
+  },
 };
 
 const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
@@ -132,7 +132,8 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
       );
 
       if (weekTotalPoint) {
-        week.value = parseFloat(weekTotalPoint.value) || null;
+        const parsed = parseFloat(weekTotalPoint.value);
+        week.value = isNaN(parsed) ? null : parsed;
         week.id = weekTotalPoint.id;
         week.correlationType = "Неделя";
       } else {
