@@ -49,7 +49,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "REACT_APP_BUILD_DATE=$(date +'%d.%m_%H.%M') craco build",
     "test": "craco test",
     "eject": "craco eject"
   },
