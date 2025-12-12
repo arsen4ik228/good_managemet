@@ -18,6 +18,8 @@ import { useRightPanel } from '../../../../hooks';
 import default_avatar from '@image/default_avatar.svg'
 import { baseUrl } from '../../../../helpers/constants';
 import AttachedPolicy from "./attachedPolicy/AttachedPolicy.jsx";
+import { SimpleFileUploadModal } from '../../../Custom/SimpleFilesUploadModal/SimpleFilesUploadModal.jsx';
+import FilesInput from '../../../Custom/FilesInput/FilesInput.jsx';
 
 
 const TYPE_OPTIONS = [
@@ -389,6 +391,11 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                     </Select>
                 </div>
             )} */}
+            <div>
+                {files && (
+                    <FilesInput files={files} setFiles={setFiles}></FilesInput>
+                )}
+            </div>
             <div className={classes.bottomContainer}>
                 <div className={classes.iconSection}>
                     {/* <img src={icon_attachPpolicy} alt="icon_attachPpolicy" />
@@ -408,32 +415,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                         />
                     )}
 
-
-
-                    {
-                        !hiddenPopconfirm && (
-                            <>
-                                <FilesModal
-                                    openModal={openFilesModal}
-                                    setOpenModal={setOpenFilesModal}
-                                    // postOrganizationId={selectedPostOrganizationId}
-                                    files={files}
-                                    setFiles={setFiles}
-                                    unpinFiles={unpinFiles}
-                                    setUnpinFiles={setUnpinFiles}
-                                    organizationId={organizationId}
-                                    setContentInput={setContentInput}
-                                    setContentInputPolicyId={setContentInputPolicyId}
-                                />
-
-                                {/* <AttachedPolicy
-                                    selectedPolicies={selectedPolicies}
-                                    onChange={setSelectedPolicies}
-                                /> */}
-                                </>
-                        )
-                    }
-
+                    <SimpleFileUploadModal setParentFiles={setFiles}></SimpleFileUploadModal>
 
                 </div>
                 <div className={classes.textInputSection}>

@@ -19,8 +19,16 @@ export const fileApi = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["File"],
         }),
+        deleteFile: build.mutation({
+            query: ({id}) => ({
+                url: `file-upload/${id}`,
+                method: "DELETE",
+                // body: formData,
+            }),
+            // invalidatesTags: ["File"],
+        }),
     }),
 
 });
 
-export const { usePostImageMutation, usePostFilesMutation} = fileApi;
+export const { usePostImageMutation, usePostFilesMutation, useDeleteFileMutation} = fileApi;
