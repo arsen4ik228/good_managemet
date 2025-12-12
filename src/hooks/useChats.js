@@ -6,13 +6,14 @@ export const useChats = () => {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
 
-  const { data: allChats, isLoading: loadingAllChats, refetch: refetchAllChats} = useGetAllChatsQuery({organizationId: reduxSelectedOrganizationId})
+  const { data: allChatsData, isLoading: loadingAllChats, refetch: refetchAllChats} = useGetAllChatsQuery({organizationId: reduxSelectedOrganizationId})
 
 
   return {
     reduxSelectedOrganizationId,
 
-    allChats,
+    allChats: allChatsData?.contacts,
+    externalContacts: allChatsData?.externalContacts,
     loadingAllChats,
     refetchAllChats,
   };
