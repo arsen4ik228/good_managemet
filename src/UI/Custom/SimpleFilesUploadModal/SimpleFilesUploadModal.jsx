@@ -328,10 +328,10 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
 
                 message.success(`Успешно загружено ${fileList.length} файл(ов)`);
                 console.warn(response)
-                setParentFiles(response.map(item => ({
-                    attachment: item 
-                })))
-                
+                // setParentFiles(response.map(item => ({
+                //     attachment: item 
+                // })))
+                setParentFiles(response)
                 // Небольшая задержка для отображения прогресса 100%
                 setTimeout(() => {
                     setIsModalVisible(false);
@@ -428,14 +428,14 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
                         <CustomUploadButton />
 
                         <Space>
-                            <Button
+                            {/* <Button
                                 icon={<PaperClipOutlined />}
                                 onClick={handleManualPaste}
                                 type="default"
                                 disabled={isUploading}
                             >
                                 Вставить из буфера
-                            </Button>
+                            </Button> */}
 
                             {fileList.length > 0 && !isUploading && (
                                 <Button
@@ -545,7 +545,7 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
                         Поддерживаются: изображения, видео, PDF, Word документы
                         <br />
                         <span style={{ fontSize: '11px' }}>
-                            Для вставки из буфера: нажмите Ctrl+V или кнопку выше
+                            Для вставки из буфера: нажмите Ctrl+V
                         </span>
                     </div>
 

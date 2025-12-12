@@ -9,6 +9,7 @@ import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext';
 import icon_attach from '@image/icon_ attach.svg'
 import { SimpleFileUploadModal } from '../../../Custom/SimpleFilesUploadModal/SimpleFilesUploadModal';
 import FilesMessages from '../../../Custom/Message/FilesMessages';
+import FilesInput from '../../../Custom/FilesInput/FilesInput';
 
 export default function WorkingPlanInput() {
 
@@ -66,12 +67,12 @@ export default function WorkingPlanInput() {
                 type: 'Личная',
                 content: contentInput,
                 holderPostId: senderPost,
-                dateStart: dateStart.format('YYYY-MM-DD'),
-                deadline: deadline.format('YYYY-MM-DD'),
+                dateStart: dateStart?.format('YYYY-MM-DD'),
+                deadline: deadline?.format('YYYY-MM-DD'),
                 // policyId: values.policy === 'null' ? null : values.policy,
                 // attachmentIds: attachments.map(att => att.attachment.id)
             };
-
+            console.log(updateData)
             await updateTargets(updateData).unwrap();
             message.success('Задача успешно обновлена');
 
@@ -103,8 +104,8 @@ export default function WorkingPlanInput() {
                 Data.policyId = selectedPolicy
             if (files) {
                 Data.attachmentIds = files
-                    .filter(item => !unpinFiles.includes(item.id))
-                    .map(element => element.id)
+                    .filter(item => !unpinFiles.includes(item?.attachment.id))
+                    .map(element => element?.attachment.id)
             }
 
             //(Data)
@@ -161,7 +162,7 @@ export default function WorkingPlanInput() {
         <div className={classes.wrapper}>
             <div>
                 {files && (
-                    <FilesMessages attachmentToMessage={files}></FilesMessages>
+                    <FilesInput files={files} setFiles={setFiles}></FilesInput>
                 )}
             </div>
             <div className={classes.bottomContainer}>

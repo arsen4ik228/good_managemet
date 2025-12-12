@@ -65,9 +65,9 @@
 }
 
 .textContainer {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* white-space: nowrap; */
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
     width: 100%;
     padding-top: 15px;
     padding-bottom: 1px;
