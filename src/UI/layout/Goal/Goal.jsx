@@ -12,7 +12,7 @@ export default function Goal() {
   } = useGoalHook();
 
 
-  const { buutonsArr } = useModuleActions("goal");
+  const { buttonsArr } = useModuleActions("goal");
 
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Goal() {
   return (
     <>
       <MainContentContainer
-        buttons={buutonsArr}
+        buttons={buttonsArr}
       >
         <ViewingGoal
           arrGoals={currentGoal.content}

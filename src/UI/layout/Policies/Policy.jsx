@@ -15,7 +15,7 @@ export default function Policy() {
 
   usePanelPreset(PRESETS["POLICIES"]);
 
- const { buutonsArr } = useModuleActions("policy", policyId);
+ const { buttonsArr } = useModuleActions("policy", policyId);
 
   const {
     refetch,
@@ -43,7 +43,7 @@ export default function Policy() {
   }, [refetch]);
 
   return (
-    <MainContentContainer buttons={buutonsArr} >
+    <MainContentContainer buttons={buttonsArr} >
 
       <div className={classes.main}>
 

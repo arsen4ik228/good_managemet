@@ -30,7 +30,7 @@ export default function Post() {
     usePanelPreset(PRESETS["POSTS"]);
 
 
-    const { buutonsArr } = useModuleActions("post", postId);
+    const { buttonsArr } = useModuleActions("post", postId);
 
     const {
         currentPost,
@@ -59,7 +59,7 @@ export default function Post() {
     }, [refetch]);
 
     return (
-        <MainContentContainer buttons={buutonsArr} >
+        <MainContentContainer buttons={buttonsArr} >
             <div className={classes.main}>
 
                 {/* Руководитель */}

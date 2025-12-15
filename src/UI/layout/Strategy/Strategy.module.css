@@ -26,7 +26,13 @@
   text-align: center;
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.date {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .h4 {
@@ -40,6 +46,14 @@
   margin-bottom: 5px;
   font-size: 14px;
   font-weight: 600;
+}
+
+.marginLeft{
+  margin-left: 8px;
+  margin-top: 10px;
+
+  display: flex;
+  gap:5px
 }
 
 p {

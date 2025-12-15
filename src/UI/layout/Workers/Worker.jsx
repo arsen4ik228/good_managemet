@@ -28,7 +28,7 @@ export default function Worker() {
 
     usePanelPreset(PRESETS["USERS"]);
 
-    // const { buutonsArr } = useModuleActions("users", userId);
+    // const { buttonsArr } = useModuleActions("users", userId);
 
     const buttonsArr = [{
         text: "Редактировать",

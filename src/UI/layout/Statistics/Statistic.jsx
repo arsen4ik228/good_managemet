@@ -71,7 +71,7 @@ export default function Statistic() {
 
     const { statisticId } = useParams()
 
-    const { buutonsArr } = useModuleActions("statistic", statisticId);
+    const { buttonsArr } = useModuleActions("statistic", statisticId);
 
     const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
@@ -210,7 +210,7 @@ export default function Statistic() {
     return (
         <MainContentContainer
             component={<ReportDay />}
-            buttons={buutonsArr}
+            buttons={buttonsArr}
         >
 
             <div style={{
