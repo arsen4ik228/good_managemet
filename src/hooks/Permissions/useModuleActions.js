@@ -59,7 +59,7 @@ export function useModuleActions(section, id) {
 
   // Возвращаем кнопки только если есть права на обновление
   return {
-    buutonsArr: canUpdate ? allButtonsForUpdate[section] || [] : [],
+    buttonsArr: canUpdate ? allButtonsForUpdate[section] || [] : [],
     isCreate: canCreate ? true : false,
     isChange_control_panel: canUpdate ? true : false,
     isChange_svodka: canUpdate ? true : false,

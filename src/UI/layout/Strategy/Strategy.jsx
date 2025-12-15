@@ -19,10 +19,22 @@ import { useReactToPrint } from 'react-to-print';
 
 import iconSprite from "./img/sprite.svg"
 
+
+
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+}
+
+
 export function Strategy() {
 
     const { strategyId } = useParams();
-    const { buutonsArr } = useModuleActions("strategy", strategyId);
+    const { buttonsArr } = useModuleActions("strategy", strategyId);
 
 
     const { currentStrategy, refetchStrategy } = useGetSingleStrategy(strategyId);
@@ -102,11 +114,21 @@ export function Strategy() {
     }
 
     return (
-        <MainContentContainer buttons={[
-            ...buutonsArr,
-            ...(buutonsArr.length > 0 ? [{ text: "начать выполнение", click: () => updateStrategyHandler() }] : []),
-            { text: "печать", click: reactToPrintFn }
-        ]}
+        <MainContentContainer
+            buttons={[
+                ...(currentStrategy.state !== "Завершено"
+                    ? [
+                        ...buttonsArr,
+                        ...(buttonsArr.length > 0
+                            ? [{ text: "начать выполнение", click: () => updateStrategyHandler() }]
+                            : []
+                        )
+                    ]
+                    : []
+                ),
+                { text: "печать", click: reactToPrintFn }
+            ]}
+
         >
             <div ref={contentRef} className={classes.main}>
                 <div className={classes.title}>
@@ -114,7 +136,18 @@ export function Strategy() {
                     <h3 className={classes.h3}>{localStorage.getItem("name")}</h3>
                 </div>
 
-                <h3 className={classes.h3}>Стратегия №{currentStrategy?.strategyNumber}</h3>
+                <div className="">
+                    <h3 className={classes.h3}>Стратегия №{currentStrategy?.strategyNumber}</h3>
+                    <h3 className={classes.date}>
+                        {currentStrategy.state === "Черновик"
+                            ? null
+                            : currentStrategy.state === "Активный"
+                                ? `от ${formatDate(currentStrategy.updatedAt)}`
+                                : `c ${formatDate(currentStrategy.createdAt)} по ${formatDate(currentStrategy.updatedAt)}`
+                        }
+                    </h3>
+                </div>
+
 
                 <div>
                     <h4 className={classes.h4}>Ситуация</h4>
@@ -136,7 +169,7 @@ export function Strategy() {
                     </p>
 
                     <p className={classes.marginLeft}>
-                        2.<div>{currentObjective?.content?.[1]}</div> 
+                        2.<div>{currentObjective?.content?.[1]}</div>
                     </p>
 
                 </div>
