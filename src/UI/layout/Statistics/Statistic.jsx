@@ -1,5 +1,5 @@
-import React from 'react'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import classes from './Statistics.module.css'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
 import Graphic from "../../app/Graphic/Graphic";
 import useGetReduxOrganization from "../../../hooks/useGetReduxOrganization";
@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import { useParams } from 'react-router-dom';
 import { homeUrl } from '@helpers/constants'
 
+import { useReactToPrint } from 'react-to-print';
 
 const { Title } = Typography;
 
@@ -207,10 +208,13 @@ export default function Statistic() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const contentRef = useRef(null);
+    const reactToPrintFn = useReactToPrint({ contentRef });
+
     return (
         <MainContentContainer
             component={<ReportDay />}
-            buttons={buttonsArr}
+            buttons={[...buttonsArr, { text: "распечатать", click: reactToPrintFn }]}
         >
 
             <div style={{
@@ -229,7 +233,7 @@ export default function Statistic() {
                     {statisticId ? (
                         <>
 
-                            <div style={{
+                            <div ref={contentRef} style={{
 
                                 ...(widthMap[chartType] || widthMap.default),
 
@@ -271,7 +275,7 @@ export default function Statistic() {
                                 </div>
 
 
-                                <Space
+                                <Space className={classes.noPrint}
                                     size="large"
                                     align="center"
                                     style={{
