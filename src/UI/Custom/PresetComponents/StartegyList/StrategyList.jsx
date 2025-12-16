@@ -11,6 +11,16 @@ import { useCreateStrategy } from '../../../../hooks/Strategy/useCreateStrategy'
 import { notEmpty } from "@helpers/helpers.js"
 import { message } from 'antd';
 
+
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+}
+
 export default function StrategyList() {
 
     const navigate = useNavigate()
@@ -50,7 +60,6 @@ export default function StrategyList() {
     }
 
 
-
     const savePostStarteg = async () => {
         await postStrategy({
             content: " ",
@@ -66,18 +75,18 @@ export default function StrategyList() {
     };
 
 
-        useEffect(() => {
-    
-            if (!notEmpty(activeAndDraftStrategies)) return;
-    
-            const pathname = location.pathname;
-            const parts = pathname.split('/').filter(part => part !== '');
-            const removedParts = parts.slice(-1);
-    
-            if (removedParts[0] !== 'strategy') return;
-    
-            navigate(`helper/strategy/${activeAndDraftStrategies[0]?.id}`)
-        }, [activeAndDraftStrategies])
+    useEffect(() => {
+
+        if (!notEmpty(activeAndDraftStrategies)) return;
+
+        const pathname = location.pathname;
+        const parts = pathname.split('/').filter(part => part !== '');
+        const removedParts = parts.slice(-1);
+
+        if (removedParts[0] !== 'strategy') return;
+
+        navigate(`helper/strategy/${activeAndDraftStrategies[0]?.id}`)
+    }, [activeAndDraftStrategies])
 
     console.log(activeAndDraftStrategies)
 
@@ -104,7 +113,10 @@ export default function StrategyList() {
                     <React.Fragment key={index}>
                         <ListElem
                             icon={getIcon(item?.state)}
-                            upperText={`№${item?.strategyNumber}`}
+                            upperText={`№${item?.strategyNumber}${item.state === "Активный"
+                                ? ` от ${formatDate(item.updatedAt)}`
+                                : ""
+                                }`}
                             linkSegment={item.id}
                             clickFunc={() => openStrategy(item.id)}
                             upperLabel={getLabel(item?.state)}
@@ -116,7 +128,8 @@ export default function StrategyList() {
                     <React.Fragment key={index}>
                         <ListElem
                             icon={getIcon()}
-                            upperText={`№${item?.strategyNumber}`}
+                            colorUpperText={"#999999"}
+                            upperText={`№${item?.strategyNumber} c ${formatDate(item.createdAt)} по ${formatDate(item.updatedAt)}`}
                             linkSegment={item.id}
                             clickFunc={() => openStrategy(item.id)}
                             upperLabel={getLabel(item?.state)}
