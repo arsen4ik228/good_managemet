@@ -21,7 +21,7 @@ export default function MainContentContainer({ component, buttons, children }) {
           </div>
           <div>
             {buttons?.map((item, index) => (
-              <Button key={index} onClick={item.click}>{item.text}</Button>
+              <Button key={index} onClick={item.click} style={{color: item?.color}}>{item.text}</Button>
             ))}
             {component}
           </div>
