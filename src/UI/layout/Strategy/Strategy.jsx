@@ -19,8 +19,6 @@ import { useReactToPrint } from 'react-to-print';
 
 import iconSprite from "./img/sprite.svg"
 
-
-
 function formatDate(isoString) {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -29,7 +27,6 @@ function formatDate(isoString) {
 
     return `${day}.${month}.${year}`;
 }
-
 
 export function Strategy() {
 
@@ -90,6 +87,11 @@ export function Strategy() {
                         })();
                     }
                 });
+            } else {
+                await updateStrategy({
+                    _id: strategyId,
+                    state: "Активный",
+                }).unwrap();
             }
         } catch (err) {
             message.error("Ошибка!");
@@ -120,16 +122,16 @@ export function Strategy() {
                     ? [
                         ...buttonsArr,
                         ...(buttonsArr.length > 0
-                            ? [{ text: "начать выполнение", click: () => updateStrategyHandler() }]
-                            : []
-                        )
+                            ? currentStrategy.state !== "Активный"
+                                ? [{ text: "начать выполнение", color: "#D07400", click: updateStrategyHandler }]
+                                : []
+                            : [])
                     ]
-                    : []
-                ),
+                    : []),
                 { text: "печать", click: reactToPrintFn }
             ]}
-
         >
+
             <div ref={contentRef} className={classes.main}>
                 <div className={classes.title}>
                     <img src={org_icon} alt="картинка" width={"100px"} height={"100px"} className={classes.image} />
