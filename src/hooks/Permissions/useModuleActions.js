@@ -15,42 +15,42 @@ export function useModuleActions(section, id) {
   const allButtonsForUpdate = {
     users: [
       {
-        text: "Редактировать",
+        text: "редактировать",
         click: () => window.open(`${homeUrl}#/editUsers/${id}`, "_blank"),
       },
     ],
     goal: [
       {
-        text: "Редактировать",
+        text: "редактировать",
         click: () => window.open(`${homeUrl}#/editGoal`, "_blank"),
       },
     ],
     policy: [
       {
-        text: "Редактировать",
+        text: "редактировать",
         click: () => window.open(`${homeUrl}#/editPolicy/${id}`, "_blank"),
       },
     ],
     post: [
       {
-        text: "Редактировать",
+        text: "редактировать",
         click: () => window.open(`${homeUrl}#/editPost/${id}`, "_blank"),
       },
     ],
     strategy: [
       {
-        text: "Редактировать",
+        text: "редактировать",
         click: () => window.open(`${homeUrl}#/editStrategy/${id}`, "_blank"),
       },
     ],
     statistic: [
       {
-        text: "Редактировать",
+        text: "редактировать",
         click: () =>
           window.open(`${homeUrl}#/editStatisticInformation/${id}`, "_blank"),
       },
       {
-        text: "Ввести данные",
+        text: "ввести данные",
         click: () =>
           window.open(`${homeUrl}#/editStatisticPointsData/${id}`, "_blank"),
       },

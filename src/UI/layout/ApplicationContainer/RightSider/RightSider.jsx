@@ -23,6 +23,7 @@ import strategy from '@image/strategy.svg';
 import workingPlan from '@image/strategy.svg';
 import { useGetReduxOrganization } from '../../../../hooks';
 import WorkingPlanCreationComponent from './WorkingPlanCreationComponent';
+import active_strategy from '@image/active_strategy.svg'
 
 export default function RightSider({ config: initialConfig }) {    //
     const { convertId, contactId } = useParams()
@@ -52,16 +53,16 @@ export default function RightSider({ config: initialConfig }) {    //
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
         { id: '11', icon: workingPlan_icon, text: 'Рабочий план', link: 'workingPlan' },
 
-        // { id: '8', icon: project, text: 'Стратегия', link: 'strategy',},
+        { id: '8', icon: active_strategy, text: 'Стратегия', link: 'strategy',},
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
         { id: '10', icon: project, text: 'Схема компании', link: 'schemaCompany', isActive: false },
 
-        { id: '12', icon: project, text: 'Академия', link: 'academy', isActive: false },
-        { id: '13', icon: project, text: 'Корпоративное обучение', link: 'education', isActive: false },
-        { id: '14', icon: project, text: 'CRM', link: 'CRM', isActive: false },
-        { id: '15', icon: project, text: 'Банк собственника', link: 'bank', isActive: false },
-        { id: '16', icon: project, text: 'Информационный канал', link: 'channel', isActive: false },
-        { id: '17', icon: project, text: 'Финансовые системы', link: 'finance', isActive: false },
+        // { id: '12', icon: project, text: 'Академия', link: 'academy', isActive: false },
+        // { id: '13', icon: project, text: 'Корпоративное обучение', link: 'education', isActive: false },
+        // { id: '14', icon: project, text: 'CRM', link: 'CRM', isActive: false },
+        // { id: '15', icon: project, text: 'Банк собственника', link: 'bank', isActive: false },
+        // { id: '16', icon: project, text: 'Информационный канал', link: 'channel', isActive: false },
+        // { id: '17', icon: project, text: 'Финансовые системы', link: 'finance', isActive: false },
     ];
 
     const handlerClickHelper = (link) => {
