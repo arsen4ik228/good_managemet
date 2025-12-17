@@ -44,6 +44,20 @@ const widthMap = {
   },
 };
 
+const calculateStats = (data) => {
+  const values = data
+    .map((item) => parseFloat(item.value))
+    .filter((v) => !isNaN(v));
+
+  if (!values.length) return { min: null, avg: null, max: null };
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
+
+  return { min, avg, max };
+};
+
 const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
   const [dataSource, setDataSource] = useState([]);
   const [chartType, setChartType] = useState("thirteen");
@@ -317,6 +331,11 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
     }
   }, [statisticData, modalDatePoint]);
 
+
+  console.log("dataSource =", dataSource);
+
+  // Внутри компонента
+  const stats = calculateStats(dataSource);
   return (
     <>
       <Modal
@@ -412,6 +431,13 @@ const ModalStatistic = ({ selectedStatistic, openModal, setOpenModal }) => {
             />
           </Tooltip>
         </Space>
+
+        {/* <div style={{ textAlign: "center", marginBottom: 16 }}>
+          <span style={{ margin: "0 16px" }}>минимум: {stats.min ?? "-"}</span>
+          <span style={{ margin: "0 16px" }}>максимум: {stats.max ?? "-"}</span>
+          <span style={{ margin: "0 16px" }}>среднее: {stats.avg?.toFixed(2) ?? "-"}</span>
+        </div> */}
+
       </Modal>
     </>
   );

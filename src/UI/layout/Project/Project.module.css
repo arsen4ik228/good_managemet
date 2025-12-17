@@ -53,6 +53,7 @@
     display: flex;
     justify-content: space-between;
     padding-bottom: 10px;
+    column-gap: 50px;
 }
 
 .wrapperBorder {
