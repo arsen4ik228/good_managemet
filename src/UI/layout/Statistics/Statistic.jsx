@@ -233,7 +233,7 @@ export default function Statistic() {
                     {statisticId ? (
                         <>
 
-                            <div ref={contentRef} style={{
+                            <div ref={contentRef}  className={classes.print} style={{
 
                                 ...(widthMap[chartType] || widthMap.default),
 

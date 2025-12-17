@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
+import classes from "./Graphic.module.css";
 
 // Функция для определения формата даты
 const detectDateFormat = (dateString) => {
@@ -244,4 +245,4 @@ export default function Graphic({ data, widthObj, isSmallPoint, type = "Прям
   }, [data, type]);
 
   return <div ref={chartRef} style={{ ...widthObj }} />;
-}
+} 

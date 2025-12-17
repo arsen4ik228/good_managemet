@@ -2,5 +2,7 @@
     .noPrint {
         display: none !important;
     }
-
+    .print{
+        width: 100% !important;
+    }
 }
