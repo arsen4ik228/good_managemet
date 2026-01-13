@@ -19,20 +19,20 @@ jobs:
           node-version: 18
           cache: npm
 
-      - name: Clean install dependencies
+      - name: Install dependencies
         run: |
-          rm -rf node_modules
-          rm -f package-lock.json
-          npm cache clean --force
+          rm -rf node_modules package-lock.json
           npm install --legacy-peer-deps
 
       - name: Build React app
-        run: npm run build
+        run: |
+          export REACT_APP_BUILD_DATE=$(date +%Y-%m-%d_%H-%M-%S)
+          npm run build
         env:
           CI: false
 
       - name: Upload build to server
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v0.1.8
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
