@@ -21,21 +21,11 @@ jobs:
 
       - name: Clean and force install AJV 8
         run: |
-          # Полная очистка
           rm -rf node_modules package-lock.json
           npm cache clean --force
-          
-          # Явно устанавливаем AJV 8 перед всеми остальными зависимостями
-          # AJV 8 - последняя версия, совместимая с react-scripts 5
           npm install ajv@8.12.0 ajv-keywords@5.1.0 --save-dev --legacy-peer-deps --no-audit
-          
-          # Устанавливаем schema-utils совместимую версию
           npm install schema-utils@4.2.0 --save-dev --legacy-peer-deps --no-audit
-          
-          # Устанавливаем остальные зависимости
           npm install --legacy-peer-deps --no-audit --force
-          
-          # Проверяем установленные версии
           echo "=== Проверка версий ==="
           npm list ajv ajv-keywords schema-utils
 
@@ -50,8 +40,8 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: |
-            ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
+          key_base64: true
           port: ${{ secrets.SSH_PORT }}
           source: "build/*"
           target: "/var/www/buildGM"
@@ -62,8 +52,8 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: |
-            ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
+          key_base64: true
           port: ${{ secrets.SSH_PORT }}
           script: |
             sudo -n systemctl reload nginx
