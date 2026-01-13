@@ -3,7 +3,7 @@ name: CRA Frontend CI/CD
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   build-and-deploy:
@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "build/*"
-          target: "/var/www/frontend"
+          target: "/var/www/buildGM"
           strip_components: 1
 
       - name: Reload nginx
