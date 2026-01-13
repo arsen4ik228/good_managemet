@@ -36,24 +36,24 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Upload build to server
-        uses: appleboy/scp-action@v1.0.0
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           key_base64: true
-          port: ${{ secrets.SSH_PORT }}
           source: "build/*"
           target: "/var/www/buildGM"
           strip_components: 1
 
       - name: Reload nginx
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           key_base64: true
-          port: ${{ secrets.SSH_PORT }}
           script: |
             sudo -n systemctl reload nginx
