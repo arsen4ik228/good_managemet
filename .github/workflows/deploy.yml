@@ -13,31 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 16
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 16.20.2
           cache: npm
 
-      - name: Clean and force install AJV 8
+      - name: Install dependencies
         run: |
-          # Полная очистка 
           rm -rf node_modules package-lock.json
           npm cache clean --force
-          
-          # Явно устанавливаем AJV 8 перед всеми остальными зависимостями
-          # AJV 8 - последняя версия, совместимая с react-scripts 5
-          npm install ajv@8.12.0 ajv-keywords@5.1.0 --save-dev --legacy-peer-deps --no-audit
-          
-          # Устанавливаем schema-utils совместимую версию
-          npm install schema-utils@4.2.0 --save-dev --legacy-peer-deps --no-audit
-          
-          # Устанавливаем остальные зависимости
-          npm install --legacy-peer-deps --no-audit --force
-          
-          # Проверяем установленные версии
-          echo "=== Проверка версий ==="
-          npm list ajv ajv-keywords schema-utils
+          npm install --legacy-peer-deps --no-audit
 
       - name: Build React app
         run: npm run build
@@ -45,25 +31,36 @@ jobs:
           CI: false
           NODE_OPTIONS: "--max-old-space-size=4096"
 
-      - name: Upload build to server
-        uses: appleboy/scp-action@v1.0.0
+      - name: Clean target folder on server
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: |
-            ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            rm -rf /var/www/buildGM/*
+            mkdir -p /var/www/buildGM
+            chown -R $USER:$USER /var/www/buildGM
+
+      - name: Upload build to server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
           source: "build/*"
           target: "/var/www/buildGM"
           strip_components: 1
+          overwrite: true
 
       - name: Reload nginx
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: |
-            ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo -n systemctl reload nginx
+            sudo systemctl reload nginx
