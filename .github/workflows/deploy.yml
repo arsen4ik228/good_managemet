@@ -34,16 +34,20 @@ jobs:
         env:
           CI: false
           NODE_OPTIONS: "--max-old-space-size=4096"
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+          REACT_APP_SOCKET_URL: ${{ secrets.REACT_APP_SOCKET_URL }}
+          REACT_APP_LINK_URL: ${{ secrets.REACT_APP_LINK_URL }}
+          REACT_APP_TG_BOT_URL: ${{ secrets.REACT_APP_TG_BOT_URL }}
+          REACT_APP_BUILD_DATE: ${{ steps.set_build_date.outputs.build_date }}
 
       - name: Deploy build folder as root
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: root                  # Под root
+          username: root
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Удаляем старую сборку
             rm -rf /var/www/buildGM/build
             mkdir -p /var/www/buildGM/build
 
@@ -51,12 +55,12 @@ jobs:
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: root                  # Под root
+          username: root
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           source: "build"
           target: "/var/www/buildGM"
-          strip_components: 0             # Сохраняем папку build целиком
+          strip_components: 0
           overwrite: true
 
       - name: Set ownership to root
