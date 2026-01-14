@@ -29,6 +29,11 @@ jobs:
           echo "=== Проверка версий ==="
           npm list ajv ajv-keywords schema-utils
 
+      - name: Set build date
+        id: set_build_date
+        run: |
+          echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
       - name: Build React app
         run: npm run build
         env:
