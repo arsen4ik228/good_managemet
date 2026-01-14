@@ -52,10 +52,9 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Очистка старой сборки
-            rm -rf /var/www/buildGM/*
-            mkdir -p /var/www/buildGM
-            chown -R $USER:$USER /var/www/buildGM
+            rm -rf /var/www/buildGM/build
+            mkdir -p /var/www/buildGM/build
+            chown -R $USER:$USER /var/www/buildGM/build
 
       - name: Upload build to server
         uses: appleboy/scp-action@v1
@@ -65,8 +64,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           source: "build/*"
-          target: "/var/www/buildGM"
-          strip_components: 1
+          target: "/var/www/buildGM/build"
+          strip_components: 0
           overwrite: true
 
       - name: Reload nginx
