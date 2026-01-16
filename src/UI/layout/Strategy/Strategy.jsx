@@ -123,9 +123,12 @@ export function Strategy() {
                         ...buttonsArr,
                         ...(buttonsArr.length > 0
                             ? currentStrategy.state !== "Активный"
-                                ? [{ text: "начать выполнение", color: "#D07400", click: updateStrategyHandler }]
+                                ? [
+                                    { text: "разбить на проекты" },
+                                    { text: "начать выполнение", color: "#D07400", click: updateStrategyHandler },
+                                ]
                                 : []
-                            : [])
+                            : []),
                     ]
                     : []),
                 { text: "печать", click: reactToPrintFn }
