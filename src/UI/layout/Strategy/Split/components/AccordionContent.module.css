@@ -1,0 +1,22 @@
+
+.contentText {
+    margin-bottom: 0.75rem;
+}
+
+.infoBlock {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 0.5rem;
+}
+
+.infoLabel {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.infoValue {
+    width: 100%;
+    margin-left: 10px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}

@@ -24,9 +24,7 @@ import DesktopDialogPage from "../../UI/layout/Chat/desktop/DesktopDoalogPage";
 import ArchiveDialogPage from "../../UI/layout/Chat/ArchiveDialog/ArchiveDialog";
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
-import { MainStrategy } from "../../UI/layout/Strategy/MainStrategy";
-import { Strategy } from "../../UI/layout/Strategy/Strategy";
-import { EditStrategy } from "../../UI/layout/Strategy/EditStrategy";
+import { StrategyPage } from "../../UI/layout/Strategy/StrategyPage";
 
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
 import { Project } from "../../UI/layout/Project/Project";
@@ -179,14 +177,6 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-          <Route
-            path="editStrategy/:strategyId"
-            element={
-              <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                <EditStrategy />
-              </React.Suspense>
-            }
-          />
           {/* ==== Панель управления / Сводка ==== */}
           <Route
             path="controlPanel"
@@ -296,7 +286,7 @@ function DesktopApp() {
                 path="strategy/:strategyId"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                    <MainStrategy />
+                    <StrategyPage />
                   </React.Suspense>
                 }
               />

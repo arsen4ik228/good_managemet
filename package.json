@@ -11,6 +11,8 @@
     "@fingerprintjs/fingerprintjs": "^4.5.1",
     "@lexical/react": "^0.21.0",
     "@mdxeditor/editor": "^3.37.0",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-tooltip": "^1.2.8",
     "@reduxjs/toolkit": "^2.5.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
