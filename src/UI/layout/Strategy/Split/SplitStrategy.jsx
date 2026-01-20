@@ -1,23 +1,25 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 import classes from "./SplitStrategy.module.css";
 
 import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { useAllProject } from "@hooks/Project/useAllProject";
 import BtnIconRdx from "../../../radixUI/buttonIcon/BtnIconRdx";
 
 import copy from "../img/copy.svg";
 import plusCircle from "../img/plusCircle.svg";
 
-import { useRightPanel, usePanelPreset } from '@hooks';
+import { useRightPanel, usePanelPreset } from "@hooks";
 
 export default function SplitStrategy({ currentStrategy }) {
-    const containerRef = useRef(null);
     const [selectionUI, setSelectionUI] = useState(null);
-
 
     const { PRESETS } = useRightPanel();
     usePanelPreset(PRESETS["PROJECT"]);
+
+    const {
+        reduxSelectedOrganizationId,
+        createProject,
+    } = useCreateProject();
 
     const handleMouseUp = (e) => {
         const textarea = e.target;
@@ -32,23 +34,23 @@ export default function SplitStrategy({ currentStrategy }) {
 
         const selectedText = textarea.value.slice(start, end);
 
-        const textareaRect = textarea.getBoundingClientRect();
-        const containerRect = containerRef.current.getBoundingClientRect();
-
-        // Получаем стили textarea
         const style = window.getComputedStyle(textarea);
         const lineHeight = parseInt(style.lineHeight, 10) || 20;
         const paddingTop = parseInt(style.paddingTop, 10) || 0;
         const paddingRight = parseInt(style.paddingRight, 10) || 0;
 
-        // Номер строки начала выделения
-        const startLine = textarea.value.substr(0, start).split("\n").length - 1;
+        const isBottomToTop = textarea.selectionDirection === "backward";
+        const anchorIndex = isBottomToTop ? end : start;
+        const lineIndex = textarea.value.slice(0, anchorIndex).split("\n").length - 1;
 
-        // Координата top — на уровне первой строки выделения
-        const top = textareaRect.top - containerRect.top + paddingTop + startLine * lineHeight - textarea.scrollTop;
+        // top/left относительно контейнера .main
+        const containerRect = textarea.closest(`.${classes.main}`).getBoundingClientRect();
+        const textareaRect = textarea.getBoundingClientRect();
 
-        // Координата left — справа внутри textarea с небольшим отступом
-        const left = textareaRect.right - containerRect.left - paddingRight + 8; // 8px от края текста
+        let top = textareaRect.top - containerRect.top + paddingTop + lineIndex * lineHeight;
+        if (isBottomToTop) top += lineHeight;
+
+        const left = textareaRect.right - containerRect.left - paddingRight + 8;
 
         setSelectionUI({
             top,
@@ -57,25 +59,14 @@ export default function SplitStrategy({ currentStrategy }) {
         });
     };
 
-    const {
-        projects,
-        projectsWithProgram,
-    } = useAllProject();
-
-    const {
-        reduxSelectedOrganizationId,
-        createProject,
-    } = useCreateProject();
-
-
     const createNewProject = async () => {
         try {
             await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект 123`,
+                projectName: "Новый проект",
                 type: "Проект",
                 strategyId: currentStrategy.id,
-                content: selectionUI?.text || " ", // если текст есть — используем, иначе " "
+                content: selectionUI?.text || " ",
                 targetCreateDtos: [
                     {
                         type: "Продукт",
@@ -89,32 +80,13 @@ export default function SplitStrategy({ currentStrategy }) {
         }
     };
 
-
-
     const copySelectedText = () => {
         if (!selectionUI?.text) return;
-
         navigator.clipboard.writeText(selectionUI.text);
     };
 
-
     return (
-        <div className={classes.main} ref={containerRef}>
-
-            {/* <button onClick={createNewProject}>создать проект</button>
-
-            {
-                [...projectsWithProgram, ...projects].map((p) => (
-                    <AccordionRdx
-                        accordionId={p.id}
-                        triggerContent={<TriggerContent title={p.projectName} />}
-                    >
-                        <AccordionContent project={p} updateProject={updateProject} info={p.content} name={p.projectName} product={p?.targets?.find((item) => item.type === "Продукт")?.content} />
-                    </AccordionRdx>
-                ))
-            } */}
-
-
+        <div className={classes.main}>
             <fieldset className={classes.frame}>
                 <legend className={classes.title}>Стратегия</legend>
 
@@ -136,16 +108,22 @@ export default function SplitStrategy({ currentStrategy }) {
                 <div
                     className={classes.selectionActions}
                     style={{
-                        position: "absolute",
                         top: selectionUI.top,
                         left: selectionUI.left,
                     }}
                 >
-                    <BtnIconRdx icon={plusCircle} onClick={createNewProject} tooltipText={"создать проект"} />
-                    <BtnIconRdx icon={copy} tooltipText={"скопировать"} onClick={copySelectedText} />
+                    <BtnIconRdx
+                        icon={plusCircle}
+                        onClick={createNewProject}
+                        tooltipText="создать проект"
+                    />
+                    <BtnIconRdx
+                        icon={copy}
+                        onClick={copySelectedText}
+                        tooltipText="скопировать"
+                    />
                 </div>
             )}
-
         </div>
     );
 }

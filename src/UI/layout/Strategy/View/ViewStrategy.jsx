@@ -1,7 +1,7 @@
 import classes from './ViewStrategy.module.css'
 import org_icon from "@image/org_icon.svg"
 
-// import iconSprite from "../img/sprite.svg"
+import projects from "../img/projects.svg"
 import useViewStrategy from './useViewStrategy';
 import TextAreaRdx from '../../../radixUI/textArea/TextAreaRdx';
 
@@ -14,9 +14,18 @@ function formatDate(isoString) {
     return `${day}.${month}.${year}`;
 }
 
+const StyleProject = ({ title }) => {
+    return (
+        <div className={classes.itemProject}>
+            <img src={projects} alt={projects} />
+            <button>{title}</button>
+        </div>
+    );
+}
+
 export function ViewStrategy({ contentRef }) {
 
-    const { currentStrategy, currentObjective } = useViewStrategy();
+    const { currentStrategy, currentObjective, projects } = useViewStrategy();
 
     return (
         <div ref={contentRef} className={classes.main}>
@@ -68,7 +77,7 @@ export function ViewStrategy({ contentRef }) {
                 <h4 className={classes.h4}>Стратегия</h4>
                 <TextAreaRdx
                     style={{
-                        padding:0
+                        padding: 0
                     }}
                     value={currentStrategy?.content}
                     readOnly
@@ -78,28 +87,10 @@ export function ViewStrategy({ contentRef }) {
 
             <div className="">
                 <h4 className={classes.h4}>Проекты:</h4>
-                <p>Раздел в разработке</p>
-                {/* {
-                        projects.map((item) => <StyleProject title={item} />)
-                    } */}
+                {
+                    projects.map((p) => <StyleProject title={p.projectName} />)
+                }
             </div>
         </div>
     )
 }
-
-
-// const projects = ["Закупка оборудования", "Установка вентиляции", "Ремонт крыши"];
-
-// const StyleProject = ({ title }) => {
-//     return (
-//         <div className={classes.itemProject}>
-//             <svg viewBox="0 0 24 24" width="24.000000" height="24.000000" fill="none" xmlns="http://www.w3.org/2000/svg">
-//                 <use xlinkHref={`${iconSprite}#${"project"}`}></use>
-//             </svg>
-//             <button>{title}</button>
-//         </div>
-//     );
-// }
-
-// const { PRESETS } = useRightPanel();
-// usePanelPreset(PRESETS["STRATEGY"]);

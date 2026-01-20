@@ -1,15 +1,13 @@
-
-
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 import { message, Modal } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
-import { useGetSingleObjective } from '@hooks/Objective/useGetSingleObjective';
-import { useGetSingleStrategy } from '@hooks/Strategy/useGetSingleStrategy';
-import { useUpdateSingleStrategy } from '@hooks/Strategy/useUpdateSingleStrategy';
-import { useAllStrategy } from '@hooks/Strategy/useAllStrategy';
-
+import { useGetSingleObjective } from "@hooks/Objective/useGetSingleObjective";
+import { useGetSingleStrategy } from "@hooks/Strategy/useGetSingleStrategy";
+import { useUpdateSingleStrategy } from "@hooks/Strategy/useUpdateSingleStrategy";
+import { useAllStrategy } from "@hooks/Strategy/useAllStrategy";
+import { useAllProject } from "@hooks/Project/useAllProject";
 
 export default function useViewStrategy() {
   const { strategyId } = useParams();
@@ -19,6 +17,8 @@ export default function useViewStrategy() {
 
   const { updateStrategy } = useUpdateSingleStrategy();
   const { activeStrategyId } = useAllStrategy();
+
+  const { projects, projectsWithProgram } = useAllProject();
 
   const updateStrategyHandler = async () => {
     try {
@@ -59,6 +59,9 @@ export default function useViewStrategy() {
   };
 
   return {
-    currentStrategy, currentObjective, updateStrategyHandler
+    currentStrategy,
+    currentObjective,
+    updateStrategyHandler,
+    projects:[...projects, ...projectsWithProgram]?.filter((p) => p.strategyId === strategyId),
   };
 }
