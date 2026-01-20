@@ -11,20 +11,6 @@ import { TriggerContent } from "../../../layout/Strategy/Split/components/Trigge
 import { AccordionContent } from "../../../layout/Strategy/Split/components/AccordionContent";
 
 export default function ProjectsList() {
-    // const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
-
-    // const filtredPosts = useMemo(() => {
-    //     if (!seacrhUsersSectionsValue?.trim()) {
-    //         return users; // Возвращаем все элементы если поиск пустой
-    //     }
-
-    //     const searchLower = seacrhUsersSectionsValue?.toLowerCase();
-    //     return users?.filter(item =>
-    //         item?.lastName.toLowerCase().includes(searchLower) ||
-    //         item?.firstName.toLowerCase().includes(searchLower)
-    //     );
-    // }, [seacrhUsersSectionsValue, users]);
-
     const { strategyId } = useParams();
 
     const {
@@ -63,17 +49,30 @@ export default function ProjectsList() {
     };
 
 
+    const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
+
+    const filtredProjects = useMemo(() => {
+        if (!seacrhUsersSectionsValue?.trim()) {
+            return  [...projectsWithProgram, ...projects]; // Возвращаем все элементы если поиск пустой
+        }
+
+        const searchLower = seacrhUsersSectionsValue?.toLowerCase();
+        return  [...projectsWithProgram, ...projects]?.filter(item =>
+            item?.projectName.toLowerCase().includes(searchLower)
+        );
+    }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
+
     return (
         <>
             <CustomList
                 title={'Проекты'}
-                // searchValue={seacrhUsersSectionsValue}
-                // searchFunc={setSeacrhUsersSectionsValue}
+                searchValue={seacrhUsersSectionsValue}
+                searchFunc={setSeacrhUsersSectionsValue}
                 addButtonClick={() => createNewProject()}
                 addButtonText={'Создать проект'}
             >
                 {
-                    [...projectsWithProgram, ...projects].map((p) => (
+                   filtredProjects?.filter((p) => p.strategyId === strategyId)?.map((p) => (
                         <AccordionRdx
                             accordionId={p.id}
                             triggerContent={<TriggerContent title={p.projectName} />}
