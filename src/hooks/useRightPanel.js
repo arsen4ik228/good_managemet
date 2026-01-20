@@ -58,6 +58,7 @@ export const useRightPanel = () => {
             USERS: 'users',
             WORKINGPLAN: 'workingPlan',
             STRATEGY: 'strategy',
+            PROJECT: 'project',
         }
     };
 };

@@ -1,7 +1,6 @@
-import React from 'react'
 import TextArea from "antd/es/input/TextArea";
 
-export default function TextAreaRdx({ ...props }) {
+export default function TextAreaRdx({ style, ...props }) {
   return (
     <TextArea
       style={{
@@ -9,6 +8,7 @@ export default function TextAreaRdx({ ...props }) {
         border: "none",
         outline: "none",
         boxShadow: "none",
+        ...style,
       }}
       { ...props }
     />

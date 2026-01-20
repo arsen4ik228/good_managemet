@@ -70,25 +70,26 @@ export const AccordionContent = ({
             <TextAreaRdx className={styles.contentText}
                 value={projectData.info}
                 onChange={handleChange('info')}
-                autoSize={{ minRows: 3, maxRows: 6 }}
-                placeholder="Описание фазы проекта..." />
+                autoSize={{ minRows: 3, maxRows: 6 }} />
+            <div className={styles.line}></div>
 
 
-            <div className={styles.infoBlock}>
-                <div className={styles.infoLabel}>Название проекта</div>
-                <input
-                    className={styles.infoValue}
-                    value={projectData.name}
-                    onChange={handleChange('name')}
-                />
+            <div className={styles.infoLabel}>Название проекта</div>
+            <input
+                className={styles.infoValue}
+                value={projectData.name}
+                onChange={handleChange('name')}
+            />
+            <div className={styles.line}></div>
 
-                <div className={styles.infoLabel}>Продукт проекта</div>
-                <input
-                    className={styles.infoValue}
-                    value={projectData.product}
-                    onChange={handleChange('product')}
-                />
-            </div>
+
+            <div className={styles.infoLabel}>Продукт проекта</div>
+            <input
+                className={styles.infoValue}
+                value={projectData.product}
+                onChange={handleChange('product')}
+            />
+            <div className={styles.line}></div>
         </>
     );
 };

@@ -1,24 +1,23 @@
 import { useState, useRef } from "react";
 import TextArea from "antd/es/input/TextArea";
 import classes from "./SplitStrategy.module.css";
-import { AccordionRdx } from "../../../radixUI/accordion/AccordionRdx";
-import { TriggerContent } from "./components/TriggerContent";
-import { AccordionContent } from "./components/AccordionContent";
-
 
 import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 import { useAllProject } from "@hooks/Project/useAllProject";
 import BtnIconRdx from "../../../radixUI/buttonIcon/BtnIconRdx";
 
 import copy from "../img/copy.svg";
 import plusCircle from "../img/plusCircle.svg";
 
-
+import { useRightPanel, usePanelPreset } from '@hooks';
 
 export default function SplitStrategy({ currentStrategy }) {
     const containerRef = useRef(null);
     const [selectionUI, setSelectionUI] = useState(null);
+
+
+    const { PRESETS } = useRightPanel();
+    usePanelPreset(PRESETS["PROJECT"]);
 
     const handleMouseUp = (e) => {
         const textarea = e.target;
@@ -90,9 +89,13 @@ export default function SplitStrategy({ currentStrategy }) {
         }
     };
 
-    const {
-        updateProject,
-    } = useUpdateSingleProject();
+
+
+    const copySelectedText = () => {
+        if (!selectionUI?.text) return;
+
+        navigator.clipboard.writeText(selectionUI.text);
+    };
 
 
     return (
@@ -139,7 +142,7 @@ export default function SplitStrategy({ currentStrategy }) {
                     }}
                 >
                     <BtnIconRdx icon={plusCircle} onClick={createNewProject} tooltipText={"создать проект"} />
-                    <BtnIconRdx icon={copy} tooltipText={"скопировать"} />
+                    <BtnIconRdx icon={copy} tooltipText={"скопировать"} onClick={copySelectedText} />
                 </div>
             )}
 

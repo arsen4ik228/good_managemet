@@ -24,7 +24,6 @@ export default function BtnIconRdx({ icon, onClick, tooltipText }) {
           whiteSpace: 'nowrap'
         }}>
           {tooltipText}
-          <Tooltip.Arrow style={{ fill: 'black' }} />
         </Tooltip.Content>
       </Tooltip.Root>
     </Tooltip.Provider>

@@ -22,6 +22,9 @@ const props = {
     },
     'strategy': {
         
+    },
+    'project': {
+        
     }
 }
 

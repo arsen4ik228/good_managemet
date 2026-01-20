@@ -7,6 +7,7 @@ import useEditStrategy from "./Edit/useEditStrategy";
 import { EditStrategy } from "./Edit/EditStrategy";
 import useSplitStrategy from "./Split/useSplitStrategy";
 import SplitStrategy from "./Split/SplitStrategy";
+import { useRightPanel, usePanelPreset } from '@hooks';
 
 const STATES = {
     VIEW: "view",
@@ -16,12 +17,15 @@ const STATES = {
 
 export function StrategyPage() {
 
+    const { PRESETS } = useRightPanel();
+    usePanelPreset(PRESETS["STRATEGY"]);
+
     const [currentState, setCurrentState] = useState(STATES.VIEW);
 
     const { contentRef, reactToPrintFn } = usePrint();
     const { updateStrategyHandler } = useViewStrategy();
-    const {...propsEditStartegy} = useEditStrategy();
-    const {...propsSplitStrategy} = useSplitStrategy();
+    const { ...propsEditStartegy } = useEditStrategy();
+    const { ...propsSplitStrategy } = useSplitStrategy();
 
     const config = {
         [STATES.VIEW]: {
@@ -44,17 +48,17 @@ export function StrategyPage() {
                 },
                 { text: "сохранить", click: propsEditStartegy.handleSave },
             ],
-            component: <EditStrategy {...propsEditStartegy}/>,
+            component: <EditStrategy {...propsEditStartegy} />,
         },
 
         [STATES.SPLIT]: {
             btns: [
                 { text: "выйти", click: () => setCurrentState(STATES.VIEW) },
             ],
-            component:<SplitStrategy {...propsSplitStrategy}></SplitStrategy>,
+            component: <SplitStrategy {...propsSplitStrategy}></SplitStrategy>,
         },
     }
-    
+
     const { btns, component } = config[currentState]
 
     return (
