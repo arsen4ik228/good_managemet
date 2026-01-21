@@ -1,6 +1,7 @@
 .wrapper {
     display: flex;
-    justify-content: flex-start;
+    flex-direction: column;
+    /* justify-content: flex-start; */
     align-items: center;
     padding: 15px 0;
     width: 100%;
@@ -93,6 +94,18 @@
     word-break: keep-all;
     height: 100%;
     font-size: 16px;
+}
+
+.containerForAttachmets{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.attachmentsContainer{
+    /* padding: 0 10px; */
+    width: 96%;
+    margin: 0 10px;
 }
 
 .contentMessage {

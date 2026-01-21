@@ -58,7 +58,7 @@ export default function LeftSIder() {
         isErrorOrganization
     } = useOrganizationHook();
 
-    const { allChats, loadingAllChats, refetchAllChats } = useChats()
+    const { allChats, externalContacts, loadingAllChats, refetchAllChats } = useChats()
 
     const { userInfo } = useUserHook()
     //(userInfo)
@@ -250,6 +250,21 @@ export default function LeftSIder() {
                             bottomText={userInfo?.posts.map(item => item.postName).join(', ')}
                             clickFunc={handlerUser}
                         />
+
+                        {externalContacts?.map((item) => (
+                            <React.Fragment key={item.id}>
+                                <ListElem
+                                    icon={item?.userAvatar ? `${baseUrl + item?.userAvatar}` : default_avatar}
+                                    upperText={item.userFirstName + ' ' + item.userLastName}
+                                    bottomText={item.postName}
+                                    linkSegment={`${item.userId}`}
+                                    clickFunc={() => handlerContact(item)}
+                                    setSelectedItemData={setSelectedContactsSectionsValue}
+                                    // bage={'1'}
+                                    greyBage={true}
+                                />
+                            </React.Fragment>
+                        ))}
 
                         {filtredContacts?.map((item) => (
                             <React.Fragment key={item.id}>

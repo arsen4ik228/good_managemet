@@ -78,25 +78,26 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                             <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
                         )}
                     </div>
-                    <div
-                        className={
-                            getVisaClassName(children) || classes.userMessageContainer
-                        }
-                        style={{"border-radius": userMessage ? "15px 0 15px 0" : 'none'}}
-                    >
-                        {
+                    <div className={classes.containerForAttachmets}>
+                        <div
+                            className={
+                                getVisaClassName(children) || classes.userMessageContainer
+                            }
+                            style={{ "border-radius": userMessage ? "15px 0 15px 0" : 'none' }}
+                        >
+                            {/* {
                             attachmentToMessage?.length > 0
                                 ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
                                 : (null)
-                        }
-                        <div className={classes.senderName}>
-                            {senderPostName}
-                        </div>
-                        <div className={classes.contentMessage}>
-                            <div className={classes.textMessage}>
-                                {transformText(children)}
+                        } */}
+                            <div className={classes.senderName}>
+                                {senderPostName}
                             </div>
-                            {/* <div className={classes.time}>
+                            <div className={classes.contentMessage}>
+                                <div className={classes.textMessage}>
+                                    {transformText(children)}
+                                </div>
+                                {/* <div className={classes.time}>
                         {extractHoursMinutes(createdMessage)}
                     </div>
                     {userMessage && (
@@ -104,8 +105,17 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                             <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
                         </div>
                     )} */}
+                            </div>
+                        </div>
+                        <div className={classes.attachmentsContainer}>
+                            {
+                                attachmentToMessage?.length > 0
+                                    ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
+                                    : (null)
+                            }
                         </div>
                     </div>
+
                 </div>
                 {!userMessage && (
                     <div className={classes.userAvatar}>
@@ -113,6 +123,14 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                     </div>
                 )}
             </div>
+            {/* <div className={classes.attachmentsContainer} style={{ border: '1px solid red' }}>
+                {
+                    attachmentToMessage?.length > 0
+                        ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
+                        : (null)
+                }
+            </div> */}
+
 
         </div >
     );
