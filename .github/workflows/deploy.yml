@@ -13,37 +13,77 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 16
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 16.20.2
           cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - name: Clean and force install AJV 8
+        run: |
+          rm -rf node_modules package-lock.json
+          npm cache clean --force
+          npm install ajv@8.12.0 ajv-keywords@5.1.0 --save-dev --legacy-peer-deps --no-audit
+          npm install schema-utils@4.2.0 --save-dev --legacy-peer-deps --no-audit
+          npm install --legacy-peer-deps --no-audit --force
+          echo "=== Проверка версий ==="
+          npm list ajv ajv-keywords schema-utils
+
+      - name: Set build date
+        id: set_build_date
+        run: |
+          echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
       - name: Build React app
         run: npm run build
         env:
           CI: false
+          NODE_OPTIONS: "--max-old-space-size=4096"
+          REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+          REACT_APP_SOCKET_URL: ${{ secrets.REACT_APP_SOCKET_URL }}
+          REACT_APP_LINK_URL: ${{ secrets.REACT_APP_LINK_URL }}
+          REACT_APP_TG_BOT_URL: ${{ secrets.REACT_APP_TG_BOT_URL }}
+          REACT_APP_BUILD_DATE: ${{ steps.set_build_date.outputs.build_date }}
 
-      - name: Upload build to server
-        uses: appleboy/scp-action@v0.1.7
+      - name: Deploy build folder as root
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          username: root
           port: ${{ secrets.SSH_PORT }}
-          source: "build/*"
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            rm -rf /var/www/buildGM/build
+            mkdir -p /var/www/buildGM/build
+
+      - name: Upload build folder to server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "build"
           target: "/var/www/buildGM"
-          strip_components: 1
+          strip_components: 0
+          overwrite: true
+
+      - name: Set ownership to root
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            chown -R root:root /var/www/buildGM/build
 
       - name: Reload nginx
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          username: root
           port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo systemctl reload nginx
+            systemctl reload nginx

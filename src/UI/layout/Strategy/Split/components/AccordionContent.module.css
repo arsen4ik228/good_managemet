@@ -1,0 +1,42 @@
+.contentText {
+    margin-bottom: 0.75rem;
+    background-color: transparent;
+}
+
+.contentText:focus {
+    background-color: transparent !important;
+}
+
+.contentText:hover {
+    background-color: transparent !important;
+}
+
+.infoLabel {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 2px;
+    margin-bottom: 0.25rem;
+}
+
+.infoValue {
+    width: 100%;
+    margin-left: 10px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    background-color: transparent;
+}
+
+.line {
+    position: relative;
+}
+
+.line::after {
+    position: absolute;
+    content: "";
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    transform: translateX(-10rem);
+    height: 1px;
+    background-color: #CCCCCC
+}

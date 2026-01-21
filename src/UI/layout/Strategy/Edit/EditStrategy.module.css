@@ -1,17 +1,8 @@
-.wrapper {
-  flex: 1;
-  position: relative;
-
-  display: flex;
-  flex-direction: row;
-
-  overflow-y: auto;
-}
-
 .main {
   position: relative;
 
-  width: 700px;
+  width: auto;
+  max-width: var(--content-width);
 
   flex: 1 0 120px;
 
@@ -20,7 +11,7 @@
   align-items: center;
 
   gap: 40px;
-  padding: 10px;
+  padding: 40px 50px 0px 50px;
 
   background-color: #fff;
   border: 1px solid #999999;
@@ -30,16 +21,14 @@
 
 
 .frame {
-  width: 600px;
-  max-width: 600px;
+  width: 100%;
 
   border: 2px solid #d9d9d9;
   border-radius: 5px;
 }
 
 .childFrame {
-  width: 560px;
-  max-width: 560px;
+  width: 100%;
 
   border: 1px solid #d9d9d9;
   border-radius: 5px;

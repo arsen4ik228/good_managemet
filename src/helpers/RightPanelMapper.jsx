@@ -7,8 +7,13 @@ import ConvertList from '../UI/Custom/PresetComponents/ConvertsList/ConvertList'
 import UsersList from '../UI/Custom/PresetComponents/UsersList/UsersList';
 import WorlingPlanList from '../UI/Custom/PresetComponents/WorlingPlanList/WorlingPlanList';
 import StrategyList from '../UI/Custom/PresetComponents/StartegyList/StrategyList';
+import ProjectsList from '../UI/Custom/PresetComponents/ProjectsList/ProjectsList';
 
 // import GoalsPanel from '../components/GoalsPanel';
+
+
+// useRightPanel       panel.slise       presetProps
+// 
 
 const componentMap = {
     // helper: Bey,
@@ -20,6 +25,7 @@ const componentMap = {
     users: UsersList,
     workingPlan: WorlingPlanList,
     strategy: StrategyList,
+    project: ProjectsList,
     // добавьте другие компоненты
 };
 

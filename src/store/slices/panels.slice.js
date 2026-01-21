@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { presetProps } from '../../helpers/presetProps'
+import { presetProps } from "../../helpers/presetProps";
 
 const initialState = {
   right: {
@@ -11,41 +11,37 @@ const initialState = {
     helper: {
       componentType: "helper",
       props: {
-        ...presetProps("helper")
+        ...presetProps("helper"),
       },
     },
     posts: {
       componentType: "posts",
       props: {
-        ...presetProps("posts")
+        ...presetProps("posts"),
       },
     },
     policies: {
       componentType: "policies",
       props: {
-        ...presetProps("policies")
-
+        ...presetProps("policies"),
       },
     },
     workingPlan: {
       componentType: "workingPlan",
       props: {
-        ...presetProps("workingPlan")
-
+        ...presetProps("workingPlan"),
       },
     },
     strategy: {
       componentType: "strategy",
       props: {
-        ...presetProps("strategy")
-
+        ...presetProps("strategy"),
       },
     },
     statistics: {
       componentType: "statistics",
       props: {
-        ...presetProps("statistics")
-
+        ...presetProps("statistics"),
       },
     },
     chats: {
@@ -53,17 +49,23 @@ const initialState = {
       // props: {},
     },
     goal: {
-        componentType: 'goal',
-        props: {
-          ...presetProps("goal")
-        }
+      componentType: "goal",
+      props: {
+        ...presetProps("goal"),
+      },
     },
     users: {
-        componentType: 'users',
-        props: {
-          ...presetProps("users")
-        }
-    }
+      componentType: "users",
+      props: {
+        ...presetProps("users"),
+      },
+    },
+    project: {
+      componentType: "project",
+      props: {
+        ...presetProps("project"),
+      },
+    },
   },
 };
 

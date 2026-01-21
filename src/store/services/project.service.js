@@ -154,20 +154,6 @@ export const projectApi = apiSlice.injectEndpoints({
         id: response.id,
       }),
       invalidatesTags: ["Project"],
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   try {
-      //     const { data } = await queryFulfilled; // Ждём успешного выполнения
-      //     const projectId = data.id; // Получаем id из ответа
-    
-      //     // Используем projectApi вместо api
-      //     dispatch(
-      //       projectApi.endpoints.getProjectId.initiate({ projectId })
-      //     );
-      //     //("пипец ggggggggggggggggggggggggggggggg");
-      //   } catch (error) {
-      //     console.error("Ошибка при автоматическом запросе getProjectId:", error);
-      //   }
-      // },
     }),
 
     getProjectNew: build.query({

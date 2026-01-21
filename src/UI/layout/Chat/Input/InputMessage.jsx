@@ -27,6 +27,28 @@ const TYPE_OPTIONS = [
     { value: 'Приказ', label: 'Приказ' },
 ]
 
+
+// Безопасные обёртки
+const safeLoadDraft = (dbName, storeName, key, setter) => {
+  if (key !== undefined && key !== null && key !== "") {
+    loadDraft(dbName, storeName, key, setter);
+  }
+};
+
+const safeSaveDraft = (dbName, storeName, key, value) => {
+  if (key !== undefined && key !== null && key !== "") {
+    saveDraft(dbName, storeName, key, value);
+  }
+};
+
+
+const safeDeleteDraft = (dbName, storeName, key) => {
+  if (key !== undefined && key !== null && key !== "") {
+    deleteDraft(dbName, storeName, key);
+  }
+};
+
+
 export default function InputMessage({ onCreate = false, onCalendar = false, convertStatusChange, approveConvert, finishConvert, hiddenPopconfirm }) {
 
     const { contactId, convertId } = useParams()
@@ -93,7 +115,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         setDeadlineDate(new Date().toISOString().split("T")[0]);
         setContentInput("");
         setSelectedPolicies([]);
-        deleteDraft("DraftDB", "drafts", convertId);
+        safeDeleteDraft("DraftDB", "drafts", convertId ? convertId: contactId);
         setContentInputPolicyId("");
         // setConvertTheme('')
         setFiles()
@@ -274,11 +296,11 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 await send();
             else if (convertType === 'Личная') {
                 await createPersonalLetter();
-                deleteDraft("Convert", "messages", contactId);
+                safeDeleteDraft("Convert", "messages", convertId ? convertId: contactId);
             }
             else {
                 await createOrder();
-                deleteDraft("Convert", "messages", contactId);
+                safeDeleteDraft("Convert", "messages", convertId ? convertId: contactId);
             }
         } catch (error) {
             console.error('Ошибка отправки:', error);
@@ -310,29 +332,51 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         };
     }, [handleGlobalKeyDown]);
 
+
+
+    // Загружаем черновик один раз при монтировании или смене ключей
     useEffect(() => {
-        if (!convertId) return
-        loadDraft("DraftDB", "drafts", convertId, setContentInput);
-    }, [convertId]);
+        if (convertId) {
+            safeLoadDraft("DraftDB", "drafts", convertId, setContentInput);
+        } else if (contactId) {
+            safeLoadDraft("DraftDB", "drafts", contactId, setContentInput);
+        }
+    }, [convertId, contactId]);
 
+
+    // Сохраняем черновик при изменении текста
     useEffect(() => {
-        if (!convertId) return
-        saveDraft("DraftDB", "drafts", convertId, contentInput);
-    }, [contentInput, convertId]);
+        if (convertId) {
+            safeSaveDraft("DraftDB", "drafts", convertId, contentInput);
+        } else if (contactId) {
+            safeSaveDraft("DraftDB", "drafts", contactId, contentInput);
+        }
+    }, [contentInput, convertId, contactId]);
 
 
+    // useEffect(() => {
+    //     if (!convertId) return
+    //     loadDraft("DraftDB", "drafts", convertId, setContentInput);
+    // }, [convertId]);
 
-    useEffect(() => {
-        if (convertId) return
-        if (!contactId) return
-        loadDraft("DraftDB", "drafts", contactId, setContentInput);
-    }, [contactId]);
 
-    useEffect(() => {
-        if (convertId) return
-        if (!contactId) return
-        saveDraft("DraftDB", "drafts", contactId, contentInput);
-    }, [contentInput, contactId]);
+    // useEffect(() => {
+    //     if (convertId) return
+    //     if (!contactId) return
+    //     loadDraft("DraftDB", "drafts", contactId, setContentInput);
+    // }, [contactId]);
+
+
+    // useEffect(() => {
+    //     if (!convertId) return
+    //     saveDraft("DraftDB", "drafts", convertId, contentInput);
+    // }, [contentInput, convertId]);
+
+    // useEffect(() => {
+    //     if (convertId) return
+    //     if (!contactId) return
+    //     saveDraft("DraftDB", "drafts", contactId, contentInput);
+    // }, [contentInput, contactId]);
 
 
     useEffect(() => {
