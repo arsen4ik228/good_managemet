@@ -22,11 +22,11 @@
     width: 100%;
     margin-left: 10px;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     background-color: transparent;
 }
 
-.line{
+.line {
     position: relative;
 }
 
@@ -35,7 +35,8 @@
     content: "";
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
+    transform: translateX(-10rem);
     height: 1px;
-    background-color:#CCCCCC
+    background-color: #CCCCCC
 }

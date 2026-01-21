@@ -31,7 +31,7 @@ export default function ProjectsList() {
         try {
             await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект 123`,
+                projectName: `Новый проект`,
                 type: "Проект",
                 strategyId: strategyId,
                 content: " ",
@@ -72,7 +72,7 @@ export default function ProjectsList() {
                 addButtonText={'Создать проект'}
             >
                 {
-                   filtredProjects?.filter((p) => p.strategyId === strategyId)?.map((p) => (
+                   filtredProjects?.filter((p) => p?.strategyId === strategyId)?.map((p) => (
                         <AccordionRdx
                             accordionId={p.id}
                             triggerContent={<TriggerContent title={p.projectName} />}
