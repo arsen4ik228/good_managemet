@@ -66,7 +66,7 @@ export default function FilesInput({ files, setFiles }) {
     };
 
     const handleDeleteFile = async (id) => {
-        try {            
+        try {
             // Вызываем API
             const response = await deleteFile({ id });
 
@@ -74,7 +74,7 @@ export default function FilesInput({ files, setFiles }) {
             if (response?.success || response?.status === 200 || response) {
                 // Удаляем файл из состояния
                 setFiles(prev => prev.filter(item => item?.id !== id));
-                
+
                 // Показываем сообщение об успехе
                 message.success('Файл успешно удален');
             } else {
@@ -136,50 +136,66 @@ export default function FilesInput({ files, setFiles }) {
                         return (
                             <div key={idx} className={classes.attachmentItem}>
                                 <div className={classes.attachmentWrapper}>
-                                    {/* Кнопка удаления */}
-                                    <button
-                                        className={classes.deleteButton}
-                                        onClick={() => handleDeleteFile(item?.id)}
-                                        title="Удалить"
-                                    >
-                                        ×
-                                    </button>
-
                                     {isImg ? (
                                         // Изображение
                                         <div className={classes.imageContainer}>
-                                            <div
-                                                className={classes.imageWrapper}
-                                                onClick={() => handleImageClick(item?.attachmentPath)}
-                                            >
-                                                <img
-                                                    src={url}
-                                                    alt={name}
-                                                    className={classes.attachmentImage}
-                                                    onError={(e) => {
-                                                        e.target.onerror = null;
-                                                        e.target.src = fileOther; // Fallback иконка
+                                            {/* Контейнер для изображения с кнопкой удаления */}
+                                            <div className={classes.imageWithDelete}>
+                                                <div
+                                                    className={classes.imageWrapper}
+                                                    onClick={() => handleImageClick(item?.attachmentPath)}
+                                                >
+                                                    <img
+                                                        src={url}
+                                                        alt={name}
+                                                        className={classes.attachmentImage}
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = fileOther;
+                                                        }}
+                                                    />
+                                                </div>
+                                                {/* Кнопка удаления (только при наведении) */}
+                                                <button
+                                                    className={classes.deleteButton}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Предотвращаем открытие изображения
+                                                        handleDeleteFile(item?.id);
                                                     }}
-                                                />
+                                                    title="Удалить"
+                                                >
+                                                    ×
+                                                </button>
                                             </div>
                                             <span className={classes.fileName}>{name}</span>
                                         </div>
                                     ) : (
                                         // Файл
                                         <div className={classes.fileContainer}>
-                                            <a
-                                                href={url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={classes.fileLink}
-                                                download={name}
-                                            >
-                                                <img
-                                                    src={getFileIcon(name)}
-                                                    alt="file icon"
-                                                    className={classes.fileIcon}
-                                                />
-                                            </a>
+                                            {/* Контейнер для файла с кнопкой удаления */}
+                                            <div className={classes.fileWithDelete}>
+                                                <a
+                                                    href={url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={classes.fileLink}
+                                                    download={name}
+                                                >
+                                                    <img
+                                                        src={getFileIcon(name)}
+                                                        alt="file icon"
+                                                        className={classes.fileIcon}
+                                                    />
+                                                </a>
+                                                {/* Кнопка удаления (только при наведении) */}
+                                                <button
+                                                    className={classes.deleteButton}
+                                                    onClick={() => handleDeleteFile(item?.id)}
+                                                    title="Удалить"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                             <span className={classes.fileName}>{name}</span>
                                         </div>
                                     )}

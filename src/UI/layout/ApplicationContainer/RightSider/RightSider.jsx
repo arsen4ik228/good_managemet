@@ -47,7 +47,7 @@ export default function RightSider({ config: initialConfig }) {    //
         { id: '6', icon: policy, text: 'Политика', link: 'policy' },
         { id: '1', icon: post, text: 'Посты', link: 'posts' },
         { id: '4', icon: users_icon, text: 'Cотрудники', link: 'users' },
-        { id: '5', icon: stat, text: 'Статистики', link: 'statistics' },
+        { id: '5', icon: stat, text: 'Показатели', link: 'statistics' },
         { id: '2', icon: controlPanel_icon, text: 'Панель управления', link: 'controlPanel' },
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
         { id: '11', icon: workingPlan_icon, text: 'Рабочий план', link: 'workingPlan' },

@@ -91,9 +91,35 @@ export default function Task({ id, content, deadline, type, state, completeDate,
         setOpenModal(true)
     };
 
+    const reactivateTask = async (id) => {
+        const dateComplete = new Date(completeDate);
+        const today = new Date();
+
+        // Проверяем совпадение дат
+        const isSameDate =
+            dateComplete.getFullYear() === today.getFullYear() &&
+            dateComplete.getMonth() === today.getMonth() &&
+            dateComplete.getDate() === today.getDate();
+
+        if (isSameDate) {
+            await updateTargets({
+                _id: id,
+                targetState: 'Активная',
+                type: 'Личная',
+            })
+                .unwrap()
+                .then(() => {
+                    // reset()
+                })
+                .catch((error) => {
+                    console.error("Ошибка:", JSON.stringify(error, null, 2));
+                });
+        }
+    }
+
     const finishTarget = async (id) => {
 
-        if (state === 'Завершена') return;
+        if (state === 'Завершена') return reactivateTask(id);
         if (state !== 'Завершена' && type === 'Приказ') return setOpenCommunicationModal(true);
 
         await updateTargets({
@@ -170,7 +196,7 @@ export default function Task({ id, content, deadline, type, state, completeDate,
 
     }
 
-    console.log(attachmentToTargets && attachmentToTargets)
+    console.log(completeDate, new Date())
     return (
         <>
             <div className={classes.wrapper}>

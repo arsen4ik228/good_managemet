@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import classes from './WorkingPlanInput.module.css'
 import TextArea from 'antd/es/input/TextArea'
 import { Select, Input, Spin, message } from 'antd';
@@ -54,7 +54,7 @@ export default function WorkingPlanInput() {
 
     const sendClick = () => {
         if (isEdit)
-            handleUpdateTask()
+            handleUpdateTask(true)
         else
             createTargets()
     }
@@ -82,6 +82,28 @@ export default function WorkingPlanInput() {
         } finally {
             reset()
         }
+    };
+
+    const handleUpdateDate = async () => {
+        try {
+            const updateData = {
+                _id: taskId,
+                type: 'Личная',
+                // content: contentInput,
+                // holderPostId: senderPost,
+                dateStart: dateStart?.format('YYYY-MM-DD'),
+                deadline: deadline?.format('YYYY-MM-DD'),
+                // policyId: values.policy === 'null' ? null : values.policy,
+                // attachmentIds: attachments.map(att => att.attachment.id)
+            };
+            console.log(updateData)
+            await updateTargets(updateData).unwrap();
+            // message.success('Задача успешно обновлена');
+
+        } catch (error) {
+            console.error("Ошибка:", error);
+            message.error('Произошла ошибка при обновлении задачи');
+        } 
     };
 
     const createTargets = async () => {
@@ -157,6 +179,12 @@ export default function WorkingPlanInput() {
     }, [handleGlobalKeyDown]);
 
     console.log(files)
+
+    useEffect(() => {
+        if (isEdit)
+            handleUpdateDate()
+
+    }, [dateStart, deadline, isEdit])
 
     return (
         <div className={classes.wrapper}>
