@@ -27,7 +27,7 @@ import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/Crea
 import { StrategyPage } from "../../UI/layout/Strategy/StrategyPage";
 
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
-import { Project } from "../../UI/layout/Project/Project";
+import ProjectPage  from "../../UI/layout/Project/ProjectPage";
 // import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
 import Worker from "../../UI/layout/Workers/Worker";
@@ -295,7 +295,7 @@ function DesktopApp() {
                 path="project"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                    <Project />
+                    <ProjectPage />
                   </React.Suspense>
                 }
               />
