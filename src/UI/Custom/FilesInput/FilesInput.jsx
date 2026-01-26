@@ -119,7 +119,7 @@ export default function FilesInput({ files, setFiles }) {
             };
         }
     }, [files]); // Перепроверяем при изменении файлов
-
+    console.log(files)
     return (
         <div className={classes.container}>
             {/* Горизонтальный контейнер для всех вложений */}

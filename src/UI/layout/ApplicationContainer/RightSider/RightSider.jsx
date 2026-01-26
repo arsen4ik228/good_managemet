@@ -25,6 +25,9 @@ import { useGetReduxOrganization } from '../../../../hooks';
 import WorkingPlanCreationComponent from './WorkingPlanCreationComponent';
 import active_strategy from '@image/active_strategy.svg'
 
+import useNavigationHistory from '@hooks/useNavigationHistory';
+import navigationHistoryDB from '@helpers/navigationHistoryDB';
+
 export default function RightSider({ config: initialConfig }) {    //
     const { convertId, contactId } = useParams()
     const location = useLocation()
@@ -34,6 +37,9 @@ export default function RightSider({ config: initialConfig }) {    //
     const [expanendHelper, setExpanendHelper] = useState(true)
 
     const { reduxSelectedOrganizationName } = useGetReduxOrganization()
+
+    const { updateHistory, getLastPath } = useNavigationHistory();
+    const [sectionHistory, setSectionHistory] = useState({}); // История из IndexedDB
 
     // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
     const config = useMemo(() => initialConfig, [
@@ -65,15 +71,108 @@ export default function RightSider({ config: initialConfig }) {    //
         // { id: '17', icon: project, text: 'Финансовые системы', link: 'finance', isActive: false },
     ];
 
-    const handlerClickHelper = (link) => {
+    // const handlerClickHelper = (link) => {
+    //     if (link === 'controlPanel' || link === 'svodka') {
+    //         window.open(homeUrl + `#/${link}`, '_blank')
+    //     }
+    //     else if (link === 'workingPlan')
+    //         navigate(`helper/${link}/allTasks`)
+    //     else
+    //         navigate(`helper/${link}`);
+
+    //     setExpanendHelper(false)
+    // };
+
+
+
+    // Загружаем историю из IndexedDB при монтировании
+    useEffect(() => {
+        const loadHistory = async () => {
+            try {
+                const history = await navigationHistoryDB.getAllHistory();
+                const historyMap = {};
+                history.forEach(item => {
+                    historyMap[item.sectionKey] = item.path;
+                });
+                setSectionHistory(historyMap);
+            } catch (error) {
+                console.error('Error loading navigation history:', error);
+            }
+        };
+        loadHistory();
+    }, []);
+
+    // Сохраняем текущий путь при изменении location
+    useEffect(() => {
+        const saveCurrentPath = async () => {
+            const pathSegments = location.pathname.split('/');
+            
+            // Находим основной раздел (goal, policy, users и т.д.)
+            const mainSection = HELPER_SECTIONS.find(section => {
+                return location.pathname.includes(`helper/${section.link}`);
+            });
+
+            if (mainSection) {
+                // Сохраняем полный текущий путь для этого раздела
+                await navigationHistoryDB.savePath(mainSection.link, location.pathname);
+                updateHistory(mainSection.link, location.pathname);
+                
+                // Обновляем локальное состояние
+                setSectionHistory(prev => ({
+                    ...prev,
+                    [mainSection.link]: location.pathname
+                }));
+            }
+        };
+
+        saveCurrentPath();
+    }, [location.pathname]);
+
+    const handlerClickHelper = async (link) => {
+        // Специальные случаи для внешних ссылок
         if (link === 'controlPanel' || link === 'svodka') {
-            window.open(homeUrl + `#/${link}`, '_blank')
+            window.open(homeUrl + `#/${link}`, '_blank');
+            setExpanendHelper(false);
+            return;
         }
-        else if (link === 'workingPlan')
-            navigate(`helper/${link}/allTasks`)
-        else
-            navigate(`helper/${link}`);
+
+        try {
+            // Пробуем получить сохраненный путь из IndexedDB
+            const savedPath = await navigationHistoryDB.getPath(link);
+            
+            if (savedPath) {
+                // Переходим на сохраненный путь
+                navigate(savedPath);
+            } else {
+                // Если нет сохраненного пути, переходим на корень раздела
+                if (link === 'workingPlan') {
+                    navigate(`helper/${link}/allTasks`);
+                } else {
+                    navigate(`helper/${link}`);
+                }
+            }
+        } catch (error) {
+            console.error('Error getting saved path:', error);
+            // В случае ошибки переходим на стандартный путь
+            if (link === 'workingPlan') {
+                navigate(`helper/${link}/allTasks`);
+            } else {
+                navigate(`helper/${link}`);
+            }
+        }
+        
+        setExpanendHelper(false);
     };
+
+
+
+
+
+
+
+
+
+
 
     const filtredHelperSections = useMemo(() => {
         if (!searchHelperSectionsValue.trim()) {
