@@ -6,12 +6,12 @@ import Content from './partsRow/Content'
 import HolderPostId from './partsRow/HolderPostId'
 import Date from './partsRow/Date'
 
-export default function TableRow({orderNumber, content, holderPostId}) {
+export default function TableRow({orderNumber, content, holderPostId, posts}) {
     return (
         <div className={s.row}>
             <LineNumber orderNumber={orderNumber}></LineNumber>
             <Content content={content}></Content>
-            <HolderPostId></HolderPostId>
+            <HolderPostId posts={posts} holderPostId={holderPostId}></HolderPostId>
             <Date></Date>
         </div>
     )
