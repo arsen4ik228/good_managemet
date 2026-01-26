@@ -1,19 +1,42 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { Button } from 'antd'
 import { useRightPanel, usePanelPreset } from "@hooks";
 import MainContentContainer from "../../Custom/MainContentContainer/MainContentContainer";
 import ViewProject from './View/ViewProject.jsx'
 import EditProject from "./Edit/EditProject.jsx";
+import PopoverForViewSections from "./components/popover/PopoverForViewSections.jsx";
 
 const STATES = {
   VIEW: "view",
   EDIT: "edit",
 };
 
+const initialSections = [
+  { name: 'Информация', isView: false },
+  { name: 'Продукт', isView: true },
+  { name: 'Показатели', isView: false },
+  { name: 'Организационные мероприятия', isView: false },
+  { name: 'Правила и ограничения', isView: false },
+  { name: 'Задачи', isView: true },
+];
+
 export default function ProjectPage() {
   // const { PRESETS } = useRightPanel();
   // usePanelPreset(PRESETS["STRATEGY"]);
 
   const [currentState, setCurrentState] = useState(STATES.EDIT);
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  const [sections, setSections] = useState(initialSections);
+
+  const toggleSection = (name) => {
+    setSections(prev =>
+      prev.map(section =>
+        section.name === name
+          ? { ...section, isView: !section.isView }
+          : section
+      )
+    );
+  };
 
   const config = {
     [STATES.VIEW]: {
@@ -30,22 +53,37 @@ export default function ProjectPage() {
       btns: [
         {
           text: "выйти",
-          click: () => {setCurrentState(STATES.VIEW)},
+          click: () => { setCurrentState(STATES.VIEW) },
         },
         {
           text: "начать выполнение",
           click: () => { },
         },
-        { text: "отобразить разделы", click: () => { } },
       ],
-      component: <EditProject />,
+      popover: (
+        <PopoverForViewSections
+          sections={sections}
+          onToggle={toggleSection}
+          isOpen={popoverVisible}
+          onClose={() => setPopoverVisible(false)}
+        >
+          <Button onClick={() => setPopoverVisible(true)}>
+            отобразить разделы
+          </Button>
+        </PopoverForViewSections>
+      ),
+      component: (
+        <EditProject
+          sections={sections} 
+        />
+      ),
     },
   };
 
-  const { btns, component } = config[currentState];
+  const { btns, component, popover } = config[currentState];
 
   return (
-    <MainContentContainer buttons={btns}>
+    <MainContentContainer buttons={btns} popoverButton={popover}>
       {component}
     </MainContentContainer>
   );

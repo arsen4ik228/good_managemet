@@ -15,7 +15,7 @@ export default function CustomDatePicker() {
             className={s.date}
             suffixIcon={
                 !date ? <CalendarOutlined style={{
-                    fontSize: '20px', color: '#999', marginRight:"22px"
+                    fontSize: '20px', color: '#999', marginRight: "22px"
                 }} /> : null
             }
             style={{

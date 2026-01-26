@@ -1,93 +1,43 @@
-import { useState, useEffect } from 'react'
-
-import s from './EditProject.module.css'
-import Table from '../components/table/Table'
+import { useState, useEffect } from 'react';
+import s from './EditProject.module.css';
+import Table from '../components/table/Table';
 
 const project = {
-  projectName: "projectName",
+  projectName: 'projectName',
   targets: [
-    {
-      id: "08576ed9-45c8-4556-a946-bd7e89c7de51",
-      type: "Продукт",
-      orderNumber: 1,
-      content: " ",
-      holderPostId: null,
-    },
+    { id: 'p1', type: 'Продукт', orderNumber: 1, content: ' ' },
+    { id: 'z1', type: 'Задачи', orderNumber: 1, content: 'Задача 1' },
+    { id: 'z2', type: 'Задачи', orderNumber: 2, content: 'Задача 2' },
+    { id: 'k1', type: 'Показатели', orderNumber: 1, content: 'Показатели 1' },
+    { id: 'k2', type: 'Показатели', orderNumber: 2, content: 'Показатели 2' },
+    { id: 'r1', type: 'Правила и ограничения', orderNumber: 1, content: ' ' },
+    { id: 'o1', type: 'Организационные мероприятия', orderNumber: 1, content: ' ' },
+  ],
+};
 
-    {
-      id: "1",
-      type: "Задачи",
-      orderNumber: 1,
-      content: "Задача 1",
-      holderPostId: null,
-    },
-    {
-      id: "2",
-      type: "Задачи",
-      orderNumber: 2,
-      content: "Задача 2",
-      holderPostId: null,
-    },
-
-    {
-      id: "1",
-      type: "Показатели",
-      orderNumber: 1,
-      content: " Показатели 1",
-      holderPostId: null,
-    },
-    {
-      id: "2",
-      type: "Показатели",
-      orderNumber: 1,
-      content: " Показатели 2",
-      holderPostId: null,
-    },
-    {
-      id: "1",
-      type: "Правила и огранияения",
-      orderNumber: 1,
-      content: " ",
-      holderPostId: null,
-    },
-    {
-      id: "1",
-      type: "Организационные мероприятия",
-      orderNumber: 1,
-      content: " ",
-      holderPostId: null,
-    }
-  ]
-}
-
-export default function EditProject() {
-
-  const [target, setTarget] = useState();
+export default function EditProject({ 
+  sections,
+}) {
+  const [targetsByType, setTargetsByType] = useState({});
 
   useEffect(() => {
-    if (!project) return;
-
-    const targets = project?.targets?.reduce((acc, current) => {
-      if (!acc[current.type]) {
-        acc[current.type] = [];
-      }
-      acc[current.type].push(current);
+    const grouped = project.targets.reduce((acc, item) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
       return acc;
     }, {});
-
-    setTarget(targets);
+    setTargetsByType(grouped);
   }, []);
 
   return (
     <div className={s.main}>
-      {target &&
-        Object.entries(target).map(([title, targets]) => (
-          <Table
-            key={title}
-            title={title}
-            targets={targets}
-          />
+      {Object.entries(targetsByType)
+        .filter(([title]) =>
+          sections.find(s => s.name === title && s.isView)
+        )
+        .map(([title, targets]) => (
+          <Table key={title} title={title} targets={targets} />
         ))}
     </div>
-  )
+  );
 }
