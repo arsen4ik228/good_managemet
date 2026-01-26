@@ -1,8 +1,4 @@
-import React from 'react'
-import classes from "./Project.module.css";
-import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
-
-
+import classes from "./ViewProject.module.css";
 
 const arrayTasks = [
     {
@@ -85,22 +81,19 @@ const TasksContainer = ({ title, tasks}) => {
     )
 }
 
-export function Project() {
-    return (
-        <MainContentContainer>
-            <div className={classes.main}>
-                <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
-                <span className={classes.strong}>Андрей Макаров</span>
-                <span className={classes.margin}> Начальник службы расходов</span>
 
-                <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>Проект</h2>
-                <h2 className={`${classes.strong} ${classes.center}`}>Закупка оборудования</h2>
-                {
-                    arrayTasks?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
-                }
-            </div>
-        </MainContentContainer>
+export default function ViewProject() {
+    return (
+        <div className={classes.main}>
+            <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
+            <span className={classes.strong}>Андрей Макаров</span>
+            <span className={classes.margin}> Начальник службы расходов</span>
+
+            <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>Проект</h2>
+            <h2 className={`${classes.strong} ${classes.center}`}>Закупка оборудования</h2>
+            {
+                arrayTasks?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
+            }
+        </div>
     )
 }
-
-

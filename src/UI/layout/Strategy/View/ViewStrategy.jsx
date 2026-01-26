@@ -4,6 +4,7 @@ import org_icon from "@image/org_icon.svg"
 import projects from "../img/projects.svg"
 import useViewStrategy from './useViewStrategy';
 import TextAreaRdx from '../../../radixUI/textArea/TextAreaRdx';
+import { useRightPanel, usePanelPreset } from "@hooks";
 
 function formatDate(isoString) {
     const date = new Date(isoString);
@@ -24,6 +25,9 @@ const StyleProject = ({ title }) => {
 }
 
 export function ViewStrategy({ contentRef }) {
+
+    const { PRESETS } = useRightPanel();
+    usePanelPreset(PRESETS["STRATEGY"]);
 
     const { currentStrategy, currentObjective, projects } = useViewStrategy();
 

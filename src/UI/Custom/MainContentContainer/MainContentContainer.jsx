@@ -2,7 +2,7 @@ import { useState } from 'react'
 import classes from './MainContentContainer.module.css'
 import { Button } from 'antd'
 
-export default function MainContentContainer({ component, buttons, children }) {
+export default function MainContentContainer({ component, buttons, children, popoverButton }) {
   const [count, setCount] = useState(0);
 
   const getVersion = () => {
@@ -21,8 +21,9 @@ export default function MainContentContainer({ component, buttons, children }) {
           </div>
           <div>
             {buttons?.map((item, index) => (
-              <Button key={index} onClick={item.click} style={{color: item?.color}}>{item.text}</Button>
+              <Button key={index} onClick={item.click} style={{ color: item?.color }}>{item.text}</Button>
             ))}
+            {popoverButton}
             {component}
           </div>
         </div>
