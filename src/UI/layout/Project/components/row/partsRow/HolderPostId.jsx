@@ -2,33 +2,38 @@ import { useState } from "react";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import s from "./HolderPostId.module.css";
 import default_avatar from "@image/default_avatar.svg";
-import { Select } from "antd";
+import { Select, Avatar, Flex } from "antd";
+import { baseUrl } from "@helpers/constants.js";
 
-export default function HolderPostId({ avatar }) {
+export default function HolderPostId({ avatar, posts, holderPostId }) {
   const [showSelect, setShowSelect] = useState(false);
-
-  const user = [
-    { id: 1, firstName: "Иван", lastName: "Иванов" },
-    { id: 2, firstName: "Пётр", lastName: "Петров" },
-    { id: 3, firstName: "Сергей", lastName: "Сергеев" },
-    { id: 4, firstName: "Мария", lastName: "Смирнова" },
-    { id: 5, firstName: "Анна", lastName: "Кузнецова" },
-  ];
+  const [user, setUser] = useState(null);
 
   const handleAvatarClick = () => {
     setShowSelect((prev) => !prev);
   };
 
-  const handleSelectChange = (value) => {
+  const handleSelectChange = (_, option) => {
+    if (!option) {
+      setUser(null);
+      return;
+    }
+
+    setUser(option.user);
     setShowSelect(false);
   };
+
 
   return (
     <>
       <HoverCard.Root>
         <HoverCard.Trigger>
           <img
-            src={avatar || default_avatar}
+            src={
+              user?.avatar_url
+                ? `${baseUrl}${user.avatar_url}`
+                : default_avatar
+            }
             alt="avatar"
             className={s.avatar}
             onClick={handleAvatarClick}
@@ -37,9 +42,16 @@ export default function HolderPostId({ avatar }) {
         </HoverCard.Trigger>
         <HoverCard.Portal>
           <HoverCard.Content className={s.HoverCardContent} sideOffset={5}>
-            <img src={avatar || default_avatar} alt="avatar" className={s.avatarCard} />
-            <div>Имя</div>
-            <div>Фамилия</div>
+            <img
+              src={
+                user?.avatar_url
+                  ? `${baseUrl}${user.avatar_url}`
+                  : default_avatar
+              }
+              alt="avatar"
+              className={s.avatarCard} />
+            <div> {user?.firstName ? user?.firstName : "Имя"}</div>
+            <div> {user?.lastName ? user?.lastName : "Фамилия"}</div>
           </HoverCard.Content>
         </HoverCard.Portal>
       </HoverCard.Root>
@@ -51,12 +63,29 @@ export default function HolderPostId({ avatar }) {
           allowClear
           optionFilterProp="label"
           style={{ width: 400 }}
-          options={user.map((u) => ({
-            label: `${u.firstName} ${u.lastName}`,
-            value: u.id,
+          options={posts?.map((p) => ({
+            value: p.id,
+            user: p.user,
+            search: `${p?.user?.firstName} ${p?.user?.lastName}`.toLowerCase(),
+            label: (
+              <Flex align="center" gap={8}>
+                <Avatar
+                  size={24}
+                  src={p?.user?.avatar_url ? `${baseUrl}${p?.user.avatar_url}` : default_avatar}
+                />
+                <span style={{
+                  display: "inline-block",
+                  maxWidth: 350,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}>{p?.user?.firstName} {p?.user?.lastName}</span>
+              </Flex>
+
+            ),
           }))}
           filterOption={(input, option) =>
-            option?.label?.toLowerCase().includes(input.toLowerCase())
+            option?.search?.toLowerCase().includes(input.toLowerCase())
           }
           onChange={handleSelectChange}
         />

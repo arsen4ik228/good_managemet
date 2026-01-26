@@ -161,7 +161,7 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `projects/${organizationId}/new`,
       }),
       transformResponse: (response) => {
-        //(response); // Отладка ответа
+        // console.log(response); // Отладка ответа
         return {
           posts: response?.posts || [],
           strategies: response?.strategies || [],

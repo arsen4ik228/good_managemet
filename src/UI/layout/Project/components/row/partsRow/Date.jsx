@@ -24,6 +24,7 @@ export default function CustomDatePicker() {
                 borderBottomRightRadius: 10,
                 borderTopRightRadius: 0,
                 borderBottomLeftRadius: 0,
+                backgroundColor:"#F0F0F0"
             }}
         />
     )
