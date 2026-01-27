@@ -10,7 +10,7 @@ export default function CustomDatePicker({ date, onChange }) {
       format="DD.MM.YY"
       placeholder=""
       className={s.date}
-      suffixIcon={date ? null : <CalendarOutlined style={{ fontSize: 20, color: '#999', marginRight: 22 }} />}
+      suffixIcon={date ? null : <CalendarOutlined style={{ fontSize: 20, color: '#999', marginRight: 25 }} />}
       style={{
         textAlign: 'center',
         borderTopLeftRadius: 10,
