@@ -26,8 +26,8 @@ export const projectApi = apiSlice.injectEndpoints({
                 const hasProductType = item.targets.some(
                   (target) =>
                     target.type === "Продукт" &&
-                  (target.targetState === "Активная" ||
-                    target.targetState === "Черновик")
+                    (target.targetState === "Активная" ||
+                      target.targetState === "Черновик")
                 );
                 return hasProductType;
               }
@@ -58,8 +58,8 @@ export const projectApi = apiSlice.injectEndpoints({
                 const hasProductType = item.targets.some(
                   (target) =>
                     target.type === "Продукт" &&
-                  (target.targetState === "Активная" ||
-                    target.targetState === "Черновик")
+                    (target.targetState === "Активная" ||
+                      target.targetState === "Черновик")
                 );
                 //(hasProductType);
                 return hasProductType;
@@ -86,12 +86,12 @@ export const projectApi = apiSlice.injectEndpoints({
           programs:
             response?.filter((item) => {
               if (item.type !== "Программа") return false;
-      ;
               if (Array.isArray(item.targets)) {
                 const hasProductType = item.targets.some(
                   (target) =>
-                    target.type === "Продукт" &&
-                    target.targetState === "Активная" || target.targetState === "Черновик" ||
+                    (target.type === "Продукт" &&
+                      target.targetState === "Активная") ||
+                    target.targetState === "Черновик" ||
                     target.isExpired === false
                 );
                 return hasProductType;
@@ -118,12 +118,12 @@ export const projectApi = apiSlice.injectEndpoints({
         Array.isArray(result)
           ? [
               ...result?.map(({ id }) => ({
-                type: 'Project',
+                type: "Project",
                 id,
               })),
-              'Project',
+              "Project",
             ]
-          : ['Project'],
+          : ["Project"],
     }),
 
     getProjectId: build.query({
@@ -132,16 +132,58 @@ export const projectApi = apiSlice.injectEndpoints({
       }),
       transformResponse: (response) => {
         //("getProjectId   ", response);
+        const arrayTasks = response?.project?.targets.reduce((acc, target) => {
+          // Ищем уже существующую группу по type
+          let group = acc.find((g) => g.title === target.type);
+
+          // Создаем объект задачи
+          const taskObj = {
+            task: target.content,
+            date: target.dateStart
+              ? new Date(target.dateStart).toLocaleDateString("ru-RU")
+              : "",
+            people:
+              target.targetHolders?.map((h) => h.post?.postName).join(", ") ||
+              "",
+            post:
+              target.targetHolders
+                ?.map((h) => h.post?.divisionName)
+                .join(", ") || "",
+            holderPostId: target.holderPostId,
+            id: target.id,
+            targetState: target.targetState,
+            deadline: target.deadline,
+            dateComplete: target.dateComplete,
+            createdAt: target.createdAt,
+            updatedAt: target.updatedAt,
+            isExpired: target.isExpired,
+            // можно добавить любые другие поля из target
+          };
+
+          if (group) {
+            group.tasks.push(taskObj);
+          } else {
+            acc.push({
+              title: target.type,
+              tasks: [taskObj],
+            });
+          }
+
+          return acc;
+        }, []);
+
+        // console.log(arrayTasks);
+
         return {
           currentProject: response.project || {},
-          targets:
-            response?.project?.targets?.filter(
-              (item) => item.targetState !== "Отменена"
-            ) || [],
+          strategy: response.project?.strategy || {},
+          targets: arrayTasks,
           strategies: response?.strategies || [],
         };
       },
-      providesTags: (result, error, arg) => [{ type: 'Project', id: arg.projectId }],
+      providesTags: (result, error, arg) => [
+        { type: "Project", id: arg.projectId },
+      ],
     }),
 
     postProject: build.mutation({
@@ -168,14 +210,15 @@ export const projectApi = apiSlice.injectEndpoints({
           programs: response?.programs || [],
         };
       },
-      providesTags: ['Project'],
+      providesTags: ["Project"],
     }),
 
     updateProject: build.mutation({
       query: ({ projectId, holderProductPostId, ...body }) => {
         const queryParams = new URLSearchParams();
-        if (holderProductPostId != null) {  // Добавляем параметр, только если он не null/undefined
-          queryParams.append('holderProductPostId', holderProductPostId);
+        if (holderProductPostId != null) {
+          // Добавляем параметр, только если он не null/undefined
+          queryParams.append("holderProductPostId", holderProductPostId);
         }
         return {
           url: `projects/${projectId}/update/?${queryParams.toString()}`,
@@ -183,7 +226,9 @@ export const projectApi = apiSlice.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (result, err, arg) => [{ type: 'Project', id: arg._projectId }],
+      invalidatesTags: (result, err, arg) => [
+        { type: "Project", id: arg._projectId },
+      ],
     }),
 
     getProgramNew: build.query({
@@ -198,7 +243,7 @@ export const projectApi = apiSlice.injectEndpoints({
           projects: response?.projects || [],
         };
       },
-      providesTags: ['Project'],
+      providesTags: ["Project"],
     }),
 
     getProgramId: build.query({
@@ -210,7 +255,9 @@ export const projectApi = apiSlice.injectEndpoints({
         currentProjects: response?.projects || [],
         targets: response?.program?.targets || [],
       }),
-      providesTags: (result, error, arg) => [{ type: 'Project', id: arg.programId }],
+      providesTags: (result, error, arg) => [
+        { type: "Project", id: arg.programId },
+      ],
     }),
   }),
 });
