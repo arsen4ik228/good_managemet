@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import classes from "./FilesMessages.module.css";
 import { baseUrl } from "@helpers/constants";
 import { FullScreenImageModal } from "../FullScreanImageModal/FullScreanImageModal";
-
+import { decodeUtf8 } from '@helpers/helpers'
 import file_icon from "@image/file_icon.svg"
 
 export default function FilesMessages({ attachmentToMessage }) {
@@ -10,12 +10,19 @@ export default function FilesMessages({ attachmentToMessage }) {
   const [imgUrl, setImgUrl] = useState(null);
 
   // Ограничиваем количество файлов до 10
-  const displayedAttachments = attachmentToMessage?.slice(0, 10) || [];
-  
+  const displayedAttachments = attachmentToMessage
+    ?.filter(item => !item?.attachment?.originalName?.startsWith("%photo%"))
+    .slice(0, 10) || [];
+
   // Проверяем, является ли вложение изображением
   const isImage = (item) => {
     return item?.attachment?.attachmentMimetype?.startsWith("image/");
   };
+
+  //   const images = attachmentToMessage?.filter((item) =>
+  //     item?.attachment?.attachmentMimetype?.startsWith("image/") &&
+  //     item?.attachment?.originalName?.startsWith("%photo%")
+  // );
 
   const handleImageClick = (url) => {
     setImgUrl(baseUrl + url);
@@ -30,9 +37,9 @@ export default function FilesMessages({ attachmentToMessage }) {
             const isImg = isImage(item);
             const url = `${baseUrl}${item?.attachment?.attachmentPath}`;
             const name = item?.attachment?.originalName;
-            
+
             // Определяем класс для позиционирования элементов во второй строке
-            const itemClass = displayedAttachments.length > 7 && idx >= 7 
+            const itemClass = displayedAttachments.length > 7 && idx >= 7
               ? `${classes.attachmentItem} ${classes.secondRowItem}`
               : classes.attachmentItem;
 
@@ -41,7 +48,7 @@ export default function FilesMessages({ attachmentToMessage }) {
                 <div className={classes.attachmentWrapper}>
                   {isImg ? (
                     // Изображение 52x52
-                    <div 
+                    <div
                       className={classes.imageContainer}
                       onClick={() => handleImageClick(item?.attachment?.attachmentPath)}
                     >
@@ -71,7 +78,7 @@ export default function FilesMessages({ attachmentToMessage }) {
                       />
                     </a>
                   )}
-                  <span className={classes.fileName}>{name}</span>
+                  <span className={classes.fileName}>{decodeUtf8(name)}</span>
                 </div>
               </div>
             );
