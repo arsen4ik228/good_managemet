@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import s from './EditProject.module.css';
 import Table from '../components/table/Table';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,9 +19,12 @@ const project = {
   ],
 };
 
+// "07a243c4-94bc-4b8c-b9fb-fad012e636bf"
 export default function EditProject({ sections }) {
+  const { projectId } = useParams();
+
   const { allPosts } = useAllPosts();
-  const { currentProject, targets } = useGetSingleProject({ selectedProjectId: "07a243c4-94bc-4b8c-b9fb-fad012e636bf" });
+  const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
 
   const [targetsByType, setTargetsByType] = useState({});
 

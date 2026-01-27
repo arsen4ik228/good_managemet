@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 import classes from "./ViewProject.module.css";
 
@@ -105,9 +106,9 @@ const TasksContainer = ({ title, tasks }) => {
     )
 }
 
-
 export default function ViewProject() {
-    const { currentProject, targets } = useGetSingleProject({selectedProjectId: "07a243c4-94bc-4b8c-b9fb-fad012e636bf" });
+    const { projectId } = useParams();
+    const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
     return (
         <div className={classes.main}>
             <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
