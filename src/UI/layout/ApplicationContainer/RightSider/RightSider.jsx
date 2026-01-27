@@ -27,6 +27,7 @@ import active_strategy from '@image/active_strategy.svg'
 
 import useNavigationHistory from '@hooks/useNavigationHistory';
 import navigationHistoryDB from '@helpers/navigationHistoryDB';
+import ProjectCreationComponent from './ProjectCreationComponent';
 
 export default function RightSider({ config: initialConfig }) {    //
     const { convertId, contactId } = useParams()
@@ -59,7 +60,7 @@ export default function RightSider({ config: initialConfig }) {    //
         { id: '3', icon: stat, text: 'Сводка', link: 'svodka' },
         { id: '11', icon: workingPlan_icon, text: 'Рабочий план', link: 'workingPlan' },
 
-        { id: '8', icon: active_strategy, text: 'Стратегия', link: 'strategy',},
+        { id: '8', icon: active_strategy, text: 'Стратегия', link: 'strategy', },
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
         { id: '10', icon: project, text: 'Схема компании', link: 'schemaCompany', isActive: false },
 
@@ -106,7 +107,7 @@ export default function RightSider({ config: initialConfig }) {    //
     useEffect(() => {
         const saveCurrentPath = async () => {
             const pathSegments = location.pathname.split('/');
-            
+
             // Находим основной раздел (goal, policy, users и т.д.)
             const mainSection = HELPER_SECTIONS.find(section => {
                 return location.pathname.includes(`helper/${section.link}`);
@@ -116,7 +117,7 @@ export default function RightSider({ config: initialConfig }) {    //
                 // Сохраняем полный текущий путь для этого раздела
                 await navigationHistoryDB.savePath(mainSection.link, location.pathname);
                 updateHistory(mainSection.link, location.pathname);
-                
+
                 // Обновляем локальное состояние
                 setSectionHistory(prev => ({
                     ...prev,
@@ -139,7 +140,7 @@ export default function RightSider({ config: initialConfig }) {    //
         try {
             // Пробуем получить сохраненный путь из IndexedDB
             const savedPath = await navigationHistoryDB.getPath(link);
-            
+
             if (savedPath) {
                 // Переходим на сохраненный путь
                 navigate(savedPath);
@@ -160,7 +161,7 @@ export default function RightSider({ config: initialConfig }) {    //
                 navigate(`helper/${link}`);
             }
         }
-        
+
         setExpanendHelper(false);
     };
 
@@ -237,6 +238,11 @@ export default function RightSider({ config: initialConfig }) {    //
                 {useFindPathSegment('allTasks') && (
 
                     <WorkingPlanCreationComponent></WorkingPlanCreationComponent>
+                )}
+
+                {useFindPathSegment('project') && (
+
+                    <ProjectCreationComponent></ProjectCreationComponent>
                 )}
                 {/* </div> */}
             </div>

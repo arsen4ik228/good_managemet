@@ -66,6 +66,12 @@ const initialState = {
         ...presetProps("project"),
       },
     },
+    projectsAndPrograms: {
+      componentType: "projectsAndPrograms",
+      props: {
+        ...presetProps("projectsAndPrograms"),
+      },
+    },
   },
 };
 

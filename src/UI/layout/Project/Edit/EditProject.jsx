@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import s from './EditProject.module.css';
 import Table from '../components/table/Table';
+import { useRightPanel, usePanelPreset } from "@hooks";
+
 
 const project = {
   projectName: 'projectName',
@@ -28,6 +30,10 @@ export default function EditProject({
     }, {});
     setTargetsByType(grouped);
   }, []);
+
+    const { PRESETS } = useRightPanel();
+  
+    usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
   return (
     <div className={s.main}>
