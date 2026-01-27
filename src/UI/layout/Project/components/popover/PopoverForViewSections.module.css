@@ -4,6 +4,18 @@
     gap: 15px;
 }
 
+.blackText {
+    font-family: "Montserrat";
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.greyText {
+    font-family: "Montserrat";
+    font-weight: 600;
+    color: var(--grey-B4);
+}
+
 .nameBlock {
     display: flex;
     justify-content: center;
@@ -14,9 +26,8 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
-    border-bottom: 1px solid var(--grey-medium);
+    border-bottom: 1px solid var(--grey-light);
     border-radius: 0;
-
     justify-content: flex-start;
     text-align: left;
 }

@@ -74,6 +74,7 @@ export default function HolderPostId({ posts, holderPostId, onChange }) {
           }))}
           filterOption={(input, option) => option?.search?.includes(input.toLowerCase())}
           onChange={handleSelectChange}
+          value={holderPostId}
         />
       )}
     </>
