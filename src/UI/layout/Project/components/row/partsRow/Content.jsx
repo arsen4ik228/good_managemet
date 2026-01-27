@@ -1,9 +1,7 @@
-import { useState } from 'react' 
-import TextAreaRdx from '../../../../../radixUI/textArea/TextAreaRdx'
-import s from './Content.module.css'
+import TextAreaRdx from '../../../../../radixUI/textArea/TextAreaRdx';
+import s from './Content.module.css';
 
-export default function Content({ content }) {
-  const [value, setValue] = useState(content);
+export default function Content({ content, onChange }) {
   return (
     <TextAreaRdx
       className={s.content}
@@ -13,9 +11,9 @@ export default function Content({ content }) {
         borderTopRightRadius: 0,
         borderBottomLeftRadius: 0,
       }}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
+      value={content}
+      onChange={onChange}
       autoSize
     />
-  )
+  );
 }
