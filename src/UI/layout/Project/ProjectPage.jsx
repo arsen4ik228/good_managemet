@@ -14,10 +14,10 @@ const STATES = {
 const initialSections = [
   { name: 'Информация', isView: false },
   { name: 'Продукт', isView: true },
-  { name: 'Показатели', isView: false },
+  { name: 'Метрика', isView: false },
   { name: 'Организационные мероприятия', isView: false },
-  { name: 'Правила и ограничения', isView: false },
-  { name: 'Задачи', isView: true },
+  { name: 'Правила', isView: false },
+  { name: 'Задача', isView: true },
 ];
 
 export default function ProjectPage() {

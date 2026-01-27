@@ -3,6 +3,7 @@ import s from './EditProject.module.css';
 import Table from '../components/table/Table';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllPosts } from '../../../../hooks/Post/useAllPosts';
+import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 
 const project = {
   projectName: 'projectName',
@@ -19,17 +20,29 @@ const project = {
 
 export default function EditProject({ sections }) {
   const { allPosts } = useAllPosts();
+  const { currentProject, targets } = useGetSingleProject({ selectedProjectId: "07a243c4-94bc-4b8c-b9fb-fad012e636bf" });
 
   const [targetsByType, setTargetsByType] = useState({});
 
   useEffect(() => {
-    const grouped = project.targets.reduce((acc, item) => {
-      if (!acc[item.type]) acc[item.type] = [];
-      acc[item.type].push({ ...item, isCreated: false });
+    if (!targets) return;
+
+    // Преобразуем массив из бэка в объект { type: [tasks...] }
+    const grouped = targets.reduce((acc, group) => {
+      acc[group.title] = group.tasks.map(task => ({
+        id: task.id,
+        type: group.title,
+        orderNumber: task.orderNumber || 1,
+        content: task.task || '',
+        holderPostId: task.holderPostId || null,
+        date: task.date ? new Date(task.date) : null,
+        isCreated: false,
+        ...task,
+      }));
       return acc;
     }, {});
 
-    // Добавляем пустой target для создания (кроме Продукта)
+    // Добавляем пустой target для создания (кроме Продукт)
     Object.entries(grouped).forEach(([type, items]) => {
       if (type !== 'Продукт') {
         items.push({
@@ -45,7 +58,7 @@ export default function EditProject({ sections }) {
     });
 
     setTargetsByType(grouped);
-  }, []);
+  }, [targets]);
 
   const handleUpdateTarget = (type, id, field, value) => {
     setTargetsByType(prev => ({
@@ -79,19 +92,28 @@ export default function EditProject({ sections }) {
 
   return (
     <div className={s.main}>
-      {Object.entries(targetsByType)
-        .filter(([title]) => sections.find(s => s.name === title && s.isView))
-        .map(([title, targets]) => (
-          <Table
-            key={title}
-            title={title}
-            targets={targets}
-            posts={allPosts}
-            updateTarget={(id, field, value) => handleUpdateTarget(title, id, field, value)}
-            addTarget={() => handleAddTarget(title)}
-            updateOrder={(newOrderIds) => handleUpdateOrder(title, newOrderIds)}
-          />
-        ))}
+      <div className={s.wrapper}>
+         {sections
+        .filter(section => section.isView) // только видимые
+        .map(section => {
+          const targets = targetsByType[section.name] || [];
+          return (
+            <Table
+              key={section.name}
+              title={section.name}
+              targets={targets}
+              posts={allPosts}
+              updateTarget={(id, field, value) =>
+                handleUpdateTarget(section.name, id, field, value)
+              }
+              addTarget={() => handleAddTarget(section.name)}
+              updateOrder={(newOrderIds) =>
+                handleUpdateOrder(section.name, newOrderIds)
+              }
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

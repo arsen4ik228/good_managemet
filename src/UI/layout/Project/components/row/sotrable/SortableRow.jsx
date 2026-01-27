@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import TableRow from '../TableRow.jsx';
@@ -13,8 +14,18 @@ export default function SortableRow({ id, target, posts, updateTarget }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
-      <div className={s.dragHandle} {...listeners} {...attributes}>☰</div>
+    <div
+      className={s.drag}
+      ref={setNodeRef}
+      style={style}
+    >
+      <div
+        className={s.dragHandle}
+        {...listeners}
+        {...attributes}
+      >
+        ☰
+      </div>
       <TableRow target={target} posts={posts} updateTarget={updateTarget} />
     </div>
   );
