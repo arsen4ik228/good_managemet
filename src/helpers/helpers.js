@@ -257,3 +257,39 @@ export function formatDateWithDay(dateString) {
     return 'Invalid date';
   }
 }
+
+
+export const decodeUtf8 = (str) => {
+    try {
+        // Если строка в формате base64 или другой кодировке
+        if (str && typeof str === 'string') {
+            // Проверяем, есть ли не-ASCII символы
+            const hasNonAscii = /[^\x00-\x7F]/.test(str);
+            
+            if (!hasNonAscii && str.includes('=')) {
+                // Возможно, это base64
+                try {
+                    const decoded = atob(str);
+                    return decoded;
+                } catch (e) {
+                    // Не base64, пробуем другие методы
+                }
+            }
+            
+            // Пробуем декодировать как URI компонент
+            try {
+                return decodeURIComponent(escape(str));
+            } catch (e) {
+                // Используем TextDecoder для UTF-8
+                const decoder = new TextDecoder('utf-8');
+                const encoder = new TextEncoder();
+                const bytes = encoder.encode(str);
+                return decoder.decode(bytes);
+            }
+        }
+        return str;
+    } catch (error) {
+        console.error('Error decoding string:', error);
+        return str; // Возвращаем оригинал в случае ошибки
+    }
+};

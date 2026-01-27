@@ -6,6 +6,7 @@ import notSeenIcon from '@image/notSeen.svg'
 import FilesMessages from './FilesMessages';
 import { baseUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
+import ImageGrig from './ImageGrig';
 
 const transformText = (text) => {
     const regex = /(.*?)policyId:([^,]+),policyName:([^,]+)(.*)/i;
@@ -113,6 +114,8 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                                     ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
                                     : (null)
                             }
+
+                            <ImageGrig attachmentToMessage= {attachmentToMessage}></ImageGrig>
                         </div>
                     </div>
 
