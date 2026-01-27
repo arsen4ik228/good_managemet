@@ -74,13 +74,17 @@ export default function ProjectPage() {
       ),
       component: (
         <EditProject
-          sections={sections} 
+          sections={sections}
         />
       ),
     },
   };
 
   const { btns, component, popover } = config[currentState];
+
+  const { PRESETS } = useRightPanel();
+
+  usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
   return (
     <MainContentContainer buttons={btns} popoverButton={popover}>

@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import s from './EditProject.module.css';
 import Table from '../components/table/Table';
 import { v4 as uuidv4 } from 'uuid';
+import { useRightPanel, usePanelPreset } from "@hooks";
 import { useAllPosts } from '../../../../hooks/Post/useAllPosts';
 import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
+
 
 const project = {
   projectName: 'projectName',
@@ -93,6 +95,10 @@ export default function EditProject({ sections }) {
       [type]: newOrderIds.map(id => prev[type].find(t => t.id === id)),
     }));
   };
+
+    const { PRESETS } = useRightPanel();
+  
+    usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
   return (
     <div className={s.main}>

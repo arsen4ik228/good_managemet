@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Upload, Button, message, Space, List, Progress } from 'antd';
 import { usePostFilesMutation } from "@services";
-import { PaperClipOutlined, UploadOutlined, DeleteOutlined, CloseOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, UploadOutlined, DeleteOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons';
 import icon_attach from '@image/icon_ attach.svg';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 МБ
@@ -58,6 +58,31 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
         return allowedExtensions.some(ext => fileName.endsWith(ext));
     };
 
+    // Функция для создания нового File объекта с префиксом
+    const createFileWithPrefix = (file, prefix = '%photo%') => {
+        // Создаем новый File объект с измененным именем
+        const newFileName = `${prefix}${file.name}`;
+        const newFile = new File([file], newFileName, {
+            type: file.type,
+            lastModified: file.lastModified
+        });
+        return newFile;
+    };
+
+    // Проверяем, является ли файл фото или видео
+    const isPhotoOrVideoFile = (file) => {
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const fileNameLower = file.name.toLowerCase();
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const videoExtensions = ['.mp4', '.webm', '.mov'];
+        
+        const isImageByExt = imageExtensions.some(ext => fileNameLower.endsWith(ext));
+        const isVideoByExt = videoExtensions.some(ext => fileNameLower.endsWith(ext));
+        
+        return isImage || isVideo || isImageByExt || isVideoByExt;
+    };
+
     // Отмена загрузки
     const cancelUpload = () => {
         if (abortControllerRef.current) {
@@ -90,11 +115,20 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
                 if (item.kind === 'file') {
                     const file = item.getAsFile();
                     if (file && isValidFile(file)) { // Используем новую функцию проверки
+                        // Проверяем, нужно ли добавлять префикс для вставленных файлов
+                        let finalFile = file;
+                        let fileName = file.name;
+                        
+                        if (isPhotoOrVideoFile(file)) {
+                            finalFile = createFileWithPrefix(file, '%photo%');
+                            fileName = finalFile.name;
+                        }
+                        
                         const newFile = {
                             uid: `pasted-${Date.now()}-${i}`,
-                            name: file.name || `pasted-${Date.now()}`,
+                            name: fileName,
                             status: 'done',
-                            originFileObj: file,
+                            originFileObj: finalFile,
                             size: file.size,
                             type: file.type,
                         };
@@ -133,11 +167,20 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
                             const file = new File([blob], `pasted-${Date.now()}.${extension}`, { type });
                             
                             if (isValidFile(file)) { // Используем новую функцию проверки
+                                let finalFile = file;
+                                let fileName = file.name;
+                                
+                                // Для вставленных фото/видео тоже добавляем префикс
+                                if (isPhotoOrVideoFile(file)) {
+                                    finalFile = createFileWithPrefix(file, '%photo%');
+                                    fileName = finalFile.name;
+                                }
+                                
                                 newFiles.push({
                                     uid: `pasted-manual-${Date.now()}-${Math.random()}`,
-                                    name: file.name,
+                                    name: fileName,
                                     status: 'done',
-                                    originFileObj: file,
+                                    originFileObj: finalFile,
                                     size: blob.size,
                                     type: file.type,
                                 });
@@ -161,8 +204,8 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
         }
     };
 
-    // Создаем кастомный input для загрузки файлов
-    const CustomUploadButton = () => {
+    // Создаем кастомный input для загрузки файлов (общий)
+    const CustomUploadButton = ({ accept, buttonText, icon, btnType = "default", isPhotoVideoButton = false }) => {
         const fileInputRef = React.useRef(null);
 
         const handleClick = () => {
@@ -179,18 +222,27 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
             const validFiles = [];
             
             files.forEach(file => {
-                if (isValidFile(file)) { // Используем новую функцию проверки
+                if (isValidFile(file)) {
                     // Проверка на дубликаты
                     const isDuplicate = fileList.some(
                         f => f.name === file.name && f.size === file.size
                     );
 
                     if (!isDuplicate) {
+                        let finalFile = file;
+                        let fileName = file.name;
+                        
+                        // Если это кнопка "фото или видео" И файл является фото/видео, добавляем префикс
+                        if (isPhotoVideoButton && isPhotoOrVideoFile(file)) {
+                            finalFile = createFileWithPrefix(file, '%photo%');
+                            fileName = finalFile.name;
+                        }
+                        
                         validFiles.push({
                             uid: `upload-${Date.now()}-${Math.random()}`,
-                            name: file.name,
+                            name: fileName,
                             status: 'done',
-                            originFileObj: file,
+                            originFileObj: finalFile,
                             size: file.size,
                             type: file.type,
                         });
@@ -209,22 +261,24 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
             e.target.value = '';
         };
 
+        const IconComponent = icon;
+
         return (
             <>
                 <Button
-                    icon={<UploadOutlined />}
+                    icon={icon && <IconComponent />}
                     onClick={handleClick}
-                    type="default"
+                    type={btnType}
                     disabled={isUploading}
                 >
-                    Выбрать файлы
+                    {buttonText}
                 </Button>
                 <input
                     type="file"
                     ref={fileInputRef}
                     style={{ display: 'none' }}
                     multiple
-                    accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.mov,.pdf,.doc,.docx"
+                    accept={accept}
                     onChange={handleFileChange}
                     disabled={isUploading}
                 />
@@ -286,7 +340,8 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
             // Подготавливаем FormData
             const formData = new FormData();
             fileList.forEach((file) => {
-                formData.append("files", file.originFileObj || file);
+                // Передаем файл с уже измененным именем (если был добавлен префикс)
+                formData.append("files", file.originFileObj);
             });
 
             // Симуляция прогресса на случай, если API не поддерживает onUploadProgress
@@ -381,7 +436,9 @@ export const SimpleFileUploadModal = ({setParentFiles}) => {
         if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' КБ';
         return (bytes / (1024 * 1024)).toFixed(1) + ' МБ';
     };
-console.log(fileList)
+    
+    console.log(fileList)
+    
     return (
         <>
             {/* Иконка для открытия модального окна */}
@@ -425,7 +482,25 @@ console.log(fileList)
                 <Space direction="vertical" style={{ width: '100%', gap: '16px' }}>
                     {/* Кнопки управления */}
                     <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-                        <CustomUploadButton />
+                        <Space wrap>
+                            {/* Кнопка "Загрузить фото или видео" */}
+                            <CustomUploadButton
+                                accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.mov"
+                                buttonText="фото или видео"
+                                icon={PictureOutlined}
+                                btnType="default"
+                                isPhotoVideoButton={true}
+                            />
+                            
+                            {/* Кнопка "Выбрать файлы" (все типы файлов) */}
+                            <CustomUploadButton
+                                accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.mov,.pdf,.doc,.docx"
+                                buttonText="файл"
+                                icon={UploadOutlined}
+                                btnType="default"
+                                isPhotoVideoButton={false}
+                            />
+                        </Space>
 
                         <Space>
                             {/* <Button
@@ -505,6 +580,11 @@ console.log(fileList)
                                                     {file.size > MAX_FILE_SIZE && (
                                                         <span style={{ color: '#ff4d4f', marginLeft: '8px' }}>
                                                             Превышен размер!
+                                                        </span>
+                                                    )}
+                                                    {file.name.startsWith('%photo%') && (
+                                                        <span style={{ color: '#1890ff', marginLeft: '8px' }}>
+                                                            (фото/видео)
                                                         </span>
                                                     )}
                                                 </div>

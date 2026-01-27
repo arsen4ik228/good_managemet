@@ -8,6 +8,7 @@ import UsersList from '../UI/Custom/PresetComponents/UsersList/UsersList';
 import WorlingPlanList from '../UI/Custom/PresetComponents/WorlingPlanList/WorlingPlanList';
 import StrategyList from '../UI/Custom/PresetComponents/StartegyList/StrategyList';
 import ProjectsList from '../UI/Custom/PresetComponents/ProjectsList/ProjectsList';
+import ProjectsAndProgramsList from '../UI/Custom/PresetComponents/ProjectsAndProgramsList/ProjectsAndPrograms'
 
 // import GoalsPanel from '../components/GoalsPanel';
 
@@ -26,6 +27,7 @@ const componentMap = {
     workingPlan: WorlingPlanList,
     strategy: StrategyList,
     project: ProjectsList,
+    projectsAndPrograms: ProjectsAndProgramsList,
     // добавьте другие компоненты
 };
 

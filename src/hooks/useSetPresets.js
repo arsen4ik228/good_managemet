@@ -3,15 +3,15 @@ import { usePanelPreset } from './usePanelPreset'
 import { useRightPanel } from './useRightPanel'
 
 const PRESETS_NAMES = {
-    policy: 'POLICIES',
-    posts: 'POSTS',
-    statistics: 'STATISTICS',
-    goal: 'GOAL',
-    helper: 'HELPER',
+    // policy: 'POLICIES',
+    // posts: 'POSTS',
+    // statistics: 'STATISTICS',
+    // goal: 'GOAL',
+    // helper: 'HELPER',
     chat: 'CHATS',
-    users: 'USERS',
-    workingPlan: 'WORKINGPLAN',
-    strategy: 'STRATEGY'
+    // users: 'USERS',
+    // workingPlan: 'WORKINGPLAN',
+    // strategy: 'STRATEGY'
 }
 
 const map = new Map(Object.entries(PRESETS_NAMES))

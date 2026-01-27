@@ -27,7 +27,7 @@ import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/Crea
 import { StrategyPage } from "../../UI/layout/Strategy/StrategyPage";
 
 import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
-import ProjectPage  from "../../UI/layout/Project/ProjectPage";
+import ProjectPage from "../../UI/layout/Project/ProjectPage";
 // import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
 import Worker from "../../UI/layout/Workers/Worker";
@@ -281,7 +281,7 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               /> */}
-              
+
               <Route
                 path="strategy/:strategyId"
                 element={
@@ -293,6 +293,14 @@ function DesktopApp() {
 
               <Route
                 path="project"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <MessageSelectingList presetName="PROJECTSANDPROGRAMS" />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="project/:projectId"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <ProjectPage />
