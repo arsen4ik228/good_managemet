@@ -35,8 +35,8 @@ export default function PopoverForViewSections({
               className={s.item}
               onClick={() => onToggle(section.name)}
             >
-              {section.isView ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-              <span>{section.name}</span>
+              {section.isView ? <EyeOutlined style={{ color: '#333333' }} /> : <EyeInvisibleOutlined  style={{ color: '#B4B4B4' }}/>}
+              <span className={`${section.isView ? s.blackText : s.greyText}`}>{section.name}</span>
             </Button>
           ))}
         </div>

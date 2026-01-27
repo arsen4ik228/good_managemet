@@ -10,7 +10,9 @@
 }
 
 .HoverCardContent {
-    width: 120px;
+    padding: 5px;
+    
+    min-width: 120px;
     height: 120px;
 
     display: flex;

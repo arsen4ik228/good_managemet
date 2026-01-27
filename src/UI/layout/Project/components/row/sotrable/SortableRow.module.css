@@ -1,5 +1,24 @@
+.drag {
+  position: relative;
+  border: 2px solid red;
+
+  padding-left: 50px;
+  margin-left: -50px;
+}
+
 .dragHandle {
+  position: absolute;
+  top: 50%;
+  left: 25px;
+  transform: translateY(-50%);
   cursor: grab;
-  display: inline-block;
-  margin-right: 8px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.drag:hover .dragHandle {
+  opacity: 1;
+  pointer-events: auto;
 }

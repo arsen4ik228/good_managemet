@@ -1,6 +1,6 @@
 import TextArea from "antd/es/input/TextArea";
 
-export default function TextAreaRdx({ style, ...props }) {
+export default function TextAreaRdx({ style, value, onChange,...props }) {
   return (
     <TextArea
       style={{
@@ -10,7 +10,9 @@ export default function TextAreaRdx({ style, ...props }) {
         boxShadow: "none",
         ...style,
       }}
-      { ...props }
+      {...props}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
     />
   )
 }

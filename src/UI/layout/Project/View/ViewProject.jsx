@@ -1,3 +1,5 @@
+import { useParams } from "react-router-dom";
+import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 import classes from "./ViewProject.module.css";
 
 const arrayTasks = [
@@ -13,6 +15,29 @@ const arrayTasks = [
     },
     {
         title: "Задачи",
+        tasks: [
+            {
+                task: "Заключить договор на покупку станка ВР-350 ТЕ",
+                date: "19.11.2023",
+                people: "Андрей Тыртышный",
+                post: "Начальник службы заказов"
+            },
+            {
+                task: "Подготовить место в цехе №2 для установки станка ВР-350 ТЕ",
+                date: "27.11.2023",
+                people: "Андрей Макаров",
+                post: "Начальник цеха №2"
+            },
+            {
+                task: "Провести кабель питания до места усановки станка ВР-350 ТЕ",
+                date: "19.11.2023",
+                people: "Алксей Любимов",
+                post: "Электрик"
+            },
+        ],
+    },
+    {
+        title: "Показатели",
         tasks: [
             {
                 task: "Заключить договор на покупку станка ВР-350 ТЕ",
@@ -70,7 +95,7 @@ const Task = ({ title, task, date, people, post, index }) => {
     )
 }
 
-const TasksContainer = ({ title, tasks}) => {
+const TasksContainer = ({ title, tasks }) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
@@ -81,18 +106,19 @@ const TasksContainer = ({ title, tasks}) => {
     )
 }
 
-
 export default function ViewProject() {
+    const { projectId } = useParams();
+    const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
     return (
         <div className={classes.main}>
             <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
-            <span className={classes.strong}>Андрей Макаров</span>
-            <span className={classes.margin}> Начальник службы расходов</span>
+            <span className={classes.strong}>Имя Фамилия</span>
+            <span className={classes.margin}>Название поста</span>
 
-            <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>Проект</h2>
-            <h2 className={`${classes.strong} ${classes.center}`}>Закупка оборудования</h2>
+            <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProject?.type}</h2>
+            <h2 className={`${classes.strong} ${classes.center}`}>{currentProject?.projectName}</h2>
             {
-                arrayTasks?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
+                targets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
             }
         </div>
     )
