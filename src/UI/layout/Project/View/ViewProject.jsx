@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 import classes from "./ViewProject.module.css";
+import { useRightPanel, usePanelPreset } from "@hooks";
 
 const arrayTasks = [
     {
@@ -107,6 +108,8 @@ const TasksContainer = ({ title, tasks }) => {
 }
 
 export default function ViewProject() {
+    const { PRESETS } = useRightPanel()
+    usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
     const { projectId } = useParams();
     const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
     return (
