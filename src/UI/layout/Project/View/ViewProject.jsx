@@ -119,6 +119,16 @@ export default function ViewProject() {
     const { projectId } = useParams();
     const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
 
+    const sortedTargets = targets
+        ? [...targets].sort((a, b) => {
+            if (a.title === 'Продукт') return -1;
+            if (b.title === 'Продукт') return 1;
+            return 0;
+        })
+        : [];
+
+
+
     const {
 
         projectName,
@@ -131,6 +141,7 @@ export default function ViewProject() {
         setProjectName(currentProject?.projectName)
 
     }, [currentProject])
+
     return (
         <div className={classes.main}>
             <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
@@ -140,7 +151,7 @@ export default function ViewProject() {
             <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProject?.type}</h2>
             <h2 className={`${classes.strong} ${classes.center}`}>{currentProject?.projectName}</h2>
             {
-                targets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
+                sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
             }
         </div>
     )
