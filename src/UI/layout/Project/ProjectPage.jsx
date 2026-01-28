@@ -21,10 +21,7 @@ const initialSections = [
 ];
 
 export default function ProjectPage() {
-  // const { PRESETS } = useRightPanel();
-  // usePanelPreset(PRESETS["STRATEGY"]);
-
-  const [currentState, setCurrentState] = useState(STATES.EDIT);
+  const [currentState, setCurrentState] = useState(STATES.VIEW);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [sections, setSections] = useState(initialSections);
 

@@ -7,7 +7,6 @@ import { useRightPanel, usePanelPreset } from "@hooks";
 import { useAllPosts } from '../../../../hooks/Post/useAllPosts';
 import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 
-
 const project = {
   projectName: 'projectName',
   targets: [
@@ -21,8 +20,20 @@ const project = {
   ],
 };
 
+const initialSections = [
+  { name: 'Информация' },
+  { name: 'Продукт' },
+  { name: 'Метрика' },
+  { name: 'Организационные мероприятия' },
+  { name: 'Правила' },
+  { name: 'Задача' },
+];
+
 // "07a243c4-94bc-4b8c-b9fb-fad012e636bf"
 export default function EditProject({ sections }) {
+  const { PRESETS } = useRightPanel()
+  usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
+
   const { projectId } = useParams();
 
   const { allPosts } = useAllPosts();
@@ -33,7 +44,7 @@ export default function EditProject({ sections }) {
   useEffect(() => {
     if (!targets) return;
 
-    // Преобразуем массив из бэка в объект { type: [tasks...] }
+    // 1. Группируем то, что пришло с бэка
     const grouped = targets.reduce((acc, group) => {
       acc[group.title] = group.tasks.map(task => ({
         id: task.id,
@@ -48,9 +59,26 @@ export default function EditProject({ sections }) {
       return acc;
     }, {});
 
-    // Добавляем пустой target для создания (кроме Продукт)
+    // 2. Гарантируем наличие всех разделов
+    initialSections.forEach(({ name }) => {
+      if (!grouped[name]) {
+        grouped[name] = [
+          {
+            id: uuidv4(),
+            type: name,
+            orderNumber: 1,
+            content: '',
+            holderPostId: null,
+            date: null,
+            isCreated: true,
+          },
+        ];
+      }
+    });
+
+    // 3. Добавляем пустой элемент для создания (кроме "Продукт")
     Object.entries(grouped).forEach(([type, items]) => {
-      if (type !== 'Продукт') {
+      if (type !== 'Продукт' && !items.some(i => i.isCreated)) {
         items.push({
           id: uuidv4(),
           type,
@@ -65,6 +93,8 @@ export default function EditProject({ sections }) {
 
     setTargetsByType(grouped);
   }, [targets]);
+
+  console.log("targetsByType = ", targetsByType)
 
   const handleUpdateTarget = (type, id, field, value) => {
     setTargetsByType(prev => ({
@@ -96,33 +126,29 @@ export default function EditProject({ sections }) {
     }));
   };
 
-    const { PRESETS } = useRightPanel();
-  
-    usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
-
   return (
     <div className={s.main}>
       <div className={s.wrapper}>
-         {sections
-        .filter(section => section.isView) // только видимые
-        .map(section => {
-          const targets = targetsByType[section.name] || [];
-          return (
-            <Table
-              key={section.name}
-              title={section.name}
-              targets={targets}
-              posts={allPosts}
-              updateTarget={(id, field, value) =>
-                handleUpdateTarget(section.name, id, field, value)
-              }
-              addTarget={() => handleAddTarget(section.name)}
-              updateOrder={(newOrderIds) =>
-                handleUpdateOrder(section.name, newOrderIds)
-              }
-            />
-          );
-        })}
+        {sections
+          .filter(section => section.isView) // только видимые
+          .map(section => {
+            const targets = targetsByType[section.name] || [];
+            return (
+              <Table
+                key={section.name}
+                title={section.name}
+                targets={targets}
+                posts={allPosts}
+                updateTarget={(id, field, value) =>
+                  handleUpdateTarget(section.name, id, field, value)
+                }
+                addTarget={() => handleAddTarget(section.name)}
+                updateOrder={(newOrderIds) =>
+                  handleUpdateOrder(section.name, newOrderIds)
+                }
+              />
+            );
+          })}
       </div>
     </div>
   );
