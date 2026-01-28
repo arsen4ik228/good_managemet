@@ -4,7 +4,7 @@ import { DatePicker, Input, Select } from 'antd';
 import classes from './CustomComponent.module.css';
 import { useParams } from 'react-router-dom';
 import { loadDraft, saveDraft } from "@helpers/indexedDB";
-import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext';
+import { useProjectForm } from '../../../../contexts/ProjectFormContext';
 
 const { Option } = Select;
 
@@ -18,7 +18,10 @@ export const ProjectCreationComponent = () => {
         senderPost,
         setSenderPost,
         userPostsInAccount,
-    } = useWorkingPlanForm();
+
+        projectName,
+        setProjectName
+    } = useProjectForm();
 
 
     return (
@@ -32,8 +35,8 @@ export const ProjectCreationComponent = () => {
                     placeholder="Введите название проекта"
                     className={classes.customInput}
                     bordered={false}
-                // value={convertTheme}
-                // onChange={(e) => setConvertTheme(e.target.value)}
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
                 />
             </div>
 

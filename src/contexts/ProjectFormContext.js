@@ -1,12 +1,11 @@
 // contexts/ConvertFormContext.js
 import React, { createContext, useContext, useState, useEffect, use } from 'react';
-import { useParams } from 'react-router-dom';
 import { usePostsHook, useConvertsHook, useGetReduxOrganization } from '@hooks';
 import dayjs from 'dayjs';
 
-const WorkingPlanContext = createContext();
+const ProjectContext = createContext();
 
-export const WorkingPlanProvider = ({ children }) => {
+export const ProjectProvider = ({ children }) => {
 
     const [senderPost, setSenderPost] = useState();
     const [dateStart, setDateStart] = useState(dayjs())
@@ -43,20 +42,25 @@ export const WorkingPlanProvider = ({ children }) => {
         setIsEdit,
         taskId,
         setTaskId,
+
+
+        projectName,
+        setProjectName
+
     };
 
     return (
-        <WorkingPlanContext.Provider value={value}>
+        <ProjectContext.Provider value={value}>
             {children}
-        </WorkingPlanContext.Provider>
+        </ProjectContext.Provider>
     );
 };
 
 
-export const useWorkingPlanForm = () => {
-    const context = useContext(WorkingPlanContext);
+export const useProjectForm = () => {
+    const context = useContext(ProjectContext);
     if (!context) {
-        throw new Error('useWorkingPlanForm must be used within ConvertFormProvider');
+        throw new Error('useProjectForm must be used within ConvertFormProvider');
     }
     return context;
 };

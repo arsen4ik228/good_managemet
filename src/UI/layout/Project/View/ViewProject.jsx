@@ -1,7 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 import classes from "./ViewProject.module.css";
+
+import { useEffect } from "react";
+import { useProjectForm } from "../../../../contexts/ProjectFormContext";
+import { notEmpty } from '@helpers/helpers'
+
 import { useRightPanel, usePanelPreset } from "@hooks";
+
 
 const arrayTasks = [
     {
@@ -112,6 +118,7 @@ export default function ViewProject() {
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
     const { projectId } = useParams();
     const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
+
     const sortedTargets = targets
         ? [...targets].sort((a, b) => {
             if (a.title === 'Продукт') return -1;
@@ -119,6 +126,21 @@ export default function ViewProject() {
             return 0;
         })
         : [];
+
+
+
+    const {
+
+        projectName,
+        setProjectName
+    } = useProjectForm();
+
+    useEffect(() => {
+        if (!notEmpty(currentProject)) return
+
+        setProjectName(currentProject?.projectName)
+
+    }, [currentProject])
 
     return (
         <div className={classes.main}>
