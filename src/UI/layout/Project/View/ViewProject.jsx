@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
 import classes from "./ViewProject.module.css";
+import { useEffect } from "react";
+import { useProjectForm } from "../../../../contexts/ProjectFormContext";
+import { notEmpty } from '@helpers/helpers'
 
 const arrayTasks = [
     {
@@ -109,6 +112,19 @@ const TasksContainer = ({ title, tasks }) => {
 export default function ViewProject() {
     const { projectId } = useParams();
     const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
+
+    const {
+
+        projectName,
+        setProjectName
+    } = useProjectForm();
+
+    useEffect(() => {
+        if (!notEmpty(currentProject)) return
+
+        setProjectName(currentProject?.projectName)
+
+    }, [currentProject])
     return (
         <div className={classes.main}>
             <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
