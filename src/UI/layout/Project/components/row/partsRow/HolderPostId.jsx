@@ -13,10 +13,10 @@ export default function HolderPostId({ posts, holderPostId, onChange }) {
     if (!option) {
       setUser(null);
       onChange(null);
-      return;
+    } else {
+      setUser(option.user);
+      onChange(option.value);
     }
-    setUser(option.user);
-    onChange(option.value);
     setShowSelect(false);
   };
 
@@ -46,36 +46,50 @@ export default function HolderPostId({ posts, holderPostId, onChange }) {
       </HoverCard.Root>
 
       {showSelect && (
-        <Select
-          bordered={false}
-          showSearch
-          allowClear
-          optionFilterProp="label"
-          style={{ width: 400 }}
-          options={posts?.map(p => ({
-            value: p.id,
-            user: p.user,
-            search: `${p.user?.firstName} ${p.user?.lastName}`.toLowerCase(),
-            label: (
-              <Flex align="center" gap={8}>
-                <Avatar
-                  size={24}
-                  src={p.user?.avatar_url ? `${baseUrl}${p.user.avatar_url}` : default_avatar}
-                />
-                <span style={{
-                  display: "inline-block",
-                  maxWidth: 350,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}>{p.user?.firstName} {p.user?.lastName}</span>
-              </Flex>
-            ),
-          }))}
-          filterOption={(input, option) => option?.search?.includes(input.toLowerCase())}
-          onChange={handleSelectChange}
-          value={holderPostId}
-        />
+        <div
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: "-35px",
+            zIndex: 1000,
+          }}
+        >
+          <Select
+            bordered={false}
+            open={true} // автоматически открываем dropdown
+            showSearch
+            allowClear
+            optionFilterProp="label"
+            style={{
+              width: 250,
+              backgroundColor: "#fff",
+              borderRadius: 4
+            }}
+            options={posts?.map(p => ({
+              value: p.id,
+              user: p.user,
+              search: `${p.user?.firstName} ${p.user?.lastName}`.toLowerCase(),
+              label: (
+                <Flex align="center" gap={8}>
+                  <Avatar
+                    size={24}
+                    src={p.user?.avatar_url ? `${baseUrl}${p.user.avatar_url}` : default_avatar}
+                  />
+                  <span style={{
+                    display: "inline-block",
+                    maxWidth: 350,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}>{p.user?.firstName} {p.user?.lastName}</span>
+                </Flex>
+              ),
+            }))}
+            filterOption={(input, option) => option?.search?.includes(input.toLowerCase())}
+            onChange={handleSelectChange}
+            value={holderPostId}
+          />
+        </div>
       )}
     </>
   );
