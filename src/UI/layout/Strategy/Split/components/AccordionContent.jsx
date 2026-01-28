@@ -21,18 +21,19 @@ export const AccordionContent = ({
     const debouncedSaveRef = useRef(null);
 
 
-    const handleChange = (field) => (e) => {
-        const value = e.target.value;
+    const handleChange = (field) => (valueOrEvent) => {
+        const value =
+            typeof valueOrEvent === 'string'
+                ? valueOrEvent
+                : valueOrEvent?.target?.value;
 
         setProjectData(prev => {
             const updated = { ...prev, [field]: value };
-
-            // вызываем debounce с актуальными данными
             debouncedSaveRef.current(updated);
-
             return updated;
         });
     };
+
 
 
     // создаём debounce один раз
