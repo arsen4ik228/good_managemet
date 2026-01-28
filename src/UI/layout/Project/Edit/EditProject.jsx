@@ -94,8 +94,6 @@ export default function EditProject({ sections }) {
     setTargetsByType(grouped);
   }, [targets]);
 
-  console.log("targetsByType = ", targetsByType)
-
   const handleUpdateTarget = (type, id, field, value) => {
     setTargetsByType(prev => ({
       ...prev,

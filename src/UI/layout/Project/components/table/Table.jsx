@@ -4,6 +4,7 @@ import { DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, us
 import { arrayMove, SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import SortableRow from '../row/sotrable/SortableRow.jsx';
+import TableRowForInformation from '../row/TableRowForInformation.jsx';
 
 export default function Table({ title, targets, posts, updateTarget, addTarget, updateOrder }) {
   const items = targets.map(t => t.id);
@@ -35,19 +36,35 @@ export default function Table({ title, targets, posts, updateTarget, addTarget, 
   return (
     <div className={s.table}>
       <TableName title={title} />
-      <DndContext modifiers={[restrictToVerticalAxis]} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          {targets.map(t => (
-            <SortableRow
-              key={t.id}
-              id={t.id}
-              target={t}
-              posts={posts}
-              updateTarget={updateTarget}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
+      {
+        title === "Информация"
+          ? (
+            targets.map(t => (
+              <TableRowForInformation
+                key={t.id}
+                id={t.id}
+                target={t}
+                posts={posts}
+                updateTarget={updateTarget}
+              />
+            ))
+          )
+          : (
+            <DndContext modifiers={[restrictToVerticalAxis]} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                {targets.map(t => (
+                  <SortableRow
+                    key={t.id}
+                    id={t.id}
+                    target={t}
+                    posts={posts}
+                    updateTarget={updateTarget}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          )
+      }
     </div>
   );
 }
