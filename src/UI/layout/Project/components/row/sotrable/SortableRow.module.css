@@ -1,6 +1,5 @@
 .drag {
   position: relative;
-  border: 2px solid red;
 
   padding-left: 50px;
   margin-left: -50px;
@@ -9,16 +8,29 @@
 .dragHandle {
   position: absolute;
   top: 50%;
-  left: 25px;
+  left: 15px;
   transform: translateY(-50%);
   cursor: grab;
 
+  display: flex;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background-color: var(--grey-light2);
+  border-top-left-radius: 12.5px;
+  border-bottom-left-radius: 12.5px;
+  border: 1px solid var(--grey-medium);
+
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s;
+  transition: opacity 1s;
 }
 
 .drag:hover .dragHandle {
   opacity: 1;
   pointer-events: auto;
+}
+
+.dragIcon {
+  margin-left: 5px;
 }

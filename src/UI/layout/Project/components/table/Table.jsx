@@ -2,6 +2,7 @@ import s from './Table.module.css';
 import TableName from '../tableName/TableName.jsx';
 import { DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import SortableRow from '../row/sotrable/SortableRow.jsx';
 
 export default function Table({ title, targets, posts, updateTarget, addTarget, updateOrder }) {
@@ -34,7 +35,7 @@ export default function Table({ title, targets, posts, updateTarget, addTarget, 
   return (
     <div className={s.table}>
       <TableName title={title} />
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext modifiers={[restrictToVerticalAxis]} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={items} strategy={verticalListSortingStrategy}>
           {targets.map(t => (
             <SortableRow
