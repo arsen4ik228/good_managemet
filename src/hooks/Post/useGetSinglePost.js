@@ -37,7 +37,6 @@ export const useGetSinglePost = ({postId, enabled = true}) => {
         parentPost: data?.parentPost || {},
         posts: data?.posts || [],
         policiesActive: data?.policiesActive || [],
-        statisticsIncludedPost: data?.statisticsIncludedPost || [],
         isLoadingGetPostId: isLoading,
         isErrorGetPostId: isError,
         isFetchingGetPostId: isFetching,

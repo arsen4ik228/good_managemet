@@ -74,7 +74,7 @@ export default function ProjectsAndProgramsList() {
         );
     }, [seacrhUsersSectionsValue, projects, projectsWithProgram, programs]);
 
-    console.log(projectsWithProgram, '   ', projects, '    ', programs)
+    // console.log(projectsWithProgram, '   ', projects, '    ', programs)
 
     return (
         <>

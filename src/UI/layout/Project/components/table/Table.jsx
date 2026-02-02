@@ -6,7 +6,7 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import SortableRow from '../row/sotrable/SortableRow.jsx';
 import TableRowForInformation from '../row/TableRowForInformation.jsx';
 
-export default function Table({ title, targets, posts, updateTarget, addTarget, updateOrder }) {
+export default function Table({ title, targets, posts, updateTarget, addTarget, updateOrder, focusTargetId}) {
   const items = targets.map(t => t.id);
 
   const sensors = useSensors(
@@ -59,6 +59,8 @@ export default function Table({ title, targets, posts, updateTarget, addTarget, 
                     target={t}
                     posts={posts}
                     updateTarget={updateTarget}
+                    addTarget={addTarget}
+                    focusTargetId={focusTargetId}
                   />
                 ))}
               </SortableContext>
