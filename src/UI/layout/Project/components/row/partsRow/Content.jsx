@@ -12,12 +12,11 @@ export default function Content({ content, onChange, addTarget, autoFocus }) {
     }, [autoFocus]);
 
 
-
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             if (e.shiftKey) return;
             e.preventDefault();
-            addTarget();
+            if(content) addTarget();
         }
     };
 
