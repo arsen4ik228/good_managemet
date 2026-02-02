@@ -4,13 +4,15 @@ import Content from './partsRow/Content';
 import HolderPostId from './partsRow/HolderPostId';
 import CustomDatePicker from './partsRow/Date';
 
-export default function TableRow({ target, posts, updateTarget }) {
+export default function TableRow({ target, posts, updateTarget, addTarget, focusTargetId}) {
   return (
     <div className={s.row}>
-      <LineNumber orderNumber={target.orderNumber} isCreated={target.isCreated} />
+      <LineNumber orderNumber={target.orderNumber} />
       <Content
         content={target.content}
         onChange={(val) => updateTarget(target.id, 'content', val)}
+        addTarget={addTarget}
+        autoFocus={target.id === focusTargetId} // <- передаём условный фокус
       />
       <HolderPostId
         holderPostId={target.holderPostId}

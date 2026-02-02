@@ -9,10 +9,10 @@ export const usePanelPreset = (presetKey, cleanup = true) => {
     // В вашем компоненте добавьте:
     const location = useLocation();
 
-    console.log('presetKey    ', presetKey, ' | Current path:', location.pathname);
+    // console.log('presetKey    ', presetKey, ' | Current path:', location.pathname);
     useEffect(() => {
         setPanelPreset(presetKey);
-        console.warn('usePanelPreset   ', presetKey)
+        // console.warn('usePanelPreset   ', presetKey)
         return () => {
             if (cleanup) {
                 resetRightPanel();
