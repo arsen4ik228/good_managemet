@@ -107,49 +107,51 @@ export default function WorkingPlanInput() {
     };
 
     const createTargets = async () => {
+        if (!contentInput.trim() || isRequestInProgress) return;
+        
         setIsRequestInProgress(true);
-
-
+    
         try {
-            if (!contentInput) return
-
-            const Data = {}
-
-            Data.type = 'Личная'
-            Data.orderNumber = 1
-            Data.content = contentInput
-            Data.holderPostId = senderPost
-            Data.dateStart = dateStart
-            Data.deadline = deadline
-            Data.targetState = 'Активная'
-            if (selectedPolicy)
-                Data.policyId = selectedPolicy
-            if (files) {
-                Data.attachmentIds = files
-                    .filter(item => !unpinFiles.includes(item?.attachment.id))
-                    .map(element => element?.attachment.id)
-            }
-
-            //(Data)
-
-            await postTargets({
-                ...Data
-            })
-                .unwrap()
-                .then(() => {
-                    reset()
+            const Data = {
+                type: 'Личная',
+                orderNumber: 1,
+                content: contentInput,
+                holderPostId: senderPost,
+                dateStart: dateStart,
+                deadline: deadline,
+                targetState: 'Активная',
+                ...(selectedPolicy && { policyId: selectedPolicy }),
+                ...(files && { 
+                    attachmentIds: files
+                        .filter(item => !unpinFiles.includes(item?.attachment.id))
+                        .map(element => element?.attachment.id)
                 })
-                .catch((error) => {
-                    console.error("Ошибка:", JSON.stringify(error, null, 2));
-                });
-
-            setFiles();
+            };
+    
+            await postTargets(Data).unwrap();
+            
+            // Успешная отправка
+            message.success('Задача создана');
+            
+            // Очищаем состояние
+            setContentInput('');
+            setFiles(undefined);
             setUnpinFiles([]);
+            
         } catch (error) {
-            message.error(`Произошла ошибка при создании задачи: ${error?.data?.message || ""}`);
+            message.error(`Произошла ошибка: ${error?.data?.message || "Неизвестная ошибка"}`);
+            console.error("Ошибка создания задачи:", error);
         } finally {
             setIsRequestInProgress(false);
-
+            
+            // Возвращаем фокус с небольшой задержкой
+            setTimeout(() => {
+                if (textAreaRef.current) {
+                    textAreaRef.current.focus();
+                    // Убедимся, что textarea не disabled
+                    textAreaRef.current.disabled = false;
+                }
+            }, 50);
         }
     }
 

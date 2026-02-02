@@ -16,6 +16,7 @@ export default function ProjectsList() {
     const {
         projects,
         projectsWithProgram,
+        maxProjectNumber
     } = useAllProject();
 
     const {
@@ -31,7 +32,7 @@ export default function ProjectsList() {
         try {
             await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект`,
+                projectName: `Новый проект №${maxProjectNumber+1}`,
                 type: "Проект",
                 strategyId: strategyId,
                 content: " ",

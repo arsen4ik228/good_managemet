@@ -7,113 +7,115 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `projects/${organizationId}/projects`,
       }),
       transformResponse: (response) => {
-        //("getProject    ", response); // Отладка ответа
-        return {
-          projects:
+    // Находим максимальный projectNumber среди всех элементов
+    let maxProjectNumber = 0;
+    
+    if (Array.isArray(response)) {
+        response.forEach(item => {
+            if (item.projectNumber && item.projectNumber > maxProjectNumber) {
+                maxProjectNumber = item.projectNumber;
+            }
+        });
+    }
+
+    return {
+        maxProjectNumber, // Добавляем максимальный номер в результат
+        
+        projects:
             response?.filter((item) => {
-              if (item.type !== "Проект" || item.programId !== null)
-                return false;
+                if (item.type !== "Проект" || item.programId !== null)
+                    return false;
 
-              // if (Array.isArray(item.targets)) {
-              //   const hasProductType = item.targets.some(
-              //     (target) =>
-              //       target.type === "Продукт" &&
-              //       target.targetState === "Активная" &&
-              //       target.isExpired === false
-              //   );
-
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    target.type === "Продукт" &&
-                    (target.targetState === "Активная" ||
-                      target.targetState === "Черновик")
-                );
-                return hasProductType;
-              }
+                if (Array.isArray(item.targets)) {
+                    const hasProductType = item.targets.some(
+                        (target) =>
+                            target.type === "Продукт" &&
+                            (target.targetState === "Активная" ||
+                                target.targetState === "Черновик")
+                    );
+                    return hasProductType;
+                }
             }) || [],
 
-          archivesProjects:
+        archivesProjects:
             response?.filter((item) => {
-              if (item.type !== "Проект" || item.programId !== null)
-                return false;
+                if (item.type !== "Проект" || item.programId !== null)
+                    return false;
 
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    target.type === "Продукт" &&
-                    (target.targetState === "Завершена" ||
-                      target.isExpired === true)
-                );
-                return hasProductType;
-              }
+                if (Array.isArray(item.targets)) {
+                    const hasProductType = item.targets.some(
+                        (target) =>
+                            target.type === "Продукт" &&
+                            (target.targetState === "Завершена" ||
+                                target.isExpired === true)
+                    );
+                    return hasProductType;
+                }
             }) || [],
 
-          projectsWithProgram:
+        projectsWithProgram:
             response?.filter((item) => {
-              if (item.type !== "Проект" || item.programId === null)
-                return false;
+                if (item.type !== "Проект" || item.programId === null)
+                    return false;
 
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    target.type === "Продукт" &&
-                    (target.targetState === "Активная" ||
-                      target.targetState === "Черновик")
-                );
-                //(hasProductType);
-                return hasProductType;
-              }
+                if (Array.isArray(item.targets)) {
+                    const hasProductType = item.targets.some(
+                        (target) =>
+                            target.type === "Продукт" &&
+                            (target.targetState === "Активная" ||
+                                target.targetState === "Черновик")
+                    );
+                    return hasProductType;
+                }
             }) || [],
 
-          archivesProjectsWithProgram:
+        archivesProjectsWithProgram:
             response?.filter((item) => {
-              if (item.type !== "Проект" || item.programId === null)
-                return false;
+                if (item.type !== "Проект" || item.programId === null)
+                    return false;
 
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    target.type === "Продукт" &&
-                    (target.targetState === "Завершена" ||
-                      target.isExpired === true)
-                );
-                //(hasProductType);
-                return hasProductType;
-              }
+                if (Array.isArray(item.targets)) {
+                    const hasProductType = item.targets.some(
+                        (target) =>
+                            target.type === "Продукт" &&
+                            (target.targetState === "Завершена" ||
+                                target.isExpired === true)
+                    );
+                    return hasProductType;
+                }
             }) || [],
 
-          programs:
+        programs:
             response?.filter((item) => {
-              if (item.type !== "Программа") return false;
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    (target.type === "Продукт" &&
-                      target.targetState === "Активная") ||
-                    target.targetState === "Черновик" ||
-                    target.isExpired === false
-                );
-                return hasProductType;
-              }
+                if (item.type !== "Программа") return false;
+                if (Array.isArray(item.targets)) {
+                    const hasProductType = item.targets.some(
+                        (target) =>
+                            (target.type === "Продукт" &&
+                                target.targetState === "Активная") ||
+                            target.targetState === "Черновик" ||
+                            target.isExpired === false
+                    );
+                    return hasProductType;
+                }
             }) || [],
 
-          archivesPrograms:
+        archivesPrograms:
             response?.filter((item) => {
-              if (item.type !== "Программа") return false;
+                if (item.type !== "Программа") return false;
 
-              if (Array.isArray(item.targets)) {
-                const hasProductType = item.targets.some(
-                  (target) =>
-                    target.type === "Продукт" &&
-                    (target.targetState === "Завершена" ||
-                      target.isExpired === true)
-                );
-                return hasProductType;
-              }
+                if (Array.isArray(item.targets)) {
+                    const hasProductType = item.targets.some(
+                        (target) =>
+                            target.type === "Продукт" &&
+                            (target.targetState === "Завершена" ||
+                                target.isExpired === true)
+                    );
+                    return hasProductType;
+                }
             }) || [],
-        };
-      },
+    };
+},
       providesTags: (result) =>
         Array.isArray(result)
           ? [
