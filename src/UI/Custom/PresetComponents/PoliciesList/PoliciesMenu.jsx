@@ -27,6 +27,7 @@ export default function PoliciesMenu({
             directives: filtered.filter((item) => item?.type === "Директива"),
             instructions: filtered.filter((item) => item?.type === "Инструкция"),
             disposals: filtered.filter((item) => item?.type === "Распоряжение"),
+            all: filtered.filter((item) => item?.type === "Распоряжение" || item?.type === "Инструкция" || item?.type === "Директива")
         };
     }, [objAllPolicies, statePolicy, seacrhPostsSectionsValue]);
 
@@ -78,9 +79,21 @@ export default function PoliciesMenu({
                 onClick: () => openPolicy(item.id),
             })),
         },
+        {
+            key: "all",
+            label: <span className={classes.menuLabel}>Общая папка</span>,
+            icon: <img src={folder} alt="folder" />,
+            children:  objFolder.all?.map((item) => ({
+                key: `disp-${item.id}`,
+                label: <span className={classes.menuLabel}>{item.policyName}</span>,
+                icon: getPolicyIcon(item.type),
+                onClick: () => openPolicy(item.id),
+            })),
+        },
     ];
 
 
+    console.log(objAllPolicies)
 
     return (
         <Menu
