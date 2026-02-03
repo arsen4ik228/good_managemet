@@ -38,7 +38,7 @@ export default function ProjectsList() {
                 projectName: `Новый проект №${maxProjectNumber+1}`,
                 type: "Проект",
                 strategyId: strategyId,
-                // content: " ",
+                content: " ",
                 targetCreateDtos: [
                     {
                         type: "Продукт",
