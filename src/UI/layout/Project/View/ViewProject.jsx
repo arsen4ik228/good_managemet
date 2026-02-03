@@ -1,13 +1,12 @@
-import { useParams } from "react-router-dom";
-import { useGetSingleProject } from "../../../../hooks/Project/useGetSingleProject";
+import {useParams} from "react-router-dom";
+import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 import classes from "./ViewProject.module.css";
 
-import { useEffect } from "react";
-import { useProjectForm } from "../../../../contexts/ProjectFormContext";
-import { notEmpty } from '@helpers/helpers'
+import {useEffect} from "react";
+import {useProjectForm} from "../../../../contexts/ProjectFormContext";
+import {notEmpty} from '@helpers/helpers'
 
-import { useRightPanel, usePanelPreset } from "@hooks";
-
+import {useRightPanel, usePanelPreset} from "@hooks";
 
 const arrayTasks = [
     {
@@ -68,22 +67,22 @@ const arrayTasks = [
     },
 ];
 
-const Task = ({ title, task, date, people, post, index }) => {
+const Task = ({title, task, date, people, post, index}) => {
     return (
         <>
             {
                 title === "Продукт" ? (
-                    <div className={classes.wrapper}>
-                        <div className={classes.leftBlock}>
-                            <span>{task}</span>
+                        <div className={classes.wrapper}>
+                            <div className={classes.leftBlock}>
+                                <span>{task}</span>
+                            </div>
+                            <div className={classes.rightBlock}>
+                                <span>{date}</span>
+                                <span>{people}</span>
+                                <span className={classes.light}>{post}</span>
+                            </div>
                         </div>
-                        <div className={classes.rightBlock}>
-                            <span>{date}</span>
-                            <span>{people}</span>
-                            <span className={classes.light}>{post}</span>
-                        </div>
-                    </div>
-                )
+                    )
                     : (
                         <div className={classes.wrapperBorder}>
                             <div className={classes.leftBlock}>
@@ -102,25 +101,50 @@ const Task = ({ title, task, date, people, post, index }) => {
     )
 }
 
-const TasksContainer = ({ title, tasks }) => {
+const TasksContainer = ({title, tasks}) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
             {
-                tasks?.map((item, index) => <Task title={title} task={item.task} date={item.date} people={item.people} post={item.post} index={++index} />)
+                tasks?.map((item, index) => {
+                    const user = item?.targetHolders?.[0]?.post?.user;
+                    const people = user
+                        ? `${user.firstName} ${user.lastName}`
+                        : null;
+
+                    return (
+                        <Task
+                            key={item.id}
+                            title={title}
+                            task={item.content}
+                            date={item.deadline}
+                            people={people}
+                            post={item?.targetHolders?.[0]?.post?.postName}
+                            index={index + 1}
+                        />
+                    );
+                })
             }
+
         </div>
     )
 }
 
 export default function ViewProject() {
-    const { PRESETS } = useRightPanel()
+    const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
-    const { projectId } = useParams();
-    const { currentProject, targets } = useGetSingleProject({ selectedProjectId: projectId });
+    const {projectId} = useParams();
+    const {currentProject, targets} = useGetSingleProject({selectedProjectId: projectId});
+
+    const sortedTargets = targets
+        ? [...targets].sort((a, b) => {
+            if (a.title === 'Продукт') return -1;
+            if (b.title === 'Продукт') return 1;
+            return 0;
+        })
+        : [];
 
     const {
-
         projectName,
         setProjectName
     } = useProjectForm();
@@ -131,6 +155,7 @@ export default function ViewProject() {
         setProjectName(currentProject?.projectName)
 
     }, [currentProject])
+
     return (
         <div className={classes.main}>
             <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
@@ -140,7 +165,7 @@ export default function ViewProject() {
             <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProject?.type}</h2>
             <h2 className={`${classes.strong} ${classes.center}`}>{currentProject?.projectName}</h2>
             {
-                targets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
+                sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks}/>)
             }
         </div>
     )

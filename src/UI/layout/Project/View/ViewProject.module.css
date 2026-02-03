@@ -25,6 +25,10 @@
     font-size: 16px;
 }
 
+h2 {
+    font-size: 18px !important;
+}
+
 .light {
     color: #999999;
     font-size: 12px !important;
@@ -38,7 +42,7 @@
     text-align: center;
 }
 
-.container{
+.container {
     margin-top: 50px;
 
     display: flex;
@@ -66,6 +70,7 @@
     flex-direction: row;
     align-items: center;
     gap: 6px;
+    line-height: 1.2;
 }
 
 .rightBlock {

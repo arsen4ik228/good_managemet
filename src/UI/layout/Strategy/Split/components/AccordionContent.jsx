@@ -1,15 +1,17 @@
-import { useState, useRef, useEffect } from 'react';
+import {useState, useRef, useEffect} from 'react';
 import styles from "./AccordionContent.module.css";
 import TextAreaRdx from '../../../../radixUI/textArea/TextAreaRdx';
 import debounce from "lodash/debounce";
+import { message } from 'antd';
 
 export const AccordionContent = ({
-    project,
-    name,
-    info,
-    product,
-    updateProject,
-}) => {
+                                     project,
+                                     name,
+                                     info,
+                                     product,
+                                     updateProject,
+                                     onSaved
+                                 }) => {
 
     const [projectData, setProjectData] = useState({
         name: name,
@@ -21,15 +23,15 @@ export const AccordionContent = ({
     const debouncedSaveRef = useRef(null);
 
 
-    const handleChange = (field) => (e) => {
-        const value = e.target.value;
+    const handleChange = (field) => (valueOrEvent) => {
+        const value =
+            typeof valueOrEvent === 'string'
+                ? valueOrEvent
+                : valueOrEvent?.target?.value;
 
         setProjectData(prev => {
-            const updated = { ...prev, [field]: value };
-
-            // вызываем debounce с актуальными данными
+            const updated = {...prev, [field]: value};
             debouncedSaveRef.current(updated);
-
             return updated;
         });
     };
@@ -39,6 +41,9 @@ export const AccordionContent = ({
     useEffect(() => {
         debouncedSaveRef.current = debounce(async (data) => {
             try {
+                if (!data.name?.trim()) return;
+                if (!data.info?.trim()) return;
+                if (!data.product?.trim()) return;
                 await updateProject({
                     projectId: project.id,
                     _id: project.id,
@@ -51,12 +56,16 @@ export const AccordionContent = ({
                             orderNumber: 1,
                             content: data.product,
                         },
-                    ],
+                    ]
+
                 }).unwrap();
+                message.success('Проект обновился');
+                onSaved?.(); // ← ВАЖНО
             } catch (e) {
+                message.error('Ошибка при обновлении проектов');
                 console.error("Ошибка обновления проекта", e);
             }
-        }, 2000); // ← задержка debounce
+        }, 5000); // ← задержка debounce
 
         return () => {
             debouncedSaveRef.current?.cancel();
@@ -64,13 +73,16 @@ export const AccordionContent = ({
     }, [project, updateProject]);
 
     return (
-        <>
+        <div style={{
+            overflow: 'hidden',
+        }}>
             <div className={styles.infoLabel}>Информация по проекту</div>
 
             <TextAreaRdx className={styles.contentText}
-                value={projectData.info}
-                onChange={handleChange('info')}
-                autoSize={{ minRows: 3, maxRows: 6 }} />
+                         value={projectData.info}
+                         onChange={handleChange('info')}
+                         autoSize={{minRows: 3, maxRows: 6}}/>
+            <div className={styles.error}> {!projectData.info?.trim() && "Не может быть пустым"}</div>
             <div className={styles.line}></div>
 
 
@@ -80,6 +92,7 @@ export const AccordionContent = ({
                 value={projectData.name}
                 onChange={handleChange('name')}
             />
+            <div className={styles.error}> {!projectData.name?.trim() && "Не может быть пустым"}</div>
             <div className={styles.line}></div>
 
 
@@ -89,7 +102,8 @@ export const AccordionContent = ({
                 value={projectData.product}
                 onChange={handleChange('product')}
             />
+            <div className={styles.error}> {!projectData.product?.trim() && "Не может быть пустым"}</div>
             <div className={styles.line}></div>
-        </>
+        </div>
     );
 };

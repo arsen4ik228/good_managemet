@@ -261,15 +261,14 @@ export const projectApi = apiSlice.injectEndpoints({
         { type: "Project", id: arg.programId },
       ],
     }),
-  }),
 });
 
 export const {
-  useGetProjectQuery,
-  useGetProgramIdQuery,
-  useGetProgramNewQuery,
-  useGetProjectNewQuery,
-  usePostProjectMutation,
-  useGetProjectIdQuery,
-  useUpdateProjectMutation,
+    useGetProjectQuery,
+    useGetProgramIdQuery,
+    useGetProgramNewQuery,
+    useGetProjectNewQuery,
+    usePostProjectMutation,
+    useGetProjectIdQuery,
+    useUpdateProjectMutation,
 } = projectApi;

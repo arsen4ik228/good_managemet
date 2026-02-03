@@ -12,7 +12,7 @@ export const usePanelPreset = (presetKey, cleanup = true) => {
     // console.log('presetKey    ', presetKey, ' | Current path:', location.pathname);
     useEffect(() => {
         setPanelPreset(presetKey);
-        console.warn('usePanelPreset   ', presetKey)
+        // console.warn('usePanelPreset   ', presetKey)
         return () => {
             if (cleanup) {
                 resetRightPanel();

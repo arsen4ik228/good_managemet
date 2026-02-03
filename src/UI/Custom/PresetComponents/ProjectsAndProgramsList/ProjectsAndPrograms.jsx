@@ -92,7 +92,7 @@ export default function ProjectsAndProgramsList() {
         );
     }, [seacrhUsersSectionsValue, projects, projectsWithProgram, programs]);
 
-    console.log(projectsWithProgram, '   ', projects, '    ', maxProjectNumber)
+    // console.log(projectsWithProgram, '   ', projects, '    ', programs)
 
     return (
         <>

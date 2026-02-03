@@ -1,0 +1,6 @@
+.row {
+    position: relative;
+
+    width: calc(100% - 25px - 30px - 110px);
+    margin-left: 35px;
+}
