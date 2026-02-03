@@ -5,9 +5,23 @@ import { useFindPathSegment } from '@helpers/helpers'
 import { Tooltip } from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
 
-export default function ListElem({ icon, upperText, colorUpperText, bottomText, upperLabel, bage, greyBage, linkSegment, isActive, clickFunc, setSelectedItemData }) {
+export default function ListElem({
+    icon,
+    upperText,
+    colorUpperText,
+    bottomText,
+    upperLabel,
+    bage,
+    greyBage,
+    linkSegment,
+    isActive,
+    clickFunc,
+    setSelectedItemData
+}) {
     const isSelected = useFindPathSegment(linkSegment)
 
+    // Добавляем ref для элемента
+    const elemRef = useRef(null)
 
     useEffect(() => {
         if (isSelected && setSelectedItemData) {
@@ -23,12 +37,15 @@ export default function ListElem({ icon, upperText, colorUpperText, bottomText, 
         }
     }, [isSelected])
 
-
     return (
         <>
-            <div className={`${classes.content} ${isSelected && classes.selected}`}
+            <div
+                ref={elemRef}
+                className={`${classes.content} ${isSelected && classes.selected}`}
                 onClick={() => clickFunc()}
                 data-after={upperLabel}
+                data-id={linkSegment} // Добавляем data-id
+                data-selected={isSelected} // Добавляем data-selected
             >
                 <div className={classes.imgContainer}>
                     <img src={icon ?? avatar} alt="avatar" />

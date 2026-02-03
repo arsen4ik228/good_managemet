@@ -17,6 +17,8 @@ export const useAllProject = () => {
       isErrorGetProject,
       isLoadingGetProject,
 
+      maxProjectNumber
+
     } = useGetProjectQuery(
       {organizationId: reduxSelectedOrganizationId},
       {
@@ -29,6 +31,8 @@ export const useAllProject = () => {
   
           programs: data?.programs || [],
           archivesPrograms: data?.archivesPrograms || [],
+
+          maxProjectNumber: data?.maxProjectNumber || 1,
 
           isErrorGetProject: isError,
           isLoadingGetProject: isLoading,
@@ -51,5 +55,7 @@ export const useAllProject = () => {
 
     isErrorGetProject,
     isLoadingGetProject,
+
+    maxProjectNumber
   };
 };

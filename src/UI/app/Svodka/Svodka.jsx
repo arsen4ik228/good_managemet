@@ -229,7 +229,7 @@ export default function Svodka() {
             padding: "5px",
           }
         }),
-        render: (text) => (
+        render: (obj) => (
           <div
             className={classes.cell}
             style={{
@@ -237,13 +237,16 @@ export default function Svodka() {
               maxWidth: "320px",
               wordWrap: "break-word",
               whiteSpace: "normal",
-              lineHeight: "1.2",
+              lineHeight: "1.4",
               overflow: "hidden",
               display: "block",
             }}
-            title={text}
+            title={`${obj.name}${obj.postName ? ` (${obj.postName})` : ''}`}
           >
-            {text}
+            <div>{obj.name}</div>
+            {obj.postName && (
+              <div style={{ fontSize: "14px", color: "#666" }}>{obj.postName}</div>
+            )}
           </div>
         ),
       },
@@ -328,7 +331,7 @@ export default function Svodka() {
     if (!allStatistics.length || !datePoint) return [];
 
     return allStatistics.map((statisticItem) => {
-      const rowData = { id: statisticItem.id, name: statisticItem.name, key: statisticItem.id };
+      const rowData = { id: statisticItem.id, name: { name: statisticItem.name, postName: statisticItem?.post?.name }, key: statisticItem.id };
       const weeklyData = generateWeeklyData(statisticItem.statisticDatas || [], week, datePoint);
 
       weeklyData.forEach((w, index) => {
@@ -352,6 +355,8 @@ export default function Svodka() {
       setAllStatistics(_.cloneDeep(statistics));
     }
   }, [statistics]);
+
+  console.log(allStatistics)
 
   return (
     <div className={classes.dialog}>

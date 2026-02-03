@@ -318,9 +318,12 @@ export default function ControlPanel() {
 
   // Обновление cards при изменении statisticsPoints
   useEffect(() => {
+    if (!selectedControlPanelId) return;
+
     if (allStatistics.length > 0) {
       setCards(allStatistics);
-    } else {
+    }
+    else {
       setCards([]);
     }
   }, [allStatistics]);

@@ -57,7 +57,7 @@ export default function PanelDragDrop({
         {...provided.dragHandleProps}
         className={classes.div}
         style={{
-          background: isActive ? "var(--primary)" : "var(--grey)",
+          background: isActive ? "var(--primary)" : "var(--grey-medium)",
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}

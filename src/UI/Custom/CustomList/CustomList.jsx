@@ -15,11 +15,13 @@ export default function CustomList({
     addButtonClick,
     searchValue,
     searchFunc,
-    onExpandedChange, // опциональный callback для управления извне
+    onExpandedChange,
     selectedItem,
-    expanded, // опциональное внешнее управление состоянием
+    expanded,
     children,
-    isLoading
+    isLoading,
+    // Добавляем проп для получения ref контейнера
+    onListContainerRef
 }) {
     // Внутреннее состояние используется только если expanded не передано извне
     const [internalExpanded, setInternalExpanded] = useState(true);
@@ -81,6 +83,14 @@ export default function CustomList({
             searchInputRef.current.focus();
         }
     }, [showSearch]);
+
+    
+    // Передаем ref наружу
+    useEffect(() => {
+        if (onListContainerRef) {
+            onListContainerRef(listRef.current);
+        }
+    }, [onListContainerRef]);
 
     return (
         <div className={classes.wrapper}>
@@ -149,6 +159,7 @@ export default function CustomList({
             {/* Контейнер для списка с фиксированной высотой и скроллом */}
             <div
                 ref={listRef}
+                
                 className={`${classes.listContainer} ${!currentExpanded ? classes.collapsed : ''}`}
             >
 

@@ -25,6 +25,8 @@ export default function ProjectsAndProgramsList() {
 
         programs,
         archivesPrograms,
+
+        maxProjectNumber
     } = useAllProject();
 
     const {
@@ -35,12 +37,12 @@ export default function ProjectsAndProgramsList() {
     const {
         updateProject,
     } = useUpdateSingleProject();
-
     const createNewProject = async () => {
         try {
-            await createProject({
+            // Сохраняем результат запроса в переменную
+            const result = await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект _ тестовый`,
+                projectName: `Новый проект №${maxProjectNumber + 1}`,
                 type: "Проект",
                 // strategyId: strategyId,
                 content: " ",
@@ -52,6 +54,22 @@ export default function ProjectsAndProgramsList() {
                     },
                 ],
             }).unwrap();
+            
+            // Проверяем структуру ответа
+            console.log('Result от сервера:', result);
+            
+            // Получаем ID из результата (зависит от структуры ответа сервера)
+            const projectId = result.id || result._id || result.data?.id;
+            
+            if (projectId) {
+                // Навигация с ID созданного проекта
+                navigate(`helper/project/${projectId}`);
+            } else {
+                console.error('ID проекта не найден в ответе сервера:', result);
+                // Альтернативная навигация или сообщение об ошибке
+                navigate('helper/projects');
+            }
+            
         } catch (error) {
             console.error("Ошибка при создании проекта:", error);
         }

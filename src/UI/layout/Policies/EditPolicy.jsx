@@ -6,16 +6,30 @@ import { useGetSinglePolicy, useUpdatePolicy } from '@hooks';
 import EditContainer from "@Custom/EditContainer/EditContainer";
 import Mdxeditor from "@Custom/Mdxeditor/Mdxeditor.jsx";
 
-import { Select, Input, Form, Modal, message } from "antd";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import { Select, Input, Form, Modal, message, Tooltip } from "antd";
+import { ExclamationCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
 import isEqual from "lodash/isEqual";
 
 
 const arrayTypes = [
-    { value: "Директива", label: "Директива" },
-    { value: "Инструкция", label: "Инструкция" },
-    { value: "Распоряжение", label: "Распоряжение" },
+    {
+        value: "Директива",
+        label: "Директива",
+        description: "Директива - это документ, устанавливающий организационные моменты. Это может быть описание поста, включая результат поста, метрику, правила, структурное положение, кому пост подчиняется и кто у него в подчинении. Это могут быть общие правила, установленные в компании, правила работы с клиентами, ведения отчётности и тому подобное. Регламент, постоянно действующий приказ и другие подобные документы оформляются как директива."
+    },
+    {
+        value: "Инструкция",
+        label: "Инструкция",
+        description: "Инструкция - это документ, содержащий описание технологии получения результата. Это описание может включать инструменты, последовательность, процедуры и прочее. Технический регламент, стандарт, технологическая карта и другие подобные документы являются инструкциями."
+    },
+    {
+        value: "Распоряжение",
+        label: "Распоряжение",
+        description: "Распоряжение - это документ с ограниченным сроком действия. Любые документы с ограниченным сроком действия оформляются как распоряжение."
+    },
 ];
+
+
 
 const arrayState = [
     { value: "Черновик", label: "Черновик" },
@@ -186,6 +200,34 @@ export default function EditPolicy() {
                                 >
                                     <Select
                                         options={arrayTypes}
+                                        optionRender={(option) => (
+                                            <Tooltip
+                                                title={option.data.description}
+                                                placement="right"
+                                                color="white" // Белый фон
+                                                overlayStyle={{
+                                                    color: '#000000', // Черный текст
+                                                    fontSize: '14px',
+                                                    lineHeight: '1.5',
+                                                    boxShadow: '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+                                                    maxWidth: '300px'
+                                                }}
+                                                overlayInnerStyle={{
+                                                    color: '#000000', // Черный текст для внутреннего содержимого
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center',
+                                                        width: '100%'
+                                                    }}
+                                                >
+                                                    <span>{option.data.label}</span>
+                                                </div>
+                                            </Tooltip>
+                                        )}
                                     />
                                 </Form.Item>
 
