@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useRef, useEffect} from "react";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import {Select, Avatar, Flex} from "antd";
 import s from './HolderPostId.module.css';
@@ -7,12 +7,24 @@ import {baseUrl} from "@helpers/constants.js";
 
 export default function HolderPostId({posts, holderPostId, onChange}) {
     const [showSelect, setShowSelect] = useState(false);
+    const containerRef = useRef(null); // реф для select
     const user = posts?.find(p => p.id === holderPostId)?.user || null;
 
     const handleSelectChange = (_, option) => {
         onChange(option ? option.value : null);
         setShowSelect(false);
     };
+
+    // закрываем при клике вне
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setShowSelect(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
         <>
@@ -41,6 +53,7 @@ export default function HolderPostId({posts, holderPostId, onChange}) {
 
             {showSelect && (
                 <div
+                    ref={containerRef}
                     style={{
                         position: "absolute",
                         right: 0,
@@ -50,10 +63,11 @@ export default function HolderPostId({posts, holderPostId, onChange}) {
                 >
                     <Select
                         bordered={false}
-                        open={true} // автоматически открываем dropdown
                         showSearch
                         allowClear
                         optionFilterProp="label"
+                        open={true}
+                        getPopupContainer={trigger => trigger.parentNode}
                         style={{
                             width: 250,
                             backgroundColor: "#fff",
