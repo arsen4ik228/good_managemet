@@ -20,8 +20,8 @@ export default function TableRow({ target, posts, updateTarget, addTarget, focus
         onChange={(val) => updateTarget(target.id, 'holderPostId', val)}
       />
       <CustomDatePicker
-        date={target.date}
-        onChange={(val) => updateTarget(target.id, 'date', val)}
+        date={target.deadline}
+        onChange={(val) => updateTarget(target.id, 'deadline', val)}
       />
     </div>
   );

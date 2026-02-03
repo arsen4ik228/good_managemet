@@ -7,6 +7,7 @@ import {useProjectForm} from "../../../../contexts/ProjectFormContext";
 import {notEmpty} from '@helpers/helpers'
 
 import {useRightPanel, usePanelPreset} from "@hooks";
+import dayjs from 'dayjs';
 
 const arrayTasks = [
     {
@@ -67,6 +68,11 @@ const arrayTasks = [
     },
 ];
 
+const formatDate = (iso) => {
+    if (!iso) return '';
+    return dayjs(iso).format('DD.MM.YY');
+};
+
 const Task = ({title, task, date, people, post, index}) => {
     return (
         <>
@@ -117,7 +123,7 @@ const TasksContainer = ({title, tasks}) => {
                             key={item.id}
                             title={title}
                             task={item.content}
-                            date={item.deadline}
+                            date={formatDate(item.deadline)}
                             people={people}
                             post={item?.targetHolders?.[0]?.post?.postName}
                             index={index + 1}

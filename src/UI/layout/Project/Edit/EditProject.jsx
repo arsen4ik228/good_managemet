@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {useParams} from "react-router-dom";
 import s from './EditProject.module.css';
 import Table from '../components/table/Table';
@@ -7,7 +7,7 @@ import {useRightPanel, usePanelPreset} from "@hooks";
 import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
 import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
-
+import {message} from 'antd';
 
 const project = {
     projectName: 'projectName',
@@ -45,16 +45,16 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-// "07a243c4-94bc-4b8c-b9fb-fad012e636bf"
 export default function EditProject({sections}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
     const {projectId} = useParams();
+    const [currentProjectId, setCurrentProjectId] = useState(projectId);
 
     const {allPosts} = useAllPosts();
     const {updateProject} = useUpdateSingleProject();
-    const {currentProject, targets} = useGetSingleProject({selectedProjectId: projectId});
+    const {currentProject, targets} = useGetSingleProject({selectedProjectId: currentProjectId});
 
     const [targetsByType, setTargetsByType] = useState({});
     const [focusTargetId, setFocusTargetId] = useState(null);
@@ -70,7 +70,7 @@ export default function EditProject({sections}) {
                 orderNumber: task.orderNumber || 1,
                 content: task.content || '',
                 holderPostId: task.holderPostId || null,
-                date: task.date ? new Date(task.date) : null,
+                deadline: task.deadline || null,
                 isCreated: false,
             }));
             return acc;
@@ -86,7 +86,7 @@ export default function EditProject({sections}) {
                         orderNumber: 1,
                         content: '',
                         holderPostId: null,
-                        date: null,
+                        deadline: null,
                         isCreated: true,
                     },
                 ];
@@ -94,19 +94,19 @@ export default function EditProject({sections}) {
         });
 
         // 3. Добавляем пустой элемент для создания (кроме "Продукт")
-        Object.entries(grouped).forEach(([type, items]) => {
-            if (type !== 'Продукт' && !items.some(i => i.isCreated)) {
-                items.push({
-                    id: uuidv4(),
-                    type,
-                    orderNumber: items.length + 1,
-                    content: '',
-                    holderPostId: null,
-                    date: null,
-                    isCreated: true,
-                });
-            }
-        });
+        // Object.entries(grouped).forEach(([type, items]) => {
+        //     if (type !== 'Продукт' && !items.some(i => i.isCreated)) {
+        //         items.push({
+        //             id: uuidv4(),
+        //             type,
+        //             orderNumber: items.length + 1,
+        //             content: '',
+        //             holderPostId: null,
+        //             deadline: null,
+        //             isCreated: true,
+        //         });
+        //     }
+        // });
 
         setTargetsByType(grouped);
     }, [targets]);
@@ -114,18 +114,27 @@ export default function EditProject({sections}) {
     const handleUpdateTarget = (type, id, field, value) => {
         setTargetsByType(prev => ({
             ...prev,
-            [type]: prev[type].map(t => t.id === id ? {...t, [field]: value} : t),
+            [type]: prev[type].map(t => t.id === id
+                ?
+                {
+                    ...t,
+                    ...(t.isCreated ? {} : {isChanged: true}),
+                    [field]: value
+                }
+                : t
+            ),
         }));
     };
 
     const handleAddTarget = (type) => {
+        if (type === "Продукт") return
         const newTarget = {
             id: uuidv4(),
             type,
             orderNumber: (targetsByType[type]?.length ?? 0) + 1,
             content: '',
             holderPostId: null,
-            date: null,
+            deadline: null,
             isCreated: true,
         };
         setTargetsByType(prev => ({
@@ -146,22 +155,30 @@ export default function EditProject({sections}) {
         const targetCreateDtos = Object.values(targetsByType)
             .flat()
             .filter(t => t.isCreated && t.content.trim() !== '')
-            .map(({id, isCreated, date, ...rest}) => ({deadline: date, ...rest}));
+            .map(({id, isCreated, ...rest}) => rest);
 
         const targetUpdateDtos = Object.values(targetsByType)
             .flat()
-            .filter(t => !t.isCreated)
-            .map(({id, date, isCreated, ...rest}) => ({_id: id, ...rest}));
-
+            .filter(t => t.isChanged)
+            .map(({id, date, isCreated, isChanged, ...rest}) => ({_id: id, ...rest}));
+            // .map((item) => ({...item, targetState: "Активная"}))
+        // "targetState": "Активная",
         console.log("targetCreateDtos =", targetCreateDtos);
         console.log("targetUpdateDtos =", targetUpdateDtos);
 
-        await updateProject({
-            projectId: projectId,
-            _id: projectId,
-            targetCreateDtos,
-            targetUpdateDtos
-        }).unwrap();
+        try {
+            const response = await updateProject({
+                projectId: projectId,
+                _id: projectId,
+                targetCreateDtos,
+                targetUpdateDtos
+            }).unwrap();
+            setCurrentProjectId(response?.id);
+            message.success("Проект обновлен");
+        } catch (error) {
+            message.error("Ошибка при обновлении проектов")
+        }
+
     }
     // console.log("targetsByType = ", targetsByType);
     return (
