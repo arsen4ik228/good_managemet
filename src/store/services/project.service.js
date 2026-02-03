@@ -7,124 +7,124 @@ export const projectApi = apiSlice.injectEndpoints({
         url: `projects/${organizationId}/projects`,
       }),
       transformResponse: (response) => {
-    // Находим максимальный projectNumber среди всех элементов
-    let maxProjectNumber = 0;
-    
-    if (Array.isArray(response)) {
-        response.forEach(item => {
+        // Находим максимальный projectNumber среди всех элементов
+        let maxProjectNumber = 0;
+
+        if (Array.isArray(response)) {
+          response.forEach(item => {
             if (item.projectNumber && item.projectNumber > maxProjectNumber) {
-                maxProjectNumber = item.projectNumber;
+              maxProjectNumber = item.projectNumber;
             }
-        });
-    }
+          });
+        }
 
-    return {
-        maxProjectNumber, // Добавляем максимальный номер в результат
-        
-        projects:
+        return {
+          maxProjectNumber, // Добавляем максимальный номер в результат
+
+          projects:
             response?.filter((item) => {
-                if (item.type !== "Проект" || item.programId !== null)
-                    return false;
+              if (item.type !== "Проект" || item.programId !== null)
+                return false;
 
-                if (Array.isArray(item.targets)) {
-                    const hasProductType = item.targets.some(
-                        (target) =>
-                            target.type === "Продукт" &&
-                            (target.targetState === "Активная" ||
-                                target.targetState === "Черновик")
-                    );
-                    return hasProductType;
-                }
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    (target.targetState === "Активная" ||
+                      target.targetState === "Черновик")
+                );
+                return hasProductType;
+              }
             }) || [],
 
-        archivesProjects:
+          archivesProjects:
             response?.filter((item) => {
-                if (item.type !== "Проект" || item.programId !== null)
-                    return false;
+              if (item.type !== "Проект" || item.programId !== null)
+                return false;
 
-                if (Array.isArray(item.targets)) {
-                    const hasProductType = item.targets.some(
-                        (target) =>
-                            target.type === "Продукт" &&
-                            (target.targetState === "Завершена" ||
-                                target.isExpired === true)
-                    );
-                    return hasProductType;
-                }
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    (target.targetState === "Завершена" ||
+                      target.isExpired === true)
+                );
+                return hasProductType;
+              }
             }) || [],
 
-        projectsWithProgram:
+          projectsWithProgram:
             response?.filter((item) => {
-                if (item.type !== "Проект" || item.programId === null)
-                    return false;
+              if (item.type !== "Проект" || item.programId === null)
+                return false;
 
-                if (Array.isArray(item.targets)) {
-                    const hasProductType = item.targets.some(
-                        (target) =>
-                            target.type === "Продукт" &&
-                            (target.targetState === "Активная" ||
-                                target.targetState === "Черновик")
-                    );
-                    return hasProductType;
-                }
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    (target.targetState === "Активная" ||
+                      target.targetState === "Черновик")
+                );
+                return hasProductType;
+              }
             }) || [],
 
-        archivesProjectsWithProgram:
+          archivesProjectsWithProgram:
             response?.filter((item) => {
-                if (item.type !== "Проект" || item.programId === null)
-                    return false;
+              if (item.type !== "Проект" || item.programId === null)
+                return false;
 
-                if (Array.isArray(item.targets)) {
-                    const hasProductType = item.targets.some(
-                        (target) =>
-                            target.type === "Продукт" &&
-                            (target.targetState === "Завершена" ||
-                                target.isExpired === true)
-                    );
-                    return hasProductType;
-                }
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    (target.targetState === "Завершена" ||
+                      target.isExpired === true)
+                );
+                return hasProductType;
+              }
             }) || [],
 
-        programs:
+          programs:
             response?.filter((item) => {
-                if (item.type !== "Программа") return false;
-                if (Array.isArray(item.targets)) {
-                    const hasProductType = item.targets.some(
-                        (target) =>
-                            (target.type === "Продукт" &&
-                                target.targetState === "Активная") ||
-                            target.targetState === "Черновик" ||
-                            target.isExpired === false
-                    );
-                    return hasProductType;
-                }
+              if (item.type !== "Программа") return false;
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    (target.type === "Продукт" &&
+                      target.targetState === "Активная") ||
+                    target.targetState === "Черновик" ||
+                    target.isExpired === false
+                );
+                return hasProductType;
+              }
             }) || [],
 
-        archivesPrograms:
+          archivesPrograms:
             response?.filter((item) => {
-                if (item.type !== "Программа") return false;
+              if (item.type !== "Программа") return false;
 
-                if (Array.isArray(item.targets)) {
-                    const hasProductType = item.targets.some(
-                        (target) =>
-                            target.type === "Продукт" &&
-                            (target.targetState === "Завершена" ||
-                                target.isExpired === true)
-                    );
-                    return hasProductType;
-                }
+              if (Array.isArray(item.targets)) {
+                const hasProductType = item.targets.some(
+                  (target) =>
+                    target.type === "Продукт" &&
+                    (target.targetState === "Завершена" ||
+                      target.isExpired === true)
+                );
+                return hasProductType;
+              }
             }) || [],
-    };
-},
+        };
+      },
       providesTags: (result) =>
         Array.isArray(result)
           ? [
-              ...result?.map(({ id }) => ({
-                type: "Project",
-                id,
-              })),
-              "Project",
-            ]
+            ...result?.map(({ id }) => ({
+              type: "Project",
+              id,
+            })),
+            "Project",
+          ]
           : ["Project"],
     }),
 
@@ -134,47 +134,28 @@ export const projectApi = apiSlice.injectEndpoints({
       }),
       transformResponse: (response) => {
         //("getProjectId   ", response);
-        const arrayTasks = response?.project?.targets.reduce((acc, target) => {
-          // Ищем уже существующую группу по type
-          let group = acc.find((g) => g.title === target.type);
+        const arrayTasks = response?.project?.targets
+          .reduce((acc, target) => {
+            // Ищем уже существующую группу по type
+            let group = acc.find((g) => g.title === target.type);
 
-          // Создаем объект задачи
-          const taskObj = {
-            task: target.content,
-            date: target.dateStart
-              ? new Date(target.dateStart).toLocaleDateString("ru-RU")
-              : "",
-            people:
-              target.targetHolders?.map((h) => h.post?.postName).join(", ") ||
-              "",
-            post:
-              target.targetHolders
-                ?.map((h) => h.post?.divisionName)
-                .join(", ") || "",
-            holderPostId: target.holderPostId,
-            id: target.id,
-            targetState: target.targetState,
-            deadline: target.deadline,
-            dateComplete: target.dateComplete,
-            createdAt: target.createdAt,
-            updatedAt: target.updatedAt,
-            isExpired: target.isExpired,
-            // можно добавить любые другие поля из target
-          };
+            if (group) {
+              group.tasks.push(target);
+            } else {
+              acc.push({
+                title: target.type,
+                tasks: [target],
+              });
+            }
 
-          if (group) {
-            group.tasks.push(taskObj);
-          } else {
-            acc.push({
-              title: target.type,
-              tasks: [taskObj],
-            });
-          }
-
-          return acc;
-        }, []);
-
-        // console.log(arrayTasks);
+            return acc;
+          }, [])
+          .map(group => ({
+            ...group,
+            tasks: group.tasks.sort(
+              (a, b) => (a.orderNumber ?? 0) - (b.orderNumber ?? 0)
+            ),
+          }));
 
         return {
           currentProject: response.project || {},
@@ -261,14 +242,16 @@ export const projectApi = apiSlice.injectEndpoints({
         { type: "Project", id: arg.programId },
       ],
     }),
+  })
 });
 
+
 export const {
-    useGetProjectQuery,
-    useGetProgramIdQuery,
-    useGetProgramNewQuery,
-    useGetProjectNewQuery,
-    usePostProjectMutation,
-    useGetProjectIdQuery,
-    useUpdateProjectMutation,
+  useGetProjectQuery,
+  useGetProgramIdQuery,
+  useGetProgramNewQuery,
+  useGetProjectNewQuery,
+  usePostProjectMutation,
+  useGetProjectIdQuery,
+  useUpdateProjectMutation,
 } = projectApi;
