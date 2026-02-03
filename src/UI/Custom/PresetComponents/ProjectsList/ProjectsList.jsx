@@ -1,17 +1,20 @@
-import React, { useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import React, {useMemo, useState, useRef, useEffect} from 'react'
+import {useParams} from 'react-router-dom';
 import CustomList from '../../CustomList/CustomList'
-import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { useAllProject } from "@hooks/Project/useAllProject";
-import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
+import {useCreateProject} from "@hooks/Project/useCreateProject";
+import {useAllProject} from "@hooks/Project/useAllProject";
+import {useUpdateSingleProject} from "@hooks/Project/useUpdateSingleProject";
 
 
-import { AccordionRdx } from "../../../radixUI/accordion/AccordionRdx";
-import { TriggerContent } from "../../../layout/Strategy/Split/components/TriggerContent";
-import { AccordionContent } from "../../../layout/Strategy/Split/components/AccordionContent";
+import {AccordionRdx} from "../../../radixUI/accordion/AccordionRdx";
+import {TriggerContent} from "../../../layout/Strategy/Split/components/TriggerContent";
+import {AccordionContent} from "../../../layout/Strategy/Split/components/AccordionContent";
 
 export default function ProjectsList() {
-    const { strategyId } = useParams();
+    const {strategyId} = useParams();
+    const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
+    const [openedAccordionId, setOpenedAccordionId] = useState(null);
+    const accordionRefs = useRef({});
 
     const {
         projects,
@@ -29,12 +32,12 @@ export default function ProjectsList() {
 
     const createNewProject = async () => {
         try {
-            await createProject({
+            const response = await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект`,
+                projectName: `ой мой 3`,
                 type: "Проект",
                 strategyId: strategyId,
-                content: " ",
+                // content: " ",
                 targetCreateDtos: [
                     {
                         type: "Продукт",
@@ -43,24 +46,35 @@ export default function ProjectsList() {
                     },
                 ],
             }).unwrap();
+            setOpenedAccordionId(response?.id);
         } catch (error) {
             console.error("Ошибка при создании проекта:", error);
         }
     };
 
-
-    const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
-
     const filtredProjects = useMemo(() => {
-        if (!seacrhUsersSectionsValue?.trim()) {
-            return  [...projectsWithProgram, ...projects]; // Возвращаем все элементы если поиск пустой
-        }
+        const combined = [...projectsWithProgram, ...projects];
 
-        const searchLower = seacrhUsersSectionsValue?.toLowerCase();
-        return  [...projectsWithProgram, ...projects]?.filter(item =>
-            item?.projectName.toLowerCase().includes(searchLower)
-        );
+        const filtered = seacrhUsersSectionsValue?.trim()
+            ? combined.filter(item =>
+                item.projectName.toLowerCase().includes(seacrhUsersSectionsValue.toLowerCase())
+            )
+            : combined;
+
+        // Сортировка по projectName
+        return filtered.sort((a, b) => a.projectName.localeCompare(b.projectName));
     }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
+
+    useEffect(() => {
+        if (!openedAccordionId) return;
+
+        requestAnimationFrame(() => {
+            accordionRefs.current[openedAccordionId]?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        });
+    }, [openedAccordionId, filtredProjects]);
 
     return (
         <>
@@ -72,12 +86,22 @@ export default function ProjectsList() {
                 addButtonText={'Создать проект'}
             >
                 {
-                   filtredProjects?.filter((p) => p?.strategyId === strategyId)?.map((p) => (
+                    filtredProjects?.filter((p) => p?.strategyId === strategyId)?.map((p) => (
                         <AccordionRdx
                             accordionId={p.id}
-                            triggerContent={<TriggerContent title={p.projectName} />}
+                            isOpen={openedAccordionId === p.id}
+                            onToggle={(val) => {
+                                setOpenedAccordionId(val); // val либо id, либо null
+                            }}
+                            ref={el => {
+                                if (el) accordionRefs.current[p.id] = el;
+                            }}
+                            triggerContent={<TriggerContent title={p.projectName}/>}
                         >
-                            <AccordionContent project={p} updateProject={updateProject} info={p.content} name={p.projectName} product={p?.targets?.find((item) => item.type === "Продукт")?.content} />
+                            <AccordionContent project={p} updateProject={updateProject} info={p.content}
+                                              name={p.projectName}
+                                              product={p?.targets?.find((item) => item.type === "Продукт")?.content}
+                                              onSaved={() => setOpenedAccordionId(p.id)}/>
                         </AccordionRdx>
                     ))
                 }
