@@ -136,6 +136,15 @@ const TasksContainer = ({title, tasks}) => {
     )
 }
 
+const Information = ({title, content}) => {
+    return (
+        <div className={classes.container}>
+            <span className={`${classes.strong}`}>{title}:</span>
+            <span>{content}</span>
+        </div>
+    )
+}
+
 export default function ViewProject() {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
@@ -173,6 +182,9 @@ export default function ViewProject() {
             {
                 sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks}/>)
             }
+
+            {currentProject?.content && <Information title={"Информация"} content={currentProject?.content}/>}
+
         </div>
     )
 }

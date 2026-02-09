@@ -36,20 +36,6 @@ export default function Table({ title, targets, posts, updateTarget, addTarget, 
   return (
     <div className={s.table}>
       <TableName title={title} />
-      {
-        title === "Информация"
-          ? (
-            targets.map(t => (
-              <TableRowForInformation
-                key={t.id}
-                id={t.id}
-                target={t}
-                posts={posts}
-                updateTarget={updateTarget}
-              />
-            ))
-          )
-          : (
             <DndContext modifiers={[restrictToVerticalAxis]} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={items} strategy={verticalListSortingStrategy}>
                 {targets.map(t => (
@@ -65,8 +51,6 @@ export default function Table({ title, targets, posts, updateTarget, addTarget, 
                 ))}
               </SortableContext>
             </DndContext>
-          )
-      }
     </div>
   );
 }
