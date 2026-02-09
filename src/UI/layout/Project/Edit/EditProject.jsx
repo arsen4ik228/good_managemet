@@ -46,7 +46,7 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections}) {
+export default function EditProject({sections, refHandleTargetsInActive, setBtn}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -205,6 +205,8 @@ export default function EditProject({sections}) {
         }
     };
 
+    refHandleTargetsInActive.current = handleTargetsInActive;
+
     // для открытия нового проекта
     useEffect(() => {
         if (!projectId) return;
@@ -250,6 +252,26 @@ export default function EditProject({sections}) {
 
         setContentProject(currentProject?.content);
         setTargetsByType(grouped);
+
+        const productState = Object.values(grouped)
+            .flat()
+            .find(t => t.type === "Продукт")?.targetState
+
+        console.log("productState = ", productState);
+        console.log("grouped = ", grouped);
+
+        if(productState === "Черновик"){
+            setBtn([
+                {
+                    text: "начать выполнение",
+                    click: () => {
+                        refHandleTargetsInActive?.current();
+                    },
+                },
+            ])
+        }else{
+            setBtn([])
+        }
     }, [targets, currentProject]);
 
     // заполняется переменная ref latestStateRef для handleSave
