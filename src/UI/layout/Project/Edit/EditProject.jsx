@@ -8,6 +8,8 @@ import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
 import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
 import {message} from 'antd';
+import TableInformation from "../components/table/TableInformation";
+import debounce from "lodash/debounce";
 
 const project = {
     projectName: 'projectName',
@@ -37,7 +39,6 @@ const project = {
 };
 
 const initialSections = [
-    {name: 'Информация'},
     {name: 'Продукт'},
     {name: 'Метрика'},
     {name: 'Организационные мероприятия'},
@@ -50,66 +51,17 @@ export default function EditProject({sections}) {
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
     const {projectId} = useParams();
-    const [currentProjectId, setCurrentProjectId] = useState(projectId);
+    const debouncedSaveRef = useRef(null);
+    const latestStateRef = useRef({});
+    const [currentProjectId, setCurrentProjectId] = useState();
 
     const {allPosts} = useAllPosts();
     const {updateProject} = useUpdateSingleProject();
     const {currentProject, targets} = useGetSingleProject({selectedProjectId: currentProjectId});
 
+    const [contentProject, setContentProject] = useState("");
     const [targetsByType, setTargetsByType] = useState({});
     const [focusTargetId, setFocusTargetId] = useState(null);
-
-    useEffect(() => {
-        if (!targets) return;
-
-        // 1. Группируем то, что пришло с бэка
-        const grouped = targets.reduce((acc, group) => {
-            acc[group.title] = group.tasks.map(task => ({
-                id: task.id,
-                type: group.title,
-                orderNumber: task.orderNumber || 1,
-                content: task.content || '',
-                holderPostId: task.holderPostId || null,
-                deadline: task.deadline || null,
-                isCreated: false,
-            }));
-            return acc;
-        }, {});
-
-        // 2. Гарантируем наличие всех разделов
-        initialSections.forEach(({name}) => {
-            if (!grouped[name]) {
-                grouped[name] = [
-                    {
-                        id: uuidv4(),
-                        type: name,
-                        orderNumber: 1,
-                        content: '',
-                        holderPostId: null,
-                        deadline: null,
-                        isCreated: true,
-                    },
-                ];
-            }
-        });
-
-        // 3. Добавляем пустой элемент для создания (кроме "Продукт")
-        // Object.entries(grouped).forEach(([type, items]) => {
-        //     if (type !== 'Продукт' && !items.some(i => i.isCreated)) {
-        //         items.push({
-        //             id: uuidv4(),
-        //             type,
-        //             orderNumber: items.length + 1,
-        //             content: '',
-        //             holderPostId: null,
-        //             deadline: null,
-        //             isCreated: true,
-        //         });
-        //     }
-        // });
-
-        setTargetsByType(grouped);
-    }, [targets]);
 
     const handleUpdateTarget = (type, id, field, value) => {
         setTargetsByType(prev => ({
@@ -124,6 +76,7 @@ export default function EditProject({sections}) {
                 : t
             ),
         }));
+        debouncedSaveRef.current();
     };
 
     const handleAddTarget = (type) => {
@@ -149,9 +102,15 @@ export default function EditProject({sections}) {
             ...prev,
             [type]: newOrderIds.map(id => prev[type].find(t => t.id === id)),
         }));
+        debouncedSaveRef.current();
     };
 
     const handleSave = async () => {
+        const {contentProject, targetsByType, projectId} = latestStateRef.current;
+        const productState = Object.values(targetsByType)
+            .flat()
+            .find(t => t.type === "Продукт")?.targetState
+
         const targetCreateDtos = Object.values(targetsByType)
             .flat()
             .filter(t => t.isCreated && t.content.trim() !== '')
@@ -160,35 +119,174 @@ export default function EditProject({sections}) {
         const targetUpdateDtos = Object.values(targetsByType)
             .flat()
             .filter(t => t.isChanged)
-            .map(({id, date, isCreated, isChanged, ...rest}) => ({_id: id, ...rest}));
-            // .map((item) => ({...item, targetState: "Активная"}))
-        // "targetState": "Активная",
-        console.log("targetCreateDtos =", targetCreateDtos);
-        console.log("targetUpdateDtos =", targetUpdateDtos);
+            .map(({id, date, isCreated, isChanged, ...rest}) => ({
+                _id: id,
+                ...rest
+            }));
+
+        console.log("productState = ", productState);
+        console.log("targetsByType = ", targetsByType);
+
+        if (productState === "Активная") {
+            const holderProductPostId = Object.values(targetsByType)
+                .flat()
+                .find(t => t.type === "Продукт")?.holderPostId;
+
+            const targetActive = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
+            const targetUpdate = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+                ...t,
+                targetState: "Активная"
+            }));
+            try {
+                const response = await updateProject({
+                    projectId: projectId,
+                    _id: projectId,
+                    holderProductPostId,
+                    content: contentProject,
+                    ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
+                    ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
+                }).unwrap();
+                setCurrentProjectId(response?.id);
+                message.success("Проект обновлен");
+            } catch (error) {
+                message.error("Ошибка при обновлении проектов")
+            }
+        } else {
+            try {
+                const response = await updateProject({
+                    projectId: projectId,
+                    _id: projectId,
+                    content: contentProject,
+                    ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
+                    ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
+                }).unwrap();
+                setCurrentProjectId(response?.id);
+                message.success("Проект обновлен");
+            } catch (error) {
+                message.error("Ошибка при обновлении проектов")
+            }
+        }
+
+    };
+
+    const handleTargetsInActive = async () => {
+        //targetState(pin):"Активная"
+        //targetState(pin):"Завершена"
+        const targetCreateDtos = Object.values(targetsByType)
+            .flat()
+            .filter(t => t.isCreated && t.content.trim() !== '')
+            .map(({id, isCreated, ...rest}) => ({...rest, targetState: "Активная"}));
+
+        const targetUpdateDtos = Object.values(targetsByType)
+            .flat()
+            .filter(t => !t.isCreated)
+            .map(({id, date, isCreated, isChanged, ...rest}) => ({
+                _id: id,
+                ...rest,
+                targetState: "Активная"
+            }));
+
+        const holderProductPostId = Object.values(targetsByType)
+            .flat()
+            .find(t => t.type === "Продукт")?.holderPostId
 
         try {
             const response = await updateProject({
                 projectId: projectId,
                 _id: projectId,
-                targetCreateDtos,
-                targetUpdateDtos
+                holderProductPostId,
+                ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
+                ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
             setCurrentProjectId(response?.id);
-            message.success("Проект обновлен");
+            message.success("Проект активный");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
+    };
 
-    }
-    // console.log("targetsByType = ", targetsByType);
+    // для открытия нового проекта
+    useEffect(() => {
+        if (!projectId) return;
+        setCurrentProjectId(projectId);
+    }, [projectId]);
+
+    // для новых данных в проекте
+    useEffect(() => {
+        if (!targets) return;
+
+        // 1. Группируем то, что пришло с бэка
+        const grouped = targets.reduce((acc, group) => {
+            acc[group.title] = group.tasks.map(task => ({
+                id: task.id,
+                type: group.title,
+                orderNumber: task.orderNumber || 1,
+                targetState: task.targetState || "Черновик",
+                content: task.content || '',
+                holderPostId: task.holderPostId || null,
+                deadline: task.deadline || null,
+                isCreated: false,
+            }));
+            return acc;
+        }, {});
+
+        // 2. Гарантируем наличие всех разделов
+        initialSections.forEach(({name}) => {
+            if (!grouped[name]) {
+                grouped[name] = [
+                    {
+                        id: uuidv4(),
+                        type: name,
+                        orderNumber: 1,
+                        content: '',
+                        targetState: "Черновик",
+                        holderPostId: null,
+                        deadline: null,
+                        isCreated: true,
+                    },
+                ];
+            }
+        });
+
+        setContentProject(currentProject?.content);
+        setTargetsByType(grouped);
+    }, [targets, currentProject]);
+
+    // заполняется переменная ref latestStateRef для handleSave
+    useEffect(() => {
+        latestStateRef.current = {
+            contentProject,
+            targetsByType,
+            projectId,
+        };
+    }, [contentProject, targetsByType, projectId]);
+
+    // создается debounce
+    useEffect(() => {
+        debouncedSaveRef.current = debounce(handleSave, 25000);
+        return () => debouncedSaveRef.current.flush();
+    }, []);
+
     return (
         <div className={s.main}>
             <div className={s.wrapper}>
-
-                <button onClick={handleSave}> update project</button>
+                <button onClick={handleTargetsInActive}> handleTargetsInActive</button>
+                <button onClick={handleSave}> update</button>
                 {sections
                     .filter(section => section.isView) // только видимые
                     .map(section => {
+                        if (section.name === "Информация") {
+                            return (
+                                <TableInformation
+                                    key={section.name}
+                                    title={section.name}
+                                    content={contentProject}
+                                    updateContent={(value) =>
+                                        setContentProject(value)
+                                    }
+                                />
+                            )
+                        }
                         const targets = targetsByType[section.name] || [];
                         return (
                             <Table

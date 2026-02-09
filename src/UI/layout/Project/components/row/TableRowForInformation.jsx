@@ -1,12 +1,12 @@
 import s from './TableRowForInformation.module.css';
 import Content from './partsRow/Content';
 
-export default function TableRowForInformation({ target,updateTarget }) {
+export default function TableRowForInformation({ content, updateContent }) {
   return (
      <div className={s.row}>
           <Content
-            content={target.content}
-            onChange={(val) => updateTarget(target.id, 'content', val)}
+            content={content}
+            onChange={updateContent}
           />
         </div>
   )
