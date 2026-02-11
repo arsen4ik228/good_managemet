@@ -17,7 +17,7 @@ import { convertApi, postApi } from '../../../../store/services';
 import { useDispatch } from 'react-redux';
 import { baseUrl } from '../../../../helpers/constants';
 import default_avatar from '@image/default_avatar.svg'
-
+import AddedWatcherContainer from '@Custom/AddedWatcherContainer/AddedWatcherContainer.jsx'
 
 
 
@@ -279,7 +279,11 @@ export default function DesktopDialogPage() {
     console.log('socketMessages   ', socketMessages, '   ', 'unSeenMessages   ', unSeenMessages, 'messagesArray   ', messagesArray, currentConvert)
 
     return (
-        <MainContentContainer buttons={buttons}>
+        <MainContentContainer buttons={buttons}
+            component={<AddedWatcherContainer convertId={convertId} watchersToConvert={currentConvert?.watchersToConvert}
+            ></AddedWatcherContainer>
+            }>
+            {/* <AddedWatcherContainer></AddedWatcherContainer> */}
             {/* <div className={classes.dialog}>
                 <Headers name={userInfo?.userName} sectionName={userInfo.postName} avatar={userInfo?.avatar}>
                 </Headers> */}

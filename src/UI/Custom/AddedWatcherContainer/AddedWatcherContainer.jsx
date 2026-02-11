@@ -41,7 +41,7 @@ export default function AddedWatcherContainer({ convertId, watchersToConvert }) 
         <>
             <div className={classes.wrapper}>
                 <div className={classes.content}>
-                    <div className={classes.text}>Копия:</div>
+                    <div className={classes.text}>наблюдатели:</div>
                     <div className={classes.imgContainer}>
                         {watchersToConvert?.map((item, index) => (
                             <div className={classes.userAvatarContainer}>
