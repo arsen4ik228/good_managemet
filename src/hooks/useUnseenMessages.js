@@ -12,18 +12,18 @@ export function useUnseenMessages(convertId) {
             isFetchingUnSeenMessages
         }] = useLazyGetUnSeenMessagesQuery();
 
-    // const [fetchWatcherUnSeenMessages,
-    //     { data: watcherUnseenMessages,
-    //         isLoadingWatcherUnSeenMessages,
-    //         isErrorWatcherUnSeenMessages,
-    //         isFetchingWatcherUnSeenMessages
-    //     }] = useLazyGetWatcherUnSeenMessagesQuery();
+    const [fetchWatcherUnSeenMessages,
+        { data: watcherUnseenMessages,
+            isLoadingWatcherUnSeenMessages,
+            isErrorWatcherUnSeenMessages,
+            isFetchingWatcherUnSeenMessages
+        }] = useLazyGetWatcherUnSeenMessagesQuery();
 
 
     useEffect(() => {
         fetchUnSeenMessages({ convertId })
         
-        // fetchWatcherUnSeenMessages({ convertId })
+        fetchWatcherUnSeenMessages({ convertId })
     }, [convertId])
 
 
@@ -37,10 +37,10 @@ export function useUnseenMessages(convertId) {
         isFetchingUnSeenMessages,
 
 
-        // watcherUnseenMessages,
-        // isLoadingWatcherUnSeenMessages,
-        // isErrorWatcherUnSeenMessages,
-        // isFetchingWatcherUnSeenMessages,
+        watcherUnseenMessages,
+        isLoadingWatcherUnSeenMessages,
+        isErrorWatcherUnSeenMessages,
+        isFetchingWatcherUnSeenMessages,
 
     };
 }

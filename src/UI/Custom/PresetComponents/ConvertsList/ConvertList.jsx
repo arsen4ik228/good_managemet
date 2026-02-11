@@ -9,6 +9,7 @@ import personal_chat_icon from '@image/personal_chat_icon.svg'
 import order_chat_icon from '@image/order_chat_icon.svg'
 import convert_agreement_icon from '@image/convert_agreement_icon.svg'
 import request_chat_icon from '@image/request_chat_icon.svg'
+import watchers_convert_icon from '@image/watchers_convert_icon.svg'
 import { homeUrl } from '@helpers/constants'
 import { useSocket } from '../../../../hooks';
 import default_avatar from '@image/default_avatar.svg'
@@ -87,18 +88,23 @@ export default function ConvertList() {
         'Переписка': personal_chat_icon,
         'Запрос': request_chat_icon,
         'Согласование': convert_agreement_icon,
+        'Копия': watchers_convert_icon,
     }
 
     const getIcon = (type, path) => {
-        if (path === 'Прямой') {
+        if (type === 'Копия')
+            return CONVERT_ICON[type]
+        else if (path === 'Прямой') {
             return CONVERT_ICON[type]
         }
 
         return CONVERT_ICON[path]
     }
 
-    const openChat = (status, id) => {
-        if (status)
+    const openChat = (status, id, type) => {
+        if(type === 'Копия')
+            navigate(`chat/${contactId}/watcher/${id}`)
+        else if (status)
             navigate(`chat/${contactId}/${id}`)
         else
             navigate(`chat/${contactId}/archive/${id}`)
@@ -131,7 +137,7 @@ export default function ConvertList() {
 
     }, [socketResponse?.convertCreationEvent])
 
-    console.log(filtredChats)
+    console.log(seenConverts, unseenConverts)
     return (
         <>
             <CustomList
@@ -170,7 +176,7 @@ export default function ConvertList() {
                             linkSegment={item.id}
                             bage={item.unseenMessagesCount}
                             greyBage={item?.hasUnrepliedMessage}
-                            clickFunc={() => openChat(item.convertStatus, item.id)}
+                            clickFunc={() => openChat(item.convertStatus, item.id, item.convertType)}
                         />
                     </React.Fragment>
                 ))}

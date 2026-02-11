@@ -1,14 +1,20 @@
 import React, { useLayoutEffect, useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import classes from './WatcherDialogPage.module.css';
-import Header from "@Custom/CustomHeader/Header";
-import { useConvertsHook, useMessages } from '@hooks';
+import { useConvertsHook, useMessages, useUnseenMessages } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { Message } from '@Custom/Message/Message';
 import { notEmpty } from '@helpers/helpers'
 import { debounce } from 'lodash';
 import { useSocket, useEmitSocket } from '@helpers/SocketContext';
-import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTargetContainer';
-import AdaptiveLayoutContainer from '../adaptive.container/AdaptiveLayoutContainer';
+
+import HandlerQeury from "@Custom/HandlerQeury.jsx";
+import MainContentContainer from '../../../Custom/MainContentContainer/MainContentContainer';
+import ChatContainer from '../ChatContainer/ChatContainer';
+import FinalConvertModal from '@Custom/FinalConvertModal/FinalConvertModal'
+import ApproveConvertModal from '../../../Custom/FinalConvertModal/ApproveConvertModal';
+import AddedWatcherContainer from '@Custom/AddedWatcherContainer/AddedWatcherContainer.jsx'
+
+
 
 export default function WatcherDialogPage() {
     const { convertId } = useParams();
@@ -21,33 +27,47 @@ export default function WatcherDialogPage() {
     const [lastSeenMessageNumber, setLastSeenMessageNumber] = useState(0)
     const globalHistorySeenIds = []
 
+    const [openFinishModal, setOpenFinishModal] = useState()
+    const [openAgreementModal, setOpenAgreementModal] = useState()
+
     const {
         currentConvert,
         recipientPost,
         userInfo,
         watcherPostForSocket,
-        isLoadingGetConvertId
+        isLoadingGetConvertId,
+        pathOfUsers,
+        isFetchingGetConvartId,
+        isErrorGetConvertId,
     } = useConvertsHook({ convertId });
 
     const {
         watcherSeenMessages,
-        watcherUnseenMessages,
-        isLoadingWatcherUnSeenMessages,
-        isFetchingWatcherSeenMessages,
+        // watcherUnseenMessages,
+        // isLoadingWatcherUnSeenMessages,
+        // isFetchingWatcherSeenMessages,
         watcherUnseenMessageExist,
 
     } = useMessages(convertId, paginationSeenMessages);
+
+
+    const {
+        watcherUnseenMessages,
+        isLoadingWatcherUnSeenMessages,
+        isFetchingWatcherSeenMessages,
+    } = useUnseenMessages(convertId)
+
     const seenMessagesRef = useRef(watcherSeenMessages);
     const unSeenMessageExistRef = useRef(watcherUnseenMessageExist)
 
     useEmitSocket('join_convert', { convertId: convertId });
-    useEmitSocket('messagesSeenWatcher',
-        {
-            convertId: convertId,
-            messageIds: visibleUnSeenMessageIds,
-            post: watcherPostForSocket,
-            lastSeenMessageNumber: lastSeenMessageNumber
-        })
+    // useEmitSocket('messagesSeenWatcher',
+    //     {
+    //         convertId: convertId,
+    //         messageIds: visibleUnSeenMessageIds,
+    //         post: watcherPostForSocket,
+    //         lastSeenMessageNumber: lastSeenMessageNumber
+    //     })
 
     // Инициализация socket подписок 
     const eventNames = useMemo(() => ['messageCreationEvent'], []);
@@ -246,87 +266,169 @@ export default function WatcherDialogPage() {
     }, [watcherUnseenMessages, socketMessages]);
 
     //(socketResponse?.messageCreationEvent)
-    console.warn(globalHistorySeenIds)
+    console.warn(watcherUnseenMessages, messagesArray)
 
 
     return (
+        // <>
+
+        //         <div className={classes.body} ref={bodyRef}>
+        //             {socketMessages?.slice().reverse().map((item, index) => (
+        //                 <React.Fragment key={index}>
+        //                     <Message
+        //                         userMessage={item?.userMessage}
+        //                         createdMessage={item?.createdAt}
+        //                         seenStatuses={item?.seenStatuses}
+        //                         data-message-id={item.id}
+        //                         data-message-number={item?.messageNumber}
+        //                         attachmentToMessage={item?.attachmentToMessages}
+        //                         senderPostName={item?.senderPostName}
+        //                     >
+        //                         {item.content}
+        //                     </Message>
+        //                 </React.Fragment>
+        //             ))}
+        //             {watcherUnseenMessages?.length > 0 && (
+        //                 <>
+        //                     {watcherUnseenMessages?.map((item, index) => (
+        //                         <React.Fragment key={index}>
+        //                             <Message
+        //                                 userMessage={item?.sender?.id === currentConvert?.host?.id}
+        //                                 createdMessage={item?.createdAt}
+        //                                 ref={index === watcherUnseenMessages.length - 1 ? unSeenMessagesRef : null}
+        //                                 data-message-id={item?.id} // Добавляем data-атрибут
+        //                                 data-message-number={item.messageNumber}
+        //                                 attachmentToMessage={item?.attachmentToMessages}
+        //                                 seenStatuses={item?.seenStatuses}
+        //                                 senderPostName={item?.sender?.postName}
+        //                             >
+        //                                 {item.content}
+        //                             </Message>
+        //                         </React.Fragment>
+        //                     ))}
+        //                     <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+        //                 </>
+        //             )}
+        //             {messagesArray?.map((item, index) => (
+        //                 <React.Fragment key={index}>
+        //                     <Message key={index}
+        //                         userMessage={item?.sender?.id === currentConvert?.host?.id}
+        //                         seenStatuses={item?.seenStatuses}
+        //                         senderPost={item?.sender}
+        //                         attachmentToMessage={item?.attachmentToMessages}
+        //                         createdMessage={item?.createdAt}
+        //                         senderPostName={item?.sender?.postName}
+        //                     >
+        //                         {item.content}
+        //                     </Message>
+        //                 </React.Fragment>
+        //             ))}
+        //         </div>
+
+        // </>
+
         <>
-            <AdaptiveLayoutContainer
-                userInfo={userInfo}
-            >
-                <ConvertTargetContainer
-                    targetStatus={currentConvert?.target?.targetStatus}
-                    targetText={currentConvert?.target?.content}
-                    date={currentConvert?.target?.createdAt}
-                    isWatcher={true}
+            <MainContentContainer //buttons={buttons}
+                // component={<AddedWatcherContainer convertId={convertId} watchersToConvert={currentConvert?.watchersToConvert}
+                // ></AddedWatcherContainer>
+                // }
                 >
-                    <div className={classes.recepientPost}>
-                        <span>получатель:</span> {recipientPost.postName}
+               
+                <ChatContainer isArchive={true}>
+                    {/* <div className={classes.main}> */}
+                    <div className={classes.body} ref={bodyRef}>
+                        {socketMessages?.slice().reverse().map((item, index) => (
+                            <React.Fragment key={index}>
+                                <Message
+                                    userMessage={item?.userMessage}
+                                    createdMessage={item?.createdAt}
+                                    seenStatuses={item?.seenStatuses}
+                                    data-message-id={item.id}
+                                    data-message-number={item?.messageNumber}
+                                    attachmentToMessage={item?.attachmentToMessages}
+                                    senderPostName={item?.senderPostName}
+                                    avatar={item?.sender.user.avatar_url}
+                                >
+                                    {item.content}
+                                </Message>
+                            </React.Fragment>
+                        ))}
+                        {watcherUnseenMessages?.length > 0 && (
+                            <>
+                                {watcherUnseenMessages?.map((item, index) => (
+                                    <React.Fragment key={index}>
+                                        <Message
+                                            userMessage={item?.sender?.id === currentConvert?.host?.id}
+                                            createdMessage={item?.createdAt}
+                                            ref={index === watcherUnseenMessages.length - 1 ? unSeenMessagesRef : null}
+                                            data-message-id={item?.id} // Добавляем data-атрибут
+                                            data-message-number={item.messageNumber}
+                                            attachmentToMessage={item?.attachmentToMessages}
+                                            seenStatuses={item?.seenStatuses}
+                                            senderPostName={item?.sender?.postName}
+                                            avatar={item?.sender.user.avatar_url}
+                                        >
+                                            {item.content}
+                                        </Message>
+                                    </React.Fragment>
+                                ))}
+                                <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
+                            </>
+                        )}
+                        {messagesArray?.map((item, index) => (
+                            <React.Fragment key={index}>
+                                <Message key={index}
+                                    userMessage={item?.sender?.id === currentConvert?.host?.id}
+                                    seenStatuses={item?.seenStatuses}
+                                    senderPost={item?.sender}
+                                    attachmentToMessage={item?.attachmentToMessages}
+                                    createdMessage={item?.createdAt}
+                                    senderPostName={item?.sender?.postName}
+                                    avatar={item?.sender.user.avatar_url}
+                                >
+                                    {item.content}
+                                </Message>
+                            </React.Fragment>
+                        ))}
                     </div>
-                </ConvertTargetContainer>
-                <div className={classes.body} ref={bodyRef}>
-                    {socketMessages?.slice().reverse().map((item, index) => (
-                        <React.Fragment key={index}>
-                            <Message
-                                userMessage={item?.userMessage}
-                                createdMessage={item?.createdAt}
-                                seenStatuses={item?.seenStatuses}
-                                data-message-id={item.id}
-                                data-message-number={item?.messageNumber}
-                                attachmentToMessage={item?.attachmentToMessages}
-                                senderPostName={item?.senderPostName}
-                            >
-                                {item.content}
-                            </Message>
-                        </React.Fragment>
-                    ))}
-                    {watcherUnseenMessages?.length > 0 && (
-                        <>
-                            {watcherUnseenMessages?.map((item, index) => (
-                                <React.Fragment key={index}>
-                                    <Message
-                                        userMessage={item?.sender?.id === currentConvert?.host?.id}
-                                        createdMessage={item?.createdAt}
-                                        ref={index === watcherUnseenMessages.length - 1 ? unSeenMessagesRef : null}
-                                        data-message-id={item?.id} // Добавляем data-атрибут
-                                        data-message-number={item.messageNumber}
-                                        attachmentToMessage={item?.attachmentToMessages}
-                                        seenStatuses={item?.seenStatuses}
-                                        senderPostName={item?.sender?.postName}
-                                    >
-                                        {item.content}
-                                    </Message>
-                                </React.Fragment>
-                            ))}
-                            <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
-                        </>
-                    )}
-                    {messagesArray?.map((item, index) => (
-                        <React.Fragment key={index}>
-                            <Message key={index}
-                                userMessage={item?.sender?.id === currentConvert?.host?.id}
-                                seenStatuses={item?.seenStatuses}
-                                senderPost={item?.sender}
-                                attachmentToMessage={item?.attachmentToMessages}
-                                createdMessage={item?.createdAt}
-                                senderPostName={item?.sender?.postName}
-                            >
-                                {item.content}
-                            </Message>
-                        </React.Fragment>
-                    ))}
-                </div>
-                <footer className={classes.footer}>
-                    {/* <Input
+                    {/* </div> */}
+                </ChatContainer>
+                {/* 
+            {<footer className={classes.footer}>
+                    <Input
                         convertId={currentConvert?.id}
                         sendMessage={sendMessage}
                         senderPostId={senderPostId}
                         senderPostName={senderPostName}
                         refetchMessages={refetchGetConvertId}
                         isLoadingGetConvertId={isLoadingGetConvertId}
-                    /> */}
+                        organizationId={organizationId}
+                    />
                 </footer>
-            </AdaptiveLayoutContainer>
+            } */}
+
+                {openFinishModal && (
+                    <FinalConvertModal
+                        setOpenModal={setOpenFinishModal}
+                        convertId={convertId}
+                        pathOfUsers={pathOfUsers}
+                        targetId={currentConvert?.target?.id}
+                    ></FinalConvertModal>
+                )}
+                {openAgreementModal && (
+                    <ApproveConvertModal
+                        setOpenModal={setOpenAgreementModal}
+                        convertId={convertId}
+                    >
+                    </ApproveConvertModal>
+                )}
+
+                <HandlerQeury
+                    Error={isErrorGetConvertId}
+                    Loading={isLoadingGetConvertId}
+                    Fetching={isFetchingGetConvartId}
+                />
+            </MainContentContainer>
         </>
     );
 };

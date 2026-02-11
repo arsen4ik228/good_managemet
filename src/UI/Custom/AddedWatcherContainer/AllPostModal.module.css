@@ -1,14 +1,15 @@
 .contentContainer {
 
-    padding: 5px;
+    padding: 5px 0;
 }
 
 .postContainer {
+    max-width: 350px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    padding: 5px 0;
+    overflow: hidden;
+    /* padding: 5px 0; */
 }
 
 .postName {
@@ -17,3 +18,174 @@
 }
 
 .checkboxContainer {}
+
+.content{
+    width: 100%;
+    position: relative;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    color: var(--primary);
+    cursor: pointer;
+
+}
+
+.content:hover{
+    background-color: var(--primary-light);
+}
+
+.content:active{
+    filter: brightness(0.85);
+}
+
+.content::after{
+    position: absolute;
+    content: attr(data-after);
+    top: 0;
+    left: 58px;
+    color: #999999;
+    font-size: 12px;
+}
+
+.imgContainer{
+    >img{
+        height: 42px;
+        width: 42px;
+        border-radius: 50%;
+    }
+}
+.text {
+    overflow: hidden;
+    width: 100%;
+    padding-left: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.upperTxt {
+    overflow: hidden;    
+    color: #333333;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
+
+
+.notActive {
+    color: #666666;
+}
+
+.bottomTxt {
+    overflow: hidden;    
+    color: #999999;
+    font-weight: 300;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
+
+.roundSection {
+    >div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        height: 24px;
+        width: 24px;
+
+        /* margin: auto; */
+
+        /* border: 2px solid #3E7B94; */
+        background-color: #005475;
+        border-radius: 50%;
+
+        text-align: center;
+        font-size: 10px;
+        font-weight: 400;
+        color: white;
+    }
+
+}
+
+.selected{
+    background-color: var(--primary-light);
+
+}
+
+.searchContainer{
+    display: flex;
+    padding: 15px 24px;
+    gap: 16px;
+}
+
+.searchWrapper {
+    display: flex;
+    align-items: center;
+    width: 256px;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 0 0;
+    /* padding-left: 16px; */
+    transition: border-color 0.2s ease;
+  }
+  
+  /* .searchWrapper:focus-within {
+    border-bottom-color: #1890ff;
+  }
+   */
+  .searchIcon {
+    color: #bfbfbf;
+    font-size: 16px;
+    margin-right: 8px;
+  }
+  
+  .searchInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    padding: 0;
+    background: transparent;
+  }
+  
+  .searchInput::placeholder {
+    color: #999999;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .searchInput:focus {
+    outline: none;
+  }
+
+
+
+
+.clearButton {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clearButton:hover {
+    color: #333;
+}
+
+.noResults {
+    padding: 32px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Подсветка найденного текста (опционально) */
+.highlight {
+    background-color: #ffeb3b;
+    font-weight: 500;
+}
