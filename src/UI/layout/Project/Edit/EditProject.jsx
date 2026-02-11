@@ -46,7 +46,7 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections}) {
+export default function EditProject({sections, refHandleTargetsInActive, setBtn}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -141,7 +141,7 @@ export default function EditProject({sections}) {
                 const response = await updateProject({
                     projectId: projectId,
                     _id: projectId,
-                    holderProductPostId,
+                    // holderProductPostId,
                     content: contentProject,
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
@@ -194,7 +194,7 @@ export default function EditProject({sections}) {
             const response = await updateProject({
                 projectId: projectId,
                 _id: projectId,
-                holderProductPostId,
+                //holderProductPostId,
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
@@ -204,6 +204,8 @@ export default function EditProject({sections}) {
             message.error("Ошибка при обновлении проектов")
         }
     };
+
+    refHandleTargetsInActive.current = handleTargetsInActive;
 
     // для открытия нового проекта
     useEffect(() => {
@@ -250,6 +252,26 @@ export default function EditProject({sections}) {
 
         setContentProject(currentProject?.content);
         setTargetsByType(grouped);
+
+        const productState = Object.values(grouped)
+            .flat()
+            .find(t => t.type === "Продукт")?.targetState
+
+        console.log("productState = ", productState);
+        console.log("grouped = ", grouped);
+
+        if(productState === "Черновик"){
+            setBtn([
+                {
+                    text: "начать выполнение",
+                    click: () => {
+                        refHandleTargetsInActive?.current();
+                    },
+                },
+            ])
+        }else{
+            setBtn([])
+        }
     }, [targets, currentProject]);
 
     // заполняется переменная ref latestStateRef для handleSave
