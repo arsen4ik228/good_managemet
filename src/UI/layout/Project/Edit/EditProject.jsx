@@ -141,7 +141,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                 const response = await updateProject({
                     projectId: projectId,
                     _id: projectId,
-                    holderProductPostId,
+                    // holderProductPostId,
                     content: contentProject,
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
@@ -194,7 +194,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
             const response = await updateProject({
                 projectId: projectId,
                 _id: projectId,
-                holderProductPostId,
+                //holderProductPostId,
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
