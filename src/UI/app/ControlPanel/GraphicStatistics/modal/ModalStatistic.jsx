@@ -448,11 +448,11 @@ const ModalStatistic = ({selectedStatistic, openModal, setOpenModal}) => {
                     </Tooltip>
                 </Space>
 
-                {/* <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <span style={{ margin: "0 16px" }}>минимум: {stats.min ?? "-"}</span>
-          <span style={{ margin: "0 16px" }}>максимум: {stats.max ?? "-"}</span>
-          <span style={{ margin: "0 16px" }}>среднее: {stats.avg?.toFixed(2) ?? "-"}</span>
-        </div> */}
+                <div style={{textAlign: "center", marginBottom: 16}}>
+                    <span style={{margin: "0 16px"}}>минимум: {stats.min ?? "-"}</span>
+                    <span style={{margin: "0 16px"}}>максимум: {stats.max ?? "-"}</span>
+                    <span style={{margin: "0 16px"}}>среднее: {stats.avg?.toFixed(2) ?? "-"}</span>
+                </div>
 
             </Modal>
         </>
