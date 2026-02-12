@@ -1,3 +1,4 @@
+import { ConsoleView } from "react-device-detect";
 import apiSlice from "./api";
 import { userId } from "@helpers/constants";
 
@@ -71,7 +72,7 @@ export const messageApi = apiSlice.injectEndpoints({
             keepUnusedDataFor: 0, // данные удаляются сразу после unmount
             cacheTime: 0,
             transformResponse: response => {
-                //('getWatcherSeenMessages:  ', response)
+                console.log('getWatcherSeenMessages:  ', response)
                 let unseenWatcherMessageExist = false
                 const sortedWatcherMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -101,7 +102,7 @@ export const messageApi = apiSlice.injectEndpoints({
 
             }),
             transformResponse: response => {
-                //('getWatcherUnSeenMessages:  ', response)
+                console.log('getWatcherUnSeenMessages:  ', response)
 
                 const unSeenMessagesIds = []
                 const sortedMessages = [...response]?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

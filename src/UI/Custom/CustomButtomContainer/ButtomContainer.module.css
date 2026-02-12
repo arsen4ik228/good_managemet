@@ -5,7 +5,7 @@
     padding: 5px;
 
     background-color: white;
-    border-top: #005475 3px solid;
+    border-top: var(--grey-light) solid 2px;
 }
 
 .buttonContainer {
@@ -16,14 +16,18 @@
     align-items: center;
     justify-content: center;
 
-    padding: 10px 5px;
+    padding: 5px 5px;
+
+    border-radius: 0 0 10px 10px;
 
 }
 
-.buttonContainer > button {
+.buttonContainer>button {
     height: 2.5rem;
     width: 10rem;
-    background: linear-gradient(145deg, #005475, #006f9c);
+    /* background: linear-gradient(145deg, #005475, #006f9c); */
+    background: #005475;
+
     border: none;
     border-radius: 8px;
     color: white;
@@ -37,7 +41,7 @@
 
 /* Стили для наведения (для устройств с поддержкой hover) */
 @media (hover: hover) and (pointer: fine) {
-    .buttonContainer > button:hover {
+    .buttonContainer>button:hover {
         background: linear-gradient(145deg, #006f9c, #005475);
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         transform: translateY(-2px);
@@ -45,24 +49,29 @@
 }
 
 /* Стили для активного состояния (для всех устройств) */
-.buttonContainer > button:active {
+.buttonContainer>button:active {
     transform: translateY(0);
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-    background: #005475; /* Возвращаем исходный цвет фона */
-    transition: all 0.1s ease; /* Уменьшаем время анимации для активного состояния */
+    background: #005475;
+    /* Возвращаем исходный цвет фона */
+    transition: all 0.1s ease;
+    /* Уменьшаем время анимации для активного состояния */
 }
 
 /* Стили для мобильных устройств (сенсорные экраны) */
 @media (hover: none) and (pointer: coarse) {
-    .buttonContainer > button {
+    .buttonContainer>button {
         /* Оставляем все стили, но добавляем гарантированный возврат анимации */
-        transition: all 0.3s ease, transform 0.1s ease; /* Разделяем transition */
+        transition: all 0.3s ease, transform 0.1s ease;
+        /* Разделяем transition */
     }
 
-    .buttonContainer > button:active {
+    .buttonContainer>button:active {
         transform: translateY(0);
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-        background: #005475; /* Возвращаем исходный цвет фона */
-        transition: all 0.1s ease; /* Быстрая анимация для активного состояния */
+        background: #005475;
+        /* Возвращаем исходный цвет фона */
+        transition: all 0.1s ease;
+        /* Быстрая анимация для активного состояния */
     }
 }

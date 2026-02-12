@@ -22,6 +22,7 @@ import MessageSelectingList from "../../UI/Custom/MessageSelectingList/MessageSe
 import { EditStatisticPointsData } from "../../UI/layout/Statistics/EditStatisticPointsData";
 import DesktopDialogPage from "../../UI/layout/Chat/desktop/DesktopDoalogPage";
 import ArchiveDialogPage from "../../UI/layout/Chat/ArchiveDialog/ArchiveDialog";
+import WatcherDialogPage from "../../UI/layout/Chat/WatcherDialogPage/WatcherDialogPage";
 import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/CreateNewConvertPage";
 
 import { StrategyPage } from "../../UI/layout/Strategy/StrategyPage";
@@ -64,9 +65,9 @@ const DesktopConvertsPage = React.lazy(() =>
 // const SettingsPage = React.lazy(() =>
 //   import("@app/SettingsPage/desktop/SettingsPage.jsx")
 // );
-const WatcherDialogPage = React.lazy(() =>
-  import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
-);
+// const WatcherDialogPage = React.lazy(() =>
+//   import("@app/DialogPage/WatcherDialogPage/WatcherDialogPage.jsx")
+// );
 // const ArchiveDialog = React.lazy(() =>
 //   import("@app/DialogPage/ArchiveDialog/ArchiveDialog.jsx")
 // );
@@ -241,6 +242,14 @@ function DesktopApp() {
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                     <DesktopDialogPage />
+                  </React.Suspense>
+                }
+              />
+               <Route
+                path="watcher/:convertId"
+                element={
+                  <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                    <WatcherDialogPage />
                   </React.Suspense>
                 }
               />

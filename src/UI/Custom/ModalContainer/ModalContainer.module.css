@@ -9,6 +9,8 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.09);
+    /* border-radius: 10px 10px 0 0; */
+
 
     z-index: 1000;
 }
@@ -16,9 +18,10 @@
 .contentContainer{
     max-width: 80%;
     margin: auto;
-    padding: 5px;
+    /* padding: 5px; */
 
-    border-radius: 5px;
+    border-radius: 11px 11px 0 0;
+
     background-color: white;
 }
 
@@ -28,16 +31,28 @@
 
 .close{
     position: relative;
-    height: 25px;
+    /* height: 25px; */
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+
+    padding: 5px 10px;
+
+    background-color: var(--primary);
+    border-radius: 10px 10px 0 0;
+
 
     >img{
         position: absolute;
 
-        top: -8px;
-        right: -8px;
+        top: 0;
+        right: -1px;
+    }
+
+    >div{
+        color: white;
+        font-weight: 600;
+        font-size: 22px;
     }
 
 }

@@ -78,6 +78,8 @@ export default function Statistic() {
 
     const [chartType, setChartType] = useState("thirteen");
     const [clickArrow, setClickArrow] = useState([null, null]);
+    const [showTrend, setShowTrend] = useState(false);
+    const [showLineNorma, setShowLineNorma] = useState(false);
 
     const [datePoint, setDatePoint] = useState(null);
 
@@ -271,6 +273,8 @@ export default function Statistic() {
                                         widthObj={{ flex: 1, minWidth: "100%", minHeight: "100%" }}
                                         isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                                         type={currentStatistic?.type}
+                                        showTrend={showTrend}
+                                        // norma={showLineNorma}
                                     />
                                 </div>
 
@@ -328,6 +332,34 @@ export default function Statistic() {
                                         {item.label}
                                     </Button>
                                 ))}
+                                {/*<Button*/}
+                                {/*    onClick={() => setShowLineNorma(!showLineNorma)}*/}
+                                {/*    style={{*/}
+                                {/*        width: "120px",*/}
+                                {/*        backgroundColor:*/}
+                                {/*            showLineNorma ? "rgba(207, 222, 229, 0.5)" : "#fff",*/}
+                                {/*        color: showLineNorma ? "#005475" : "#999999",*/}
+                                {/*        border: "1px solid #CFDEE5",*/}
+                                {/*        borderRadius: "6px",*/}
+                                {/*        fontWeight: 400,*/}
+                                {/*    }}*/}
+                                {/*>*/}
+                                {/*    Норма: 50*/}
+                                {/*</Button>*/}
+                                <Button
+                                    onClick={() => setShowTrend(!showTrend)}
+                                    style={{
+                                        width: "120px",
+                                        backgroundColor:
+                                            showTrend ? "rgba(207, 222, 229, 0.5)" : "#fff",
+                                        color: showTrend ? "#005475" : "#999999",
+                                        border: "1px solid #CFDEE5",
+                                        borderRadius: "6px",
+                                        fontWeight: 400,
+                                    }}
+                                >
+                                  Тренд
+                                </Button>
                             </Flex>
                         </>
                     ) : null}

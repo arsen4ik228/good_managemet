@@ -17,6 +17,7 @@ export default function ModalContainer({ children, buttonText, setOpenModal, cli
                 <div className={classes.contentContainer} style={style}>
                     <div className={classes.contentColumn}>
                         <div className={classes.close}>
+                        <div>наблюдатели</div>
                             <img src={close} alt="close" onClick={() => setOpenModal(false)} />
                         </div>
                         <div className={classes.content}>
