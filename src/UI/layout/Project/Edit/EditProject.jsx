@@ -52,7 +52,10 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
     const {projectId} = useParams();
     const debouncedSaveRef = useRef(null);
+    const prevProjectIdRef = useRef(null);
     const latestStateRef = useRef({});
+    const isDirtyRef = useRef(false);
+
     const [currentProjectId, setCurrentProjectId] = useState();
 
     const {allPosts} = useAllPosts();
@@ -64,6 +67,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
     const [focusTargetId, setFocusTargetId] = useState(null);
 
     const handleUpdateTarget = (type, id, field, value) => {
+        isDirtyRef.current = true;
         setTargetsByType(prev => ({
             ...prev,
             [type]: prev[type].map(t => t.id === id
@@ -80,6 +84,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
     };
 
     const handleAddTarget = (type) => {
+        isDirtyRef.current = true;
         if (type === "Продукт") return
         const newTarget = {
             id: uuidv4(),
@@ -98,6 +103,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
     };
 
     const handleUpdateOrder = (type, newOrderIds) => {
+        isDirtyRef.current = true;
         setTargetsByType(prev => ({
             ...prev,
             [type]: newOrderIds.map(id => prev[type].find(t => t.id === id)),
@@ -146,7 +152,6 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
-                setCurrentProjectId(response?.id);
                 message.success("Проект обновлен");
             } catch (error) {
                 message.error("Ошибка при обновлении проектов")
@@ -160,7 +165,6 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
-                setCurrentProjectId(response?.id);
                 message.success("Проект обновлен");
             } catch (error) {
                 message.error("Ошибка при обновлении проектов")
@@ -199,7 +203,6 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
-            setCurrentProjectId(response?.id);
             message.success("Проект активный");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
@@ -208,11 +211,28 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
     refHandleTargetsInActive.current = handleTargetsInActive;
 
-    // для открытия нового проекта
+    // для открытия нового проекта и сохранении старого
     useEffect(() => {
         if (!projectId) return;
+
+        const prevId = prevProjectIdRef.current;
+
+        if (prevId && prevId !== projectId) {
+
+            // 💥 ВАЖНО: отменяем отложённый debounce
+            debouncedSaveRef.current?.cancel();
+
+            if (isDirtyRef.current) {
+                handleSave(); // сохраняем старый проект
+                isDirtyRef.current = false;
+            }
+        }
+
+        prevProjectIdRef.current = projectId;
         setCurrentProjectId(projectId);
+
     }, [projectId]);
+
 
     // для новых данных в проекте
     useEffect(() => {
@@ -286,9 +306,16 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
     // создается debounce
     useEffect(() => {
-        debouncedSaveRef.current = debounce(handleSave, 5000);
-        return () => debouncedSaveRef.current.flush();
+        debouncedSaveRef.current = debounce(handleSave, 25000);
+
+        return () => {
+            if (isDirtyRef.current) {
+                handleSave(); // сохраняем только если были изменения
+            }
+            debouncedSaveRef.current?.cancel(); // отменяем таймер
+        };
     }, []);
+
 
     return (
         <div className={s.main}>
@@ -305,6 +332,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                                     title={section.name}
                                     content={contentProject}
                                     updateContent={(value) => {
+                                        isDirtyRef.current = true;
                                         setContentProject(value)
                                         if (!debouncedSaveRef.current) return;
                                         debouncedSaveRef.current();
