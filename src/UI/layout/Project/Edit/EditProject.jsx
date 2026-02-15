@@ -141,8 +141,8 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                 const response = await updateProject({
                     projectId: projectId,
                     _id: projectId,
-                    // holderProductPostId,
-                    content: contentProject,
+                    //holderProductPostId,
+                    ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
@@ -156,7 +156,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                 const response = await updateProject({
                     projectId: projectId,
                     _id: projectId,
-                    content: contentProject,
+                    ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
@@ -195,6 +195,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                 projectId: projectId,
                 _id: projectId,
                 //holderProductPostId,
+                ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
@@ -250,7 +251,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
             }
         });
 
-        setContentProject(currentProject?.content);
+        setContentProject(currentProject?.content?.trim());
         setTargetsByType(grouped);
 
         const productState = Object.values(grouped)
@@ -260,7 +261,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
         console.log("productState = ", productState);
         console.log("grouped = ", grouped);
 
-        if(productState === "Черновик"){
+        if (productState === "Черновик") {
             setBtn([
                 {
                     text: "начать выполнение",
@@ -269,7 +270,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                     },
                 },
             ])
-        }else{
+        } else {
             setBtn([])
         }
     }, [targets, currentProject]);
@@ -285,7 +286,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
     // создается debounce
     useEffect(() => {
-        debouncedSaveRef.current = debounce(handleSave, 25000);
+        debouncedSaveRef.current = debounce(handleSave, 5000);
         return () => debouncedSaveRef.current.flush();
     }, []);
 
@@ -303,8 +304,11 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                                     key={section.name}
                                     title={section.name}
                                     content={contentProject}
-                                    updateContent={(value) =>
+                                    updateContent={(value) => {
                                         setContentProject(value)
+                                        if (!debouncedSaveRef.current) return;
+                                        debouncedSaveRef.current();
+                                    }
                                     }
                                 />
                             )
