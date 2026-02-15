@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams} from 'react-router-dom';
 import CustomList from '../../CustomList/CustomList'
 import { useCreateProject } from "@hooks/Project/useCreateProject";
 import { useAllProject } from "@hooks/Project/useAllProject";
@@ -10,6 +10,7 @@ import ListElem from '../../CustomList/ListElem';
 export default function ProjectsAndProgramsList() {
 
     const navigate = useNavigate()
+    const { projectId } = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
     const accordionRefs = useRef({});
@@ -94,6 +95,13 @@ export default function ProjectsAndProgramsList() {
             });
         });
     }, [openedAccordionId, filtredProjects]);
+
+    // для автоскролла до выбранного элемента при перезагрузки страницы
+    useEffect(() => {
+        if (projectId) {
+            setOpenedAccordionId(projectId);
+        }
+    }, [projectId]);
 
     // console.log(projectsWithProgram, '   ', projects, '    ', programs)
 
