@@ -1,27 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, forwardRef } from 'react'
 import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
 import { useFindPathSegment } from '@helpers/helpers'
 import { Tooltip } from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
 
-export default function ListElem({
-    icon,
-    upperText,
-    colorUpperText,
-    bottomText,
-    upperLabel,
-    bage,
-    greyBage,
-    linkSegment,
-    isActive,
-    clickFunc,
-    setSelectedItemData
-}) {
+const ListElem = forwardRef(({
+                                 icon,
+                                 upperText,
+                                 colorUpperText,
+                                 bottomText,
+                                 upperLabel,
+                                 bage,
+                                 greyBage,
+                                 linkSegment,
+                                 isActive,
+                                 clickFunc,
+                                 setSelectedItemData
+                             }, ref) => {
     const isSelected = useFindPathSegment(linkSegment)
 
     // Добавляем ref для элемента
-    const elemRef = useRef(null)
+    // const elemRef = useRef(null)
 
     useEffect(() => {
         if (isSelected && setSelectedItemData) {
@@ -40,7 +40,8 @@ export default function ListElem({
     return (
         <>
             <div
-                ref={elemRef}
+                // ref={elemRef}
+                ref={ref}
                 className={`${classes.content} ${isSelected && classes.selected}`}
                 onClick={() => clickFunc()}
                 data-after={upperLabel}
@@ -93,4 +94,6 @@ export default function ListElem({
             </div>
         </>
     )
-}
+})
+
+export default ListElem

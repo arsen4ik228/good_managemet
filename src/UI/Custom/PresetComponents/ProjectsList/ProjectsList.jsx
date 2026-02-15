@@ -63,7 +63,7 @@ export default function ProjectsList() {
             : combined;
 
         // Сортировка по projectName
-        return filtered.sort((a, b) => a.projectName.localeCompare(b.projectName));
+        return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
     }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
 
     useEffect(() => {
