@@ -161,15 +161,19 @@ export default function ViewProject() {
 
     const {
         projectName,
-        setProjectName
+        setProjectName,
+        setStrategyId
     } = useProjectForm();
 
     useEffect(() => {
         if (!notEmpty(currentProject)) return
 
         setProjectName(currentProject?.projectName)
+        setStrategyId(currentProject?.strategy?.id ? currentProject?.strategy?.id : null)
 
     }, [currentProject])
+
+    console.log(currentProject)
 
     return (
         <div className={classes.main}>
