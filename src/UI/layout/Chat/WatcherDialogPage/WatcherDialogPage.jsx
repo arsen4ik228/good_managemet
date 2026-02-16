@@ -266,7 +266,7 @@ export default function WatcherDialogPage() {
     }, [watcherUnseenMessages, socketMessages]);
 
     //(socketResponse?.messageCreationEvent)
-    console.warn(watcherUnseenMessages, messagesArray)
+    console.warn(currentConvert)
 
 
     return (
@@ -329,9 +329,9 @@ export default function WatcherDialogPage() {
 
         <>
             <MainContentContainer //buttons={buttons}
-                // component={<AddedWatcherContainer convertId={convertId} watchersToConvert={currentConvert?.watchersToConvert}
-                // ></AddedWatcherContainer>
-                // }
+                component={<AddedWatcherContainer disabled={true} convertId={convertId} watchersToConvert={currentConvert?.watchersToConvert}
+                ></AddedWatcherContainer>
+                }
                 >
                
                 <ChatContainer isArchive={true}>

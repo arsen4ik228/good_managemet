@@ -174,8 +174,8 @@ export default function ConvertList() {
                             upperText={item.convertTheme}
                             bottomText={item.convertType}
                             linkSegment={item.id}
-                            bage={item.unseenMessagesCount}
-                            greyBage={item?.hasUnrepliedMessage}
+                            bage={item?.unseenMessagesCount}
+                            greyBage={item?.hasUnrepliedMessage || item?.unreadMessagesCount}
                             clickFunc={() => openChat(item.convertStatus, item.id, item.convertType)}
                         />
                     </React.Fragment>

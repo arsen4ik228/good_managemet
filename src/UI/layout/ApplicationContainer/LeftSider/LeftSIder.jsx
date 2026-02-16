@@ -275,7 +275,7 @@ export default function LeftSIder() {
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
-                                    bage={item.unseenMessagesCount}//bage={calculateUnseenMessages(item, socketMessagesCount)}
+                                    bage={item.unseenMessagesCount + item?.watcherUnseenCount}//bage={calculateUnseenMessages(item, socketMessagesCount)}
                                     greyBage={item?.hasUnrepliedMessage}
                                 />
                             </React.Fragment>
