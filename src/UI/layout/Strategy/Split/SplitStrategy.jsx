@@ -9,12 +9,20 @@ import copy from "../img/copy.svg";
 import plusCircle from "../img/plusCircle.svg";
 
 import { useRightPanel, usePanelPreset } from "@hooks";
+import {useAllProject} from "../../../../hooks/Project/useAllProject";
 
 export default function SplitStrategy({ currentStrategy }) {
     const [selectionUI, setSelectionUI] = useState(null);
 
     const { PRESETS } = useRightPanel();
     usePanelPreset(PRESETS["PROJECT"]);
+
+
+    const {
+        projects,
+        projectsWithProgram,
+        maxProjectNumber
+    } = useAllProject();
 
     const {
         reduxSelectedOrganizationId,
@@ -63,7 +71,7 @@ export default function SplitStrategy({ currentStrategy }) {
         try {
             await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: "Новый проект",
+                projectName: `Новый проект № ${maxProjectNumber}`,
                 type: "Проект",
                 strategyId: currentStrategy.id,
                 content: selectionUI?.text || " ",

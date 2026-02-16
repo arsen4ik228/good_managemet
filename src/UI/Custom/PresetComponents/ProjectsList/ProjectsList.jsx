@@ -35,7 +35,7 @@ export default function ProjectsList() {
         try {
             const response = await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект №${maxProjectNumber+1}`,
+                projectName: `Новый проект №${maxProjectNumber + 1}`,
                 type: "Проект",
                 strategyId: strategyId,
                 content: " ",
@@ -54,8 +54,8 @@ export default function ProjectsList() {
     };
 
     const filtredProjects = useMemo(() => {
-        const combined = [...projectsWithProgram, ...projects];
-
+        const combined = [...projectsWithProgram, ...projects].filter((p) => p?.strategyId === strategyId);
+        console.log("combined", combined);
         const filtered = seacrhUsersSectionsValue?.trim()
             ? combined.filter(item =>
                 item.projectName.toLowerCase().includes(seacrhUsersSectionsValue.toLowerCase())
@@ -63,7 +63,7 @@ export default function ProjectsList() {
             : combined;
 
         // Сортировка по projectName
-        return filtered.sort((a, b) => a.projectName.localeCompare(b.projectName));
+        return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
     }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
 
     useEffect(() => {
@@ -87,7 +87,7 @@ export default function ProjectsList() {
                 addButtonText={'Создать проект'}
             >
                 {
-                    filtredProjects?.filter((p) => p?.strategyId === strategyId)?.map((p) => (
+                    filtredProjects?.map((p) => (
                         <AccordionRdx
                             accordionId={p.id}
                             isOpen={openedAccordionId === p.id}

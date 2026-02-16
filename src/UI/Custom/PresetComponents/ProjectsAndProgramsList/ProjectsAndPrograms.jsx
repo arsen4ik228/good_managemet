@@ -1,22 +1,19 @@
-import React, { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useEffect, useMemo, useRef, useState} from 'react'
+import { useNavigate, useParams} from 'react-router-dom';
 import CustomList from '../../CustomList/CustomList'
 import { useCreateProject } from "@hooks/Project/useCreateProject";
 import { useAllProject } from "@hooks/Project/useAllProject";
-import { useUpdateSingleProject } from "@hooks/Project/useUpdateSingleProject";
 import active_project from '@image/active_project.svg';
 import program_icon from '@image/program_icon.svg';
-
-import { AccordionRdx } from "../../../radixUI/accordion/AccordionRdx";
-import { TriggerContent } from "../../../layout/Strategy/Split/components/TriggerContent";
-import { AccordionContent } from "../../../layout/Strategy/Split/components/AccordionContent";
 import ListElem from '../../CustomList/ListElem';
 
 export default function ProjectsAndProgramsList() {
-    const { strategyId } = useParams();
+
     const navigate = useNavigate()
-
-
+    const { projectId } = useParams();
+    const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
+    const [openedAccordionId, setOpenedAccordionId] = useState(null);
+    const accordionRefs = useRef({});
     const {
         projects,
         archivesProjects,
@@ -34,9 +31,6 @@ export default function ProjectsAndProgramsList() {
         createProject,
     } = useCreateProject();
 
-    const {
-        updateProject,
-    } = useUpdateSingleProject();
     const createNewProject = async () => {
         try {
             // Сохраняем результат запроса в переменную
@@ -44,7 +38,6 @@ export default function ProjectsAndProgramsList() {
                 organizationId: reduxSelectedOrganizationId,
                 projectName: `Новый проект №${maxProjectNumber + 1}`,
                 type: "Проект",
-                // strategyId: strategyId,
                 content: " ",
                 targetCreateDtos: [
                     {
@@ -54,13 +47,13 @@ export default function ProjectsAndProgramsList() {
                     },
                 ],
             }).unwrap();
-            
+            setOpenedAccordionId(result?.id);
             // Проверяем структуру ответа
             console.log('Result от сервера:', result);
-            
+
             // Получаем ID из результата (зависит от структуры ответа сервера)
             const projectId = result.id || result._id || result.data?.id;
-            
+
             if (projectId) {
                 // Навигация с ID созданного проекта
                 navigate(`helper/project/${projectId}`);
@@ -69,7 +62,7 @@ export default function ProjectsAndProgramsList() {
                 // Альтернативная навигация или сообщение об ошибке
                 navigate('helper/projects');
             }
-            
+
         } catch (error) {
             console.error("Ошибка при создании проекта:", error);
         }
@@ -79,18 +72,36 @@ export default function ProjectsAndProgramsList() {
         navigate(`helper/project/${id}`)
     }
 
-    const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
-
     const filtredProjects = useMemo(() => {
-        if (!seacrhUsersSectionsValue?.trim()) {
-            return [...projectsWithProgram, ...projects, ...programs]; // Возвращаем все элементы если поиск пустой
-        }
+        const combined = [...projectsWithProgram, ...projects, ...programs];
 
-        const searchLower = seacrhUsersSectionsValue?.toLowerCase();
-        return [...projectsWithProgram, ...projects, ...programs]?.filter(item =>
-            item?.projectName.toLowerCase().includes(searchLower)
-        );
-    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, programs]);
+        const filtered = seacrhUsersSectionsValue?.trim()
+            ? combined.filter(item =>
+                item.projectName.toLowerCase().includes(seacrhUsersSectionsValue.toLowerCase())
+            )
+            : combined;
+
+        // Сортировка по projectName
+        return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
+    }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
+
+    useEffect(() => {
+        if (!openedAccordionId) return;
+
+        requestAnimationFrame(() => {
+            accordionRefs.current[openedAccordionId]?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        });
+    }, [openedAccordionId, filtredProjects]);
+
+    // для автоскролла до выбранного элемента при перезагрузки страницы
+    useEffect(() => {
+        if (projectId) {
+            setOpenedAccordionId(projectId);
+        }
+    }, [projectId]);
 
     // console.log(projectsWithProgram, '   ', projects, '    ', programs)
 
@@ -113,6 +124,9 @@ export default function ProjectsAndProgramsList() {
                                 clickFunc={() => openProject(item.id)}
                                 // bage={item.targets.length}
                                 upperLabel={item.type === 'Программа' ? 'Программа из стратегии' : 'Проект'}
+                                ref={el => {
+                                    if (el) accordionRefs.current[item.id] = el;
+                                }}
                             />
                         </React.Fragment>
                     ))
