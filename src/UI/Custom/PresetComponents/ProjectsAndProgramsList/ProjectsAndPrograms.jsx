@@ -1,19 +1,43 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react'
-import { useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import CustomList from '../../CustomList/CustomList'
-import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { useAllProject } from "@hooks/Project/useAllProject";
+import {useCreateProject} from "@hooks/Project/useCreateProject";
+import {useAllProject} from "@hooks/Project/useAllProject";
 import active_project from '@image/active_project.svg';
 import program_icon from '@image/program_icon.svg';
 import ListElem from '../../CustomList/ListElem';
+import FilterElement from "../../CustomList/FilterElement";
+import ListAddButtom from "../../ListAddButton/ListAddButtom";
+
+
+const arrayFilter = [
+    {
+        label: "Черновик",
+        value: "Черновик"
+    },
+    {
+        label: "Активные",
+        value: "Активная"
+    },
+    {
+        label: "Завершенные",
+        value: "Завершена"
+    }
+]
 
 export default function ProjectsAndProgramsList() {
 
     const navigate = useNavigate()
-    const { projectId } = useParams();
+    const {projectId} = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
     const accordionRefs = useRef({});
+
+// Для FilterElement
+    const [openFilter, setOpenFilter] = useState(false);
+    const [stateFilter, setStateFilter] = useState("Черновик");
+//
+
     const {
         projects,
         archivesProjects,
@@ -73,8 +97,13 @@ export default function ProjectsAndProgramsList() {
     }
 
     const filtredProjects = useMemo(() => {
-        const combined = [...projectsWithProgram, ...projects, ...programs];
-
+        const combined = [...projectsWithProgram, ...projects, ...programs]
+            .filter(c =>
+                c?.targets?.some(
+                    t => t.type === "Продукт" && t.targetState === stateFilter
+                )
+            );
+        console.log("combined = ", combined);
         const filtered = seacrhUsersSectionsValue?.trim()
             ? combined.filter(item =>
                 item.projectName.toLowerCase().includes(seacrhUsersSectionsValue.toLowerCase())
@@ -83,7 +112,7 @@ export default function ProjectsAndProgramsList() {
 
         // Сортировка по projectName
         return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
-    }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
+    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, stateFilter]);
 
     useEffect(() => {
         if (!openedAccordionId) return;
@@ -109,11 +138,26 @@ export default function ProjectsAndProgramsList() {
         <>
             <CustomList
                 title={'Проекты'}
+                isFilter={true}
+                setOpenFilter={setOpenFilter}
                 searchValue={seacrhUsersSectionsValue}
                 searchFunc={setSeacrhUsersSectionsValue}
-                addButtonClick={() => createNewProject()}
-                addButtonText={'Создать проект'}
+                // addButtonClick={() => createNewProject()}
+                // addButtonText={'Создать проект'}
             >
+
+                {
+                    openFilter && <FilterElement
+                        array={arrayFilter}
+                        state={stateFilter}
+                        setState={setStateFilter}
+                    />
+                }
+
+                {
+                    !openFilter && <ListAddButtom textButton={'Создать проект'} clickFunc={createNewProject}/>
+                }
+
                 {
                     filtredProjects?.map((item, index) => (
                         <React.Fragment key={index}>
