@@ -7,6 +7,7 @@ import { loadDraft, saveDraft } from "@helpers/indexedDB";
 import { useProjectForm } from '../../../../contexts/ProjectFormContext';
 import { useUpdateSingleProject } from '../../../../hooks/Project/useUpdateSingleProject';
 import debounce from 'lodash/debounce';
+import { useStrategyHook } from '../../../../hooks/useStrategyHook';
 
 const { Option } = Select;
 
@@ -24,49 +25,84 @@ export const ProjectCreationComponent = () => {
         setSenderPost,
         userPostsInAccount,
         projectName,
-        setProjectName
+        setProjectName,
+
+        setStrategyId,
+        strategyId
     } = useProjectForm();
 
     // Создаем ref для хранения актуального projectName
     const projectNameRef = useRef(projectName);
-    
+    const strategyIdRef = useRef(strategyId)
+    const isProjectDataChanged = useRef(false)
+
+    const { activeAndDraftStrategies } = useStrategyHook()
+
     // Обновляем ref при изменении projectName
     useEffect(() => {
         projectNameRef.current = projectName;
     }, [projectName]);
+    useEffect(() => {
+        strategyIdRef.current = strategyId;
+    }, [strategyId]);
+
+    // Создаем функцию для немедленного сохранения (чтобы не дублировать код)
+    const saveProjectNameImmediately = useCallback(async () => {
+        // Проверяем, что имя действительно менялось
+        if (!isProjectDataChanged.current) return;
+
+        try {
+            const response = await updateProject({
+                projectId: projectId,
+                _id: projectId,
+                projectName: projectNameRef.current,
+                strategyId: strategyIdRef.current,
+            }).unwrap();
+            message.success("Проект обновлен");
+            // Сбрасываем флаг после успешного сохранения
+            isProjectDataChanged.current = false;
+        } catch (error) {
+            message.error("Ошибка при обновлении проектов");
+        }
+    }, [projectId, updateProject]);
 
     // Debounced функция для обновления проекта
     const debouncedUpdateProjectName = useCallback(
         debounce(async () => {
-            try {
-                const response = await updateProject({
-                    projectId: projectId,
-                    _id: projectId,
-                    projectName: projectNameRef.current
-                }).unwrap();
-                message.success("Проект обновлен");
-            } catch (error) {
-                message.error("Ошибка при обновлении проектов");
-            }
-        }, 1300), // Задержка 1 секунда
-        [projectId, updateProject]
+            await saveProjectNameImmediately();
+        }, 1300), // Задержка 5 секунд (у тебя в комменте было 1s, но в коде 5000)
+        [saveProjectNameImmediately]
     );
 
     // Обработчик изменения имени
     const handleProjectNameChange = (e) => {
         const newValue = e.target.value;
         setProjectName(newValue);
+        isProjectDataChanged.current = true
         debouncedUpdateProjectName();
     };
 
-    // Отмена debounced вызова при размонтировании
+    const habdleChangeStrategyId = (e) => {
+        // const newValue = e;
+        setStrategyId(e);
+        isProjectDataChanged.current = true
+        debouncedUpdateProjectName();
+    }
+
+    // Отмена debounced вызова и немедленное сохранение при размонтировании
     useEffect(() => {
         return () => {
+            // Отменяем запланированный debounced вызов
             debouncedUpdateProjectName.cancel();
+
+            // Если имя менялось - сохраняем немедленно
+            if (isProjectDataChanged.current) {
+                saveProjectNameImmediately();
+            }
         };
-    }, [debouncedUpdateProjectName]);
+    }, [debouncedUpdateProjectName, saveProjectNameImmediately]);
 
-
+    console.log(activeAndDraftStrategies)
 
     return (
         <div className={classes.customContainer}>
@@ -84,20 +120,28 @@ export const ProjectCreationComponent = () => {
                 />
             </div>
 
-            <div className={classes.selectSection} data-label="Привязать проект">
+            <div className={classes.selectSection} data-label="Прикрепить стратегию">
                 <Select
                     className={classes.customSelect}
                     bordered={false}
-                    value={senderPost}
-                    onChange={(value) => setSenderPost(value)}
-                    disabled
+                    value={strategyId}
+                    onChange={habdleChangeStrategyId}
                 >
-                    <Option value={1}>
-                        Черновик стратегии
+                    {(activeAndDraftStrategies[0] && activeAndDraftStrategies[0].state === 'Черновик') && (
+                        <Option value={activeAndDraftStrategies[0]?.id}>
+                            Черновик стратегии
+                        </Option>
+                    )}
+                    {((activeAndDraftStrategies[0] && activeAndDraftStrategies[0].state === 'Активный') ||
+                        (activeAndDraftStrategies[1] && activeAndDraftStrategies[1].state === 'Активный')) && (
+                            <Option value={activeAndDraftStrategies[1]?.id}>
+                                Текущая стратегия
+                            </Option>
+                        )}
+                    <Option value={null}>
+                        Отсутствует
                     </Option>
-                    <Option value={2}>
-                        Текущая стратегия
-                    </Option>
+
                 </Select>
             </div>
 

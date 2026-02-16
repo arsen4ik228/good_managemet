@@ -13,6 +13,7 @@ export const ProjectProvider = ({ children }) => {
     const [contentInput, setContentInput] = useState("");
     const [isEdit, setIsEdit] = useState(false)
     const [taskId, setTaskId] = useState()
+    const [strategyId, setStrategyId] = useState()
 
     const [projectName, setProjectName] = useState()
 
@@ -45,7 +46,10 @@ export const ProjectProvider = ({ children }) => {
 
 
         projectName,
-        setProjectName
+        setProjectName,
+
+        strategyId,
+        setStrategyId
 
     };
 
