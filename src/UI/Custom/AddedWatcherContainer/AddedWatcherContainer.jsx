@@ -13,7 +13,7 @@ const getAvatar = (link) => {
     return baseUrl + link
 }
 
-export default function AddedWatcherContainer({ convertId, watchersToConvert }) {
+export default function AddedWatcherContainer({ convertId, watchersToConvert, disabled=false }) {
     const [openModal, setOpenModal] = useState(false)
     const [selectedPost, setSelectedPost] = useState([])
 
@@ -49,7 +49,7 @@ export default function AddedWatcherContainer({ convertId, watchersToConvert }) 
                             </div>
                         ))}
                         <div className={classes.addedButton}>
-                            <img src={addedWatcher} alt="addedButton" onClick={() => setOpenModal(true)} />
+                           {!disabled && <img src={addedWatcher} alt="addedButton" onClick={() => setOpenModal(true)} /> }
                         </div>
                     </div>
                 </div>

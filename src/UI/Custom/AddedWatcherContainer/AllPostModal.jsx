@@ -8,6 +8,7 @@ import primary_search from '@image/primary _ search.svg'
 import avatar from '@image/default_avatar.svg'
 import round_check from '@image/round_check.svg'
 import round_check_true from '@image/round_check_true.svg'
+import {baseUrl} from '@helpers/constants'
 
 export default function AllPostModal({ setOpenModal, watchers, buttonClick, selectedPost, setSelectedPost }) {
 
@@ -47,6 +48,7 @@ export default function AllPostModal({ setOpenModal, watchers, buttonClick, sele
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
+
 
     return (
         <ModalContainer
@@ -95,7 +97,8 @@ export default function AllPostModal({ setOpenModal, watchers, buttonClick, sele
                                 `}
                             >
                                 <div className={classes.imgContainer}>
-                                    <img src={item?.user?.avatar_url || avatar} alt="avatar" />
+                                    <img src={ item?.user?.avatar_url ? baseUrl + item?.user?.avatar_url : avatar} alt="avatar" />
+                                    {/* userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}` : default_avatar */}
                                 </div>
                                 <Tooltip
                                     title={`${item?.postName || ''} - ${item?.lastName || ''} ${item?.firstName || ''}`}

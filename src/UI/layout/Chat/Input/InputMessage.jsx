@@ -396,7 +396,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     //         setSenderPost(userPosts[0]?.id);
     //     }
     // }, [userPosts, senderPost]);
-    console.log(senderPostId)
+    console.log(contentInput)
     return (
 
         <div className={classes.wrapper}>
@@ -498,11 +498,25 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
 const autoCreateConvertTheme = (content) => {
     if (!content || typeof content !== 'string') return '';
 
-    // Обрезаем до 1023 символов
-    let truncated = content.slice(0, 124);
+    const MAX_LENGTH = 124;
+    
+    // Проверяем наличие абзаца ТОЛЬКО в первых MAX_LENGTH символах
+    const firstPart = content.slice(0, MAX_LENGTH);
+    const paragraphIndex = firstPart.search(/\n\n|\n/);
+    
+    // Если найден абзац в первых 124 символах, возвращаем текст до него
+    if (paragraphIndex !== -1) {
+        const beforeParagraph = content.slice(0, paragraphIndex);
+        if (beforeParagraph.trim().length > 0) {
+            return beforeParagraph;
+        }
+    }
 
-    // Если контент и так короче 1023 символов, возвращаем как есть
-    if (content.length <= 124) {
+    // Обрезаем до 124 символов
+    let truncated = content.slice(0, MAX_LENGTH);
+
+    // Если контент и так короче 124 символов, возвращаем как есть
+    if (content.length <= MAX_LENGTH) {
         return truncated;
     }
 
