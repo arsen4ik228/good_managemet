@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useConvertsHook, useTargetsHook } from '@hooks'
 import classes from './FinalConvertModal.module.css'
 
-export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers, targetId }) {
+export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers, targetId, senderPost }) {
     const navigate = useNavigate()
     const { contactId, organizationId } = useParams()
 
@@ -25,6 +25,10 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
 
         deleteTarget,
     } = useTargetsHook();
+
+    const {
+        sendMessage,
+    } = useConvertsHook({ convertId: convertId, });
 
     useEffect(() => {
         // Показываем модальное окно при монтировании компонента
@@ -71,14 +75,40 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
     //             setOpenModal(false)
     //         })
     // }
+    //$&#ПриказСогласован$&#1
+    console.log(senderPost)
 
+    const send = async () => {
+        try {
+            // Отправка сообщения
+            await sendMessage({
+                convertId: convertId,
+                content: '$&#ПриказСогласован$&#1',
+                postId: senderPost?.id,
+            }).unwrap();
+            
+            // Если send успешен, вызываем finalConvert
+            await finalConvert();
+            
+        } catch (error) {
+            console.error("Ошибка в sendMessage:", error);
+            notification.error({
+                message: 'Ошибка',
+                description: `${error?.data?.message || 'Не удалось отправить сообщение'}`,
+                placement: 'topRight',
+            });
+            
+            // Можно добавить обработку ошибки (например, показать уведомление)
+        }
+    };
+    
     const finalConvert = async () => {
         try {
             const Data = {
                 pathOfUsers: pathOfUsers,
                 convertId: convertId
             }
-
+    
             // Если targetId существует, выполняем updateTargets
             if (targetId) {
                 await updateTargets({
@@ -87,23 +117,27 @@ export default function FinalConvertModal({ setOpenModal, convertId, pathOfUsers
                     type: 'Приказ',
                 }).unwrap();
             }
-
+    
             // Затем всегда выполняем finishConvert
             await finishConvert({ ...Data }).unwrap();
-
+    
             navigate(`/${organizationId}/chat/${contactId}`);
-
+    
         } catch (error) {
-            console.error('Ошибка:', error);
+            console.error('Ошибка в finalConvert:', error);
             notification.error({
                 message: 'Ошибка',
                 description: 'Не удалось завершить операцию',
                 placement: 'topRight',
             });
+            throw error; // Пробрасываем ошибку дальше, чтобы send знал о ней
         } finally {
             setOpenModal(false);
         }
     }
+    
+    // Теперь по кнопке вызываем только send()
+    // <Button onClick={send}>Отправить</Button>
 
     const showConfirmationModal = () => {
 

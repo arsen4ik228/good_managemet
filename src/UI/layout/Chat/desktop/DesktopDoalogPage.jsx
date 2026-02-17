@@ -363,6 +363,7 @@ export default function DesktopDialogPage() {
                     convertId={convertId}
                     pathOfUsers={pathOfUsers}
                     targetId={currentConvert?.target?.id}
+                    senderPost={senderPostForSocket}
                 ></FinalConvertModal>
             )}
             {openAgreementModal && (
