@@ -2,7 +2,7 @@ import React from 'react'
 import classes from './ModalContainer.module.css'
 import { ButtonContainer } from '../CustomButtomContainer/ButtonContainer'
 import close from "../SearchModal/icon/icon _ add.svg";
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 
 
@@ -17,18 +17,21 @@ export default function ModalContainer({ children, buttonText, setOpenModal, cli
                 <div className={classes.contentContainer} style={style}>
                     <div className={classes.contentColumn}>
                         <div className={classes.close}>
-                        <div>наблюдатели</div>
+                            <div>наблюдатели</div>
                             <img src={close} alt="close" onClick={() => setOpenModal(false)} />
                         </div>
                         <div className={classes.content}>
                             {children}
                         </div>
-                        <ButtonContainer
-                            clickFunction={clickFunction || closeModal}
-                            disabled={disabledButton}
-                        >
-                            {buttonText} 
-                        </ButtonContainer>
+                        {clickFunction && (
+
+                            <ButtonContainer
+                                clickFunction={clickFunction || closeModal}
+                                disabled={disabledButton}
+                            >
+                                {buttonText}
+                            </ButtonContainer>
+                        )}
                     </div>
                 </div>
             </div>
@@ -38,18 +41,18 @@ export default function ModalContainer({ children, buttonText, setOpenModal, cli
 
 
 ModalContainer.propTypes = {
-    children: PropTypes.node.isRequired, 
-    buttonText: PropTypes.string, 
-    setOpenModal: PropTypes.func.isRequired, 
+    children: PropTypes.node.isRequired,
+    buttonText: PropTypes.string,
+    setOpenModal: PropTypes.func.isRequired,
     clickFunction: PropTypes.func,
-    disabledButton: PropTypes.bool, 
-    style: PropTypes.object, 
+    disabledButton: PropTypes.bool,
+    style: PropTypes.object,
 };
 
 
 ModalContainer.defaultProps = {
-    buttonText: 'Сохранить', 
-    clickFunction: null, 
-    disabledButton: false, 
-    style: {}, 
+    buttonText: 'Сохранить',
+    clickFunction: null,
+    disabledButton: false,
+    style: {},
 };
