@@ -56,12 +56,13 @@ export const EditStatisticPointsData = () => {
 
     const [chartType, setChartType] = useState("thirteen");
     const [datePoint, setDatePoint] = useState(null);
-    const [norma, setNorma] = useState(50);
+    const [norma, setNorma] = useState(null);
 
     const [dataSource, setDataSource] = useState([]);
     const [createCorellationPoints, setCreateCorellationPoints] = useState([]);
     const [clickArrow, setClickArrow] = useState([null, null]);
 
+    const [showLineNorma, setShowLineNorma] = useState(false);
     // Получение статистики по id
     const {
         currentStatistic,
@@ -123,6 +124,7 @@ export const EditStatisticPointsData = () => {
             await updateStatistics({
                 statisticId: currentStatistic?.id,
                 _id: currentStatistic?.id,
+                normalize: norma,
                 ...DataArray,
             }).unwrap();
 
@@ -302,7 +304,6 @@ export const EditStatisticPointsData = () => {
 
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
     // Отслеживаем изменение ширины окна
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
@@ -311,6 +312,11 @@ export const EditStatisticPointsData = () => {
     }, []);
 
     const isViewNormalLine = chartType === "thirteen" || chartType === "twenty_six" || chartType === "fifty_two";
+
+    useEffect(() => {
+        if(!currentStatistic) return;
+        setNorma(currentStatistic.normalize);
+    },[currentStatistic]);
 
     return (
         <EditContainer header={"ввод данных"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
@@ -383,7 +389,7 @@ export const EditStatisticPointsData = () => {
                                     widthObj={{flex: 1, minWidth: "100%", minHeight: "100%"}}
                                     isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                                     type={currentStatistic?.type}
-                                    norma={isViewNormalLine ? norma : null}
+                                    norma={showLineNorma ? norma : null}
                                 />
                             </div>
 
@@ -448,11 +454,12 @@ export const EditStatisticPointsData = () => {
                             isViewNormalLine && (
                                 <>
                                     <Button
-                                        disabled={false}
+                                        onClick={() => setShowLineNorma(!showLineNorma)}
                                         style={{
                                             width: "120px",
-                                            backgroundColor: "#fff",
-                                            color: "#999999",
+                                            backgroundColor:
+                                                showLineNorma ? "rgba(207, 222, 229, 0.5)" : "#fff",
+                                            color: showLineNorma ? "#005475" : "#999999",
                                             border: "1px solid #CFDEE5",
                                             borderRadius: "6px",
                                             fontWeight: 400,

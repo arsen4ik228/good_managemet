@@ -1,22 +1,26 @@
-import { useState } from "react";
-import TextArea from "antd/es/input/TextArea";
+import {useState, useRef} from "react";
+import {MDXEditor} from "@mdxeditor/editor";
+import "@mdxeditor/editor/style.css";
+
 import classes from "./SplitStrategy.module.css";
 
-import { useCreateProject } from "@hooks/Project/useCreateProject";
+import {useCreateProject} from "@hooks/Project/useCreateProject";
+import {useRightPanel, usePanelPreset} from "@hooks";
+import {useAllProject} from "../../../../hooks/Project/useAllProject";
+
 import BtnIconRdx from "../../../radixUI/buttonIcon/BtnIconRdx";
 
 import copy from "../img/copy.svg";
 import plusCircle from "../img/plusCircle.svg";
 
-import { useRightPanel, usePanelPreset } from "@hooks";
-import {useAllProject} from "../../../../hooks/Project/useAllProject";
 
-export default function SplitStrategy({ currentStrategy }) {
+export default function SplitStrategy({currentStrategy}) {
+    const channel = new BroadcastChannel("project-events");
     const [selectionUI, setSelectionUI] = useState(null);
+    const editorWrapperRef = useRef(null);
 
-    const { PRESETS } = useRightPanel();
+    const {PRESETS} = useRightPanel();
     usePanelPreset(PRESETS["PROJECT"]);
-
 
     const {
         projects,
@@ -29,36 +33,41 @@ export default function SplitStrategy({ currentStrategy }) {
         createProject,
     } = useCreateProject();
 
-    const handleMouseUp = (e) => {
-        const textarea = e.target;
+    const handleMouseUp = () => {
+        const selection = window.getSelection();
 
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-
-        if (start === end) {
+        if (!selection || selection.rangeCount === 0) {
             setSelectionUI(null);
             return;
         }
 
-        const selectedText = textarea.value.slice(start, end);
+        const range = selection.getRangeAt(0);
 
-        const style = window.getComputedStyle(textarea);
-        const lineHeight = parseInt(style.lineHeight, 10) || 20;
-        const paddingTop = parseInt(style.paddingTop, 10) || 0;
-        const paddingRight = parseInt(style.paddingRight, 10) || 0;
+        if (range.collapsed) {
+            setSelectionUI(null);
+            return;
+        }
 
-        const isBottomToTop = textarea.selectionDirection === "backward";
-        const anchorIndex = isBottomToTop ? end : start;
-        const lineIndex = textarea.value.slice(0, anchorIndex).split("\n").length - 1;
+        // Проверяем, что выделение внутри редактора
+        const editorElement = editorWrapperRef.current;
+        if (!editorElement.contains(range.commonAncestorContainer)) {
+            setSelectionUI(null);
+            return;
+        }
 
-        // top/left относительно контейнера .main
-        const containerRect = textarea.closest(`.${classes.main}`).getBoundingClientRect();
-        const textareaRect = textarea.getBoundingClientRect();
+        const selectedText = selection.toString();
+        const rect = range.getBoundingClientRect();
+        const wrapperRect = editorElement.getBoundingClientRect();
 
-        let top = textareaRect.top - containerRect.top + paddingTop + lineIndex * lineHeight;
-        if (isBottomToTop) top += lineHeight;
+        const top =
+            rect.top -
+            wrapperRect.top +
+            editorElement.scrollTop + 55;
 
-        const left = textareaRect.right - containerRect.left - paddingRight + 8;
+        const left =
+            rect.right -
+            wrapperRect.left +
+            70;
 
         setSelectionUI({
             top,
@@ -69,9 +78,9 @@ export default function SplitStrategy({ currentStrategy }) {
 
     const createNewProject = async () => {
         try {
-            await createProject({
+            const response = await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект № ${maxProjectNumber}`,
+                projectName: `Новый проект №${maxProjectNumber}`,
                 type: "Проект",
                 strategyId: currentStrategy.id,
                 content: selectionUI?.text || " ",
@@ -83,14 +92,21 @@ export default function SplitStrategy({ currentStrategy }) {
                     },
                 ],
             }).unwrap();
+            channel.postMessage({
+                type: "projectCreated",
+                projectId: response?.id
+            });
+            setSelectionUI(null);
         } catch (error) {
             console.error("Ошибка при создании проекта:", error);
         }
     };
 
-    const copySelectedText = () => {
+    const copySelectedText = async () => {
         if (!selectionUI?.text) return;
-        navigator.clipboard.writeText(selectionUI.text);
+
+        await navigator.clipboard.writeText(selectionUI.text);
+        setSelectionUI(null);
     };
 
     return (
@@ -98,18 +114,15 @@ export default function SplitStrategy({ currentStrategy }) {
             <fieldset className={classes.frame}>
                 <legend className={classes.title}>Стратегия</legend>
 
-                <TextArea
-                    style={{
-                        resize: "none",
-                        border: "none",
-                        outline: "none",
-                        boxShadow: "none",
-                    }}
-                    value={currentStrategy.content}
-                    readOnly
-                    autoSize
+                <div
+                    ref={editorWrapperRef}
+                    className={classes.editorWrapper}
                     onMouseUp={handleMouseUp}
-                />
+                >
+                    <MDXEditor
+                        markdown={currentStrategy.content}
+                    />
+                </div>
             </fieldset>
 
             {selectionUI && (

@@ -11,6 +11,7 @@ import {TriggerContent} from "../../../layout/Strategy/Split/components/TriggerC
 import {AccordionContent} from "../../../layout/Strategy/Split/components/AccordionContent";
 
 export default function ProjectsList() {
+    const channel = new BroadcastChannel("project-events");
     const {strategyId} = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
@@ -66,16 +67,43 @@ export default function ProjectsList() {
         return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
     }, [seacrhUsersSectionsValue, projects, projectsWithProgram]);
 
-    useEffect(() => {
-        if (!openedAccordionId) return;
+    const [pendingOpenProjectId, setPendingOpenProjectId] = useState(null);
 
+    useEffect(() => {
+        const handler = (event) => {
+            if (event.data.type === "projectCreated") {
+                setPendingOpenProjectId(event.data.projectId);
+            }
+        };
+
+        channel.addEventListener("message", handler);
+
+        return () => channel.removeEventListener("message", handler);
+    },[]);
+
+    useEffect(() => {
+        let idToOpen = pendingOpenProjectId || openedAccordionId;
+        if (!idToOpen) return;
+
+        // Проверяем, что проект реально есть
+        const exists = filtredProjects.find(p => p.id === idToOpen);
+        if (!exists) return; // ждём, пока массив обновится
+
+        if (pendingOpenProjectId) {
+            setOpenedAccordionId(pendingOpenProjectId);
+            setPendingOpenProjectId(null);
+        }
+
+        // Скроллим после рендера
         requestAnimationFrame(() => {
-            accordionRefs.current[openedAccordionId]?.scrollIntoView({
+            accordionRefs.current[idToOpen]?.scrollIntoView({
                 behavior: "smooth",
                 block: "start",
             });
         });
-    }, [openedAccordionId, filtredProjects]);
+    }, [pendingOpenProjectId, openedAccordionId, filtredProjects]);
+
+
 
     return (
         <>
