@@ -7,8 +7,15 @@ import FilesMessages from './FilesMessages';
 import { baseUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
 import ImageGrig from './ImageGrig';
+import helper_medium from '@image/helper_icon.svg'
 
-const transformText = (text) => {
+const transformText = (text, setIsFinalMessage) => {
+
+    if (text === '$&#ПриказСогласован$&#1') {
+        setIsFinalMessage(true)
+        return;
+    }
+
     const regex = /(.*?)policyId:([^,]+),policyName:([^,]+)(.*)/i;
     const match = text.match(regex);
 
@@ -54,6 +61,7 @@ const getVisaClassName = (text) => {
 
 export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
 
+    const [isFinalMessage, setIsFinalMessage] = useState(false)
 
     return (
         <div
@@ -67,38 +75,41 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                     justifyContent: userMessage ? 'flex-end' : 'flex-start',
                 }}
             >
-                {userMessage && (
-                    <div className={classes.userAvatar_receiver}>
-                        <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
-                    </div>
-                )}
-                <div className={classes.messageWithoutAvatar}>
-                    <div className={classes.messageInfo}>
-                        {formatDateTime(createdMessage)}
+                {isFinalMessage ? (
+                    <>
                         {userMessage && (
-                            <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
+                            <div className={classes.userAvatar_receiver}>
+                                <img src={helper_medium} alt="ava" />
+                            </div>
                         )}
-                    </div>
-                    <div className={classes.containerForAttachmets}>
-                        <div
-                            className={
-                                getVisaClassName(children) || classes.userMessageContainer
-                            }
-                            style={{ "border-radius": userMessage ? "15px 0 15px 0" : 'none' }}
-                        >
-                            {/* {
+
+                        <div className={classes.messageWithoutAvatar}>
+                            <div className={classes.messageInfo}>
+                                {formatDateTime(createdMessage)}
+                                {userMessage && (
+                                    <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
+                                )}
+                            </div>
+                            <div className={classes.containerForAttachmets}>
+                                <div
+                                    className={
+                                        getVisaClassName(children) || classes.userMessageContainer
+                                    }
+                                    style={{ "border-radius": userMessage ? "15px 0 15px 0" : 'none' }}
+                                >
+                                    {/* {
                             attachmentToMessage?.length > 0
                                 ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
                                 : (null)
                         } */}
-                            <div className={classes.senderName}>
-                                {senderPostName}
-                            </div>
-                            <div className={classes.contentMessage}>
-                                <div className={classes.textMessage}>
-                                    {transformText(children)}
-                                </div>
-                                {/* <div className={classes.time}>
+                                    <div className={classes.senderName}>
+                                        {senderPostName}
+                                    </div>
+                                    <div className={classes.contentMessage}>
+                                        <div className={classes.textMessage}>
+                                            Коммуникация завершена
+                                        </div>
+                                        {/* <div className={classes.time}>
                         {extractHoursMinutes(createdMessage)}
                     </div>
                     {userMessage && (
@@ -106,24 +117,89 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                             <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
                         </div>
                     )} */}
+                                    </div>
+                                </div>
+                                <div className={classes.attachmentsContainer}>
+                                    {
+                                        attachmentToMessage?.length > 0
+                                            ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
+                                            : (null)
+                                    }
+
+                                    <ImageGrig attachmentToMessage={attachmentToMessage}></ImageGrig>
+                                </div>
                             </div>
-                        </div>
-                        <div className={classes.attachmentsContainer}>
-                            {
-                                attachmentToMessage?.length > 0
-                                    ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
-                                    : (null)
-                            }
 
-                            <ImageGrig attachmentToMessage= {attachmentToMessage}></ImageGrig>
                         </div>
-                    </div>
 
-                </div>
-                {!userMessage && (
-                    <div className={classes.userAvatar}>
-                        <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
+                        {!userMessage && (
+                            <div className={classes.userAvatar}>
+                                <img src={helper_medium} alt="ava" />
+                            </div>
+                        )}
+                    </>
+
+                ) : (
+                    <>
+                        {userMessage && (
+                            <div className={classes.userAvatar_receiver}>
+                                <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
+                            </div>
+                        )}
+                        <div className={classes.messageWithoutAvatar}>
+                            <div className={classes.messageInfo}>
+                                {formatDateTime(createdMessage)}
+                                {userMessage && (
+                                    <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
+                                )}
+                            </div>
+                            <div className={classes.containerForAttachmets}>
+                                <div
+                                    className={
+                                        getVisaClassName(children) || classes.userMessageContainer
+                                    }
+                                    style={{ "border-radius": userMessage ? "15px 0 15px 0" : 'none' }}
+                                >
+                                    {/* {
+                            attachmentToMessage?.length > 0
+                                ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
+                                : (null)
+                        } */}
+                                    <div className={classes.senderName}>
+                                        {senderPostName}
+                                    </div>
+                                    <div className={classes.contentMessage}>
+                                        <div className={classes.textMessage}>
+                                            {transformText(children, setIsFinalMessage)}
+                                        </div>
+                                        {/* <div className={classes.time}>
+                        {extractHoursMinutes(createdMessage)}
                     </div>
+                    {userMessage && (
+                        <div className={classes.isSeen}>
+                            <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
+                        </div>
+                    )} */}
+                                    </div>
+                                </div>
+                                <div className={classes.attachmentsContainer}>
+                                    {
+                                        attachmentToMessage?.length > 0
+                                            ? (<FilesMessages attachmentToMessage={attachmentToMessage}></FilesMessages>)
+                                            : (null)
+                                    }
+
+                                    <ImageGrig attachmentToMessage={attachmentToMessage}></ImageGrig>
+                                </div>
+                            </div>
+
+                        </div>
+                        {!userMessage && (
+                            <div className={classes.userAvatar}>
+                                <img src={avatar ? `${baseUrl}${avatar}` : default_avatar} alt="ava" />
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
             {/* <div className={classes.attachmentsContainer} style={{ border: '1px solid red' }}>

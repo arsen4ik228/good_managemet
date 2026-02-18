@@ -6,14 +6,15 @@ import { useConvertsHook } from '@hooks'
 import { baseUrl } from '@helpers/constants'
 import { notEmpty } from '@helpers/helpers'
 import defaultAvatar from '../icon/messendger _ avatar.svg'
+import { Tooltip } from 'antd'
 
 const getAvatar = (link) => {
-    if(!link) return defaultAvatar
+    if (!link) return defaultAvatar
 
     return baseUrl + link
 }
 
-export default function AddedWatcherContainer({ convertId, watchersToConvert, disabled=false }) {
+export default function AddedWatcherContainer({ convertId, watchersToConvert, disabled = false }) {
     const [openModal, setOpenModal] = useState(false)
     const [selectedPost, setSelectedPost] = useState([])
 
@@ -44,12 +45,15 @@ export default function AddedWatcherContainer({ convertId, watchersToConvert, di
                     <div className={classes.text}>наблюдатели:</div>
                     <div className={classes.imgContainer}>
                         {watchersToConvert?.map((item, index) => (
-                            <div className={classes.userAvatarContainer}>
-                                <img src={getAvatar(item?.post?.user?.avatar_url)} alt="avatar" />
-                            </div>
+                            <Tooltip title={item?.post?.user?.firstName + ' ' + item?.post?.user?.lastName} placement="top">
+                                <div className={classes.userAvatarContainer}>
+
+                                    <img src={getAvatar(item?.post?.user?.avatar_url)} alt="avatar" />
+                                </div>
+                            </Tooltip>
                         ))}
                         <div className={classes.addedButton}>
-                           {!disabled && <img src={addedWatcher} alt="addedButton" onClick={() => setOpenModal(true)} /> }
+                            {!disabled && <img src={addedWatcher} alt="addedButton" onClick={() => setOpenModal(true)} />}
                         </div>
                     </div>
                 </div>
