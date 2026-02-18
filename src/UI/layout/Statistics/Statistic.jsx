@@ -274,7 +274,7 @@ export default function Statistic() {
                                         isSmallPoint={chartType === "fifty_two" && windowWidth < 1900}
                                         type={currentStatistic?.type}
                                         showTrend={showTrend}
-                                        // norma={showLineNorma}
+                                        norma={showLineNorma ? currentStatistic?.normalize : null}
                                     />
                                 </div>
 
@@ -332,20 +332,20 @@ export default function Statistic() {
                                         {item.label}
                                     </Button>
                                 ))}
-                                {/*<Button*/}
-                                {/*    onClick={() => setShowLineNorma(!showLineNorma)}*/}
-                                {/*    style={{*/}
-                                {/*        width: "120px",*/}
-                                {/*        backgroundColor:*/}
-                                {/*            showLineNorma ? "rgba(207, 222, 229, 0.5)" : "#fff",*/}
-                                {/*        color: showLineNorma ? "#005475" : "#999999",*/}
-                                {/*        border: "1px solid #CFDEE5",*/}
-                                {/*        borderRadius: "6px",*/}
-                                {/*        fontWeight: 400,*/}
-                                {/*    }}*/}
-                                {/*>*/}
-                                {/*    Норма: 50*/}
-                                {/*</Button>*/}
+                                <Button
+                                    onClick={() => setShowLineNorma(!showLineNorma)}
+                                    style={{
+                                        width: "120px",
+                                        backgroundColor:
+                                            showLineNorma ? "rgba(207, 222, 229, 0.5)" : "#fff",
+                                        color: showLineNorma ? "#005475" : "#999999",
+                                        border: "1px solid #CFDEE5",
+                                        borderRadius: "6px",
+                                        fontWeight: 400,
+                                    }}
+                                >
+                                    Норма: {currentStatistic.normalize ?? "—"}
+                                </Button>
                                 <Button
                                     onClick={() => setShowTrend(!showTrend)}
                                     style={{
