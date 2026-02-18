@@ -1,0 +1,35 @@
+.wrapper {}
+
+.content {
+    display: flex;
+    align-items: center;
+}
+
+.text {
+    color: #333333;
+    font-size: 14px;
+    /* font-style: italic; */
+    font-weight: 400;
+}
+
+.imgContainer {
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+
+}
+
+.userAvatarContainer {
+    padding: 0 3px;
+}
+
+.userAvatarContainer > img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+
+.addedButton {
+
+}
