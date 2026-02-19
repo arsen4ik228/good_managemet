@@ -54,7 +54,7 @@ export default function AllPostModal({ setOpenModal, watchers, buttonClick, sele
         <ModalContainer
             buttonText={'Сохранить'}
             setOpenModal={setOpenModal}
-            // clickFunction={buttonClick}
+            clickFunction={buttonClick}
         >
             <div className={classes.contentContainer}>
                 <div className={classes.searchContainer}>
