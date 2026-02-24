@@ -98,7 +98,15 @@ export default function Graphic({data, widthObj, isSmallPoint, type = "Прям�
             };
         });
 
-// ===== Расчет линии тренда (линейная регрессия) =====
+        // ===== Расчет максимума с учетом нормы =====
+        const values = chartData
+            .map(item => item.value)
+            .filter(v => v !== null);
+
+        const dataMax = values.length ? Math.max(...values) : 0;
+        const finalMax = norma != null ? Math.max(dataMax, norma) : dataMax;
+
+        // ===== Расчет линии тренда (линейная регрессия) =====
         let trendData = [];
 
         if (showTrend && chartData.length > 1) {
@@ -187,6 +195,7 @@ export default function Graphic({data, widthObj, isSmallPoint, type = "Прям�
             yAxis: {
                 type: "value",
                 inverse: type === "Обратная", // Переворачиваем ось Y только для обратного типа
+                max: finalMax,
                 axisLabel: {
                     formatter: function (value) {
                         if (value >= 1000000) return value / 1000000 + "M";
@@ -262,13 +271,10 @@ export default function Graphic({data, widthObj, isSmallPoint, type = "Прям�
                             width: 2,
                         },
                         label: {
-                            show: true,
-                            formatter: `Норма: ${norma}`,
-                            color: "#333333",
-                            position: "end",
+                            show: false,   // ← вот это убирает число в конце линии
                         },
                         tooltip: {
-                            formatter: () => `Норма: ${norma}`,
+                            formatter: () => `Норма: ${formatNumber(norma)}`,
                         },
                         data: [
                             {yAxis: norma},
@@ -309,4 +315,4 @@ export default function Graphic({data, widthObj, isSmallPoint, type = "Прям�
     }, [data, type, showTrend, norma]);
 
     return <div ref={chartRef} style={{...widthObj}}/>;
-} 
+}

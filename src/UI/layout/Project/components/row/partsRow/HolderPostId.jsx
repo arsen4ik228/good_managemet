@@ -69,18 +69,19 @@ export default function HolderPostId({posts, holderPostId, onChange}) {
                         open={true}
                         getPopupContainer={trigger => trigger.parentNode}
                         style={{
-                            width: 250,
+                            width: 400,
                             backgroundColor: "#fff",
                             borderRadius: 4
                         }}
                         options={posts?.map(p => ({
                             value: p.id,
                             user: p.user,
-                            search: `${p.user?.firstName} ${p.user?.lastName}`.toLowerCase(),
+                            search: `${p?.postName} ${p.user?.firstName} ${p.user?.lastName}`.toLowerCase(),
                             label: (
                                 <Flex align="center" gap={8}>
                                     <Avatar
                                         size={24}
+                                        style={{minWidth: 24, minHeight: 24}}
                                         src={p.user?.avatar_url ? `${baseUrl}${p.user.avatar_url}` : default_avatar}
                                     />
                                     <span style={{
@@ -89,7 +90,11 @@ export default function HolderPostId({posts, holderPostId, onChange}) {
                                         whiteSpace: "nowrap",
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
-                                    }}>{p.user?.firstName} {p.user?.lastName}</span>
+                                    }}
+                                          title={`${p?.postName} ${p?.user ? `(${p.user.firstName} ${p.user.lastName})` : ''}`}
+                                    >
+                                        {p?.user ? `${p.user.firstName} ${p.user.lastName}` : ''}  {`(${p?.postName})`}
+                                    </span>
                                 </Flex>
                             ),
                         }))}

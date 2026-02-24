@@ -145,18 +145,17 @@ const Information = ({title, content}) => {
     )
 }
 
-export default function ViewProject() {
+
+const order = ['Продукт', 'Метрика', 'Организационные мероприятия', 'Правила', 'Задача'];
+
+export default function ViewProject({contentRef}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
     const {projectId} = useParams();
     const {currentProject, targets} = useGetSingleProject({selectedProjectId: projectId});
 
     const sortedTargets = targets
-        ? [...targets].sort((a, b) => {
-            if (a.title === 'Продукт') return -1;
-            if (b.title === 'Продукт') return 1;
-            return 0;
-        })
+        ? [...targets].sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title))
         : [];
 
     const {
@@ -176,19 +175,17 @@ export default function ViewProject() {
     console.log(currentProject)
 
     return (
-        <div className={classes.main}>
+        <div className={classes.main} ref={contentRef}>
             <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
             <span className={classes.strong}>Имя Фамилия</span>
             <span className={classes.margin}>Название поста</span>
 
             <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProject?.type}</h2>
             <h2 className={`${classes.strong} ${classes.center}`}>{currentProject?.projectName}</h2>
+            {currentProject?.content?.trim() && <Information title={"Информация"} content={currentProject?.content}/>}
             {
                 sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks}/>)
             }
-
-            {currentProject?.content && <Information title={"Информация"} content={currentProject?.content}/>}
-
         </div>
     )
 }

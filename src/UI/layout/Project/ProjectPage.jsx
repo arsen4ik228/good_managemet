@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from 'antd'
-import { useRightPanel, usePanelPreset } from "@hooks";
+import {useState, useRef, useEffect} from "react";
+import {Button} from 'antd'
+import {useRightPanel, usePanelPreset} from "@hooks";
 import MainContentContainer from "../../Custom/MainContentContainer/MainContentContainer";
 import ViewProject from './View/ViewProject.jsx'
 import EditProject from "./Edit/EditProject.jsx";
 import PopoverForViewSections from "./components/popover/PopoverForViewSections.jsx";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
+import {useGetSingleProject} from "../../../hooks/Project/useGetSingleProject";
+import {usePrint} from "../../../helpers/printHook/usePrint";
 
 const STATES = {
     VIEW: "view",
@@ -13,12 +15,12 @@ const STATES = {
 };
 
 const initialSections = [
-    { name: 'Информация', isView: false },
-    { name: 'Продукт', isView: true },
-    { name: 'Метрика', isView: false },
-    { name: 'Организационные мероприятия', isView: false },
-    { name: 'Правила', isView: false },
-    { name: 'Задача', isView: true },
+    {name: 'Информация', isView: false},
+    {name: 'Продукт', isView: true},
+    {name: 'Метрика', isView: false},
+    {name: 'Организационные мероприятия', isView: false},
+    {name: 'Правила', isView: false},
+    {name: 'Задача', isView: true},
 ];
 
 export default function ProjectPage() {
@@ -26,19 +28,21 @@ export default function ProjectPage() {
     const [currentState, setCurrentState] = useState(STATES.VIEW);
     const [popoverVisible, setPopoverVisible] = useState(false);
     const [sections, setSections] = useState(initialSections);
-    const { projectId } = useParams()
+    const {projectId} = useParams()
 
     const toggleSection = (name) => {
         setSections(prev =>
             prev.map(section =>
                 section.name === name
-                    ? { ...section, isView: !section.isView }
+                    ? {...section, isView: !section.isView}
                     : section
             )
         );
     };
 
     const [btn, setBtn] = useState([]);
+
+    const { contentRef, reactToPrintFn } = usePrint();
 
     const config = {
         [STATES.VIEW]: {
@@ -49,8 +53,12 @@ export default function ProjectPage() {
                         setCurrentState(STATES.EDIT)
                     },
                 },
+                {
+                    text: "печать",
+                    click: reactToPrintFn,
+                },
             ],
-            component: <ViewProject />,
+            component: <ViewProject contentRef={contentRef}/>,
         },
 
         [STATES.EDIT]: {
@@ -62,12 +70,6 @@ export default function ProjectPage() {
                     },
                 },
                 ...btn,
-                // {
-                //     text: "начать выполнение",
-                //     click: () => {
-                //         refHandleTargetsInActive?.current();
-                //     },
-                // },
             ],
             popover: (
                 <PopoverForViewSections
@@ -91,19 +93,24 @@ export default function ProjectPage() {
         },
     };
 
-    const { btns, component, popover } = config[currentState];
+    const {btns, component, popover} = config[currentState];
 
-    const { PRESETS } = useRightPanel();
+    const {PRESETS} = useRightPanel();
 
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
     useEffect(() => {
-        if(projectId)
+        if (projectId)
             setCurrentState(STATES.VIEW)
     }, [projectId])
 
+    const {currentProject, statusProject} = useGetSingleProject({selectedProjectId: projectId});
+    const arrayNameForView = currentState === STATES.EDIT ? [
+        { label: "Проект: ", value: currentProject?.projectName },
+        { label: "Статус: ", value: statusProject }
+    ] : undefined;
     return (
-        <MainContentContainer buttons={btns} popoverButton={popover}>
+        <MainContentContainer buttons={btns} popoverButton={popover} arrayName={arrayNameForView}>
             {component}
         </MainContentContainer>
     );
