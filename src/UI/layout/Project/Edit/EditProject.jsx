@@ -347,7 +347,11 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                                 key={section.name}
                                 title={section.name}
                                 targets={targets}
-                                posts={allPosts}
+                                posts={[...allPosts].sort((a, b) => {
+                                    const nameA = `${a.user?.firstName ?? ""} ${a.user?.lastName ?? ""}`.toLowerCase();
+                                    const nameB = `${b.user?.firstName ?? ""} ${b.user?.lastName ?? ""}`.toLowerCase();
+                                    return nameA.localeCompare(nameB);
+                                })}
                                 updateTarget={(id, field, value) =>
                                     handleUpdateTarget(section.name, id, field, value)
                                 }
