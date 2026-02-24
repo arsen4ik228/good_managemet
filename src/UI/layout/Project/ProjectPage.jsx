@@ -7,6 +7,7 @@ import EditProject from "./Edit/EditProject.jsx";
 import PopoverForViewSections from "./components/popover/PopoverForViewSections.jsx";
 import {useParams} from "react-router-dom";
 import {useGetSingleProject} from "../../../hooks/Project/useGetSingleProject";
+import {usePrint} from "../../../helpers/printHook/usePrint";
 
 const STATES = {
     VIEW: "view",
@@ -41,6 +42,8 @@ export default function ProjectPage() {
 
     const [btn, setBtn] = useState([]);
 
+    const { contentRef, reactToPrintFn } = usePrint();
+
     const config = {
         [STATES.VIEW]: {
             btns: [
@@ -50,8 +53,12 @@ export default function ProjectPage() {
                         setCurrentState(STATES.EDIT)
                     },
                 },
+                {
+                    text: "печать",
+                    click: reactToPrintFn,
+                },
             ],
-            component: <ViewProject/>,
+            component: <ViewProject contentRef={contentRef}/>,
         },
 
         [STATES.EDIT]: {
@@ -63,12 +70,6 @@ export default function ProjectPage() {
                     },
                 },
                 ...btn,
-                // {
-                //     text: "начать выполнение",
-                //     click: () => {
-                //         refHandleTargetsInActive?.current();
-                //     },
-                // },
             ],
             popover: (
                 <PopoverForViewSections
@@ -104,9 +105,6 @@ export default function ProjectPage() {
     }, [projectId])
 
     const {currentProject, statusProject} = useGetSingleProject({selectedProjectId: projectId});
-    console.log("currentProject = ", currentProject);
-    console.log("statusProject = ", statusProject);
-
     const arrayNameForView = currentState === STATES.EDIT ? [
         { label: "Проект: ", value: currentProject?.projectName },
         { label: "Статус: ", value: statusProject }
