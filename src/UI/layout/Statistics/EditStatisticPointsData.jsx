@@ -18,6 +18,7 @@ import {useUpdateSingleStatistic, useGetSingleStatistic} from "@hooks";
 import StatisticTable from "./StatisticTable";
 import {calculateInitialDate, countDays, countWeeks, countMonths, countYears} from "./function/functionForStatistic";
 import Graphic from "../../app/Graphic/Graphic";
+import styles from "./EditStatisticPointsData.module.css";
 
 const {Title} = Typography;
 
@@ -314,9 +315,9 @@ export const EditStatisticPointsData = () => {
     const isViewNormalLine = chartType === "thirteen" || chartType === "twenty_six" || chartType === "fifty_two";
 
     useEffect(() => {
-        if(!currentStatistic) return;
+        if (!currentStatistic) return;
         setNorma(currentStatistic.normalize);
-    },[currentStatistic]);
+    }, [currentStatistic]);
 
     return (
         <EditContainer header={"ввод данных"} saveClick={handleSave} canselClick={handleReset} exitClick={exitClick}>
@@ -467,19 +468,43 @@ export const EditStatisticPointsData = () => {
                                     >
                                         Норма
                                     </Button>
-                                    <InputNumber
-                                        controls={false}
-                                        value={norma}
-                                        onChange={(value) => setNorma(value)}
-                                        style={{
-                                            width: "120px",
-                                            backgroundColor: "#fff",
-                                            color: "#999999",
-                                            border: "1px solid #CFDEE5",
-                                            borderRadius: "6px",
-                                            fontWeight: 400,
-                                        }}
-                                    />
+
+                                    {
+                                        showLineNorma && (
+                                            <InputNumber
+                                                className={styles.inputNumber}
+                                                style={{
+                                                width: "120px",
+                                                backgroundColor: "#fff",
+                                                color: "#999999",
+                                                border: "1px solid #CFDEE5",
+                                                borderRadius: "6px",
+                                                fontWeight: 400,
+                                            }}
+                                                controls={false}
+                                                value={norma}
+                                                onChange={(value) => setNorma(value)}
+                                                inputStyle={{
+                                                    textAlign: "center", // стили для внутреннего input элемента
+                                                }}
+                                                formatter={(value) => {
+                                                    if (value === undefined || value === null) return "";
+                                                    return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                                }}
+                                                parser={(value) => {
+                                                    if (value == null || value === "") return null;
+
+                                                    const cleanValue = value.toString().replace(/[\s,]/g, "");
+                                                    if (cleanValue === "") return null;
+
+                                                    const numericValue = parseFloat(cleanValue);
+                                                    return isNaN(numericValue) ? null : numericValue;
+                                                }}
+                                            />
+
+                                        )
+                                    }
+
                                 </>
                             )
                         }

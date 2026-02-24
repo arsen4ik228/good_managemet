@@ -1,0 +1,4 @@
+/* В вашем CSS файле */
+.inputNumber :global(.ant-input-number-input) {
+    text-align: right !important;
+}

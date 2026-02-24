@@ -344,7 +344,7 @@ export default function Statistic() {
                                         fontWeight: 400,
                                     }}
                                 >
-                                    Норма: {currentStatistic.normalize ?? "—"}
+                                    Норма
                                 </Button>
                                 <Button
                                     onClick={() => setShowTrend(!showTrend)}
