@@ -20,6 +20,7 @@ import { baseUrl } from '../../../../helpers/constants';
 import AttachedPolicy from "./attachedPolicy/AttachedPolicy.jsx";
 import { SimpleFileUploadModal } from '../../../Custom/SimpleFilesUploadModal/SimpleFilesUploadModal.jsx';
 import FilesInput from '../../../Custom/FilesInput/FilesInput.jsx';
+import { useObservers } from '../../../../contexts/ObserverContext.js';
 
 
 const TYPE_OPTIONS = [
@@ -30,22 +31,22 @@ const TYPE_OPTIONS = [
 
 // Безопасные обёртки
 const safeLoadDraft = (dbName, storeName, key, setter) => {
-  if (key !== undefined && key !== null && key !== "") {
-    loadDraft(dbName, storeName, key, setter);
-  }
+    if (key !== undefined && key !== null && key !== "") {
+        loadDraft(dbName, storeName, key, setter);
+    }
 };
 
 const safeSaveDraft = (dbName, storeName, key, value) => {
-  if (key !== undefined && key !== null && key !== "") {
-    saveDraft(dbName, storeName, key, value);
-  }
+    if (key !== undefined && key !== null && key !== "") {
+        saveDraft(dbName, storeName, key, value);
+    }
 };
 
 
 const safeDeleteDraft = (dbName, storeName, key) => {
-  if (key !== undefined && key !== null && key !== "") {
-    deleteDraft(dbName, storeName, key);
-  }
+    if (key !== undefined && key !== null && key !== "") {
+        deleteDraft(dbName, storeName, key);
+    }
 };
 
 
@@ -70,6 +71,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     // const [senderPost, setSenderPost] = useState(null)
     // const [reciverPostId, setReciverPostId] = useState()
     // const [convertType, setConvertType] = useState(TYPE_OPTIONS[0].value);
+
+    const { setObservers, observers } = useObservers()
 
 
     const {
@@ -103,6 +106,8 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         isErrorGetConvertId,
         organizationId,
 
+        updateConvert,
+
         postConvert,
         isLoadingPostConvertMutation,
         isSuccessPostPoliciesMutation,
@@ -110,15 +115,18 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         ErrorPostPoliciesMutation,
     } = useConvertsHook({ convertId: convertId, contactId: contactId });
 
+
     const reset = () => {
         setStartDate(new Date().toISOString().split("T")[0]);
         setDeadlineDate(new Date().toISOString().split("T")[0]);
         setContentInput("");
         setSelectedPolicies([]);
-        safeDeleteDraft("DraftDB", "drafts", convertId ? convertId: contactId);
+        safeDeleteDraft("DraftDB", "drafts", convertId ? convertId : contactId);
         setContentInputPolicyId("");
         // setConvertTheme('')
         setFiles()
+
+        setObservers([])
     };
 
     const transformText = (text, convertStatus) => {
@@ -195,15 +203,14 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         }
     };
 
-    const createPersonalLetter = async () => {
 
+
+    const createPersonalLetter = async () => {
         if (!contentInput) {
             return message.error(`Вы не заполнили текст сообщения!`);
         }
 
         const Data = {}
-        //(senderPost, reciverPostId, convertType, convertTheme)
-
         Data.convertTheme = convertTheme ? convertTheme : autoCreateConvertTheme(contentInput)
         Data.convertType = "Переписка"
         Data.deadline = deadlineDate
@@ -211,14 +218,30 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
         Data.reciverPostId = reciverPostId
         Data.messageContent = contentInput
 
-
-        await postConvert({
-            ...Data
-        })
+        await postConvert({ ...Data })
             .unwrap()
-            .then((res) => {
-                reset()
-                navigate(`${res.id}`)
+            .then(async (res) => {
+                // Проверяем, что onservers существует и не пустой
+                if (Array.isArray(observers) && observers.length > 0) {
+                    try {
+                        // Выполняем второй запрос
+                        await updateConvert({
+                            _id: res?.id,
+                            watcherIds: observers.map(item => item?.id)
+                        }).unwrap();
+                    } catch (secondError) {
+                        console.error("Ошибка во втором запросе:", secondError);
+                        // Можно показать уведомление, но не прерывать навигацию
+                        // notification.warning({
+                        //     message: 'Предупреждение',
+                        //     description: 'Наблюдатели не были добавлены',
+                        //     placement: 'topRight',
+                        // });
+                    }
+                }
+
+                reset();
+                navigate(`${res.id}`);
             })
             .catch((error) => {
                 console.error("Ошибка:", JSON.stringify(error, null, 2));
@@ -226,7 +249,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                     message: 'Ошибка',
                     description: `${error?.data?.message}`,
                     placement: 'topRight',
-                })
+                });
             });
     }
 
@@ -269,7 +292,27 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
             ...Data
         })
             .unwrap()
-            .then((res) => {
+            .then(async (res) => {
+
+                // Проверяем, что onservers существует и не пустой
+                if (Array.isArray(observers) && observers.length > 0) {
+                    try {
+                        // Выполняем второй запрос
+                        await updateConvert({
+                            _id: res.id,
+                            watcherIds: observers.map(item => item.id)
+                        }).unwrap();
+                    } catch (secondError) {
+                        console.error("Ошибка во втором запросе:", secondError);
+                        // Можно показать уведомление, но не прерывать навигацию
+                        // notification.warning({
+                        //     message: 'Предупреждение',
+                        //     description: 'Наблюдатели не были добавлены',
+                        //     placement: 'topRight',
+                        // });
+                    }
+                }
+
                 reset()
                 navigate(`${res.id}`)
             })
@@ -296,11 +339,11 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
                 await send();
             else if (convertType === 'Личная') {
                 await createPersonalLetter();
-                safeDeleteDraft("Convert", "messages", convertId ? convertId: contactId);
+                safeDeleteDraft("Convert", "messages", convertId ? convertId : contactId);
             }
             else {
                 await createOrder();
-                safeDeleteDraft("Convert", "messages", convertId ? convertId: contactId);
+                safeDeleteDraft("Convert", "messages", convertId ? convertId : contactId);
             }
         } catch (error) {
             console.error('Ошибка отправки:', error);
@@ -396,7 +439,7 @@ export default function InputMessage({ onCreate = false, onCalendar = false, con
     //         setSenderPost(userPosts[0]?.id);
     //     }
     // }, [userPosts, senderPost]);
-    console.log(contentInput)
+    console.warn(observers)
     return (
 
         <div className={classes.wrapper}>
@@ -499,11 +542,11 @@ const autoCreateConvertTheme = (content) => {
     if (!content || typeof content !== 'string') return '';
 
     const MAX_LENGTH = 124;
-    
+
     // Проверяем наличие абзаца ТОЛЬКО в первых MAX_LENGTH символах
     const firstPart = content.slice(0, MAX_LENGTH);
     const paragraphIndex = firstPart.search(/\n\n|\n/);
-    
+
     // Если найден абзац в первых 124 символах, возвращаем текст до него
     if (paragraphIndex !== -1) {
         const beforeParagraph = content.slice(0, paragraphIndex);

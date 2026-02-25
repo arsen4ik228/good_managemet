@@ -6,10 +6,11 @@ import { useConvertsHook } from '@hooks'
 import { baseUrl } from '@helpers/constants'
 import { notEmpty } from '@helpers/helpers'
 import defaultAvatar from '../icon/messendger _ avatar.svg'
+import default_avatar from '@image/default_avatar.svg'
 import { Tooltip } from 'antd'
 
 const getAvatar = (link) => {
-    if (!link) return defaultAvatar
+    if (!link) return default_avatar
 
     return baseUrl + link
 }
