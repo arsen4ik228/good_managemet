@@ -92,8 +92,12 @@ export default function ProjectsAndProgramsList() {
         }
     };
 
-    const openProject = (id) => {
-        navigate(`helper/project/${id}`)
+    const openProject = (id, type) => {
+        if(type === "Проект"){
+            navigate(`helper/project/${id}`);
+        }else{
+            navigate(`helper/program/${id}`)
+        }
     }
 
     const filtredProjects = useMemo(() => {
@@ -165,7 +169,7 @@ export default function ProjectsAndProgramsList() {
                                 icon={item.type === 'Программа' ? program_icon : active_project}
                                 upperText={item.projectName}
                                 linkSegment={item.id}
-                                clickFunc={() => openProject(item.id)}
+                                clickFunc={() => openProject(item.id, item.type)}
                                 // bage={item.targets.length}
                                 upperLabel={item.type === 'Программа' ? 'Программа из стратегии' : 'Проект'}
                                 ref={el => {

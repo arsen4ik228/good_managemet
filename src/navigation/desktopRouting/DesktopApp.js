@@ -316,6 +316,14 @@ function DesktopApp() {
                   </React.Suspense>
                 }
               />
+                <Route
+                    path="program/:programId"
+                    element={
+                        <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                            <ProjectPage />
+                        </React.Suspense>
+                    }
+                />
               <Route
                 path="schemaCompany"
                 element={

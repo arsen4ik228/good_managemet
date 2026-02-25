@@ -5,6 +5,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy, sortableKeyboa
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import SortableRow from '../row/sotrable/SortableRow.jsx';
 import TableRowForInformation from '../row/TableRowForInformation.jsx';
+import SortableRowProgram from "../row/sotrable/SortableRowProgram";
 
 export default function Table({ title, targets, posts, updateTarget, addTarget, updateOrder, focusTargetId}) {
   const items = targets.map(t => t.id);
@@ -37,19 +38,19 @@ export default function Table({ title, targets, posts, updateTarget, addTarget, 
     <div className={s.table}>
       <TableName title={title} />
             <DndContext modifiers={[restrictToVerticalAxis]} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={items} strategy={verticalListSortingStrategy}>
-                {targets.map(t => (
-                  <SortableRow
-                    key={t.id}
-                    id={t.id}
-                    target={t}
-                    posts={posts}
-                    updateTarget={updateTarget}
-                    addTarget={addTarget}
-                    focusTargetId={focusTargetId}
-                  />
-                ))}
-              </SortableContext>
+                        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                            {targets.map(t => (
+                                <SortableRow
+                                    key={t.id}
+                                    id={t.id}
+                                    target={t}
+                                    posts={posts}
+                                    updateTarget={updateTarget}
+                                    addTarget={addTarget}
+                                    focusTargetId={focusTargetId}
+                                />
+                            ))}
+                        </SortableContext>
             </DndContext>
     </div>
   );

@@ -3,8 +3,9 @@ import { CSS } from '@dnd-kit/utilities';
 import TableRow from '../TableRow.jsx';
 import s from './SortableRow.module.css';
 import icon_drag from '@image/icon_drag.svg';
+import TableRowProgram from "../TableRowProgram";
 
-export default function SortableRow({ id, target, posts, updateTarget, addTarget, focusTargetId }) {
+export default function SortableRowProgram({ id, target, posts, updateTarget, addTarget, focusTargetId, fieldDisabled, orderNumber }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -26,7 +27,7 @@ export default function SortableRow({ id, target, posts, updateTarget, addTarget
       >
        <img src={icon_drag} alt="icon_drag" className={s.dragIcon}/>
       </div>
-      <TableRow target={target} posts={posts} updateTarget={updateTarget} addTarget={addTarget} focusTargetId={focusTargetId}/>
+      <TableRowProgram target={target} posts={posts} updateTarget={updateTarget} addTarget={addTarget} focusTargetId={focusTargetId} fieldDisabled={fieldDisabled} orderNumber={orderNumber}/>
     </div>
   );
 }

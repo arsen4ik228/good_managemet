@@ -234,11 +234,37 @@ export const projectApi = apiSlice.injectEndpoints({
             query: ({programId}) => ({
                 url: `projects/${programId}/program`,
             }),
-            transformResponse: (response) => ({
-                currentProgram: response?.program || {},
-                currentProjects: response?.projects || [],
-                targets: response?.program?.targets || [],
-            }),
+            transformResponse: (response) => {
+                const arrayTasks = response?.program?.targets
+                    .reduce((acc, target) => {
+                        // Ищем уже существующую группу по type
+                        let group = acc.find((g) => g.title === target.type);
+
+                        if (group) {
+                            group.tasks.push(target);
+                        } else {
+                            acc.push({
+                                title: target.type,
+                                tasks: [target],
+                            });
+                        }
+
+                        return acc;
+                    }, [])
+                    .map(group => ({
+                        ...group,
+                        tasks: group.tasks.sort(
+                            (a, b) => (a.orderNumber ?? 0) - (b.orderNumber ?? 0)
+                        ),
+                    }));
+                const statusProgram = response?.program?.targets.find((t) => t.type === "Продукт")?.targetState;
+                return {
+                    currentProgram: response?.program || {},
+                    currentProjects: response?.projects || [],
+                    targets: arrayTasks,
+                    statusProgram: statusProgram || "",
+                }
+            },
             providesTags: (result, error, arg) => [
                 {type: "Project", id: arg.programId},
             ],
