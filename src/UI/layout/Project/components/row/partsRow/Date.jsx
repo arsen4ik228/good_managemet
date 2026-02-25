@@ -3,9 +3,10 @@ import {CalendarOutlined} from '@ant-design/icons';
 import s from './Date.module.css';
 import dayjs from 'dayjs';
 
-export default function CustomDatePicker({date, onChange}) {
+export default function CustomDatePicker({date, onChange, fieldDisabled}) {
     return (
         <DatePicker
+            disabled={fieldDisabled}
             value={date ? dayjs(date) : null}
             onChange={onChange}
             format="DD.MM.YY"

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import TextAreaRdx from '../../../../../radixUI/textArea/TextAreaRdx';
 import s from './Content.module.css';
 
-export default function Content({ content, onChange, addTarget, autoFocus }) {
+export default function Content({ content, onChange, addTarget, autoFocus, fieldDisabled }) {
     const textareaRef = useRef(null);
 
     useEffect(() => {
@@ -34,6 +34,7 @@ export default function Content({ content, onChange, addTarget, autoFocus }) {
             onChange={onChange}
             autoSize
             onKeyDown={handleKeyDown}
+            disabled={fieldDisabled}
         />
     );
 }

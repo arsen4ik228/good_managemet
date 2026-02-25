@@ -5,64 +5,47 @@ import Table from '../components/table/Table';
 import {v4 as uuidv4} from 'uuid';
 import {useRightPanel, usePanelPreset} from "@hooks";
 import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
-import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
 import {message} from 'antd';
 import TableInformation from "../components/table/TableInformation";
 import debounce from "lodash/debounce";
-
-const project = {
-    projectName: 'projectName',
-    targets: [
-        {id: uuidv4(), type: 'Продукт', orderNumber: 1, content: 'Продукт', holderPostId: null, date: null},
-        {id: uuidv4(), type: 'Задачи', orderNumber: 1, content: 'Задача 1', holderPostId: null, date: null},
-        {id: uuidv4(), type: 'Задачи', orderNumber: 2, content: 'Задача 2', holderPostId: null, date: null},
-        {id: uuidv4(), type: 'Показатели', orderNumber: 1, content: 'Показатели 1', holderPostId: null, date: null},
-        {id: uuidv4(), type: 'Показатели', orderNumber: 2, content: 'Показатели 2', holderPostId: null, date: null},
-        {
-            id: uuidv4(),
-            type: 'Правила и ограничения',
-            orderNumber: 1,
-            content: 'Правила и ограничения 1',
-            holderPostId: null,
-            date: null
-        },
-        {
-            id: uuidv4(),
-            type: 'Организационные мероприятия',
-            orderNumber: 1,
-            content: 'Организационные мероприятия 1',
-            holderPostId: null,
-            date: null
-        },
-    ],
-};
+import {useGetSingleProgram} from "../../../../hooks/Project/useGetSingleProgram";
+import {useGetDataForCreateProgram} from "../../../../hooks/Project/useGetDataForCreateProgram";
+import TableProgram from "../components/table/TableProgram";
+import ModalSelectProject from "../components/modal/ModalSelectProject";
 
 const initialSections = [
     {name: 'Продукт'},
     {name: 'Метрика'},
     {name: 'Организационные мероприятия'},
     {name: 'Правила'},
-    {name: 'Задача'},
 ];
 
-export default function EditProject({sections, refHandleTargetsInActive, setBtn}) {
+export default function EditProgram({sections, refHandleTargetsInActive, setBtn}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
-    const {projectId} = useParams();
+    const {programId} = useParams();
     const debouncedSaveRef = useRef(null);
     const prevProjectIdRef = useRef(null);
     const latestStateRef = useRef({});
     const isDirtyRef = useRef(false);
 
-    const [currentProjectId, setCurrentProjectId] = useState();
+    const [currentProgramId, setCurrentProgramId] = useState();
 
     const {allPosts} = useAllPosts();
     const {updateProject} = useUpdateSingleProject();
-    const {currentProject, targets} = useGetSingleProject({selectedProjectId: currentProjectId});
+    const {
+        currentProgram,
+        currentProjects,
+        targets,
+        statusProgram
+    } = useGetSingleProgram({selectedProgramId: currentProgramId});
+    const {projects} = useGetDataForCreateProgram();
 
-    const [contentProject, setContentProject] = useState("");
+    const [contentProgram, setContentProgram] = useState("");
+    const [projectInProgram, setProjectInProgram] = useState([]);
+    const [projectIdsInProgram, setProjectIdsInProgram] = useState([]);
     const [targetsByType, setTargetsByType] = useState({});
     const [focusTargetId, setFocusTargetId] = useState(null);
 
@@ -112,14 +95,14 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
     };
 
     const handleSave = async () => {
-        const {contentProject, targetsByType, projectId} = latestStateRef.current;
+        const {contentProgram, targetsByType, programId, projectIdsInProgram} = latestStateRef.current;
         const productState = Object.values(targetsByType)
             .flat()
             .find(t => t.type === "Продукт")?.targetState
 
         const targetCreateDtos = Object.values(targetsByType)
             .flat()
-            .filter(t => t.isCreated && t.content.trim() !== '')
+            .filter(t => t.isCreated && t.content?.trim() !== '')
             .map(({id, isCreated, ...rest}) => rest);
 
         const targetUpdateDtos = Object.values(targetsByType)
@@ -145,10 +128,11 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
             }));
             try {
                 const response = await updateProject({
-                    projectId: projectId,
-                    _id: projectId,
+                    projectId: programId,
+                    _id: programId,
+                    projectIds: projectIdsInProgram,
                     holderProductPostId,
-                    ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
+                    ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
@@ -159,9 +143,10 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
         } else {
             try {
                 const response = await updateProject({
-                    projectId: projectId,
-                    _id: projectId,
-                    ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
+                    projectId: programId,
+                    _id: programId,
+                    projectIds: projectIdsInProgram,
+                    ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
@@ -196,10 +181,11 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
         try {
             const response = await updateProject({
-                projectId: projectId,
-                _id: projectId,
+                projectId: programId,
+                _id: programId,
+                projectIds: projectIdsInProgram,
                 holderProductPostId,
-                ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
+                ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
@@ -213,11 +199,11 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
     // для открытия нового проекта и сохранении старого
     useEffect(() => {
-        if (!projectId) return;
+        if (!programId) return;
 
         const prevId = prevProjectIdRef.current;
 
-        if (prevId && prevId !== projectId) {
+        if (prevId && prevId !== programId) {
 
             // 💥 ВАЖНО: отменяем отложённый debounce
             debouncedSaveRef.current?.cancel();
@@ -228,11 +214,10 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
             }
         }
 
-        prevProjectIdRef.current = projectId;
-        setCurrentProjectId(projectId);
+        prevProjectIdRef.current = programId;
+        setCurrentProgramId(programId);
 
-    }, [projectId]);
-
+    }, [programId]);
 
     // для новых данных в проекте
     useEffect(() => {
@@ -261,7 +246,7 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                         id: uuidv4(),
                         type: name,
                         orderNumber: 1,
-                        content: '',
+                        content: "",
                         targetState: "Черновик",
                         holderPostId: null,
                         deadline: null,
@@ -271,8 +256,12 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
             }
         });
 
-        setContentProject(currentProject?.content?.trim());
+        setContentProgram(currentProgram?.content?.trim());
         setTargetsByType(grouped);
+        setProjectInProgram(currentProjects);
+
+        const idsProject = currentProjects.map((p) => p.id);
+        setProjectIdsInProgram(idsProject);
 
         const productState = Object.values(grouped)
             .flat()
@@ -293,16 +282,17 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
         } else {
             setBtn([])
         }
-    }, [targets, currentProject]);
+    }, [targets, currentProgram, currentProjects]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {
         latestStateRef.current = {
-            contentProject,
+            contentProgram,
             targetsByType,
-            projectId,
+            programId,
+            projectIdsInProgram
         };
-    }, [contentProject, targetsByType, projectId]);
+    }, [contentProgram, targetsByType, programId, projectIdsInProgram]);
 
     // создается debounce
     useEffect(() => {
@@ -316,6 +306,15 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
         };
     }, []);
 
+    useEffect(() => {
+        if (!debouncedSaveRef.current) return;
+        if (!isDirtyRef.current) return;
+
+        debouncedSaveRef.current();
+    }, [projectIdsInProgram]);
+
+    console.log("projects = ", projects)
+    console.log("currentProjects = ", currentProjects)
 
     return (
         <div className={s.main}>
@@ -330,15 +329,62 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                                 <TableInformation
                                     key={section.name}
                                     title={section.name}
-                                    content={contentProject}
+                                    content={contentProgram}
                                     updateContent={(value) => {
                                         isDirtyRef.current = true;
-                                        setContentProject(value)
+                                        setContentProgram(value)
                                         if (!debouncedSaveRef.current) return;
                                         debouncedSaveRef.current();
                                     }
                                     }
                                 />
+                            )
+                        }
+
+                        if (section.name === "Задача") {
+                            return (
+                                <>
+                                    <TableProgram
+                                        key={section.name}
+                                        title={section.name}
+                                        projects={projectInProgram}
+                                        posts={[...allPosts].sort((a, b) => {
+                                            const nameA = `${a.user?.firstName ?? ""} ${a.user?.lastName ?? ""}`.toLowerCase();
+                                            const nameB = `${b.user?.firstName ?? ""} ${b.user?.lastName ?? ""}`.toLowerCase();
+                                            return nameA.localeCompare(nameB);
+                                        })}
+                                        updateTarget={(id, field, value) =>
+                                            handleUpdateTarget(section.name, id, field, value)
+                                        }
+                                        addTarget={() => handleAddTarget(section.name)}
+                                        updateOrder={(newProjectsArray) => {
+                                            // Здесь newProjectsArray - это уже массив проектов в новом порядке
+                                            setProjectInProgram(newProjectsArray);
+                                            // Вызываем debounced save если нужно
+                                            if (debouncedSaveRef.current) {
+                                                debouncedSaveRef.current();
+                                            }
+                                        }}
+                                        setProjectIdsInProgram={setProjectIdsInProgram}
+
+                                        focusTargetId={focusTargetId}
+                                    />
+                                    <ModalSelectProject
+                                        projects={[
+                                            ...[...(currentProjects || [])].sort((a, b) =>
+                                                a.projectName.localeCompare(b.projectName, "ru")
+                                            ),
+                                            ...[...(projects || [])].sort((a, b) =>
+                                                a.projectName.localeCompare(b.projectName, "ru")
+                                            )
+                                        ]}
+                                        setProjectInProgram={setProjectInProgram}
+                                        projectIdsInProgram={projectIdsInProgram}
+                                        setProjectIdsInProgram={setProjectIdsInProgram}
+                                        isDirtyRef={isDirtyRef}
+                                    />
+
+                                </>
                             )
                         }
                         const targets = targetsByType[section.name] || [];
@@ -367,3 +413,6 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
         </div>
     );
 }
+// id(pin):"02e73388-f08a-4bbc-9377-d7a995dd0b9f"
+// projectNumber(pin):28
+// projectName(pin):"Новый проект №27"

@@ -1,41 +1,44 @@
-import { useGetProgramIdQuery } from "@services/index";
+import {useGetProgramIdQuery} from "@services/index";
 import useGetReduxOrganization from "@hooks/useGetReduxOrganization";
 
-export const useGetSingleProgram = ({ selectedProgramId }) => {
-  const { reduxSelectedOrganizationId } = useGetReduxOrganization();
+export const useGetSingleProgram = ({selectedProgramId}) => {
+    const {reduxSelectedOrganizationId} = useGetReduxOrganization();
 
-  const {
-    currentProgram = {},
-    currentProjects = [],
-    targets = [],
+    const {
+        currentProgram = {},
+        currentProjects = [],
+        targets = [],
+        statusProgram = "",
 
-    isLoadingGetProgramId,
-    isErrorGetProgramId,
-    isFetchingGetProgramId,
-  } = useGetProgramIdQuery(
-    { programId: selectedProgramId },
-    {
-      selectFromResult: ({ data, isLoading, isError, isFetching }) => ({
-        currentProgram: data?.currentProgram || {},
-        currentProjects: data?.currentProjects || [],
-        targets: data?.targets || [],
-        isLoadingGetProgramId: isLoading,
-        isErrorGetProgramId: isError,
-        isFetchingGetProgramId: isFetching,
-      }),
-      skip: !selectedProgramId,
-    }
-  );
+        isLoadingGetProgramId,
+        isErrorGetProgramId,
+        isFetchingGetProgramId,
+    } = useGetProgramIdQuery(
+        {programId: selectedProgramId},
+        {
+            selectFromResult: ({data, isLoading, isError, isFetching}) => ({
+                currentProgram: data?.currentProgram || {},
+                currentProjects: data?.currentProjects || [],
+                targets: data?.targets || [],
+                statusProgram: data?.statusProgram || [],
+                isLoadingGetProgramId: isLoading,
+                isErrorGetProgramId: isError,
+                isFetchingGetProgramId: isFetching,
+            }),
+            skip: !selectedProgramId,
+        }
+    );
 
-  return {
-    reduxSelectedOrganizationId,
+    return {
+        reduxSelectedOrganizationId,
 
-    currentProgram,
-    currentProjects,
-    targets,
+        currentProgram,
+        currentProjects,
+        targets,
+        statusProgram,
 
-    isLoadingGetProgramId,
-    isErrorGetProgramId,
-    isFetchingGetProgramId,
-  };
+        isLoadingGetProgramId,
+        isErrorGetProgramId,
+        isFetchingGetProgramId,
+    };
 };
