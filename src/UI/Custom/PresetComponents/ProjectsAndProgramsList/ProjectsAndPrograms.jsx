@@ -116,7 +116,7 @@ export default function ProjectsAndProgramsList() {
 
         // Сортировка по projectName
         return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
-    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, stateFilter]);
+    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, stateFilter, programs]);
 
     useEffect(() => {
         if (!openedAccordionId) return;
