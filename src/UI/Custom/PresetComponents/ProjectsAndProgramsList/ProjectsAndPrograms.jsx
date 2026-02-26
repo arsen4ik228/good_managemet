@@ -1,13 +1,15 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react'
-import {useNavigate, useParams} from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
 import CustomList from '../../CustomList/CustomList'
-import {useCreateProject} from "@hooks/Project/useCreateProject";
-import {useAllProject} from "@hooks/Project/useAllProject";
+import { useCreateProject } from "@hooks/Project/useCreateProject";
+import { useAllProject } from "@hooks/Project/useAllProject";
 import active_project from '@image/active_project.svg';
 import program_icon from '@image/program_icon.svg';
 import ListElem from '../../CustomList/ListElem';
 import FilterElement from "../../CustomList/FilterElement";
 import ListAddButtom from "../../ListAddButton/ListAddButtom";
+import ExpandableAddButton from '../../ListAddButton/ExpandableAddButton';
+import { useStrategyHook } from '../../../../hooks';
 
 
 const arrayFilter = [
@@ -28,15 +30,15 @@ const arrayFilter = [
 export default function ProjectsAndProgramsList() {
 
     const navigate = useNavigate()
-    const {projectId} = useParams();
+    const { projectId } = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
     const accordionRefs = useRef({});
 
-// Для FilterElement
+    // Для FilterElement
     const [openFilter, setOpenFilter] = useState(false);
     const [stateFilter, setStateFilter] = useState("Черновик");
-//
+    //
 
     const {
         projects,
@@ -50,19 +52,60 @@ export default function ProjectsAndProgramsList() {
         maxProjectNumber
     } = useAllProject();
 
+    const { activeStrategyId } = useStrategyHook()
+
     const {
         reduxSelectedOrganizationId,
         createProject,
     } = useCreateProject();
+
+    const createNewProgram = async () => {
+        try {
+            // Сохраняем результат запроса в переменную
+            const result = await createProject({
+                organizationId: reduxSelectedOrganizationId,
+                projectName: `Новая программа №${maxProjectNumber + 1}`,
+                type: "Программа",
+                content: " ",
+                strategyId: '8c5d710f-0f26-4ceb-9cca-054301a6809e',
+                targetCreateDtos: [
+                    {
+                        type: "Продукт",
+                        orderNumber: 1,
+                        content: " ",
+                    },
+                ],
+            }).unwrap();
+            setOpenedAccordionId(result?.id);
+            // Проверяем структуру ответа
+            console.log('Result от сервера:', result);
+
+            // Получаем ID из результата (зависит от структуры ответа сервера)
+            const projectId = result.id || result._id || result.data?.id;
+
+            if (projectId) {
+                // Навигация с ID созданного проекта
+                navigate(`helper/project/${projectId}`);
+            } else {
+                console.error('ID проекта не найден в ответе сервера:', result);
+                // Альтернативная навигация или сообщение об ошибке
+                navigate('helper/projects');
+            }
+
+        } catch (error) {
+            console.error("Ошибка при создании проекта:", error);
+        }
+    };
 
     const createNewProject = async () => {
         try {
             // Сохраняем результат запроса в переменную
             const result = await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый проект №${maxProjectNumber + 1}`,
-                type: "Проект",
+                projectName: `Новый программа №${maxProjectNumber + 1}`,
+                type: "Программа",
                 content: " ",
+                strategyId: activeStrategyId,
                 targetCreateDtos: [
                     {
                         type: "Продукт",
@@ -93,9 +136,9 @@ export default function ProjectsAndProgramsList() {
     };
 
     const openProject = (id, type) => {
-        if(type === "Проект"){
+        if (type === "Проект") {
             navigate(`helper/project/${id}`);
-        }else{
+        } else {
             navigate(`helper/program/${id}`)
         }
     }
@@ -146,8 +189,8 @@ export default function ProjectsAndProgramsList() {
                 setOpenFilter={setOpenFilter}
                 searchValue={seacrhUsersSectionsValue}
                 searchFunc={setSeacrhUsersSectionsValue}
-                // addButtonClick={() => createNewProject()}
-                // addButtonText={'Создать проект'}
+            // addButtonClick={() => createNewProject()}
+            // addButtonText={'Создать проект'}
             >
 
                 {
@@ -159,7 +202,13 @@ export default function ProjectsAndProgramsList() {
                 }
 
                 {
-                    !openFilter && <ListAddButtom textButton={'Создать проект'} clickFunc={createNewProject}/>
+                    !openFilter &&//<ListAddButtom textButton={'Создать проект'} clickFunc={createNewProject}/>
+                    <ExpandableAddButton textButton={'Создать проект'}
+                        onFirstOptionClick={createNewProject}
+                        onSecondOptionClick={createNewProgram}
+                        firstOptionText={'Проект'}
+                        secondOptionText={'Программа'}
+                    ></ExpandableAddButton>
                 }
 
                 {

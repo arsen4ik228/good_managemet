@@ -2,7 +2,7 @@ import React from 'react'
 import classes from './ListAddButton.module.css'
 import add from '@image/big_plus.svg'
 
-export default function ListAddButtom({textButton, clickFunc}) {
+export default function ListAddButtom({textButton, clickFunc, isExpanend}) {
   return (
     <>
         <div className={classes.content} onClick={clickFunc}>

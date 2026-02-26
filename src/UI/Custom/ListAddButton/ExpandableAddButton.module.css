@@ -1,0 +1,115 @@
+.container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .expandableBlock {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    /* border-bottom: 1px solid #999999; */
+    border-radius: 0 0 15px 15px;
+    /* margin-top: 2px; Небольшой отступ для визуального разделения */
+  }
+  
+  .expandableBlock.expanded {
+    max-height: 40px; /* 32px высота блока + небольшой запас */
+    transition: max-height 0.3s ease-in;
+  }
+  
+  .optionsRow {
+    display: flex;
+    flex-direction: row;
+    /* gap: 2px; Минимальный зазор между кнопками */
+    height: 32px; /* Фиксированная высота блока */
+  }
+  
+  .optionButton {
+    flex: 1;
+    height: 32px; /* Полная высота блока */
+    /* border: 1px solid var(--primary, #007bff); */
+    background-color: var(--light-grey);
+    color: var(--primary, #007bff); /* primary текст */
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Текст слева */
+    gap: 6px; /* Расстояние между иконкой и текстом */
+    
+    /* Убираем transition с filter */
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  /* Убираем двойную обводку между кнопками */
+  .optionButton:first-child {
+    border-right: none;
+    border-radius: 0 0 0 4px; /* Скругление только нижнего левого угла */
+  }
+  
+  .optionButton:last-child {
+    border-left: none;
+    border-radius: 0 0 4px 0; /* Скругление только нижнего правого угла */
+  }
+  
+  /* Состояние при наведении */
+  .optionButton:hover {
+    background-color: var(--primary-light, #e6f2ff); /* Светло-голубой фон */
+    color: var(--primary, #007bff); /* primary текст */
+  }
+  
+  .optionButton:hover .optionIcon img {
+    filter: none;
+  }
+  
+  /* Состояние при нажатии - как в оригинальном компоненте */
+  .optionButton:active {
+    filter: brightness(0.85); /* Затемнение как в ListAddButtom */
+    background-color: var(--light-grey); /* Возвращаем исходный фон */
+    color: var(--primary, #007bff); /* Сохраняем primary текст */
+  }
+  
+  /* Убираем изменение иконки при нажатии */
+  .optionButton:active .optionIcon img {
+    filter: none; /* Иконка остается обычной */
+  }
+  
+  /* Иконка в обычном состоянии */
+  .optionIcon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .optionIcon svg,
+  .optionIcon img {
+    width: 100%;
+    height: 100%;
+    transition: none; /* Убираем transition для иконки */
+  }
+  
+  /* Текст */
+  .optionText {
+    line-height: 1;
+  }
+  
+  /* Анимация появления */
+  .expanded .optionButton {
+    animation: slideDown 0.2s ease-out;
+  }
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
