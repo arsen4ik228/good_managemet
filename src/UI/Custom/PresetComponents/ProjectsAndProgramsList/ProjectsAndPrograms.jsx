@@ -101,7 +101,7 @@ export default function ProjectsAndProgramsList() {
     }
 
     const filtredProjects = useMemo(() => {
-        const combined = [...projectsWithProgram, ...projects, ...programs]
+        const combined = [...projectsWithProgram, ...projects, ...programs, ...archivesPrograms, ...archivesProjects, ...archivesProjectsWithProgram]
             .filter(c =>
                 c?.targets?.some(
                     t => t.type === "Продукт" && t.targetState === stateFilter

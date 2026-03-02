@@ -103,8 +103,6 @@ export default function ProjectsList() {
         });
     }, [pendingOpenProjectId, openedAccordionId, filtredProjects]);
 
-
-
     return (
         <>
             <CustomList
