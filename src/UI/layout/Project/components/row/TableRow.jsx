@@ -7,7 +7,7 @@ import CustomDatePicker from './partsRow/Date';
 export default function TableRow({ target, posts, updateTarget, addTarget, focusTargetId}) {
   return (
     <div className={s.row}>
-      <LineNumber orderNumber={target.orderNumber} />
+      <LineNumber orderNumber={target.orderNumber} target={target} />
       <Content
         content={target.content}
         onChange={(val) => updateTarget(target.id, 'content', val)}
