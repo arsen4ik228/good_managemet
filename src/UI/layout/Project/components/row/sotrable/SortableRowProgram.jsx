@@ -5,7 +5,7 @@ import s from './SortableRow.module.css';
 import icon_drag from '@image/icon_drag.svg';
 import TableRowProgram from "../TableRowProgram";
 
-export default function SortableRowProgram({ id, target, posts, updateTarget, addTarget, focusTargetId, fieldDisabled, orderNumber }) {
+export default function SortableRowProgram({ hrefProject, id, target, posts, updateTarget, addTarget, focusTargetId, fieldDisabled, orderNumber }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -27,7 +27,7 @@ export default function SortableRowProgram({ id, target, posts, updateTarget, ad
       >
        <img src={icon_drag} alt="icon_drag" className={s.dragIcon}/>
       </div>
-      <TableRowProgram target={target} posts={posts} updateTarget={updateTarget} addTarget={addTarget} focusTargetId={focusTargetId} fieldDisabled={fieldDisabled} orderNumber={orderNumber}/>
+      <TableRowProgram hrefProject = {hrefProject} target={target} posts={posts} updateTarget={updateTarget} addTarget={addTarget} focusTargetId={focusTargetId} fieldDisabled={fieldDisabled} orderNumber={orderNumber}/>
     </div>
   );
 }

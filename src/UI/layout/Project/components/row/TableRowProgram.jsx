@@ -1,30 +1,28 @@
 import s from './TableRow.module.css';
 import LineNumber from './partsRow/LineNumber';
-import Content from './partsRow/Content';
-import HolderPostId from './partsRow/HolderPostId';
-import CustomDatePicker from './partsRow/Date';
+import { homeUrl } from '@helpers/constants'
+import {useParams} from "react-router-dom";
+import ContentForProjectInProgram from "./partsRow/program/ContentForProjectInProgram";
+import HolderPostIdForProjectInProgram from "./partsRow/program/HolderPostIdForProjectInProgram";
+import DateForProjectInProgram from "./partsRow/program/DateForProjectInProgram";
 
-export default function TableRowProgram({ target, posts, updateTarget, addTarget, focusTargetId, fieldDisabled, orderNumber}) {
+export default function TableRowProgram({ hrefProject, target, posts, updateTarget, addTarget, focusTargetId, orderNumber}) {
+    const {organizationId} = useParams();
+    const openProject = (projectId) => {
+        window.open(homeUrl + `#/${organizationId}/helper/project/${projectId}`, '_blank');
+    }
   return (
-    <div className={s.row}>
+    <div className={s.row} onClick={(e) => openProject(hrefProject)}>
       <LineNumber orderNumber={orderNumber} />
-      <Content
+      <ContentForProjectInProgram
         content={target.content}
-        onChange={(val) => updateTarget(target.id, 'content', val)}
-        addTarget={addTarget}
-        autoFocus={target.id === focusTargetId} // <- передаём условный фокус
-        fieldDisabled={fieldDisabled}
       />
-      <HolderPostId
+      <HolderPostIdForProjectInProgram
         holderPostId={target.holderPostId}
         posts={posts}
-        onChange={(val) => updateTarget(target.id, 'holderPostId', val)}
-        fieldDisabled={fieldDisabled}
       />
-      <CustomDatePicker
+      <DateForProjectInProgram
         date={target.deadline}
-        onChange={(val) => updateTarget(target.id, 'deadline', val)}
-        fieldDisabled={fieldDisabled}
       />
     </div>
   );

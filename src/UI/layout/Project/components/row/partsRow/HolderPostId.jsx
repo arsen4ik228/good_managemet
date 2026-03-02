@@ -5,7 +5,7 @@ import s from './HolderPostId.module.css';
 import default_avatar from "@image/default_avatar.svg";
 import {baseUrl} from "@helpers/constants.js";
 
-export default function HolderPostId({posts, holderPostId, onChange, fieldDisabled}) {
+export default function HolderPostId({posts, holderPostId, onChange}) {
     const [showSelect, setShowSelect] = useState(false);
     const containerRef = useRef(null); // реф для select
     const user = posts?.find(p => p.id === holderPostId)?.user || null;
@@ -63,7 +63,6 @@ export default function HolderPostId({posts, holderPostId, onChange, fieldDisabl
                 >
                     <Select
                         bordered={false}
-                        disabled={fieldDisabled}
                         showSearch
                         allowClear
                         optionFilterProp="label"
