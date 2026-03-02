@@ -13,7 +13,7 @@ export default function TableRowProgram({ hrefProject, target, posts, updateTarg
     }
   return (
     <div className={s.row} onClick={(e) => openProject(hrefProject)}>
-      <LineNumber orderNumber={orderNumber} />
+      <LineNumber orderNumber={orderNumber} target={target}/>
       <ContentForProjectInProgram
         content={target.content}
       />
