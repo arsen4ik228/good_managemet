@@ -133,11 +133,12 @@ const statusTarget = (target) => {
                 date = formatDate(target.deadline);
             }
             break;
-    }
 
-    console.log("date: ", date);
-    console.log("status: ", status);
-    console.log("target: ", target);
+        default:
+            status = null;
+            date = formatDate(target.deadline);
+            break;
+    }
 
     return {
         status,
@@ -151,12 +152,12 @@ const TasksContainer = ({title, tasks}) => {
             <span className={`${classes.strong}`}>{title}:</span>
             {
                 tasks?.map((item, index) => {
-                    const user = item?.targetHolders?.[0]?.post?.user;
+                    const {status, date} = statusTarget(item);
+                    const post = item?.targetHolders.find(t => t?.post?.id === item.holderPostId)?.post?.postName;
+                    const user = item?.targetHolders.find(t => t?.post?.id === item.holderPostId)?.post?.user;
                     const people = user
                         ? `${user.firstName} ${user.lastName}`
                         : null;
-                    const {status, date} = statusTarget(item);
-
                     return (
                         <Task
                             key={item.id}
@@ -164,7 +165,7 @@ const TasksContainer = ({title, tasks}) => {
                             task={item.content}
                             date={date}
                             people={people}
-                            post={item?.targetHolders?.[0]?.post?.postName}
+                            post={post}
                             index={index + 1}
                             status={status}
                         />

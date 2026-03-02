@@ -24,7 +24,7 @@ const Task = ({title, task, date, people, post, index, status}) => {
                                 <span>{task}</span>
                             </div>
                             <div className={classes.rightBlock}>
-                                <span>{date}</span>
+                                <span>{status} {date}</span>
                                 <span>{people}</span>
                                 <span className={classes.light}>{post}</span>
                             </div>
@@ -75,6 +75,11 @@ const statusTarget = (target) => {
                 date = formatDate(target.deadline);
             }
             break;
+
+        default:
+            status = null;
+            date = formatDate(target.deadline);
+            break;
     }
 
     console.log("date: ", date);
@@ -93,11 +98,12 @@ const TasksContainer = ({title, tasks}) => {
             <span className={`${classes.strong}`}>{title}:</span>
             {
                 tasks?.map((item, index) => {
-                    const user = item?.targetHolders?.[0]?.post?.user;
+                    const {status, date} = statusTarget(item);
+                    const post = item?.targetHolders.find(t => t?.post?.id === item.holderPostId)?.post?.postName;
+                    const user = item?.targetHolders.find(t => t?.post?.id === item.holderPostId)?.post?.user;
                     const people = user
                         ? `${user.firstName} ${user.lastName}`
                         : null;
-                    const {status, date} = statusTarget(item);
                     return (
                         <Task
                             key={item.id}
@@ -105,7 +111,7 @@ const TasksContainer = ({title, tasks}) => {
                             task={item?.content}
                             date={date}
                             people={people}
-                            post={item?.targetHolders?.[0]?.post?.postName}
+                            post={post}
                             index={index + 1}
                             status={status}
                         />
@@ -129,6 +135,7 @@ const TasksContainerProject = ({title, tasks}) => {
                         : null;
                     const post = item?.targets[0]?.targetHolders?.[0]?.post?.postName
                     const {status, date} = statusTarget(item?.targets[0]);
+
                     return (
                         <Task
                             key={item.id}
