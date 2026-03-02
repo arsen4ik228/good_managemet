@@ -73,7 +73,7 @@ const formatDate = (iso) => {
     return dayjs(iso).format('DD.MM.YY');
 };
 
-const Task = ({title, task, date, people, post, index}) => {
+const Task = ({title, task, date, people, post, index, status}) => {
     return (
         <>
             {
@@ -83,7 +83,7 @@ const Task = ({title, task, date, people, post, index}) => {
                                 <span>{task}</span>
                             </div>
                             <div className={classes.rightBlock}>
-                                <span>{date}</span>
+                                <span>{status} {date}</span>
                                 <span>{people}</span>
                                 <span className={classes.light}>{post}</span>
                             </div>
@@ -96,7 +96,7 @@ const Task = ({title, task, date, people, post, index}) => {
                                 <span>{task}</span>
                             </div>
                             <div className={classes.rightBlock}>
-                                <span>{date}</span>
+                                <span>{status} {date}</span>
                                 <span>{people}</span>
                                 <span className={classes.light}>{post}</span>
                             </div>
@@ -106,6 +106,44 @@ const Task = ({title, task, date, people, post, index}) => {
         </>
     )
 }
+
+const statusTarget = (target) => {
+    let status = "";
+    let date = "";
+
+    const targetState = target.targetState;
+
+    // сегодняшняя дата без времени
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (targetState) {
+        case "Завершена":
+            status = "Завершена";
+            date = formatDate(target?.dateComplete);
+            break;
+
+        case "Активная":
+            if (target?.deadline) {
+                const deadlineDate = new Date(target.deadline);
+                deadlineDate.setHours(0, 0, 0, 0); // нормализуем дату
+
+                // сравнение только по день/месяц/год
+                status = deadlineDate >= today ? null : "Просрочена";
+                date = formatDate(target.deadline);
+            }
+            break;
+    }
+
+    console.log("date: ", date);
+    console.log("status: ", status);
+    console.log("target: ", target);
+
+    return {
+        status,
+        date
+    };
+};
 
 const TasksContainer = ({title, tasks}) => {
     return (
@@ -117,16 +155,18 @@ const TasksContainer = ({title, tasks}) => {
                     const people = user
                         ? `${user.firstName} ${user.lastName}`
                         : null;
+                    const {status, date} = statusTarget(item);
 
                     return (
                         <Task
                             key={item.id}
                             title={title}
                             task={item.content}
-                            date={formatDate(item.deadline)}
+                            date={date}
                             people={people}
                             post={item?.targetHolders?.[0]?.post?.postName}
                             index={index + 1}
+                            status={status}
                         />
                     );
                 })
@@ -144,7 +184,6 @@ const Information = ({title, content}) => {
         </div>
     )
 }
-
 
 const order = ['Продукт', 'Метрика', 'Организационные мероприятия', 'Правила', 'Задача'];
 

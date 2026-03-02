@@ -14,7 +14,7 @@ const formatDate = (iso) => {
     return dayjs(iso).format('DD.MM.YY');
 };
 
-const Task = ({title, task, date, people, post, index}) => {
+const Task = ({title, task, date, people, post, index, status}) => {
     return (
         <>
             {
@@ -37,7 +37,7 @@ const Task = ({title, task, date, people, post, index}) => {
                                 <span>{task}</span>
                             </div>
                             <div className={classes.rightBlock}>
-                                <span>{date}</span>
+                                <span>{status} {date}</span>
                                 <span>{people}</span>
                                 <span className={classes.light}>{post}</span>
                             </div>
@@ -48,7 +48,46 @@ const Task = ({title, task, date, people, post, index}) => {
     )
 }
 
-const TasksContainer = ({title, tasks, project}) => {
+const statusTarget = (target) => {
+    let status = "";
+    let date = "";
+
+    const targetState = target.targetState;
+
+    console.log("targetState", targetState);
+    // сегодняшняя дата без времени
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (targetState) {
+        case "Завершена":
+            status = "Завершена";
+            date = formatDate(target?.dateComplete);
+            break;
+
+        case "Активная":
+            if (target?.deadline) {
+                const deadlineDate = new Date(target.deadline);
+                deadlineDate.setHours(0, 0, 0, 0); // нормализуем дату
+
+                // сравнение только по день/месяц/год
+                status = deadlineDate >= today ? null : "Просрочена";
+                date = formatDate(target.deadline);
+            }
+            break;
+    }
+
+    console.log("date: ", date);
+    console.log("status: ", status);
+    console.log("target: ", target);
+
+    return {
+        status,
+        date
+    };
+};
+
+const TasksContainer = ({title, tasks}) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
@@ -58,16 +97,48 @@ const TasksContainer = ({title, tasks, project}) => {
                     const people = user
                         ? `${user.firstName} ${user.lastName}`
                         : null;
-
+                    const {status, date} = statusTarget(item);
                     return (
                         <Task
                             key={item.id}
                             title={title}
-                            task={ project ? `"${item?.projectName}". Продукт: "${item?.targets?.[0]?.content}"` : item?.content}
-                            date={formatDate(item.deadline)}
+                            task={item?.content}
+                            date={date}
                             people={people}
                             post={item?.targetHolders?.[0]?.post?.postName}
                             index={index + 1}
+                            status={status}
+                        />
+                    );
+                })
+            }
+
+        </div>
+    )
+}
+
+const TasksContainerProject = ({title, tasks}) => {
+    return (
+        <div className={classes.container}>
+            <span className={`${classes.strong}`}>{title}:</span>
+            {
+                tasks?.map((item, index) => {
+                    const user = item?.targets[0]?.targetHolders?.[0]?.post?.user;
+                    const people = user
+                        ? `${user.firstName} ${user.lastName}`
+                        : null;
+                    const post = item?.targets[0]?.targetHolders?.[0]?.post?.postName
+                    const {status, date} = statusTarget(item?.targets[0]);
+                    return (
+                        <Task
+                            key={item.id}
+                            title={title}
+                            task={`"${item?.projectName}". Продукт: "${item?.targets?.[0]?.content}"`}
+                            date={date}
+                            people={people}
+                            post={post}
+                            index={index + 1}
+                            status={status}
                         />
                     );
                 })
@@ -133,7 +204,7 @@ export default function ViewProgram({contentRef}) {
                 sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks}/>)
             }
             {
-                currentProjects?.length > 0 && <TasksContainer title={"Проекты"} tasks={currentProjects} project={true}/>
+                currentProjects?.length > 0 && <TasksContainerProject title={"Проекты"} tasks={currentProjects}/>
             }
         </div>
     )
