@@ -48,7 +48,7 @@ const Task = ({title, task, date, people, post, index}) => {
     )
 }
 
-const TasksContainer = ({title, tasks}) => {
+const TasksContainer = ({title, tasks, project}) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
@@ -63,7 +63,7 @@ const TasksContainer = ({title, tasks}) => {
                         <Task
                             key={item.id}
                             title={title}
-                            task={item.content}
+                            task={ project ? `"${item?.projectName}". Продукт: "${item?.targets?.[0]?.content}"` : item?.content}
                             date={formatDate(item.deadline)}
                             people={people}
                             post={item?.targetHolders?.[0]?.post?.postName}
@@ -133,7 +133,7 @@ export default function ViewProgram({contentRef}) {
                 sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks}/>)
             }
             {
-                currentProjects.length > 0 && <TasksContainer title={"Задача"} tasks={currentProjects}/>
+                currentProjects?.length > 0 && <TasksContainer title={"Проекты"} tasks={currentProjects} project={true}/>
             }
         </div>
     )
