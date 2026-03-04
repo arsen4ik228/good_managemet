@@ -50,6 +50,7 @@ export default function TableProgram({title, projects, posts, updateTarget, addT
                 <SortableContext items={items} strategy={verticalListSortingStrategy}>
                     {validProjects.map((project, index) => (
                         <SortableRowProgram
+                            hrefProject={project?.id}
                             key={project.targets[0].id}
                             id={project.targets[0].id}
                             target={project.targets[0]}

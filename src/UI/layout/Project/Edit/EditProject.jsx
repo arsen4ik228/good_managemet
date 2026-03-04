@@ -46,7 +46,7 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections, refHandleTargetsInActive, setBtn}) {
+export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, setBtn}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -130,26 +130,33 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                 ...rest
             }));
 
-        console.log("productState = ", productState);
-        console.log("targetsByType = ", targetsByType);
+        console.log("targetUpdateDtos = ", targetUpdateDtos);
+
 
         if (productState === "Активная") {
             const holderProductPostId = Object.values(targetsByType)
                 .flat()
                 .find(t => t.type === "Продукт")?.holderPostId;
 
-            const targetActive = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdate = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+            const targetCreate = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
+            const targetUpdateDraft = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
                 ...t,
                 targetState: "Активная"
             }));
+            const targetUpdateActive = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+                ...t,
+                targetState: "Активная"
+            }));
+
+            const targetUpdate = [...targetUpdateDraft, ...targetUpdateActive];
+            console.log("targetUpdate = ", targetUpdate);
             try {
                 const response = await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     holderProductPostId,
                     ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
-                    ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
+                    ...(targetCreate.length > 0 ? {targetCreateDtos: targetCreate} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
                 message.success("Проект обновлен");
@@ -211,6 +218,43 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
 
     refHandleTargetsInActive.current = handleTargetsInActive;
 
+    const handleStateProductInCompleted = async () => {
+        const target = Object.values(targetsByType)
+            .flat()
+            .find(t => t.type === "Продукт");
+
+        const targetUpdateDtos = target
+            ? (() => {
+                const { id, isCreated, ...rest } = target;
+
+                return [{
+                    _id: id,
+                    ...rest,
+                    targetState: "Завершена"
+                }];
+            })()
+            : [];
+
+        const holderProductPostId = Object.values(targetsByType)
+            .flat()
+            .find(t => t.type === "Продукт")?.holderPostId
+
+        try {
+            const response = await updateProject({
+                projectId: projectId,
+                _id: projectId,
+                holderProductPostId,
+                ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
+                ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
+            }).unwrap();
+            message.success("Проект завершен");
+        } catch (error) {
+            message.error("Ошибка при обновлении проектов")
+        }
+    };
+
+    refHandleStateProductInCompleted.current = handleStateProductInCompleted;
+
     // для открытия нового проекта и сохранении старого
     useEffect(() => {
         if (!projectId) return;
@@ -232,7 +276,6 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
         setCurrentProjectId(projectId);
 
     }, [projectId]);
-
 
     // для новых данных в проекте
     useEffect(() => {
@@ -290,7 +333,16 @@ export default function EditProject({sections, refHandleTargetsInActive, setBtn}
                     },
                 },
             ])
-        } else {
+        } else if(productState === "Активная"){
+            setBtn([
+                {
+                    text: "завершить проект",
+                    click: () => {
+                        refHandleStateProductInCompleted?.current();
+                    },
+                },
+            ])
+        }else{
             setBtn([])
         }
     }, [targets, currentProject]);

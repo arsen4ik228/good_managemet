@@ -144,7 +144,7 @@ export default function ProjectsAndProgramsList() {
     }
 
     const filtredProjects = useMemo(() => {
-        const combined = [...projectsWithProgram, ...projects, ...programs]
+        const combined = [...projectsWithProgram, ...projects, ...programs, ...archivesPrograms, ...archivesProjects, ...archivesProjectsWithProgram]
             .filter(c =>
                 c?.targets?.some(
                     t => t.type === "Продукт" && t.targetState === stateFilter
@@ -159,7 +159,7 @@ export default function ProjectsAndProgramsList() {
 
         // Сортировка по projectName
         return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
-    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, stateFilter]);
+    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, stateFilter, programs]);
 
     useEffect(() => {
         if (!openedAccordionId) return;

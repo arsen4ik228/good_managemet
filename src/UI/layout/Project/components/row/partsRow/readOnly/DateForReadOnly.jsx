@@ -1,13 +1,15 @@
 import {DatePicker} from 'antd';
 import {CalendarOutlined} from '@ant-design/icons';
-import s from './Date.module.css';
+import s from '../Date.module.css';
 import dayjs from 'dayjs';
 
-export default function CustomDatePicker({date, onChange}) {
+export default function DateForReadOnly({date}) {
     return (
         <DatePicker
+            open={false}
             value={date ? dayjs(date) : null}
-            onChange={onChange}
+            onChange={undefined}
+            inputReadOnly
             format="DD.MM.YY"
             placeholder=""
             className={s.date}

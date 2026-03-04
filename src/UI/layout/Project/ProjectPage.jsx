@@ -28,6 +28,7 @@ const initialSections = [
 
 export default function ProjectPage() {
     const refHandleTargetsInActive = useRef({});
+    const refHandleStateProductInCompleted = useRef({});
     const [currentState, setCurrentState] = useState(STATES.VIEW);
     const [popoverVisible, setPopoverVisible] = useState(false);
     const [sections, setSections] = useState(initialSections);
@@ -68,7 +69,7 @@ export default function ProjectPage() {
             } : {
                 btns: [
                     {
-                        text: "редактировать программу",
+                        text: "редактировать",
                         click: () => {
                             setCurrentState(STATES.EDIT)
                         },
@@ -111,13 +112,14 @@ export default function ProjectPage() {
                     <EditProject
                         sections={sections}
                         refHandleTargetsInActive={refHandleTargetsInActive}
+                        refHandleStateProductInCompleted={refHandleStateProductInCompleted}
                         setBtn={setBtn}
                     />
                 ),
             } : {
                 btns: [
                     {
-                        text: "выйти из программ",
+                        text: "выйти",
                         click: () => {
                             setCurrentState(STATES.VIEW)
                         },
@@ -140,6 +142,7 @@ export default function ProjectPage() {
                     <EditProgram
                         sections={sections}
                         refHandleTargetsInActive={refHandleTargetsInActive}
+                        refHandleStateProductInCompleted={refHandleStateProductInCompleted}
                         setBtn={setBtn}
                     />
                 ),

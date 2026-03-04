@@ -21,7 +21,7 @@ const initialSections = [
     {name: 'Правила'},
 ];
 
-export default function EditProgram({sections, refHandleTargetsInActive, setBtn}) {
+export default function EditProgram({sections, refHandleTargetsInActive, refHandleStateProductInCompleted, setBtn}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -136,7 +136,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, setBtn}
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
-                message.success("Проект обновлен");
+                message.success("Программа обновлена");
             } catch (error) {
                 message.error("Ошибка при обновлении проектов")
             }
@@ -150,7 +150,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, setBtn}
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
-                message.success("Проект обновлен");
+                message.success("Программа обновлена");
             } catch (error) {
                 message.error("Ошибка при обновлении проектов")
             }
@@ -189,13 +189,50 @@ export default function EditProgram({sections, refHandleTargetsInActive, setBtn}
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
-            message.success("Проект активный");
+            message.success("Программа активная");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
     refHandleTargetsInActive.current = handleTargetsInActive;
+
+    const handleStateProductInCompleted = async () => {
+        const target = Object.values(targetsByType)
+            .flat()
+            .find(t => t.type === "Продукт");
+
+        const targetUpdateDtos = target
+            ? (() => {
+                const { id, isCreated, ...rest } = target;
+
+                return [{
+                    _id: id,
+                    ...rest,
+                    targetState: "Завершена"
+                }];
+            })()
+            : [];
+
+        const holderProductPostId = Object.values(targetsByType)
+            .flat()
+            .find(t => t.type === "Продукт")?.holderPostId
+
+        try {
+            const response = await updateProject({
+                projectId: programId,
+                _id: programId,
+                holderProductPostId,
+                ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
+                ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
+            }).unwrap();
+            message.success("Программа завершена");
+        } catch (error) {
+            message.error("Ошибка при обновлении проектов")
+        }
+    };
+
+    refHandleStateProductInCompleted.current = handleStateProductInCompleted;
 
     // для открытия нового проекта и сохранении старого
     useEffect(() => {
@@ -279,7 +316,16 @@ export default function EditProgram({sections, refHandleTargetsInActive, setBtn}
                     },
                 },
             ])
-        } else {
+        } else if(productState === "Активная"){
+            setBtn([
+                {
+                    text: "завершить программу",
+                    click: () => {
+                        refHandleStateProductInCompleted?.current();
+                    },
+                },
+            ])
+        }else{
             setBtn([])
         }
     }, [targets, currentProgram, currentProjects]);
