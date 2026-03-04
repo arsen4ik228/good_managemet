@@ -136,7 +136,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
-                message.success("Проект обновлен");
+                message.success("Программа обновлена");
             } catch (error) {
                 message.error("Ошибка при обновлении проектов")
             }
@@ -150,7 +150,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
-                message.success("Проект обновлен");
+                message.success("Программа обновлена");
             } catch (error) {
                 message.error("Ошибка при обновлении проектов")
             }
@@ -189,7 +189,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
-            message.success("Проект активный");
+            message.success("Программа активная");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
@@ -226,7 +226,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
-            message.success("Проект завершен");
+            message.success("Программа завершена");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }

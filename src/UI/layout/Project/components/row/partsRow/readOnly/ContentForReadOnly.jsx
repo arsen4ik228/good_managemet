@@ -1,7 +1,7 @@
 import TextAreaRdx from '../../../../../../radixUI/textArea/TextAreaRdx';
 import s from '../Content.module.css';
 
-export default function ContentForProjectInProgram({ content }) {
+export default function ContentForReadOnly({ content }) {
     return (
         <TextAreaRdx
             className={s.content}

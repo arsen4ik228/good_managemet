@@ -3,7 +3,7 @@ import {CalendarOutlined} from '@ant-design/icons';
 import s from '../Date.module.css';
 import dayjs from 'dayjs';
 
-export default function DateForProjectInProgram({date}) {
+export default function DateForReadOnly({date}) {
     return (
         <DatePicker
             open={false}

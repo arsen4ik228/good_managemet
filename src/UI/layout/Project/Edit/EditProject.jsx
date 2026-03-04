@@ -130,26 +130,33 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...rest
             }));
 
-        console.log("productState = ", productState);
-        console.log("targetsByType = ", targetsByType);
+        console.log("targetUpdateDtos = ", targetUpdateDtos);
+
 
         if (productState === "Активная") {
             const holderProductPostId = Object.values(targetsByType)
                 .flat()
                 .find(t => t.type === "Продукт")?.holderPostId;
 
-            const targetActive = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdate = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+            const targetCreate = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
+            const targetUpdateDraft = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
                 ...t,
                 targetState: "Активная"
             }));
+            const targetUpdateActive = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+                ...t,
+                targetState: "Активная"
+            }));
+
+            const targetUpdate = [...targetUpdateDraft, ...targetUpdateActive];
+            console.log("targetUpdate = ", targetUpdate);
             try {
                 const response = await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     holderProductPostId,
                     ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
-                    ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
+                    ...(targetCreate.length > 0 ? {targetCreateDtos: targetCreate} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
                 message.success("Проект обновлен");
@@ -210,7 +217,6 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     };
 
     refHandleTargetsInActive.current = handleTargetsInActive;
-
 
     const handleStateProductInCompleted = async () => {
         const target = Object.values(targetsByType)
