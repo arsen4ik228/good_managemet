@@ -58,7 +58,7 @@ export default function WorkingPlanPage() {
         }
     }, []);
 
-    console.log(personalTargets)
+    console.log(sendedTargets)
 
     return (
         <>
@@ -146,13 +146,16 @@ export default function WorkingPlanPage() {
                                         <React.Fragment key={index}>
                                             <Task
                                                 id={item.id}
-
+                                                isOrder={true}
                                                 content={item.content}
                                                 deadline={item.deadline}
                                                 type={item.type}
                                                 convertId={item.convert.id}
                                                 contactId={item.convert.host.user.id}
                                                 attachmentToTargets={item?.attachmentToTargets}
+                                                state={item.targetState}
+                                                completeDate={item.dateComplete}
+                                                holderPostId={item.holderPostId}
                                             />
                                         </React.Fragment>
                                     ))}
@@ -169,14 +172,17 @@ export default function WorkingPlanPage() {
                                     {elem?.items?.map((item, index) => (
                                         <Task
                                             id={item.id}
+                                            isOrder={true}
+
                                             content={item.content}
                                             deadline={item.deadline}
                                             type={item.type}
+                                            convertId={item.convert.id}
+                                            contactId={item.convert.host.user.id}
+                                            attachmentToTargets={item?.attachmentToTargets}
                                             state={item.targetState}
                                             completeDate={item.dateComplete}
-                                            dateStart={item.dateStart}
                                             holderPostId={item.holderPostId}
-                                            attachmentToTargets={item?.attachmentToTargets}
                                         ></Task>
                                     ))}
                                     <div key={elemIndex} className={classes.dayContainer}>
