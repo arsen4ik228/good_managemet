@@ -269,7 +269,7 @@ export default function DesktopDialogPage() {
         if (currentConvert?.host.user.id === reduxUserId)
             tempArray.push({ click: () => setOpenFinishModal(true), text: 'завершить' })
 
-        if (currentConvert?.convertPath === 'Согласование' || currentConvert?.convertPath === 'Запрос')
+        if (currentConvert?.convertPath === 'Согласование' ) // || currentConvert?.convertPath === 'Запрос'
             tempArray.push({ click: () => setOpenAgreementModal(true), text: 'согласовать' })
 
         setButtons(tempArray)

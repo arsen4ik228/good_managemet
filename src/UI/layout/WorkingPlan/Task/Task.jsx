@@ -12,10 +12,11 @@ import SimpleCommunicationModal from './SimpleCommunicationModal'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useWorkingPlanForm } from '../../../../contexts/WorkingPlanContext'
 import dayjs from 'dayjs';
+import { baseUrl } from '@helpers/constants.js'
 import FilesMessages from '../../../Custom/Message/FilesMessages'
 
 
-export default function Task({ id, content, deadline, type, state, completeDate, dateStart, holderPostId, contactId, convertId, attachmentToTargets }) {
+export default function Task({ id, isOrder, content, deadline, type, state, completeDate, dateStart, holderPostId, contactId, convertId, attachmentToTargets }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const [openModal, setOpenModal] = useState(false)
@@ -61,6 +62,7 @@ export default function Task({ id, content, deadline, type, state, completeDate,
     } = useTargetsHook();
 
     const {
+        currentPost,
         underPosts,
         isLoadingGetUnderPosts,
         isErrorGetUnderPosts,
@@ -68,8 +70,20 @@ export default function Task({ id, content, deadline, type, state, completeDate,
     } = usePostsHook({ postId: holderPostId })
 
 
-    const navigateToCommunication = (contactId, convertId) => {
-        navigate(`/${organizationId}/chat/${contactId}/${convertId}`)
+    const navigateToCommunication = (contactId, convertId, state) => {
+
+        let contact
+        if (isOrder)
+            contact = currentPost?.user?.id
+        else
+            contact = contactId
+
+
+        if (state === "Завершена")
+            navigate(`/${organizationId}/chat/${contact}/archive/${convertId}`)
+
+        else
+            navigate(`/${organizationId}/chat/${contact}/${convertId}`)
     }
 
     const setDataForUpdate = () => {
@@ -196,7 +210,6 @@ export default function Task({ id, content, deadline, type, state, completeDate,
 
     }
 
-    console.log(completeDate, new Date())
     return (
         <>
             <div className={classes.wrapper}>
@@ -246,6 +259,25 @@ export default function Task({ id, content, deadline, type, state, completeDate,
 
                             </div>
                         </div>
+                        {isOrder && (
+
+                            <div
+                                className={classes.avatarIcon}
+
+                            >
+                                <Tooltip
+                                    title={currentPost?.user?.firstName + ' ' + currentPost?.user?.lastName}
+                                    mouseEnterDelay={0.1} // 1 секунда задержки
+                                    placement="right"
+                                    autoAdjustOverflow={true}
+                                    destroyTooltipOnHide={true}
+                                    overlayStyle={{ maxWidth: 400 }}
+                                >
+                                    <img src={baseUrl + currentPost?.user?.avatar_url} alt="ava" />
+                                </Tooltip>
+                            </div>
+                        )}
+
                         <div
                             className={classes.delegateContainer}
                             onClick={handleDelegateClick}
@@ -280,7 +312,7 @@ export default function Task({ id, content, deadline, type, state, completeDate,
                 <SimpleCommunicationModal
                     isOpen={openCommunicationModal}
                     onClose={() => setOpenCommunicationModal(false)}
-                    onConfirm={() => navigateToCommunication(contactId, convertId)}
+                    onConfirm={() => navigateToCommunication(contactId, convertId, state)}
                 ></SimpleCommunicationModal>
             )}
         </>

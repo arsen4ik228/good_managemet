@@ -67,7 +67,7 @@ export default function ProjectsAndProgramsList() {
                 projectName: `Новая программа №${maxProjectNumber + 1}`,
                 type: "Программа",
                 content: " ",
-                strategyId: '8c5d710f-0f26-4ceb-9cca-054301a6809e',
+                strategyId: activeStrategyId,
                 targetCreateDtos: [
                     {
                         type: "Продукт",
@@ -102,10 +102,10 @@ export default function ProjectsAndProgramsList() {
             // Сохраняем результат запроса в переменную
             const result = await createProject({
                 organizationId: reduxSelectedOrganizationId,
-                projectName: `Новый программа №${maxProjectNumber + 1}`,
-                type: "Программа",
+                projectName: `Новый проект №${maxProjectNumber + 1}`,
+                type: "Проект",
                 content: " ",
-                strategyId: activeStrategyId,
+
                 targetCreateDtos: [
                     {
                         type: "Продукт",
