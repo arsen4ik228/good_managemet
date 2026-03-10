@@ -85,7 +85,7 @@ export default function ProjectsAndProgramsList() {
 
             if (projectId) {
                 // Навигация с ID созданного проекта
-                navigate(`helper/project/${projectId}`);
+                navigate(`helper/program/${projectId}`);
             } else {
                 console.error('ID проекта не найден в ответе сервера:', result);
                 // Альтернативная навигация или сообщение об ошибке
