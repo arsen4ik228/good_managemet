@@ -27,14 +27,17 @@ const initialSections = [
 ];
 
 export default function ProjectPage() {
+    const {PRESETS} = useRightPanel();
+
+    usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
+
     const refHandleTargetsInActive = useRef({});
     const refHandleStateProductInCompleted = useRef({});
     const [currentState, setCurrentState] = useState(STATES.VIEW);
     const [popoverVisible, setPopoverVisible] = useState(false);
     const [sections, setSections] = useState(initialSections);
 
-    const {projectId} = useParams()
-    const {programId} = useParams()
+    const {projectId, programId} = useParams()
 
     const toggleSection = (name) => {
         setSections(prev =>
@@ -50,34 +53,40 @@ export default function ProjectPage() {
 
     const {contentRef, reactToPrintFn} = usePrint();
 
+    const {currentProject, statusProject} = useGetSingleProject({selectedProjectId: projectId});
+    const {
+        currentProgram,
+        statusProgram
+    } = useGetSingleProgram({selectedProgramId: programId});
+
     const config = {
         [STATES.VIEW]: {
             ...(projectId ? {
                 btns: [
                     {
-                        text: "редактировать",
-                        click: () => {
-                            setCurrentState(STATES.EDIT)
-                        },
-                    },
-                    {
                         text: "печать",
                         click: reactToPrintFn,
                     },
+                    ...(statusProject === "Завершена"
+                        ? []
+                        : [{
+                            text: "редактировать",
+                            click: () => setCurrentState(STATES.EDIT),
+                        }])
                 ],
                 component: <ViewProject contentRef={contentRef}/>,
             } : {
                 btns: [
                     {
-                        text: "редактировать",
-                        click: () => {
-                            setCurrentState(STATES.EDIT)
-                        },
-                    },
-                    {
                         text: "печать",
                         click: reactToPrintFn,
                     },
+                    ...(statusProgram === "Завершена"
+                        ? []
+                        : [{
+                            text: "редактировать",
+                            click: () => setCurrentState(STATES.EDIT),
+                        }])
                 ],
                 component: <ViewProgram contentRef={contentRef}/>,
             })
@@ -153,42 +162,28 @@ export default function ProjectPage() {
 
     const {btns, component, popover} = config[currentState];
 
-    const {PRESETS} = useRightPanel();
-
-    usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
-
     useEffect(() => {
-        if (projectId)
-            setCurrentState(STATES.VIEW)
-    }, [projectId])
-
-    useEffect(() => {
-        if (programId)
-            setCurrentState(STATES.VIEW)
-    }, [programId])
-
-    const {currentProject, statusProject} = useGetSingleProject({selectedProjectId: projectId});
-    const {
-        currentProgram,
-        currentProjects,
-        targets,
-        statusProgram
-    } = useGetSingleProgram({selectedProgramId: programId});
+        if (projectId || programId) {
+            setCurrentState(STATES.VIEW);
+        }
+    }, [projectId, programId]);
 
     let arrayNameForView = [];
 
-    if (projectId) {
-        arrayNameForView = currentState === STATES.EDIT ? [
-            {label: "Проект: ", value: currentProject?.projectName},
-            {label: "Статус: ", value: statusProject}
-        ] : [];
-    }
+    if (currentState === STATES.EDIT) {
+        if (projectId) {
+            arrayNameForView = [
+                {label: "Проект: ", value: currentProject?.projectName},
+                {label: "Статус: ", value: statusProject},
+            ];
+        }
 
-    if (programId) {
-        arrayNameForView = currentState === STATES.EDIT ? [
-            {label: "Программа: ", value: currentProgram?.projectName},
-            {label: "Статус: ", value: statusProgram}
-        ] : [];
+        if (programId) {
+            arrayNameForView = [
+                {label: "Программа: ", value: currentProgram?.projectName},
+                {label: "Статус: ", value: statusProgram},
+            ];
+        }
     }
 
     return (
