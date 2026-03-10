@@ -10,6 +10,7 @@ import FilterElement from "../../CustomList/FilterElement";
 import ListAddButtom from "../../ListAddButton/ListAddButtom";
 import ExpandableAddButton from '../../ListAddButton/ExpandableAddButton';
 import { useStrategyHook } from '../../../../hooks';
+import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 
 
 const arrayFilter = [
@@ -35,10 +36,18 @@ export default function ProjectsAndProgramsList() {
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
     const accordionRefs = useRef({});
 
+    const {statusProject} = useGetSingleProject({selectedProjectId: projectId});
+
     // Для FilterElement
     const [openFilter, setOpenFilter] = useState(false);
     const [stateFilter, setStateFilter] = useState("Черновик");
     //
+
+    useEffect(() => {
+        if (!statusProject) return;
+
+        setStateFilter(statusProject);
+    }, [statusProject]);
 
     const {
         projects,
