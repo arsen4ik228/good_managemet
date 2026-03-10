@@ -1,15 +1,15 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useEffect, useMemo, useRef, useState} from 'react'
+import {useNavigate, useParams} from 'react-router-dom';
 import CustomList from '../../CustomList/CustomList'
-import { useCreateProject } from "@hooks/Project/useCreateProject";
-import { useAllProject } from "@hooks/Project/useAllProject";
+import {useCreateProject} from "@hooks/Project/useCreateProject";
+import {useAllProject} from "@hooks/Project/useAllProject";
 import active_project from '@image/active_project.svg';
 import program_icon from '@image/program_icon.svg';
 import ListElem from '../../CustomList/ListElem';
 import FilterElement from "../../CustomList/FilterElement";
 import ListAddButtom from "../../ListAddButton/ListAddButtom";
 import ExpandableAddButton from '../../ListAddButton/ExpandableAddButton';
-import { useStrategyHook } from '../../../../hooks';
+import {useStrategyHook} from '../../../../hooks';
 import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 
 
@@ -31,7 +31,7 @@ const arrayFilter = [
 export default function ProjectsAndProgramsList() {
 
     const navigate = useNavigate()
-    const { projectId } = useParams();
+    const {projectId} = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
     const accordionRefs = useRef({});
@@ -61,7 +61,7 @@ export default function ProjectsAndProgramsList() {
         maxProjectNumber
     } = useAllProject();
 
-    const { activeStrategyId } = useStrategyHook()
+    const {activeStrategyId} = useStrategyHook()
 
     const {
         reduxSelectedOrganizationId,
@@ -198,8 +198,8 @@ export default function ProjectsAndProgramsList() {
                 setOpenFilter={setOpenFilter}
                 searchValue={seacrhUsersSectionsValue}
                 searchFunc={setSeacrhUsersSectionsValue}
-            // addButtonClick={() => createNewProject()}
-            // addButtonText={'Создать проект'}
+                // addButtonClick={() => createNewProject()}
+                // addButtonText={'Создать проект'}
             >
 
                 {
@@ -213,10 +213,10 @@ export default function ProjectsAndProgramsList() {
                 {
                     !openFilter &&//<ListAddButtom textButton={'Создать проект'} clickFunc={createNewProject}/>
                     <ExpandableAddButton textButton={'Создать проект'}
-                        onFirstOptionClick={createNewProject}
-                        onSecondOptionClick={createNewProgram}
-                        firstOptionText={'Проект'}
-                        secondOptionText={'Программа'}
+                                         onFirstOptionClick={createNewProject}
+                                         onSecondOptionClick={createNewProgram}
+                                         firstOptionText={'Проект'}
+                                         secondOptionText={'Программа'}
                     ></ExpandableAddButton>
                 }
 
@@ -232,6 +232,12 @@ export default function ProjectsAndProgramsList() {
                                 upperLabel={item.type === 'Программа' ? 'Программа из стратегии' : 'Проект'}
                                 ref={el => {
                                     if (el) accordionRefs.current[item.id] = el;
+                                }}
+                                isPageProject={true}
+                                objTargets = {{
+                                    completed : item.targets.filter((t) => t.targetState === "Завершена" && t.type !== "Продукт").length,
+                                    expired : item.targets.filter((t) => t.isExpired && t.type !== "Продукт").length,
+                                    normal : item.targets.filter((t) => (t.targetState === "Активная" || t.targetState === "Черновик")&& t.type !== "Продукт").length,
                                 }}
                             />
                         </React.Fragment>

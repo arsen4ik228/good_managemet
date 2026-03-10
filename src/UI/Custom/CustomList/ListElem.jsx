@@ -1,8 +1,8 @@
-import React, { useEffect, forwardRef } from 'react'
+import React, {useEffect, forwardRef} from 'react'
 import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
-import { useFindPathSegment } from '@helpers/helpers'
-import { Tooltip } from 'antd'
+import {useFindPathSegment} from '@helpers/helpers'
+import {Tooltip} from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
 
 const ListElem = forwardRef(({
@@ -16,7 +16,9 @@ const ListElem = forwardRef(({
                                  linkSegment,
                                  isActive,
                                  clickFunc,
-                                 setSelectedItemData
+                                 setSelectedItemData,
+                                 isPageProject,
+                                 objTargets
                              }, ref) => {
     const isSelected = useFindPathSegment(linkSegment)
 
@@ -49,7 +51,7 @@ const ListElem = forwardRef(({
                 data-selected={isSelected} // Добавляем data-selected
             >
                 <div className={classes.imgContainer}>
-                    <img src={icon ?? avatar} alt="avatar" />
+                    <img src={icon ?? avatar} alt="avatar"/>
                 </div>
                 <Tooltip
                     title={bottomText ? `${upperText} - ${bottomText}` : upperText}
@@ -57,17 +59,19 @@ const ListElem = forwardRef(({
                     placement="right"
                     autoAdjustOverflow={true}
                     destroyTooltipOnHide={true}
-                    overlayStyle={{ maxWidth: 400 }}
+                    overlayStyle={{maxWidth: 400}}
                 >
                     <div
                         className={classes.text}
                     >
-                        <div style={{ color: colorUpperText ? colorUpperText : "" }} className={` ${classes.upperTxt}   ${isActive === false && classes.notActive}`}>{upperText}</div>
+                        <div style={{color: colorUpperText ? colorUpperText : ""}}
+                             className={` ${classes.upperTxt}   ${isActive === false && classes.notActive}`}>{upperText}</div>
                         {bottomText && (
                             <div className={classes.bottomTxt}>{bottomText}</div>
                         )}
                     </div>
                 </Tooltip>
+
                 <div
                     className={classes.roundSection}
                 >
@@ -77,7 +81,7 @@ const ListElem = forwardRef(({
                                 backgroundColor: '#F0F0F0',
                             }}
                         >
-                            <img src={nuber_mark} alt="nuber_mark" />
+                            <img src={nuber_mark} alt="nuber_mark"/>
                         </div>
                     ) : (
                         <div
@@ -90,7 +94,34 @@ const ListElem = forwardRef(({
                     )}
 
                 </div>
-                {/* )} */}
+
+                {
+                    isPageProject && (
+                        <div
+                            className={classes.roundSectionForProject}
+                        >
+
+                            {
+                                objTargets?.completed !== 0 && <div style={{backgroundColor: "#005475"}}>
+                                    {objTargets?.completed}
+                                </div>
+                            }
+
+                            {
+                                objTargets?.expired !== 0  && <div style={{backgroundColor: "#FF4D4F"}}>
+                                    {objTargets?.expired}
+                                </div>
+                            }
+
+                            {
+                                objTargets?.normal !== 0  && <div style={{backgroundColor: "#999999"}}>
+                                    {objTargets?.normal}
+                                </div>
+                            }
+
+                        </div>
+                    )
+                }
             </div>
         </>
     )
