@@ -123,6 +123,7 @@ export default function ProjectPage() {
                         refHandleTargetsInActive={refHandleTargetsInActive}
                         refHandleStateProductInCompleted={refHandleStateProductInCompleted}
                         setBtn={setBtn}
+                        openView={() => setCurrentState(STATES.VIEW)}
                     />
                 ),
             } : {
@@ -153,6 +154,7 @@ export default function ProjectPage() {
                         refHandleTargetsInActive={refHandleTargetsInActive}
                         refHandleStateProductInCompleted={refHandleStateProductInCompleted}
                         setBtn={setBtn}
+                        openView={() => setCurrentState(STATES.VIEW)}
                     />
                 ),
             })

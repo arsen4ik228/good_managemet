@@ -31,6 +31,7 @@ const arrayFilter = [
 export default function ProjectsAndProgramsList() {
 
     const navigate = useNavigate()
+
     const {projectId} = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
