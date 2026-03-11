@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import s from './EditProject.module.css';
 import Table from '../components/table/Table';
 import {v4 as uuidv4} from 'uuid';
@@ -46,7 +46,7 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, setBtn}) {
+export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, setBtn, openView}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -247,6 +247,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
+            openView();
             message.success("Проект завершен");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
