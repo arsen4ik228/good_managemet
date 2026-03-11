@@ -51,6 +51,8 @@ export default function ProjectsAndProgramsList() {
     }, [statusProject]);
 
     const {
+        allShit,
+
         projects,
         archivesProjects,
         projectsWithProgram,
@@ -154,7 +156,8 @@ export default function ProjectsAndProgramsList() {
     }
 
     const filtredProjects = useMemo(() => {
-        const combined = [...projectsWithProgram, ...projects, ...programs, ...archivesPrograms, ...archivesProjects, ...archivesProjectsWithProgram]
+        // const combined = [...projectsWithProgram, ...projects, ...programs, ...archivesPrograms, ...archivesProjects, ...archivesProjectsWithProgram]
+        const combined = allShit
             .filter(c =>
                 c?.targets?.some(
                     t => t.type === "Продукт" && t.targetState === stateFilter

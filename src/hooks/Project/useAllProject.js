@@ -5,6 +5,7 @@ export const useAllProject = () => {
   const { reduxSelectedOrganizationId } = useGetReduxOrganization();
 
   const {
+      allShit = [],
       projects = [],
       archivesProjects = [],
   
@@ -23,6 +24,8 @@ export const useAllProject = () => {
       {organizationId: reduxSelectedOrganizationId},
       {
         selectFromResult: ({ data, isLoading, isError }) => ({
+            allShit: data?.allShit || [],
+
           projects: data?.projects || [],
           archivesProjects: data?.archivesProjects || [],
   
@@ -44,6 +47,8 @@ export const useAllProject = () => {
 
   return {
     reduxSelectedOrganizationId,
+
+      allShit,
 
     projects,
     archivesProjects,
