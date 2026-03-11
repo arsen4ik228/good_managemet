@@ -238,7 +238,7 @@ export default function ProjectsAndProgramsList() {
                                 objTargets = {{
                                     completed : item.targets.filter((t) => t.targetState === "Завершена" && t.type !== "Продукт").length,
                                     expired : item.targets.filter((t) => t.isExpired && t.type !== "Продукт").length,
-                                    normal : item.targets.filter((t) => (t.targetState === "Активная" || t.targetState === "Черновик")&& t.type !== "Продукт").length,
+                                    normal : item.targets.filter((t) => (t.targetState === "Активная" || t.targetState === "Черновик") && t.type !== "Продукт" && !t.isExpired).length,
                                 }}
                             />
                         </React.Fragment>
