@@ -20,6 +20,7 @@ export const projectApi = apiSlice.injectEndpoints({
 
                 return {
                     maxProjectNumber, // Добавляем максимальный номер в результат
+                    allShit: response || [],
 
                     projects:
                         response?.filter((item) => {
