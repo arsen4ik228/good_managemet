@@ -61,7 +61,7 @@ const statusTarget = (target) => {
 
     switch (targetState) {
         case "Завершена":
-            status = "Завершена";
+            status = target.type === "Продукт" ? "Завершен" : "Завершена";
             date = formatDate(target?.dateComplete);
             break;
 
@@ -70,8 +70,9 @@ const statusTarget = (target) => {
                 const deadlineDate = new Date(target.deadline);
                 deadlineDate.setHours(0, 0, 0, 0); // нормализуем дату
 
+                const statusTarget = target.type === "Продукт" ? "Просрочен" : "Просрочена";
                 // сравнение только по день/месяц/год
-                status = deadlineDate >= today ? null : "Просрочена";
+                status = deadlineDate >= today ? null : statusTarget;
                 date = formatDate(target.deadline);
             }
             break;
