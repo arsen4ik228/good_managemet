@@ -139,19 +139,14 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 .find(t => t.type === "Продукт")?.holderPostId;
 
             const targetCreate = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdateDraft = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
-                ...t,
-                targetState: "Активная"
-            }));
-            const targetUpdateActive = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+            const targetUpdate = targetUpdateDtos.filter((t) => t.targetState !== "Завершена" && t.type !== "Продукт")?.map((t) => ({
                 ...t,
                 targetState: "Активная"
             }));
 
-            const targetUpdate = [...targetUpdateDraft, ...targetUpdateActive];
             console.log("targetUpdate = ", targetUpdate);
             try {
-                const response = await updateProject({
+               await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     holderProductPostId,
@@ -165,7 +160,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
             }
         } else {
             try {
-                const response = await updateProject({
+                await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
@@ -202,7 +197,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
             .find(t => t.type === "Продукт")?.holderPostId
 
         try {
-            const response = await updateProject({
+            await updateProject({
                 projectId: projectId,
                 _id: projectId,
                 holderProductPostId,
@@ -240,7 +235,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
             .find(t => t.type === "Продукт")?.holderPostId
 
         try {
-            const response = await updateProject({
+           await updateProject({
                 projectId: projectId,
                 _id: projectId,
                 holderProductPostId,
@@ -293,6 +288,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 holderPostId: task.holderPostId || null,
                 deadline: task.deadline || null,
                 isCreated: false,
+                convert: task.convert || null,
             }));
             return acc;
         }, {});
