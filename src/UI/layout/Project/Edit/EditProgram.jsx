@@ -147,7 +147,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 message.open({
                     key,
                     type: "success",
-                    content: "Проект программы",
+                    content: "Программа обновлена",
                     duration: 2
                 });
             } catch (error) {
@@ -171,7 +171,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 message.open({
                     key,
                     type: "success",
-                    content: "Проект программы",
+                    content: "Программа обновлена",
                     duration: 2
                 });
             } catch (error) {
