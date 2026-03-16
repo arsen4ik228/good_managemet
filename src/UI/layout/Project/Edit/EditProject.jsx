@@ -46,7 +46,7 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, btn, setBtn, openView}) {
+export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, setBtn, openView}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -59,7 +59,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     const [currentProjectId, setCurrentProjectId] = useState();
 
     const {allPosts} = useAllPosts();
-    const {updateProject, isLoadingUpdateProjectMutation} = useUpdateSingleProject();
+    const {updateProject} = useUpdateSingleProject();
     const {currentProject, targets} = useGetSingleProject({selectedProjectId: currentProjectId});
 
     const [contentProject, setContentProject] = useState("");
@@ -351,7 +351,6 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     click: () => {
                         refHandleTargetsInActive?.current();
                     },
-                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         } else if(productState === "Активная"){
@@ -361,13 +360,12 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     click: () => {
                         refHandleStateProductInCompleted?.current();
                     },
-                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         }else{
             setBtn([])
         }
-    }, [ targets, currentProject, isLoadingUpdateProjectMutation]);
+    }, [ targets, currentProject]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {

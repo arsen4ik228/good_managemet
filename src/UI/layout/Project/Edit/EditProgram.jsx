@@ -34,7 +34,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
     const [currentProgramId, setCurrentProgramId] = useState();
 
     const {allPosts} = useAllPosts();
-    const {updateProject, isLoadingUpdateProjectMutation} = useUpdateSingleProject();
+    const {updateProject} = useUpdateSingleProject();
     const {
         currentProgram,
         currentProjects,
@@ -339,7 +339,6 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     click: () => {
                         refHandleTargetsInActive?.current();
                     },
-                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         } else if(productState === "Активная"){
@@ -349,13 +348,12 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     click: () => {
                         refHandleStateProductInCompleted?.current();
                     },
-                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         }else{
             setBtn([])
         }
-    }, [targets, currentProgram, currentProjects,isLoadingUpdateProjectMutation ]);
+    }, [targets, currentProgram, currentProjects]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {
