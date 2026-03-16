@@ -22,7 +22,7 @@ export default function MainContentContainer({component, buttons, children, popo
                     <div>
                         <div className={classes.buutonsContainer}>
                             {buttons?.map((item, index) => (
-                                <Button key={index} onClick={item.click}
+                                <Button key={index} onClick={item.click} loading={item?.loading}
                                         style={{color: item?.color}}>{item.text}</Button>
                             ))}
                             {popoverButton}
