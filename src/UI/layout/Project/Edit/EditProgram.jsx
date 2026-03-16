@@ -95,6 +95,14 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
     };
 
     const handleSave = async () => {
+        const key = "projectUpdate";
+        message.open({
+            key,
+            type: "loading",
+            content: "Обновление программы...",
+            duration: 0
+        });
+
         const {contentProgram, targetsByType, programId, projectIdsInProgram} = latestStateRef.current;
         const productState = Object.values(targetsByType)
             .flat()
@@ -136,9 +144,19 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
-                message.success("Программа обновлена");
+                message.open({
+                    key,
+                    type: "success",
+                    content: "Проект программы",
+                    duration: 2
+                });
             } catch (error) {
-                message.error("Ошибка при обновлении проектов")
+                message.open({
+                    key,
+                    type: "error",
+                    content: "Ошибка при обновлении программы",
+                    duration: 3
+                });
             }
         } else {
             try {
@@ -150,9 +168,19 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
-                message.success("Программа обновлена");
+                message.open({
+                    key,
+                    type: "success",
+                    content: "Проект программы",
+                    duration: 2
+                });
             } catch (error) {
-                message.error("Ошибка при обновлении проектов")
+                message.open({
+                    key,
+                    type: "error",
+                    content: "Ошибка при обновлении программы",
+                    duration: 3
+                });
             }
         }
 
