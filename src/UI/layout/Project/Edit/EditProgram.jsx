@@ -6,7 +6,7 @@ import {v4 as uuidv4} from 'uuid';
 import {useRightPanel, usePanelPreset} from "@hooks";
 import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
-import {message} from 'antd';
+import {message, Modal} from 'antd';
 import TableInformation from "../components/table/TableInformation";
 import debounce from "lodash/debounce";
 import {useGetSingleProgram} from "../../../../hooks/Project/useGetSingleProgram";
@@ -34,7 +34,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
     const [currentProgramId, setCurrentProgramId] = useState();
 
     const {allPosts} = useAllPosts();
-    const {updateProject} = useUpdateSingleProject();
+    const {updateProject, isLoadingUpdateProjectMutation} = useUpdateSingleProject();
     const {
         currentProgram,
         currentProjects,
@@ -189,13 +189,25 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
+            isDirtyRef.current = false;
             message.success("Программа активная");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
-    refHandleTargetsInActive.current = handleTargetsInActive;
+    const handleTargetsInActiveСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите начать выполнение программы?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleTargetsInActive();
+            },
+        });
+    };
+    refHandleTargetsInActive.current = handleTargetsInActiveСonfirmation;
 
     const handleStateProductInCompleted = async () => {
         const target = Object.values(targetsByType)
@@ -227,13 +239,25 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
             openView();
+            isDirtyRef.current = false;
             message.success("Программа завершена");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
-    refHandleStateProductInCompleted.current = handleStateProductInCompleted;
+    const handleStateProductInCompletedСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите завершить программу?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleStateProductInCompleted();
+            },
+        });
+    };
+    refHandleStateProductInCompleted.current = handleStateProductInCompletedСonfirmation;
 
     // для открытия нового проекта и сохранении старого
     useEffect(() => {
@@ -315,6 +339,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     click: () => {
                         refHandleTargetsInActive?.current();
                     },
+                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         } else if(productState === "Активная"){
@@ -324,12 +349,13 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     click: () => {
                         refHandleStateProductInCompleted?.current();
                     },
+                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         }else{
             setBtn([])
         }
-    }, [targets, currentProgram, currentProjects]);
+    }, [targets, currentProgram, currentProjects,isLoadingUpdateProjectMutation ]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {

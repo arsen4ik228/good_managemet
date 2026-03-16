@@ -7,7 +7,7 @@ import {useRightPanel, usePanelPreset} from "@hooks";
 import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
 import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
-import {message} from 'antd';
+import {message, Popconfirm, Button, Modal} from 'antd';
 import TableInformation from "../components/table/TableInformation";
 import debounce from "lodash/debounce";
 
@@ -46,7 +46,7 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, setBtn, openView}) {
+export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, btn, setBtn, openView}) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -59,7 +59,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     const [currentProjectId, setCurrentProjectId] = useState();
 
     const {allPosts} = useAllPosts();
-    const {updateProject} = useUpdateSingleProject();
+    const {updateProject, isLoadingUpdateProjectMutation} = useUpdateSingleProject();
     const {currentProject, targets} = useGetSingleProject({selectedProjectId: currentProjectId});
 
     const [contentProject, setContentProject] = useState("");
@@ -205,13 +205,24 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
+            isDirtyRef.current = false;
             message.success("Проект активный");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
-
-    refHandleTargetsInActive.current = handleTargetsInActive;
+    const handleTargetsInActiveСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите начать выполнение проекта?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleTargetsInActive();
+            },
+        });
+    };
+    refHandleTargetsInActive.current = handleTargetsInActiveСonfirmation;
 
     const handleStateProductInCompleted = async () => {
         const target = Object.values(targetsByType)
@@ -243,13 +254,25 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
             openView();
+            isDirtyRef.current = false;
             message.success("Проект завершен");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
-    refHandleStateProductInCompleted.current = handleStateProductInCompleted;
+    const handleStateProductInCompletedСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите завершить проект?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleStateProductInCompleted();
+            },
+        });
+    };
+    refHandleStateProductInCompleted.current = handleStateProductInCompletedСonfirmation;
 
     // для открытия нового проекта и сохранении старого
     useEffect(() => {
@@ -328,6 +351,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     click: () => {
                         refHandleTargetsInActive?.current();
                     },
+                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         } else if(productState === "Активная"){
@@ -337,12 +361,13 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     click: () => {
                         refHandleStateProductInCompleted?.current();
                     },
+                    loading:isLoadingUpdateProjectMutation
                 },
             ])
         }else{
             setBtn([])
         }
-    }, [targets, currentProject]);
+    }, [ targets, currentProject, isLoadingUpdateProjectMutation]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {
@@ -369,6 +394,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     return (
         <div className={s.main}>
             <div className={s.wrapper}>
+
                 {/*<button onClick={handleTargetsInActive}> handleTargetsInActive</button>*/}
                 {/*<button onClick={handleSave}> update</button>*/}
                 {sections
