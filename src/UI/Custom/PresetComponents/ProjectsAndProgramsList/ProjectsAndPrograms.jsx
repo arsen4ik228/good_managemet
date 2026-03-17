@@ -11,6 +11,7 @@ import ListAddButtom from "../../ListAddButton/ListAddButtom";
 import ExpandableAddButton from '../../ListAddButton/ExpandableAddButton';
 import {useStrategyHook} from '../../../../hooks';
 import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
+import {useGetSingleProgram} from "../../../../hooks/Project/useGetSingleProgram";
 
 
 const arrayFilter = [
@@ -28,39 +29,32 @@ const arrayFilter = [
     }
 ]
 
+
 export default function ProjectsAndProgramsList() {
 
     const navigate = useNavigate()
 
-    const {projectId} = useParams();
+    const {projectId, programId} = useParams();
     const [seacrhUsersSectionsValue, setSeacrhUsersSectionsValue] = useState()
     const [openedAccordionId, setOpenedAccordionId] = useState(null);
     const accordionRefs = useRef({});
 
-    const {statusProject} = useGetSingleProject({selectedProjectId: projectId});
+    const {statusProject} =  useGetSingleProject({selectedProjectId: projectId || programId});
 
     // Для FilterElement
     const [openFilter, setOpenFilter] = useState(false);
     const [stateFilter, setStateFilter] = useState("Черновик");
     //
 
+
     useEffect(() => {
         if (!statusProject) return;
-
         setStateFilter(statusProject);
     }, [statusProject]);
 
+
     const {
         allShit,
-
-        projects,
-        archivesProjects,
-        projectsWithProgram,
-        archivesProjectsWithProgram,
-
-        programs,
-        archivesPrograms,
-
         maxProjectNumber
     } = useAllProject();
 
@@ -172,7 +166,7 @@ export default function ProjectsAndProgramsList() {
 
         // Сортировка по projectName
         return filtered?.sort((a, b) => a.projectName.localeCompare(b.projectName));
-    }, [seacrhUsersSectionsValue, projects, projectsWithProgram, stateFilter, programs]);
+    }, [seacrhUsersSectionsValue, allShit, stateFilter]);
 
     useEffect(() => {
         if (!openedAccordionId) return;
@@ -187,13 +181,32 @@ export default function ProjectsAndProgramsList() {
 
     // для автоскролла до выбранного элемента при перезагрузки страницы
     useEffect(() => {
-        if (projectId) {
-            setOpenedAccordionId(projectId);
+        if (projectId || programId) {
+            setOpenedAccordionId(projectId || programId);
         }
-    }, [projectId]);
+    }, [projectId, programId]);
 
     // console.log(projectsWithProgram, '   ', projects, '    ', programs)
 
+    const circleObj = (item) => {
+        let completed = item.targets.filter((t) => t.targetState === "Завершена" && t.type !== "Продукт").length;
+        let expired = item.targets.filter((t) => t.isExpired && t.type !== "Продукт").length;
+        let normal = item.targets.filter((t) => (t.targetState === "Активная" || t.targetState === "Черновик") && t.type !== "Продукт" && !t.isExpired).length;
+
+
+        if (item?.projectsInProgram?.length > 0) {
+            let projectsProduct = item?.projectsInProgram?.flatMap((p) => p.targets).filter((p) => p.type === "Продукт");
+            completed += projectsProduct.filter((t) => t.targetState === "Завершена").length;
+            expired += projectsProduct.filter((t) => t.isExpired).length;
+            normal += projectsProduct.filter((t) => (t.targetState === "Активная" || t.targetState === "Черновик") && !t.isExpired).length;
+        }
+
+        return {
+            completed,
+            expired,
+            normal,
+        }
+    }
     return (
         <>
             <CustomList
@@ -238,11 +251,7 @@ export default function ProjectsAndProgramsList() {
                                     if (el) accordionRefs.current[item.id] = el;
                                 }}
                                 isPageProject={true}
-                                objTargets = {{
-                                    completed : item.targets.filter((t) => t.targetState === "Завершена" && t.type !== "Продукт").length,
-                                    expired : item.targets.filter((t) => t.isExpired && t.type !== "Продукт").length,
-                                    normal : item.targets.filter((t) => (t.targetState === "Активная" || t.targetState === "Черновик") && t.type !== "Продукт" && !t.isExpired).length,
-                                }}
+                                objTargets={circleObj(item)}
                             />
                         </React.Fragment>
                     ))

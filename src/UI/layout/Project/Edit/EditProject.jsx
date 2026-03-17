@@ -7,7 +7,7 @@ import {useRightPanel, usePanelPreset} from "@hooks";
 import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
 import {useGetSingleProject} from "../../../../hooks/Project/useGetSingleProject";
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
-import {message} from 'antd';
+import {message, Popconfirm, Button, Modal} from 'antd';
 import TableInformation from "../components/table/TableInformation";
 import debounce from "lodash/debounce";
 
@@ -112,6 +112,15 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     };
 
     const handleSave = async () => {
+
+        const key = "projectUpdate";
+        message.open({
+            key,
+            type: "loading",
+            content: "Обновление проекта...",
+            duration: 0
+        });
+
         const {contentProject, targetsByType, projectId} = latestStateRef.current;
         const productState = Object.values(targetsByType)
             .flat()
@@ -139,19 +148,14 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 .find(t => t.type === "Продукт")?.holderPostId;
 
             const targetCreate = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdateDraft = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
-                ...t,
-                targetState: "Активная"
-            }));
-            const targetUpdateActive = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+            const targetUpdate = targetUpdateDtos.filter((t) => t.targetState !== "Завершена" && t.type !== "Продукт")?.map((t) => ({
                 ...t,
                 targetState: "Активная"
             }));
 
-            const targetUpdate = [...targetUpdateDraft, ...targetUpdateActive];
             console.log("targetUpdate = ", targetUpdate);
             try {
-                const response = await updateProject({
+               await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     holderProductPostId,
@@ -159,22 +163,42 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     ...(targetCreate.length > 0 ? {targetCreateDtos: targetCreate} : {}),
                     ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
-                message.success("Проект обновлен");
+                message.open({
+                    key,
+                    type: "success",
+                    content: "Проект обновлен",
+                    duration: 2
+                });
             } catch (error) {
-                message.error("Ошибка при обновлении проектов")
+                message.open({
+                    key,
+                    type: "error",
+                    content: "Ошибка при обновлении проектов",
+                    duration: 3
+                });
             }
         } else {
             try {
-                const response = await updateProject({
+                await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
-                message.success("Проект обновлен");
+                message.open({
+                    key,
+                    type: "success",
+                    content: "Проект обновлен",
+                    duration: 2
+                });
             } catch (error) {
-                message.error("Ошибка при обновлении проектов")
+                message.open({
+                    key,
+                    type: "error",
+                    content: "Ошибка при обновлении проектов",
+                    duration: 3
+                });
             }
         }
 
@@ -202,7 +226,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
             .find(t => t.type === "Продукт")?.holderPostId
 
         try {
-            const response = await updateProject({
+            await updateProject({
                 projectId: projectId,
                 _id: projectId,
                 holderProductPostId,
@@ -210,13 +234,24 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
+            isDirtyRef.current = false;
             message.success("Проект активный");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
-
-    refHandleTargetsInActive.current = handleTargetsInActive;
+    const handleTargetsInActiveСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите начать выполнение проекта?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleTargetsInActive();
+            },
+        });
+    };
+    refHandleTargetsInActive.current = handleTargetsInActiveСonfirmation;
 
     const handleStateProductInCompleted = async () => {
         const target = Object.values(targetsByType)
@@ -240,7 +275,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
             .find(t => t.type === "Продукт")?.holderPostId
 
         try {
-            const response = await updateProject({
+           await updateProject({
                 projectId: projectId,
                 _id: projectId,
                 holderProductPostId,
@@ -248,13 +283,25 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
             openView();
+            isDirtyRef.current = false;
             message.success("Проект завершен");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
-    refHandleStateProductInCompleted.current = handleStateProductInCompleted;
+    const handleStateProductInCompletedСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите завершить проект?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleStateProductInCompleted();
+            },
+        });
+    };
+    refHandleStateProductInCompleted.current = handleStateProductInCompletedСonfirmation;
 
     // для открытия нового проекта и сохранении старого
     useEffect(() => {
@@ -293,6 +340,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 holderPostId: task.holderPostId || null,
                 deadline: task.deadline || null,
                 isCreated: false,
+                convert: task.convert || null,
             }));
             return acc;
         }, {});
@@ -346,7 +394,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
         }else{
             setBtn([])
         }
-    }, [targets, currentProject]);
+    }, [ targets, currentProject]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {
@@ -373,6 +421,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     return (
         <div className={s.main}>
             <div className={s.wrapper}>
+
                 {/*<button onClick={handleTargetsInActive}> handleTargetsInActive</button>*/}
                 {/*<button onClick={handleSave}> update</button>*/}
                 {sections
