@@ -130,7 +130,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 .find(t => t.type === "Продукт")?.holderPostId;
 
             const targetActive = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdate = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+            const targetUpdate = targetUpdateDtos.filter((t) =>  t.targetState !== "Завершена" && t.type !== "Продукт")?.map((t) => ({
                 ...t,
                 targetState: "Активная"
             }));
@@ -142,7 +142,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     holderProductPostId,
                     ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
-                    ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
+                    // ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
                 message.open({
                     key,

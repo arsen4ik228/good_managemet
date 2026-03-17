@@ -161,7 +161,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     holderProductPostId,
                     ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                     ...(targetCreate.length > 0 ? {targetCreateDtos: targetCreate} : {}),
-                    ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
+                    // ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
                 message.open({
                     key,
