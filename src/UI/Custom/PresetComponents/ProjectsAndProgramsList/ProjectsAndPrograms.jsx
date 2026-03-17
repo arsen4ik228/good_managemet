@@ -61,7 +61,8 @@ export default function ProjectsAndProgramsList() {
         programs,
         archivesPrograms,
 
-        maxProjectNumber
+        maxProjectNumber,
+        isLoadingGetProject
     } = useAllProject();
 
     const {activeStrategyId} = useStrategyHook()
@@ -204,6 +205,7 @@ export default function ProjectsAndProgramsList() {
                 searchFunc={setSeacrhUsersSectionsValue}
                 // addButtonClick={() => createNewProject()}
                 // addButtonText={'Создать проект'}
+                isLoading={isLoadingGetProject && (!filtredProjects || filtredProjects?.length === 0)}
             >
 
                 {

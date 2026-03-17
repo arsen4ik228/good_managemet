@@ -1,35 +1,36 @@
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import classes from "./ViewProject.module.css";
 
-import {useEffect} from "react";
-import {useProjectForm} from "../../../../contexts/ProjectFormContext";
-import {notEmpty} from '@helpers/helpers'
+import { useEffect } from "react";
+import { useProjectForm } from "../../../../contexts/ProjectFormContext";
+import { notEmpty } from '@helpers/helpers'
 
-import {useRightPanel, usePanelPreset} from "@hooks";
+import { useRightPanel, usePanelPreset } from "@hooks";
 import dayjs from 'dayjs';
-import {useGetSingleProgram} from "../../../../hooks/Project/useGetSingleProgram";
+import { useGetSingleProgram } from "../../../../hooks/Project/useGetSingleProgram";
+import { DocumentSkeleton } from "../../../DocumentSkeleton/DocumentSkeleton";
 
 const formatDate = (iso) => {
     if (!iso) return '';
     return dayjs(iso).format('DD.MM.YY');
 };
 
-const Task = ({title, task, date, people, post, index, status}) => {
+const Task = ({ title, task, date, people, post, index, status }) => {
     return (
         <>
             {
                 title === "Продукт" ? (
-                        <div className={classes.wrapper}>
-                            <div className={classes.leftBlock}>
-                                <span>{task}</span>
-                            </div>
-                            <div className={classes.rightBlock}>
-                                <span>{status} {date}</span>
-                                <span>{people}</span>
-                                <span className={classes.light}>{post}</span>
-                            </div>
+                    <div className={classes.wrapper}>
+                        <div className={classes.leftBlock}>
+                            <span>{task}</span>
                         </div>
-                    )
+                        <div className={classes.rightBlock}>
+                            <span>{status} {date}</span>
+                            <span>{people}</span>
+                            <span className={classes.light}>{post}</span>
+                        </div>
+                    </div>
+                )
                     : (
                         <div className={classes.wrapperBorder}>
                             <div className={classes.leftBlock}>
@@ -93,13 +94,13 @@ const statusTarget = (target) => {
     };
 };
 
-const TasksContainer = ({title, tasks}) => {
+const TasksContainer = ({ title, tasks }) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
             {
                 tasks?.map((item, index) => {
-                    const {status, date} = statusTarget(item);
+                    const { status, date } = statusTarget(item);
                     const post = item?.targetHolders.find(t => t?.post?.id === item.holderPostId)?.post?.postName;
                     const user = item?.targetHolders.find(t => t?.post?.id === item.holderPostId)?.post?.user;
                     const people = user
@@ -124,7 +125,7 @@ const TasksContainer = ({title, tasks}) => {
     )
 }
 
-const TasksContainerProject = ({title, tasks}) => {
+const TasksContainerProject = ({ title, tasks }) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
@@ -135,7 +136,7 @@ const TasksContainerProject = ({title, tasks}) => {
                         ? `${user.firstName} ${user.lastName}`
                         : null;
                     const post = item?.targets[0]?.targetHolders?.[0]?.post?.postName
-                    const {status, date} = statusTarget(item?.targets[0]);
+                    const { status, date } = statusTarget(item?.targets[0]);
 
                     return (
                         <Task
@@ -156,7 +157,7 @@ const TasksContainerProject = ({title, tasks}) => {
     )
 }
 
-const Information = ({title, content}) => {
+const Information = ({ title, content }) => {
     return (
         <div className={classes.container}>
             <span className={`${classes.strong}`}>{title}:</span>
@@ -168,16 +169,17 @@ const Information = ({title, content}) => {
 
 const order = ['Продукт', 'Метрика', 'Организационные мероприятия', 'Правила', 'Задача'];
 
-export default function ViewProgram({contentRef}) {
-    const {PRESETS} = useRightPanel()
+export default function ViewProgram({ contentRef }) {
+    const { PRESETS } = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
-    const {programId} = useParams();
+    const { programId } = useParams();
     const {
         currentProgram,
         currentProjects,
         targets,
-        statusProgram
-    } = useGetSingleProgram({selectedProgramId: programId});
+        statusProgram,
+        isLoadingGetProgramId,
+    } = useGetSingleProgram({ selectedProgramId: programId });
 
     const sortedTargets = targets
         ? [...targets].sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title))
@@ -200,20 +202,29 @@ export default function ViewProgram({contentRef}) {
     console.log(currentProgram)
 
     return (
-        <div className={classes.main} ref={contentRef}>
-            <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
-            <span className={classes.strong}>Имя Фамилия</span>
-            <span className={classes.margin}>Название поста</span>
+        <>
+            {isLoadingGetProgramId ? (
+                <>
+                    <DocumentSkeleton></DocumentSkeleton>
+                </>
+            ) : (
+                <div className={classes.main} ref={contentRef}>
+                    <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
+                    <span className={classes.strong}>Имя Фамилия</span>
+                    <span className={classes.margin}>Название поста</span>
 
-            <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProgram?.type}</h2>
-            <h2 className={`${classes.strong} ${classes.center}`}>{currentProgram?.projectName}</h2>
-            {currentProgram?.content?.trim() && <Information title={"Информация"} content={currentProgram?.content}/>}
-            {
-                sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks}/>)
-            }
-            {
-                currentProjects?.length > 0 && <TasksContainerProject title={"Проекты"} tasks={currentProjects}/>
-            }
-        </div>
+                    <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProgram?.type}</h2>
+                    <h2 className={`${classes.strong} ${classes.center}`}>{currentProgram?.projectName}</h2>
+                    {currentProgram?.content?.trim() && <Information title={"Информация"} content={currentProgram?.content} />}
+                    {
+                        sortedTargets?.map((item) => <TasksContainer title={item.title} tasks={item.tasks} />)
+                    }
+                    {
+                        currentProjects?.length > 0 && <TasksContainerProject title={"Проекты"} tasks={currentProjects} />
+                    }
+                </div>
+            )}
+        </>
+
     )
 }

@@ -16,8 +16,7 @@
     border: 1px solid #CCCCCC;
     border-radius: 5px;
 
-    overflow-y: auto;
-    border:  1px solid red;
+    overflow-y: hidden;
 }
 
 .strong {
