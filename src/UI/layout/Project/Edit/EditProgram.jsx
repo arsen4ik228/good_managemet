@@ -6,7 +6,7 @@ import {v4 as uuidv4} from 'uuid';
 import {useRightPanel, usePanelPreset} from "@hooks";
 import {useAllPosts} from '../../../../hooks/Post/useAllPosts';
 import {useUpdateSingleProject} from "../../../../hooks/Project/useUpdateSingleProject";
-import {message} from 'antd';
+import {message, Modal} from 'antd';
 import TableInformation from "../components/table/TableInformation";
 import debounce from "lodash/debounce";
 import {useGetSingleProgram} from "../../../../hooks/Project/useGetSingleProgram";
@@ -95,6 +95,14 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
     };
 
     const handleSave = async () => {
+        const key = "projectUpdate";
+        message.open({
+            key,
+            type: "loading",
+            content: "Обновление программы...",
+            duration: 0
+        });
+
         const {contentProgram, targetsByType, programId, projectIdsInProgram} = latestStateRef.current;
         const productState = Object.values(targetsByType)
             .flat()
@@ -122,7 +130,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 .find(t => t.type === "Продукт")?.holderPostId;
 
             const targetActive = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdate = targetUpdateDtos.filter((t) => t.type === "Черновик" && t.type !== "Продукт")?.map((t) => ({
+            const targetUpdate = targetUpdateDtos.filter((t) =>  t.targetState !== "Завершена" && t.type !== "Продукт")?.map((t) => ({
                 ...t,
                 targetState: "Активная"
             }));
@@ -134,11 +142,21 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     holderProductPostId,
                     ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
-                    ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
+                    // ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
-                message.success("Программа обновлена");
+                message.open({
+                    key,
+                    type: "success",
+                    content: "Программа обновлена",
+                    duration: 2
+                });
             } catch (error) {
-                message.error("Ошибка при обновлении проектов")
+                message.open({
+                    key,
+                    type: "error",
+                    content: "Ошибка при обновлении программы",
+                    duration: 3
+                });
             }
         } else {
             try {
@@ -150,9 +168,19 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                     ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
                 }).unwrap();
-                message.success("Программа обновлена");
+                message.open({
+                    key,
+                    type: "success",
+                    content: "Программа обновлена",
+                    duration: 2
+                });
             } catch (error) {
-                message.error("Ошибка при обновлении проектов")
+                message.open({
+                    key,
+                    type: "error",
+                    content: "Ошибка при обновлении программы",
+                    duration: 3
+                });
             }
         }
 
@@ -189,13 +217,25 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 ...(targetCreateDtos.length > 0 ? {targetCreateDtos} : {}),
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
+            isDirtyRef.current = false;
             message.success("Программа активная");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
-    refHandleTargetsInActive.current = handleTargetsInActive;
+    const handleTargetsInActiveСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите начать выполнение программы?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleTargetsInActive();
+            },
+        });
+    };
+    refHandleTargetsInActive.current = handleTargetsInActiveСonfirmation;
 
     const handleStateProductInCompleted = async () => {
         const target = Object.values(targetsByType)
@@ -227,13 +267,25 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                 ...(targetUpdateDtos.length > 0 ? {targetUpdateDtos} : {}),
             }).unwrap();
             openView();
+            isDirtyRef.current = false;
             message.success("Программа завершена");
         } catch (error) {
             message.error("Ошибка при обновлении проектов")
         }
     };
 
-    refHandleStateProductInCompleted.current = handleStateProductInCompleted;
+    const handleStateProductInCompletedСonfirmation = () => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите завершить программу?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await handleStateProductInCompleted();
+            },
+        });
+    };
+    refHandleStateProductInCompleted.current = handleStateProductInCompletedСonfirmation;
 
     // для открытия нового проекта и сохранении старого
     useEffect(() => {

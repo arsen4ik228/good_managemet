@@ -71,7 +71,7 @@ const ModalSelectProject = ({
                                 checked={checkedItems.includes(item.id)}
                                 onChange={() => toggleCheck(item)}
                             >
-                                {item.projectName}
+                                {item.projectName} {item.targets.find((t) => t.type === "Продукт")?.targetState}
                             </Checkbox>
                         </List.Item>
                     )}
