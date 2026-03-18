@@ -62,7 +62,7 @@ export default function RightSider({ config: initialConfig }) {    //
 
         { id: '8', icon: active_strategy, text: 'Стратегия', link: 'strategy', },
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: false },
-        { id: '10', icon: project, text: 'Схема компании', link: 'schemaCompany', isActive: false },
+        { id: '10', icon: project, text: 'Cтруктура компании', link: 'structure', isActive: true },
 
         // { id: '12', icon: project, text: 'Академия', link: 'academy', isActive: false },
         // { id: '13', icon: project, text: 'Корпоративное обучение', link: 'education', isActive: false },
@@ -131,7 +131,7 @@ export default function RightSider({ config: initialConfig }) {    //
 
     const handlerClickHelper = async (link) => {
         // Специальные случаи для внешних ссылок
-        if (link === 'controlPanel' || link === 'svodka') {
+        if (link === 'controlPanel' || link === 'svodka' || link === 'structure') {
             window.open(homeUrl + `#/${link}`, '_blank');
             setExpanendHelper(false);
             return;

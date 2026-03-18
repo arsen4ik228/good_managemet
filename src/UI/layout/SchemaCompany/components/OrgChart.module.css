@@ -1,0 +1,121 @@
+.container {
+    width: 100%;
+    height: 100%;
+    /* calc(100vh - 120px); */
+    position: relative;
+    /* border-radius: 8px; */
+    overflow: hidden;
+    border: 1px solid #CCCCCC;
+    background-image: url('/src/UI/image/schema_background.svg'); /* Путь к файлу */
+    background-repeat: repeat; /* или no-repeat */
+    background-size: auto; /* или cover, contain */
+    background-position: center;
+   
+}
+.messageContainer {
+    width: 100%;
+    height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.loader, .error, .empty {
+    padding: 20px 30px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 12px;
+    background: white;
+    border: 2px solid #CCCCCC;
+    color: #000000;
+}
+
+.loader {
+    background: #CCCCCC;
+}
+
+.error {
+    border-left: 4px solid #ff0000;
+}
+
+.empty {
+    background: #CCCCCC;
+}
+
+/* Стили для узлов */
+:global(.react-flow__node) {
+    cursor: default !important;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+:global(.react-flow__node:hover) {
+    background: #b3b3b3 !important; /* чуть темнее при наведении */
+    border-color: #b3b3b3 !important;
+}
+
+/* Стили для ребер */
+:global(.react-flow__edge-path) {
+    transition: stroke 0.2s;
+}
+
+:global(.react-flow__edge:hover .react-flow__edge-path) {
+    stroke: #b3b3b3;
+}
+
+/* Убираем выделение */
+:global(.react-flow__node.selected) {
+    border-color: #999999 !important;
+    background: #b3b3b3 !important;
+    box-shadow: none !important;
+}
+
+:global(.react-flow__node:focus) {
+    outline: none;
+    border-color: #CCCCCC !important;
+    box-shadow: none !important;
+}
+
+:global(.react-flow__node.selectable:focus) {
+    box-shadow: none;
+}
+
+/* Стили для контролов */
+:global(.react-flow__controls) {
+    border: 2px solid #CCCCCC;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: none;
+}
+
+:global(.react-flow__controls button) {
+    background: #CCCCCC;
+    border-bottom: 2px solid #b3b3b3;
+    color: #000000;
+    width: 28px;
+    height: 28px;
+}
+
+:global(.react-flow__controls button:hover) {
+    background: #b3b3b3;
+}
+
+:global(.react-flow__controls button svg) {
+    fill: #000000;
+    width: 16px;
+    height: 16px;
+}
+
+/* Стили для миникарты */
+:global(.react-flow__minimap) {
+    border: 2px solid #CCCCCC;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Стили для бэкграунда */
+:global(.react-flow__background) {
+    opacity: 0.5;
+}
