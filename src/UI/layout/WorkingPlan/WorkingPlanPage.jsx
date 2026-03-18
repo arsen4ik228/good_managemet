@@ -58,7 +58,9 @@ export default function WorkingPlanPage() {
         }
     }, []);
 
-    console.log(sendedTargets)
+    console.log( orderTargets,
+        projectTragets,
+        futureTargets, userPosts)
 
     return (
         <>
