@@ -27,7 +27,7 @@ import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/Crea
 
 import { StrategyPage } from "../../UI/layout/Strategy/StrategyPage";
 
-import { SchemaCompany } from "../../UI/layout/SchemaCompany/SchemaCompany";
+import { MainCompany } from "../../UI/layout/SchemaCompany/MainCompany";
 import ProjectPage from "../../UI/layout/Project/ProjectPage";
 // import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
@@ -35,6 +35,9 @@ import Worker from "../../UI/layout/Workers/Worker";
 import EditWorker from "../../UI/layout/Workers/EditWorker";
 import MainWorkingPlan from "../../UI/app/WorkingPlanPage/MainWorkingPlan";
 import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
+
+
+import MainProject from "../../UI/app/Project/desktop/Main";
 
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
@@ -179,6 +182,18 @@ function DesktopApp() {
             }
           />
           {/* ==== Панель управления / Сводка ==== */}
+
+            <Route
+                path="mainProject"
+                element={
+                    <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                        <div className="tab">
+                            <MainProject />
+                        </div>
+                    </React.Suspense>
+                }
+            />
+
           <Route
             path="controlPanel"
             element={
@@ -189,6 +204,29 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
+            <Route
+                path="structure"
+                element={
+                    <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                        <div className="tab">
+                            <MainCompany />
+                        </div>
+                    </React.Suspense>
+                }
+            />
+
+            {/*<Route*/}
+            {/*    path="structure"*/}
+            {/*    element={*/}
+            {/*        <React.Suspense fallback={<HandlerMutation Loading={true} />}>*/}
+            {/*            <div className="tab">*/}
+            {/*                <SchemeСompanies />*/}
+            {/*            </div>*/}
+            {/*        </React.Suspense>*/}
+            {/*    }*/}
+            {/*/>*/}
+
           <Route
             path="svodka"
             element={
@@ -328,7 +366,7 @@ function DesktopApp() {
                 path="schemaCompany"
                 element={
                   <React.Suspense fallback={<HandlerMutation Loading={true} />}>
-                    <SchemaCompany />
+                    <MainCompany />
                   </React.Suspense>
                 }
               />
