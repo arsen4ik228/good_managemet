@@ -1,0 +1,29 @@
+.dialog {
+    width: 100%;
+    min-width: 100vw;
+
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 0px 8px 8px 0px;
+    background-color: #fff;
+    box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.5);
+
+    overflow: hidden; /* отключаем горизонтальный скролл контейнера */
+}
+
+.main {
+    position: relative;
+
+    flex: 1 1 auto; /* растягиваем на доступное место */
+
+    width: 100%;
+    min-width: 100vw;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+
+    padding: 10px;
+    background-color: var(--white);
+}
