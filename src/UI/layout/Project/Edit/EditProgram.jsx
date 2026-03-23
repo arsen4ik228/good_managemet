@@ -142,7 +142,7 @@ export default function EditProgram({sections, refHandleTargetsInActive, refHand
                     holderProductPostId,
                     ...(contentProgram?.trim() ? {content: contentProgram} : {content: " "}),
                     ...(targetActive.length > 0 ? {targetCreateDtos: targetActive} : {}),
-                    // ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
+                    ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
                 message.open({
                     key,
