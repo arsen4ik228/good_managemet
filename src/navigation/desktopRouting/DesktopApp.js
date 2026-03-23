@@ -38,6 +38,7 @@ import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
 
 
 import MainProject from "../../UI/app/Project/desktop/Main";
+import SingleOrgStructure from "../../UI/layout/SchemaCompany/OrgStructure/SingleOrgStructure";
 
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
@@ -216,6 +217,17 @@ function DesktopApp() {
                 }
             />
 
+            <Route
+                path="structure/:orgId"
+                element={
+                    <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                        <div className="tab">
+                            <SingleOrgStructure />
+                        </div>
+                    </React.Suspense>
+                }
+            />
+
             {/*<Route*/}
             {/*    path="structure"*/}
             {/*    element={*/}
@@ -237,7 +249,7 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
-          {/* ==== Основная ветка организации ==== */}
+          {/* ==== Основна÷я ветка организации ==== */}
           <Route
             path=":organizationId/*"
             element={<ApplicationContainer />} // ВАЖНО: в ApplicationContainer должен быть <Outlet />

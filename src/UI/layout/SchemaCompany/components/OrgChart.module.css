@@ -119,3 +119,23 @@
 :global(.react-flow__background) {
     opacity: 0.5;
 }
+
+/* Делаем узлы похожими на кликабельные */
+:global(.react-flow__node) {
+    cursor: pointer !important; /* меняем с default на pointer */
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+:global(.react-flow__node:hover) {
+    background: #b3b3b3 !important;
+    border-color: #b3b3b3 !important;
+    transform: scale(1.02); /* легкое увеличение при наведении */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Добавляем эффект "нажатия" */
+:global(.react-flow__node:active) {
+    transform: scale(0.98);
+    opacity: 0.9;
+}

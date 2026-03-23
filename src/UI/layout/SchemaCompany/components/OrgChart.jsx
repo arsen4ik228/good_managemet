@@ -7,17 +7,28 @@ import ReactFlow, {
     useEdgesState
 } from "reactflow";
 import "reactflow/dist/style.css";
+import { useNavigate } from "react-router-dom"; // добавляем для навигации
 import { buildTree, layoutTree } from "../utils/treeLayout";
 import styles from "./OrgChart.module.css";
-import schema_background from '@image/schema_background.svg'
 
 export default function OrgChart({ data, isLoading, isError }) {
+    const navigate = useNavigate(); // хук для навигации
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+    // Обработчик клика по узлу
     const onNodeClick = useCallback((event, node) => {
-        console.log("Clicked node:", node.data.original);
-    }, []);
+        const organizationId = node.id; // или node.data.original.id, если id хранится там
+        const organizationName = node.data.label;
+        
+        console.log(`Переход к организации: ${organizationName} (ID: ${organizationId})`);
+        
+        // Переход на страницу организации
+        navigate(`/structure/${organizationId}`);
+        
+        // Альтернатива: если используете строку запроса
+        // navigate(`/organization?id=${organizationId}`);
+    }, [navigate]);
 
     useMemo(() => {
         if (data && data.length > 0) {
@@ -77,29 +88,28 @@ export default function OrgChart({ data, isLoading, isError }) {
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
-                onNodeClick={onNodeClick}
+                onNodeClick={onNodeClick} // обработчик клика
                 fitView
                 minZoom={0.1}
                 maxZoom={1.5}
                 attributionPosition="bottom-right"
                 nodesDraggable={false}
                 nodesConnectable={false}
-                elementsSelectable={false}        // Изменено: элементы нельзя выделять
+                elementsSelectable={false}
                 draggable={false}
                 selectNodesOnDrag={false}
-                nodesFocusable={false}             // Изменено: узлы нельзя фокусировать
+                nodesFocusable={false}
                 edgesFocusable={false}
                 defaultEdgeOptions={{
                     type: 'step',
                     style: { stroke: '#CCCCCC', strokeWidth: 5 },
                 }}
-                // Отключаем порты (черные точки)
                 nodeOrigin={[0.5, 0.5]}
             >
                 <Controls 
                     showZoom={true}
                     showFitView={true}
-                    showInteractive={false}        // Скрываем кнопку интерактивного режима
+                    showInteractive={false}
                 />
                 <MiniMap 
                     nodeColor="#CCCCCC"
