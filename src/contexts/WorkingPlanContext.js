@@ -14,6 +14,7 @@ export const WorkingPlanProvider = ({ children }) => {
     const [contentInput, setContentInput] = useState("");
     const [isEdit, setIsEdit] = useState(false)
     const [taskId, setTaskId] = useState()
+    const [isDisabled, setIsDisabled] = useState(false)
 
     const [projectName, setProjectName] = useState()
 
@@ -43,6 +44,8 @@ export const WorkingPlanProvider = ({ children }) => {
         setIsEdit,
         taskId,
         setTaskId,
+        isDisabled,
+        setIsDisabled
     };
 
     return (
