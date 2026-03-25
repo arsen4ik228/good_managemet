@@ -242,7 +242,7 @@ export default function ProjectsAndProgramsList() {
 
                 {
                     !openFilter &&//<ListAddButtom textButton={'Создать проект'} clickFunc={createNewProject}/>
-                    <ExpandableAddButton textButton={'Создать проект'}
+                    <ExpandableAddButton textButton={'Создать проект или программу'}
                                          onFirstOptionClick={createNewProject}
                                          onSecondOptionClick={createNewProgram}
                                          firstOptionText={'Проект'}

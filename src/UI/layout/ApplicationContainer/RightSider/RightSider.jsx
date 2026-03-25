@@ -62,7 +62,7 @@ export default function RightSider({ config: initialConfig }) {    //
 
         { id: '8', icon: active_strategy, text: 'Стратегия', link: 'strategy', },
         { id: '9', icon: project, text: 'Проекты', link: 'project', isActive: true },
-        { id: '10', icon: schemaCompany, text: 'Cтруктура компании', link: 'structure', isActive: true },
+        { id: '10', icon: schemaCompany, text: 'Cтруктура компании', link: 'structure', isActive: false },
 
         // { id: '12', icon: project, text: 'Академия', link: 'academy', isActive: false },
         // { id: '13', icon: project, text: 'Корпоративное обучение', link: 'education', isActive: false },
