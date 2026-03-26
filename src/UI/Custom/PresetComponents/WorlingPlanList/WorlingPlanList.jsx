@@ -23,7 +23,8 @@ export default function WorlingPlanList() {
             userPostsInAccount,
             setIsEdit,
             taskId,
-            setTaskId
+            setTaskId,
+            setIsDisabled
         } = useWorkingPlanForm();
 
     const listElems = [
@@ -39,6 +40,7 @@ export default function WorlingPlanList() {
         setContentInput('')
         setDateStart(dayjs())
         setDeadline(null)
+        setIsDisabled(false)
     }
 
     const clickFunc = (link) => {

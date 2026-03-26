@@ -48,7 +48,8 @@ export default function WorkingPlanInput() {
         isEdit,
         taskId,
         setTaskId,
-        setIsEdit
+        setIsEdit,
+        isDisabled
     } = useWorkingPlanForm()
 
 
@@ -218,7 +219,7 @@ export default function WorkingPlanInput() {
                     <TextArea
                         ref={textAreaRef}
                         autoFocus
-                        disabled={isLoadingPostTargetsMutation}
+                        disabled={isLoadingPostTargetsMutation || isDisabled}
                         style={{ height: "48px" }}
                         autoSize={{
                             minRows: 1,

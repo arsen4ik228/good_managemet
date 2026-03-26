@@ -1,0 +1,17 @@
+.wrapper {
+    width: 304px;
+}
+
+.greySection {
+    background-color: #CCCCCC;
+    height: 45px;
+    border-radius: 50px 10px 0 0;
+
+}
+
+.whiteSection {
+    background-color: #F0F0F0;
+    height: 45px;
+        border-radius: 0 10px 0 50px;
+
+}
