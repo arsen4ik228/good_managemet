@@ -3,13 +3,14 @@ import "reactflow/dist/style.css";
 
 import classes from "./MainCompany.module.css";
 import Header from "@Custom/Header/Header";
-import {useAllOrganizations} from "@hooks/Organization/useAllOrganizations.js";
 import OrgChart from "./components/OrgChart";
+
+import {useAllOrganizationsWithHighPost} from "../../../hooks/Organization/useAllOrganizationsWithHighPost.js";
 
 export function MainCompany() {
 
     const {organizations, isLoadingOrganization, isErrorOrganization} =
-        useAllOrganizations();
+        useAllOrganizationsWithHighPost();
 
     return (
         <div className={classes.dialog}>
