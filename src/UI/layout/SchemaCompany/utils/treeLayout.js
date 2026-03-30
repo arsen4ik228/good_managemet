@@ -64,24 +64,11 @@ export function layoutTree(tree) {
                 label: node.organizationName || node.name || 'Без названия',
                 original: node 
             },
+            // Убираем style, чтобы использовались CSS классы
+            className: 'custom-node', // Добавляем кастомный класс
             style: {
-                padding: "12px 16px",
-                border: `2px solid #CCCCCC`,
-                borderRadius: 8,
-                background: "#CCCCCC", // серый фон как у линий
-                width: nodeWidth,
+                width: nodeWidth,     // Оставляем только размеры
                 minHeight: nodeHeight,
-                textAlign: "center",
-                fontSize: 13,
-                fontWeight: 500,
-                color: "#000000",
-                boxShadow: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                wordBreak: "break-word",
-                lineHeight: 1.4,
-                letterSpacing: "0.2px",
             },
         };
         
@@ -104,7 +91,7 @@ export function layoutTree(tree) {
                 animated: false,
                 style: { 
                     stroke: "#CCCCCC", 
-                    strokeWidth: 5, // толщина линии 5px
+                    strokeWidth: 5,
                 },
             });
         });
