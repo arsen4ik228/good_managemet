@@ -1,9 +1,9 @@
 // PostOrgChart.jsx (исправленная версия)
 
 import React, { useMemo, useCallback, useEffect } from "react";
-import ReactFlow, { 
-    Background, 
-    Controls, 
+import ReactFlow, {
+    Background,
+    Controls,
     MiniMap,
     useNodesState,
     useEdgesState
@@ -12,6 +12,12 @@ import "reactflow/dist/style.css";
 import { useNavigate } from "react-router-dom";
 import styles from "./PostOrgChart.module.css";
 import { buildPostTree, layoutPostTree } from "./utils/postTreeLayout";
+import TreeNode from "./utils/TreeNode.jsx"; // Импортируем компонент узла
+
+// Определяем типы узлов для React Flow
+const nodeTypes = {
+    custom: TreeNode, // Регистрируем наш кастомный компонент
+};
 
 export default function PostOrgChart({ data, isLoading, isError, orgId }) {
     const navigate = useNavigate();
@@ -32,7 +38,7 @@ export default function PostOrgChart({ data, isLoading, isError, orgId }) {
     const onNodeClick = useCallback((event, node) => {
         const postId = node.id;
         const postName = node.data.original?.postName;
-        
+
         console.log(`Переход к посту: ${postName} (ID: ${postId})`);
         navigate(`/post/${postId}`);
     }, [navigate]);
@@ -41,10 +47,10 @@ export default function PostOrgChart({ data, isLoading, isError, orgId }) {
         if (data && Array.isArray(data) && data.length > 0) {
             try {
                 console.log('PostOrgChart: начинаем построение дерева');
-                
+
                 const tree = buildPostTree(data);
                 console.log('PostOrgChart: построено дерево', tree);
-                
+
                 if (tree.length === 0) {
                     console.warn('PostOrgChart: дерево пустое');
                     setNodes([]);
@@ -57,19 +63,19 @@ export default function PostOrgChart({ data, isLoading, isError, orgId }) {
                     nodesCount: layoutNodes.length,
                     edgesCount: layoutEdges.length
                 });
-                
-                // Кастомизируем отображение узлов с HTML-контентом
+
+                // Теперь не нужно вставлять HTML через dangerouslySetInnerHTML
+                // Просто добавляем тип 'custom' к каждому узлу
                 const customNodes = layoutNodes.map(node => ({
                     ...node,
-                    data: {
-                        ...node.data,
-                        label: <div dangerouslySetInnerHTML={{ __html: node.data.content }} />
-                    }
+                    type: 'custom',
+                    // Убедитесь, что data передаётся корректно
+                    data: node.data  // здесь уже есть nodeData
                 }));
-                
+
                 setNodes(customNodes);
                 setEdges(layoutEdges);
-                
+
                 console.log('PostOrgChart: узлы установлены', customNodes.length);
             } catch (error) {
                 console.error("Error building post tree:", error);
@@ -119,6 +125,7 @@ export default function PostOrgChart({ data, isLoading, isError, orgId }) {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onNodeClick={onNodeClick}
+                nodeTypes={nodeTypes} // Добавляем типы узлов
                 fitView
                 minZoom={0.1}
                 maxZoom={1.5}
@@ -136,17 +143,17 @@ export default function PostOrgChart({ data, isLoading, isError, orgId }) {
                 }}
                 nodeOrigin={[0.5, 0.5]}
             >
-                <Controls 
+                <Controls
                     showZoom={true}
                     showFitView={true}
                     showInteractive={false}
                 />
-                <MiniMap 
+                <MiniMap
                     nodeColor="#CCCCCC"
                     maskColor="rgba(0, 0, 0, 0.05)"
                     style={{ backgroundColor: "#f5f5f5" }}
                 />
-                <Background 
+                <Background
                     color="#CCCCCC"
                     gap={16}
                     size={1}
