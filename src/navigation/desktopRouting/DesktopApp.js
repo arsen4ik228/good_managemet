@@ -27,7 +27,7 @@ import CreateNewConvertPage from "../../UI/layout/Chat/CreateNewConvertPage/Crea
 
 import { StrategyPage } from "../../UI/layout/Strategy/StrategyPage";
 
-import { MainCompany } from "../../UI/layout/SchemaCompany/MainCompany";
+import { MainCompany } from "../../UI/layout/SchemaCompany/HIghLevel/MainCompany";
 import ProjectPage from "../../UI/layout/Project/ProjectPage";
 // import { WorkingPlan } from "../../UI/layout/WorkingPlan/WorkingPlan";
 import { FuturePages } from "../../UI/layout/FuturePages/FuturePages";
@@ -38,7 +38,7 @@ import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
 
 
 import MainProject from "../../UI/app/Project/desktop/Main";
-import SingleOrgStructure from "../../UI/layout/SchemaCompany/OrgStructure/SingleOrgStructure";
+import SingleOrgStructure from "../../UI/layout/SchemaCompany/SingleOrgLevel/OrgStructure/SingleOrgStructure";
 import Test from "../../UI/layout/SchemaCompany/Test";
 
 

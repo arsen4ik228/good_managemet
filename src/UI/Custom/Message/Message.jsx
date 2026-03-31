@@ -9,6 +9,7 @@ import default_avatar from '@image/default_avatar.svg'
 import ImageGrig from './ImageGrig';
 import helper_medium from '@image/helper_icon.svg'
 import { useParams } from 'react-router-dom';
+import { formattedDate } from '@helpers/helpers'
 
 const transformText = (text, setIsFinalMessage, organizationId) => {
 
@@ -33,26 +34,26 @@ const transformText = (text, setIsFinalMessage, organizationId) => {
     const baseUrl = process.env.REACT_APP_LINK_URL || '';
 
     // Проверяем формат: тип (Проект/Программа) + UUID + остальной текст
-    if ((firstWord === 'Проект' || firstWord === 'Программа') && 
+    if ((firstWord === 'Проект' || firstWord === 'Программа') &&
         secondWord && isUUID(secondWord)) {
-        
+
         // Определяем путь в зависимости от типа
-        const path = firstWord === 'Проект' 
+        const path = firstWord === 'Проект'
             ? `/helper/project/${secondWord}`
             : `/helper/program/${secondWord}`;
-        
+
         return (
             <div style={{
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
                 lineHeight: '1.4'
             }}>
-                {restOfText && restOfText + ' ' }
+                {restOfText && restOfText + ' '}
                 <a
                     href={`${baseUrl}#/${organizationId}${path}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{fontStyle: 'italic', borderBottom: '1px solid'}}
+                    style={{ fontStyle: 'italic', borderBottom: '1px solid' }}
                 >
                     Перейти к {firstWord === 'Проект' ? 'Проекту' : 'Прорамме'}
                 </a>
@@ -106,7 +107,7 @@ const transformText = (text, setIsFinalMessage, organizationId) => {
             lineHeight: '1.4'
         }}>
             {before}
-            <a 
+            <a
                 href={`${baseUrl}#/${organizationId}/helper/project/${value}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -128,7 +129,7 @@ const getVisaClassName = (text) => {
     return null;  // Если текст не подошёл — вернём null
 };
 
-export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, senderPostName, createdMessage, timeSeen, children, attachmentToMessage, ...props }, ref) => {
+export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, senderPostName, createdMessage, updatedAt, timeSeen, children, attachmentToMessage, ...props }, ref) => {
 
     const [isFinalMessage, setIsFinalMessage] = useState(false)
 
@@ -218,8 +219,17 @@ export const Message = React.forwardRef(({ userMessage, seenStatuses, avatar, se
                             </div>
                         )}
                         <div className={classes.messageWithoutAvatar}>
+                            {/* {(updatedAt && (createdMessage !== updatedAt)) && (
+                                <span style={{ color: 'red' }}>Изменено: {formattedDate(updatedAt)} </span>
+                            )} */}
                             <div className={classes.messageInfo}>
-                                {formatDateTime(createdMessage)}
+                                {(updatedAt && (createdMessage !== updatedAt)) ? (
+                                    <>
+                                        Изменено: {formatDateTime(updatedAt)}
+                                    </>
+                                ) : (
+                                    formatDateTime(createdMessage)
+                                )}
                                 {userMessage && (
                                     <img src={seenStatuses?.length > 0 ? isSeenIcon : notSeenIcon} alt="isSeen" />
                                 )}

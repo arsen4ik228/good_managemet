@@ -311,6 +311,7 @@ export default function DesktopDialogPage() {
                                     <Message
                                         userMessage={item?.sender.user.id === reduxUserId}
                                         createdMessage={item?.createdAt}
+                                        updatedAt={item?.updatedAt}
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
                                         data-message-id={item.id} // Добавляем data-атрибут
                                         attachmentToMessage={item?.attachmentToMessages}
@@ -333,6 +334,7 @@ export default function DesktopDialogPage() {
                                 senderPost={item?.sender}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 createdMessage={item?.createdAt}
+                                updatedAt={item?.updatedAt}
                                 avatar={item?.sender.user.avatar_url}
                             >
                                 {item.content}
