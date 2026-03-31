@@ -68,8 +68,8 @@ export default function WorkingPlanPage() {
                 <div className={classes.wrapper}>
                     <div ref={containerRef} className={classes.taskContainer}>
 
-                        {((path === 'currentTasks') ||
-                            (path === 'allTasks')
+                        {
+                            (path === 'allTasks'
                         ) && (
                                 personalTargets?.slice().reverse().map((item, index) => (
                                     <React.Fragment key={index}>
@@ -88,8 +88,28 @@ export default function WorkingPlanPage() {
                                 ))
                             )}
 
-                        {((path === 'currentTasks') ||
-                            (path === 'allTasks')
+                            {
+                            (path === 'allTasks'
+                        ) && (
+                                projectTragets?.slice().reverse().map((item, index) => (
+                                    <React.Fragment key={index}>
+                                        <Task
+                                            id={item.id}
+                                            content={item.content}
+                                            deadline={item.deadline}
+                                            type={item.type}
+                                            state={item.targetState}
+                                            completeDate={item.dateComplete}
+                                            dateStart={item.dateStart}
+                                            holderPostId={item.holderPostId}
+                                            attachmentToTargets={item?.attachmentToTargets}
+                                        />
+                                    </React.Fragment>
+                                ))
+                            )}
+
+                        {(
+                            path === 'allTasks'
                         ) && (
                                 <>  {/* Используем Fragment вместо лишнего div */}
 
@@ -141,7 +161,7 @@ export default function WorkingPlanPage() {
 
 
 
-                        {((path === 'currentOrders') || (path === 'myOrder')) &&
+                        {((path === 'myOrder')) &&
                             (
                                 <>
                                     {sendedTargets?.map((item, index) => (

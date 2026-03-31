@@ -175,9 +175,10 @@ export const targetsApi = apiSlice.injectEndpoints({
                 
                 return {
                     userPosts: _userPosts,
-                    personalTargets,
+                    personalTargets: personalTargets,
                     orderTargets: orderTargets,
                     sendedTargets: sendedTargets,
+                    projectTargets: projectTargets,
                     futureSendedTargets: transformFutureSendedTargets,
                     futureTargets
                 }
@@ -191,6 +192,11 @@ export const targetsApi = apiSlice.injectEndpoints({
                         })),
                         'Target',
                         ...result?.orderTargets.map(({ id }) => ({
+                            type: 'Target',
+                            id,
+                        })),
+                        'Target',
+                        ...result?.projectTargets.map(({ id }) => ({
                             type: 'Target',
                             id,
                         })),

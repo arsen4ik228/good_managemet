@@ -47,7 +47,9 @@ export default function Task({ id, isOrder, content, deadline, type, state, comp
         userPostsInAccount,
         setIsEdit,
         taskId,
-        setTaskId
+        setTaskId,
+        isDisabled,
+        setIsDisabled
     } = useWorkingPlanForm();
 
     const {
@@ -88,7 +90,7 @@ export default function Task({ id, isOrder, content, deadline, type, state, comp
 
     const setDataForUpdate = () => {
 
-        if (type === 'Приказ') return setOpenCommunicationModal(true)
+        // if (type === 'Приказ') return setOpenCommunicationModal(true)
         if (state === 'Завершена') return;
 
         setDateStart(dayjs(dateStart))
@@ -97,6 +99,7 @@ export default function Task({ id, isOrder, content, deadline, type, state, comp
         setContentInput(content)
         setIsEdit(true)
         setTaskId(id)
+        setIsDisabled(type !== 'Личная')
     }
 
     const handleDelegateClick = (e) => {
@@ -134,7 +137,7 @@ export default function Task({ id, isOrder, content, deadline, type, state, comp
     const finishTarget = async (id) => {
 
         if (state === 'Завершена') return reactivateTask(id);
-        if (state !== 'Завершена' && type === 'Приказ') return setOpenCommunicationModal(true);
+        if (state !== 'Завершена' && type !== 'Личная') return setOpenCommunicationModal(true);
 
         await updateTargets({
             _id: id,

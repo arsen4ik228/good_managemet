@@ -228,8 +228,10 @@ export default function ViewProject({ contentRef }) {
 
                 <div className={classes.main} ref={contentRef}>
                     <h3 className={`${classes.strong} ${classes.margin}`}>{localStorage.getItem("name")}</h3>
+
                     {/*<span className={classes.strong}>Имя Фамилия</span>*/}
                     {/*<span className={classes.margin}>Название поста</span>*/}
+
 
                     <h2 className={`${classes.strong} ${classes.center}  ${classes.margin}`}>{currentProject?.type}</h2>
                     <h2 className={`${classes.strong} ${classes.center}`}>{currentProject?.projectName}</h2>

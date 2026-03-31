@@ -18,6 +18,7 @@ export const WorkingPlanCreationComponent = () => {
         senderPost,
         setSenderPost,
         userPostsInAccount,
+        isDisabled
     } = useWorkingPlanForm();
 
 
@@ -55,6 +56,7 @@ export const WorkingPlanCreationComponent = () => {
                     value={deadline}
                     onChange={(e) => setDeadline(e)}
                     format="DD.MM.YYYY"
+                    disabled={isDisabled}
                     style={{
                         width: "100%",
                         backgroundColor: "#F0F0F0",
@@ -78,6 +80,7 @@ export const WorkingPlanCreationComponent = () => {
                     className={classes.customSelect}
                     bordered={false}
                     value={senderPost}
+                    disabled={isDisabled}
                     onChange={(value) => setSenderPost(value)}
                 >
                     {userPostsInAccount?.map((item, index) => (
