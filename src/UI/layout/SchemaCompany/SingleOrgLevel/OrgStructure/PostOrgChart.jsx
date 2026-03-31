@@ -11,7 +11,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { useNavigate } from "react-router-dom";
 import styles from "./PostOrgChart.module.css";
-import { buildPostTree, layoutPostTree } from "./utils/postTreeLayout";
+import { buildPostTree, layoutPostTree } from "./utils/postTreeLayout.js";
 import TreeNode from "./utils/TreeNode.jsx"; // Импортируем компонент узла
 
 // Определяем типы узлов для React Flow
