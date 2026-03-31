@@ -2,7 +2,7 @@
     position: relative;
     width: 304px;
     background-color: #CCCCCC;
-        border-radius: 50px 10px 0 50px;
+    border-radius: 50px 10px 0 50px;
 }
 
 .greySection {
@@ -33,7 +33,8 @@
 .photoSection {
     display: flex;
     align-items: center;
-    >img {
+
+    > img {
         background-color: white;
         width: 84px;
         height: 84px;
@@ -70,11 +71,60 @@
     color: #333333;
 
 
-    >div {
+    > div {
         width: 100%;
     }
 
-    >div:nth-child(2) {
+    > div:nth-child(2) {
+        display: flex;
         font-size: 12px;
     }
+
+    button {
+        margin-left: auto;
+        margin-right: 20px;
+    }
+}
+
+.background {
+    height: 100vh;
+    background-image: url('/src/UI/image/schema_background.svg');
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: center;
+    padding: 100px;
+}
+
+.block {
+    position: relative;
+
+    margin-left: 70px;
+    margin-top: 20px;
+
+    min-height: 45px;
+    height: auto;
+    width: 232px;
+
+    border-radius: 20px;
+    border: 1px solid #CCCCCC;
+    padding: 15px 30px;
+
+    overflow-wrap: break-word;
+}
+
+.nameBlock {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    display: inline-block;
+    height: auto;
+
+    border-radius: 20px;
+    background-color: #FFFFFF80;
+
+    font-size: 12px !important;
+    font-weight: 400;
+    color: #999999;
+
+    padding: 5px 10px;
 }
