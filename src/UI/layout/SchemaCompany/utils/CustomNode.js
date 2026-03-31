@@ -1,6 +1,5 @@
-// components/CustomNode.jsx
 import React from 'react';
-import { Handle } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 
 export default function CustomNode({ data }) {
     return (
@@ -11,19 +10,21 @@ export default function CustomNode({ data }) {
             background: "#CCCCCC",
             minWidth: 200,
             textAlign: "center",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#000000",
-            boxShadow: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            wordBreak: "break-word",
-            lineHeight: 1.4,
-            letterSpacing: "0.2px",
+            position: 'relative'
         }}>
+            {/* Входящая линия */}
+            <Handle
+                type="target"
+                position={Position.Top}
+            />
+
             {data.label}
-            {/* Убираем Handle полностью или делаем невидимыми */}
+
+            {/* Исходящая линия */}
+            <Handle
+                type="source"
+                position={Position.Bottom}
+            />
         </div>
     );
 }

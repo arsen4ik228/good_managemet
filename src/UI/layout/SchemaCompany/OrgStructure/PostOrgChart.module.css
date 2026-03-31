@@ -5,9 +5,9 @@
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #CCCCCC;
-     background-image: url('/src/UI/image/schema_background.svg'); /* Путь к файлу */
-    background-repeat: repeat; /* или no-repeat */
-    background-size: auto; /* или cover, contain */
+    background-image: url('/src/UI/image/schema_background.svg');
+    background-repeat: repeat;
+    background-size: auto;
     background-position: center;
 }
 
@@ -43,23 +43,42 @@
     background: #CCCCCC;
 }
 
-/* Стили для узлов */
+/* Стили для узлов React Flow - используем :global() */
 :global(.react-flow__node) {
     cursor: pointer !important;
     transition: all 0.2s ease;
     font-family: inherit;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: transparent !important; /* Убираем фон по умолчанию */
+    border: none !important; /* Убираем рамку по умолчанию */
 }
 
 :global(.react-flow__node:hover) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #999999 !important;
 }
 
 :global(.react-flow__node:active) {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для кастомных узлов - обязательно с :global() */
+:global(.react-flow__node-custom) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    border-radius: 0 !important;
+}
+
+:global(.react-flow__node-custom.selected) {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+:global(.react-flow__node-custom:hover) {
+    background: transparent !important;
+    transform: translateY(-2px);
 }
 
 /* Стили для ребер */
@@ -75,6 +94,7 @@
 :global(.react-flow__node.selected) {
     border-color: #999999 !important;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+    background: transparent !important;
 }
 
 :global(.react-flow__node:focus) {
@@ -103,4 +123,13 @@
 
 :global(.react-flow__controls button svg) {
     fill: #000000;
+}
+
+/* Убедитесь, что линии видны */
+:global(.react-flow__edges) {
+    z-index: 1;
+}
+
+:global(.react-flow__nodes) {
+    z-index: 2;
 }
