@@ -12,7 +12,11 @@ import "reactflow/dist/style.css";
 import { useNavigate } from "react-router-dom";
 import { buildTree, layoutTree } from "../utils/treeLayout";
 import styles from "./OrgChart.module.css";
-import {nodeTypes} from '../utils/CustomNode.js'
+import CustomNode from '../utils/CustomNode';
+
+const nodeTypes = {
+    custom: CustomNode,
+};
 
 // Добавьте в начало файла после импортов
 // const nodeTypes = {
@@ -193,6 +197,7 @@ function OrgChartContent({ data, isLoading, isError }) {
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
+                        nodeTypes={nodeTypes}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onNodeClick={onNodeClick}

@@ -73,6 +73,9 @@
     letter-spacing: 0.2px;
 }
 
+:global(.custom-node) {
+    background: #CCCCCC !important;
+}
 
 /* Стили для разных типов узлов */
 :global(.react-flow__node-default) {
