@@ -33,6 +33,11 @@ export const organizationApi = apiSlice.injectEndpoints({
             }),
         }),
 
+        getOrganizationsWithAllPost: build.query({
+            query: () => ({
+                url: `organizations/allOrganizationWithAllPost`,
+            }),
+        }),
         getOrganizationId: build.query({
             query: ({organizationId}) => ({
                 url: `organizations/${organizationId}`,
@@ -67,6 +72,7 @@ export const organizationApi = apiSlice.injectEndpoints({
 export const {
     useGetOrganizationsQuery,
     useGetOrganizationsWithHighPostQuery,
+    useGetOrganizationsWithAllPostQuery,
     useGetOrganizationIdQuery,
     useUpdateOrganizationsMutation,
     useCreateOrganizationMutation
