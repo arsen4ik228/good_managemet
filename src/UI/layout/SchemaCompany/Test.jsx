@@ -1,23 +1,24 @@
 import React, {useState} from 'react';
 import classes from './Test.module.css';
 import default_avatar from '@image/default_avatar.svg'
-import {useGetSinglePost} from "../../../hooks";
-import {Skeleton} from 'antd';
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import phone from '@image/phone.svg'
+import {Flex, Skeleton, Space, Text, Typography} from 'antd';
+import {UpOutlined, DownOutlined} from '@ant-design/icons';
+import {useGetSinglePostForView} from "../../../hooks/Post/useGetSinglePostForView";
+import {formatPhone} from "../Posts/function/functionForPost";
 
-// "d76bab40-fadb-404c-b806-c3e6151505a5"
 
 export default function Test() {
     const [postId, setPostId] = useState(null);
     const [click, setClick] = useState(false);
+
     const {
         currentPost,
-        statisticsIncludedPost,
 
         isLoadingGetPostId,
         isErrorGetPostId,
         isFetchingGetPostId,
-    } = useGetSinglePost({postId: postId});
+    } = useGetSinglePostForView({postId: postId});
 
     const handleOnClick = () => {
         setClick(!click);
@@ -42,8 +43,8 @@ export default function Test() {
                                 <button onClick={handleOnClick}>
                                     {
                                         click
-                                            ? <DownOutlined />
-                                            : <UpOutlined />
+                                            ? <DownOutlined/>
+                                            : <UpOutlined/>
                                     }
                                 </button>
                             </div>
@@ -55,13 +56,14 @@ export default function Test() {
                 click
                     ? (
                         <Information
-                        role={currentPost?.role?.roleName}
-                        product={currentPost?.product}
-                        purpose={currentPost?.purpose}
-                        statistics={statisticsIncludedPost}
-                        policy={currentPost?.policy?.policyName}
-                        isLoadingGetPostId={isLoadingGetPostId}
-                    />)
+                            role={currentPost?.role?.roleName}
+                            product={currentPost?.product}
+                            purpose={currentPost?.purpose}
+                            statistics={currentPost?.statistics}
+                            policy={currentPost?.policy?.policyName}
+                            telephoneNumber={currentPost?.user?.telephoneNumber}
+                            isLoadingGetPostId={isLoadingGetPostId}
+                        />)
                     : null
             }
 
@@ -69,7 +71,7 @@ export default function Test() {
     )
 }
 
-function Information({role, product, purpose, statistics, policy, isLoadingGetPostId}) {
+function Information({role, product, purpose, statistics, policy, isLoadingGetPostId, telephoneNumber}) {
     return (
         <>
             <Item label={"роль поста"} text={role} isLoadingGetPostId={isLoadingGetPostId}></Item>
@@ -77,6 +79,7 @@ function Information({role, product, purpose, statistics, policy, isLoadingGetPo
             <Item label={"предназначение поста"} text={purpose} isLoadingGetPostId={isLoadingGetPostId}></Item>
             <ViewStatistics statistics={statistics} isLoadingGetPostId={isLoadingGetPostId}></ViewStatistics>
             <Item label={"политика поста"} text={policy} isLoadingGetPostId={isLoadingGetPostId} isUnderline></Item>
+            <Phone telephoneNumber={telephoneNumber}></Phone>
         </>
     )
 }
@@ -97,11 +100,23 @@ function ViewStatistics({statistics, isLoadingGetPostId}) {
                                 {index + 1}. {"  "}
                                 <span style={{
                                     textDecoration: "underline",
+                                    lineHeight: "1.4",
                                 }}>{s.name}</span>
                             </div>
                         ))}
                     </>
             }
+        </div>
+    )
+}
+
+function Phone({telephoneNumber}) {
+    return (
+        <div className={classes.phone}>
+            <Space align="start" size={17} style={{width: '100%'}}>
+                <img src={phone} alt="телефон"/>
+                <Typography.Text style={{color: "#333333"}}>{formatPhone(telephoneNumber)}</Typography.Text>
+            </Space>
         </div>
     )
 }
@@ -113,7 +128,9 @@ function Item({label, text, isUnderline, isLoadingGetPostId}) {
         }}>
             <div className={classes.nameBlock}> {label}</div>
             {
-                isLoadingGetPostId ? <Skeleton.Input active/> : text
+                isLoadingGetPostId
+                    ? <Skeleton.Input active/>
+                    : <span style={{lineHeight: "1.4"}}>{text}</span>
             }
         </div>
     )

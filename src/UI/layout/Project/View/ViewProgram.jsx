@@ -9,6 +9,7 @@ import { useRightPanel, usePanelPreset } from "@hooks";
 import dayjs from 'dayjs';
 import { useGetSingleProgram } from "../../../../hooks/Project/useGetSingleProgram";
 import { DocumentSkeleton } from "../../../DocumentSkeleton/DocumentSkeleton";
+import {Tag} from "antd";
 
 const formatDate = (iso) => {
     if (!iso) return '';
@@ -25,7 +26,15 @@ const Task = ({ title, task, date, people, post, index, status }) => {
                             <span>{task}</span>
                         </div>
                         <div className={classes.rightBlock}>
-                            <span>{status} {date}</span>
+                            <span>
+                                   {
+                                       status && (
+                                           <Tag color={status === "Завершен" ? "green" : "red"} variant="outlined">
+                                               {status}
+                                           </Tag> )
+                                   }
+                                {date}
+                                </span>
                             <span>{people}</span>
                             <span className={classes.light}>{post}</span>
                         </div>
@@ -38,7 +47,15 @@ const Task = ({ title, task, date, people, post, index, status }) => {
                                 <span>{task}</span>
                             </div>
                             <div className={classes.rightBlock}>
-                                <span>{status} {date}</span>
+                                <span>
+                                   {
+                                       status && (
+                                           <Tag color={status === "Завершена" ? "green" : "red"} variant="outlined">
+                                               {status}
+                                           </Tag> )
+                                   }
+                                    {date}
+                                </span>
                                 <span>{people}</span>
                                 <span className={classes.light}>{post}</span>
                             </div>
