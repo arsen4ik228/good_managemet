@@ -4,20 +4,21 @@ import default_avatar from '@image/default_avatar.svg'
 import {useGetSinglePost} from "../../../hooks";
 import {Skeleton} from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import {useGetSinglePostForView} from "../../../hooks/Post/useGetSinglePostForView";
 
 // "d76bab40-fadb-404c-b806-c3e6151505a5"
 
 export default function Test() {
     const [postId, setPostId] = useState(null);
     const [click, setClick] = useState(false);
+
     const {
         currentPost,
-        statisticsIncludedPost,
 
         isLoadingGetPostId,
         isErrorGetPostId,
         isFetchingGetPostId,
-    } = useGetSinglePost({postId: postId});
+    } = useGetSinglePostForView({postId: postId});
 
     const handleOnClick = () => {
         setClick(!click);
@@ -58,7 +59,7 @@ export default function Test() {
                         role={currentPost?.role?.roleName}
                         product={currentPost?.product}
                         purpose={currentPost?.purpose}
-                        statistics={statisticsIncludedPost}
+                        statistics={currentPost?.statistics}
                         policy={currentPost?.policy?.policyName}
                         isLoadingGetPostId={isLoadingGetPostId}
                     />)
