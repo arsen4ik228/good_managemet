@@ -128,3 +128,13 @@
 
     padding: 5px 10px;
 }
+
+.phone {
+    position: relative;
+
+    margin-left: 70px;
+    margin-top: 20px;
+
+    height: auto;
+    width: auto;
+}
