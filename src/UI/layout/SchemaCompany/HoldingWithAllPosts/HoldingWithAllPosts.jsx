@@ -7,14 +7,14 @@ import OrgChart from "./components/OrgChart.jsx";
 
 import { useAllOrganizationsWithHighPost,  } from "../../../../hooks/Organization/useAllOrganizationsWithHighPost.js";
 
-export function HoldingWithPost() {
+export function HoldingWithAllPosts() {
 
     const { organizations, isLoadingOrganization, isErrorOrganization } =
         useAllOrganizationsWithHighPost();
     console.warn(organizations)
     return (
         <div className={classes.dialog}>
-            <Header name="холдинг + посты" />
+            <Header name="холдинг + все посты" />
             <div className={classes.main}>
                 <OrgChart data={organizations || []} />
             </div>

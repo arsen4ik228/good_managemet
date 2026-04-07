@@ -41,6 +41,7 @@ import MainProject from "../../UI/app/Project/desktop/Main";
 import SingleOrgStructure from "../../UI/layout/SchemaCompany/SingleOrgLevel/OrgStructure/SingleOrgStructure";
 import Test from "../../UI/layout/SchemaCompany/Test";
 import { HoldingWithPost } from "../../UI/layout/SchemaCompany/HoldingWithPostLevel/HoldingWithPost";
+import { HoldingWithAllPosts } from "../../UI/layout/SchemaCompany/HoldingWithAllPosts/HoldingWithAllPosts";
 
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
@@ -233,6 +234,17 @@ function DesktopApp() {
                     <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                         <div className="tab">
                             <HoldingWithPost />
+                        </div>
+                    </React.Suspense>
+                }
+            />
+
+            <Route
+                path="structure/allPosts"
+                element={
+                    <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                        <div className="tab">
+                            <HoldingWithAllPosts />
                         </div>
                     </React.Suspense>
                 }
