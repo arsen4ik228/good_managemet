@@ -5,12 +5,12 @@ import classes from "./HoldingWithPost.module.css";
 import Header from "@Custom/Header/Header";
 import OrgChart from "./components/OrgChart.jsx";
 
-import { useAllOrganizationsWithHighPost,  } from "../../../../hooks/Organization/useAllOrganizationsWithHighPost.js";
+import { useAllOrganizationsWithAllPost,  } from "../../../../hooks/Organization/useAllOrganizationsWithAllPost.js";
 
 export function HoldingWithAllPosts() {
 
     const { organizations, isLoadingOrganization, isErrorOrganization } =
-        useAllOrganizationsWithHighPost();
+        useAllOrganizationsWithAllPost();
     console.warn(organizations)
     return (
         <div className={classes.dialog}>

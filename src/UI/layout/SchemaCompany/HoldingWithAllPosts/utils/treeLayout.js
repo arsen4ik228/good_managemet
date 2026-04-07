@@ -1,18 +1,15 @@
 // utils/treeLayout.js
 
-/**
- * Построение смешанного дерева: организация -> её посты -> дочерние организации -> их посты...
- */
 export function buildTree(data) {
     const orgMap = {};
     const roots = [];
 
-    // Создаём карту организаций
+    // Создаём организации
     data.forEach((item) => {
         orgMap[item.id] = { 
             ...item, 
             type: 'organization',
-            children: [] // здесь будут: сначала посты, потом дочерние организации
+            children: []
         };
     });
 
@@ -25,30 +22,71 @@ export function buildTree(data) {
         }
     });
 
-    // Для каждой организации строим дерево постов и вставляем его ПЕРЕД дочерними организациями
+    // Для каждой организации строим дерево постов
     Object.values(orgMap).forEach(org => {
         const postsTree = buildPostsTree(org.posts || [], org.id);
         
         // Сохраняем дочерние организации
         const childOrgs = [...org.children];
         
-        // Очищаем children и добавляем сначала посты, потом дочерние организации
-        org.children = [...postsTree, ...childOrgs];
+        // Добавляем посты как детей организации
+        org.children = postsTree;
+        
+        // Если есть дочерние организации, добавляем их к самому глубокому посту
+        if (childOrgs.length > 0) {
+            const deepestLeaf = getDeepestLeaf(org);
+            if (deepestLeaf) {
+                deepestLeaf.children = [...deepestLeaf.children, ...childOrgs];
+            } else {
+                org.children = [...org.children, ...childOrgs];
+            }
+        }
     });
 
     return roots;
 }
 
-/**
- * Построение дерева постов внутри организации
- */
+function getDeepestLeaf(node) {
+    if (!node.children || node.children.length === 0) {
+        return node;
+    }
+    
+    let deepestNode = null;
+    let maxDepth = -1;
+    
+    function findDeepest(node, depth) {
+        if (!node.children || node.children.length === 0) {
+            return { node, depth };
+        }
+        
+        let deepest = { node, depth };
+        node.children.forEach(child => {
+            const result = findDeepest(child, depth + 1);
+            if (result.depth > deepest.depth) {
+                deepest = result;
+            }
+        });
+        return deepest;
+    }
+    
+    node.children.forEach(child => {
+        const result = findDeepest(child, 1);
+        if (result.depth > maxDepth) {
+            maxDepth = result.depth;
+            deepestNode = result.node;
+        }
+    });
+    
+    return deepestNode || node;
+}
+
 function buildPostsTree(posts, organizationId) {
     if (!posts || posts.length === 0) return [];
     
     const postsMap = {};
     const postRoots = [];
 
-    // Первый проход: создаём узлы постов
+    // Первый проход: создаём все узлы постов
     posts.forEach(post => {
         postsMap[post.id] = {
             ...post,
@@ -61,8 +99,10 @@ function buildPostsTree(posts, organizationId) {
     // Второй проход: строим иерархию по parentId
     posts.forEach(post => {
         if (post.parentId && postsMap[post.parentId]) {
+            // Добавляем как дочерний к родительскому посту
             postsMap[post.parentId].children.push(postsMap[post.id]);
         } else if (!post.parentId) {
+            // Корневые посты (без parentId)
             postRoots.push(postsMap[post.id]);
         }
     });
@@ -70,9 +110,6 @@ function buildPostsTree(posts, organizationId) {
     return postRoots;
 }
 
-/**
- * Расчёт ширины поддерева
- */
 function calculateSubtreeWidth(node, nodeWidth, nodeSpacing) {
     if (!node.children || node.children.length === 0) {
         return nodeWidth;
@@ -88,9 +125,6 @@ function calculateSubtreeWidth(node, nodeWidth, nodeSpacing) {
     return Math.max(totalWidth, nodeWidth);
 }
 
-/**
- * Раскладка дерева
- */
 export function layoutTree(tree) {
     const nodes = [];
     const edges = [];
@@ -107,7 +141,6 @@ export function layoutTree(tree) {
         let x = left + (subtreeWidth / 2);
         const y = depth * levelHeight;
 
-        // Формируем данные узла
         const isPost = node.type === 'post';
         const nodeData = {
             id: node.id,
@@ -122,7 +155,6 @@ export function layoutTree(tree) {
 
         nodes.push(nodeData);
 
-        // Позиционируем дочерние элементы
         let childLeft = left;
         
         node.children.forEach((child, index) => {
@@ -132,7 +164,6 @@ export function layoutTree(tree) {
             
             childLeft += childWidth + nodeSpacing;
 
-            // Создаём ребро
             edges.push({
                 id: `${node.id}-${child.id}`,
                 source: node.id,
@@ -162,11 +193,7 @@ export function layoutTree(tree) {
     return { nodes, edges };
 }
 
-/**
- * Данные для узла организации
- */
 function getOrgNodeData(org) {
-    // Находим верхний пост организации (без parentId или первый в массиве)
     const topPost = org.posts?.find(p => !p.parentId) || org.posts?.[0];
     
     return {
@@ -181,9 +208,6 @@ function getOrgNodeData(org) {
     };
 }
 
-/**
- * Данные для узла поста
- */
 function getPostNodeData(post) {
     return {
         label: post.postName || 'Без названия',
