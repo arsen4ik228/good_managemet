@@ -49,13 +49,14 @@ const transformText = (text, setIsFinalMessage, organizationId) => {
                 lineHeight: '1.4'
             }}>
                 {restOfText && restOfText + ' '}
+                <br />
                 <a
                     href={`${baseUrl}#/${organizationId}${path}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ fontStyle: 'italic', borderBottom: '1px solid' }}
+                    // style={{ fontStyle: 'italic', borderBottom: '1px solid' }}
                 >
-                    Перейти к {firstWord === 'Проект' ? 'Проекту' : 'Прорамме'}
+                    Перейти к {firstWord === 'Проект' ? 'проекту' : 'прорамме'}
                 </a>
             </div>
         );
