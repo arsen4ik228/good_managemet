@@ -46,7 +46,13 @@ const initialSections = [
     {name: 'Задача'},
 ];
 
-export default function EditProject({sections, refHandleTargetsInActive,refHandleStateProductInCompleted, setBtn, openView}) {
+export default function EditProject({
+                                        sections,
+                                        refHandleTargetsInActive,
+                                        refHandleStateProductInCompleted,
+                                        setBtn,
+                                        openView
+                                    }) {
     const {PRESETS} = useRightPanel()
     usePanelPreset(PRESETS["PROJECTSANDPROGRAMS"]);
 
@@ -55,6 +61,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     const prevProjectIdRef = useRef(null);
     const latestStateRef = useRef({});
     const isDirtyRef = useRef(false);
+    const BDholderProductPostId = useRef(null);
 
     const [currentProjectId, setCurrentProjectId] = useState();
 
@@ -65,6 +72,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     const [contentProject, setContentProject] = useState("");
     const [targetsByType, setTargetsByType] = useState({});
     const [focusTargetId, setFocusTargetId] = useState(null);
+
 
     const handleUpdateTarget = (type, id, field, value) => {
         isDirtyRef.current = true;
@@ -112,7 +120,6 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     };
 
     const handleSave = async () => {
-
         const key = "projectUpdate";
         message.open({
             key,
@@ -139,6 +146,15 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 ...rest
             }));
 
+        const targetsExceptCreated = Object.values(targetsByType)
+            .flat()
+            .filter(t => t.isCreated === false)
+            .map(({id, date, isCreated, isChanged, ...rest}) => ({
+                _id: id,
+                ...rest,
+                targetState: "Активная"
+            }));
+
         console.log("targetUpdateDtos = ", targetUpdateDtos);
 
 
@@ -148,20 +164,29 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                 .find(t => t.type === "Продукт")?.holderPostId;
 
             const targetCreate = targetCreateDtos.map((t) => ({...t, targetState: "Активная"}));
-            const targetUpdate = targetUpdateDtos.filter((t) => t.targetState !== "Завершена" && t.type !== "Продукт")?.map((t) => ({
-                ...t,
-                targetState: "Активная"
-            }));
+
+            const isChangedHolderProductPostId = holderProductPostId !== BDholderProductPostId.current;
+
+            const targetUpdate = isChangedHolderProductPostId
+                ? targetsExceptCreated
+                : targetUpdateDtos.filter((t) => t.targetState !== "Завершена")?.map((t) => ({
+                    ...t,
+                    targetState: "Активная"
+                }));
 
             console.log("targetUpdate = ", targetUpdate);
+            console.log('targets = ', targets);
+            console.log("isChangedHolderProductPostId = ", isChangedHolderProductPostId);
+            console.log("BDholderProductPostId.current = ", BDholderProductPostId.current);
+            console.log("holderProductPostId = ", holderProductPostId);
             try {
-               await updateProject({
+                await updateProject({
                     projectId: projectId,
                     _id: projectId,
                     holderProductPostId,
                     ...(contentProject?.trim() ? {content: contentProject} : {content: " "}),
                     ...(targetCreate.length > 0 ? {targetCreateDtos: targetCreate} : {}),
-                    ...(targetUpdate.length > 0 ? {targetUpdateDtos: targetUpdate} : {}),
+                    ...(targetUpdate.length > 0  ? {targetUpdateDtos: targetUpdate} : {}),
                 }).unwrap();
                 message.open({
                     key,
@@ -260,7 +285,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
 
         const targetUpdateDtos = target
             ? (() => {
-                const { id, isCreated, ...rest } = target;
+                const {id, isCreated, ...rest} = target;
 
                 return [{
                     _id: id,
@@ -275,7 +300,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
             .find(t => t.type === "Продукт")?.holderPostId
 
         try {
-           await updateProject({
+            await updateProject({
                 projectId: projectId,
                 _id: projectId,
                 holderProductPostId,
@@ -327,6 +352,8 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
     // для новых данных в проекте
     useEffect(() => {
         if (!targets) return;
+
+        BDholderProductPostId.current = targets?.find(t => t.title === "Продукт")?.tasks?.[0]?.holderPostId;
 
         // 1. Группируем то, что пришло с бэка
         const grouped = targets.reduce((acc, group) => {
@@ -381,7 +408,7 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     },
                 },
             ])
-        } else if(productState === "Активная"){
+        } else if (productState === "Активная") {
             setBtn([
                 {
                     text: "завершить проект",
@@ -390,10 +417,10 @@ export default function EditProject({sections, refHandleTargetsInActive,refHandl
                     },
                 },
             ])
-        }else{
+        } else {
             setBtn([])
         }
-    }, [ targets, currentProject]);
+    }, [targets, currentProject]);
 
     // заполняется переменная ref latestStateRef для handleSave
     useEffect(() => {
