@@ -11,6 +11,7 @@ import tg from "@image/telegram.svg";
 import { useDispatch } from "react-redux";
 import { setUserId } from "../../../store/slices/local.storage.slice";
 import GM from "@image/labelGM.svg"
+import {VkAuth} from "./VkAuth";
 
 
 
@@ -234,32 +235,7 @@ export default function AuthPage() {
     </div>
   ) : (
 
-
     <div className={classes.body}>
-      {/* <span className={classes.text}>Для входа отсканируйте QR-код</span>
-      <div className={classes.QR}>
-        {!tokenForTG ? (
-          <span className={classes.loader}>
-            <img src={icon} alt="icon" />
-          </span>
-        ) : tokenForTG && qrUrl ? (
-          <div className={classes.telegram}>
-            <QRCode errorLevel="H" value={qrUrl} />
-            <a
-              href={qrUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={classes.link}
-            >
-              Или перейдите по ссылке
-            </a>
-          </div>
-        ) : (
-          <span className={classes.loader}>
-            <img src={icon} alt="icon" />
-          </span>
-        )}
-      </div> */}
       <div className={classes.firstContainer}>
         <img src={GM} alt="GM" />
         <div className={classes.title}>GOODMANAGEMENT</div>
@@ -268,7 +244,7 @@ export default function AuthPage() {
         </div>
         <div className={classes.text}>Войдите в программу удобным для вас способом:</div>
       </div>
-
+        <VkAuth fingerprint={fingerprint}></VkAuth>
       <div className={classes.telegram}>
         {tokenForTG && qrUrl ? (
           <QRCode errorLevel="H" value={qrUrl} icon={tg} />
@@ -307,7 +283,6 @@ export default function AuthPage() {
       </div>
 
     </div>
-
 
   );
 }
