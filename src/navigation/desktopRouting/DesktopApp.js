@@ -222,7 +222,7 @@ function DesktopApp() {
                 element={
                     <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                         <div className="tab">
-                            <MainCompany />
+                            <HoldingWithAllPosts />
                         </div>
                     </React.Suspense>
                 }
