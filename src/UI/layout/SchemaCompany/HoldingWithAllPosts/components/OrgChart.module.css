@@ -1,18 +1,16 @@
-/* Основной контейнер */
 .container {
     position: relative;
     width: calc(100vw - 320px);
-    height: calc(100vh - 320px);
+    height: calc(100vh - 100px);
     background-color: #fafafa;
     overflow: hidden;
-    border: 1px solid #CCCCCC;
-    background-image: url('/src/UI/image/schema_background.svg');
+    border: 1px solid #cccccc;
+    background-image: url("/src/UI/image/schema_background.svg");
     background-repeat: repeat;
     background-size: auto;
     background-position: center;
 }
 
-/* Контейнер для сообщений */
 .messageContainer {
     width: calc(100vw - 320px);
     height: calc(100vh - 320px);
@@ -23,34 +21,133 @@
     border-radius: 8px;
 }
 
-/* Стили для сообщений */
-.loader, 
-.error, 
+.loader,
+.error,
 .empty {
     padding: 20px 30px;
     text-align: center;
     font-size: 16px;
     border-radius: 12px;
     background: white;
-    border: 2px solid #CCCCCC;
+    border: 2px solid #cccccc;
     color: #000000;
 }
 
-.loader {
-    background: #CCCCCC;
+/* Замените стили flowWrapper */
+
+.flowWrapper {
+    transition: opacity 0.2s ease-in-out;
+    will-change: opacity;
+    opacity: 1;
 }
 
-.error {
-    border-left: 4px solid #ff0000;
+.flowWrapper.fadeOut {
+    opacity: 0 !important;
+    transition: opacity 0.2s ease-in-out;
 }
 
-.empty {
-    background: #CCCCCC;
+/* Узлы появляются только когда не в состоянии fadeOut */
+.react-flow__node-custom {
+    animation: appearFromCenter 0.25s ease-out forwards;
 }
 
+.flowWrapper.fadeOut .react-flow__node-custom {
+    animation: none;
+    opacity: 0;
+}
 
+/* Анимация появления узлов от центра */
+@keyframes appearFromCenter {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 
-/* Кастомные контролы */
+.react-flow__node-custom {
+    animation: appearFromCenter 0.3s ease-out forwards;
+}
+
+/* Анимация рисования рёбер */
+@keyframes drawEdge {
+    0% {
+        opacity: 0;
+        stroke-dasharray: 800;
+        stroke-dashoffset: 800;
+    }
+    100% {
+        opacity: 1;
+        stroke-dasharray: 800;
+        stroke-dashoffset: 0;
+    }
+}
+
+.react-flow__edge-path {
+    animation: drawEdge 0.35s ease-out forwards;
+}
+
+/* Панель управления глубиной */
+.depthControls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    z-index: 10;
+    min-width: 140px;
+}
+
+.depthInfo {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eee;
+}
+
+.depthButtons {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.depthButton {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #333;
+}
+
+.depthButton:hover:not(:disabled) {
+    background-color: #f5f5f5;
+    border-color: #999;
+}
+
+.depthButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Панель управления масштабом */
 .customControls {
     position: absolute;
     bottom: 20px;
@@ -84,36 +181,66 @@
 .controlButton:hover {
     background-color: #f5f5f5;
     border-color: #999;
-    transform: scale(1.05);
-}
-
-.controlButton:active {
-    transform: scale(0.95);
 }
 
 .zoomLevel {
     text-align: center;
     font-size: 12px;
-    padding: 4px 0;
     color: #666;
     font-weight: 500;
 }
 
-/* Медиа-запросы */
 @media (max-width: 768px) {
     .container,
     .messageContainer {
         height: calc(100vh - 60px);
     }
-    
+
+    .depthControls,
     .customControls {
         bottom: 10px;
-        right: 10px;
     }
-    
-    .controlButton {
+
+    .controlButton,
+    .depthButton {
         width: 32px;
         height: 32px;
-        font-size: 16px;
+        font-size: 14px;
     }
+}
+
+/* Добавить в OrgChart.module.css */
+
+.wheelHint {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.centerButton {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.centerButton:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+    transform: scale(1.05);
 }

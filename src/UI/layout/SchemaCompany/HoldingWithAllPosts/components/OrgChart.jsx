@@ -1,143 +1,176 @@
-import React, { useMemo, useCallback, useState, useRef } from "react";
+// 1. Убираем все контролы зума
+// 2. Фиксируем minZoom и maxZoom на 1
+// 3. Убираем handleZoomIn, handleZoomOut, zoomToPoint, handleWheel для зума
+// 4. Колёсико мыши теперь управляет глубиной
+
+import React, { useMemo, useCallback, useState, useRef, useEffect } from "react";
 import ReactFlow, {
     Background,
-    Controls,
     MiniMap,
     useNodesState,
     useEdgesState,
     useReactFlow,
-    ReactFlowProvider
+    ReactFlowProvider,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useNavigate } from "react-router-dom";
-import { buildTree, layoutTree } from "../utils/treeLayout";
+import { buildTree, layoutTree, filterTreeByDepth, getMaxAvailableDepth } from "../utils/treeLayout";
 import styles from "./OrgChart.module.css";
-import CustomNode from '../utils/CustomNode';
+import CustomNode from "../utils/CustomNode";
 
 const nodeTypes = {
     custom: CustomNode,
 };
 
-
-
-
-
-// Внутренний компонент, который будет использовать хуки React Flow
 function OrgChartContent({ data, isLoading, isError }) {
     const navigate = useNavigate();
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const { fitView, getZoom, setViewport, getViewport } = useReactFlow();
+    const { fitView, setViewport, getViewport } = useReactFlow();
 
-    const [currentZoom, setCurrentZoom] = useState(1);
+    const [maxDepth, setMaxDepth] = useState(1);
+    const [maxAvailableDepth, setMaxAvailableDepth] = useState(1);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+
     const containerRef = useRef(null);
     const reactFlowWrapper = useRef(null);
+    const viewportCenterRef = useRef(null);
+    const depthCacheRef = useRef({});
 
-    // Обработчик клика по узлу
-    const onNodeClick = useCallback((event, node) => {
-        const organizationId = node.id;
-        const organizationName = node.data.label;
+    const onNodeClick = useCallback(
+        (event, node) => {
+            if (isTransitioning) return;
+            const organizationId = node.id;
+            const organizationName = node.data.label;
+            navigate(`/structure/${organizationId}`);
+        },
+        [navigate, isTransitioning]
+    );
 
-        console.log(`Переход к организации: ${organizationName} (ID: ${organizationId})`);
-        navigate(`/structure/${organizationId}`);
-    }, [navigate]);
-
-    // Обработчики для кастомных кнопок с фиксированными значениями масштаба
-    const handleZoomIn = useCallback(() => {
-        setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 300 });
-        setCurrentZoom(1);
-    }, [setViewport]);
-
-    const handleZoomOut = useCallback(() => {
-        setViewport({ x: 0, y: 0, zoom: 0.11 }, { duration: 300 });
-        setCurrentZoom(0.11);
-    }, [setViewport]);
-
-    const handleFitView = useCallback(() => {
-        fitView({ duration: 300, padding: 0.2 });
-    }, [fitView]);
-
-    // Функция для масштабирования относительно курсора
-    const zoomToPoint = useCallback((targetZoom, clientX, clientY) => {
-        if (!reactFlowWrapper.current) return;
-
-        const currentZoom = getZoom();
-        if (Math.abs(currentZoom - targetZoom) < 0.01) return;
-
-        // Получаем bounding rectangle контейнера React Flow
-        const bounds = reactFlowWrapper.current.getBoundingClientRect();
-        
-        // Вычисляем позицию курсора относительно контейнера (в px)
-        const x = clientX - bounds.left;
-        const y = clientY - bounds.top;
-        
-        // Получаем текущий viewport
+    const captureViewportCenter = useCallback(() => {
         const viewport = getViewport();
-        
-        // Вычисляем новую позицию viewport для масштабирования относительно курсора
-        const newZoom = targetZoom;
-        const zoomRatio = newZoom / currentZoom;
-        
-        const newX = viewport.x - (x - viewport.x) * (zoomRatio - 1);
-        const newY = viewport.y - (y - viewport.y) * (zoomRatio - 1);
-        
-        // Применяем новый viewport
-        setViewport({
-            x: newX,
-            y: newY,
-            zoom: newZoom
-        }, { duration: 200 });
-        
-        setCurrentZoom(newZoom);
-    }, [getZoom, getViewport, setViewport]);
-
-    // Обработчик колесика мыши
-    const handleWheel = useCallback((event) => {
-        event.preventDefault();
-
-        const currentZoomValue = getZoom();
-        const delta = event.deltaY > 0 ? -1 : 1;
-
-        if (delta > 0) {
-            // Увеличиваем до 100%
-            if (currentZoomValue < 0.99) {
-                zoomToPoint(1, event.clientX, event.clientY);
-            }
-        } else {
-            // Уменьшаем до 11%
-            if (currentZoomValue > 0.12) {
-                zoomToPoint(0.11, event.clientX, event.clientY);
-            }
+        const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+        if (bounds) {
+            const centerX = (bounds.width / 2 - viewport.x) / viewport.zoom;
+            const centerY = (bounds.height / 2 - viewport.y) / viewport.zoom;
+            viewportCenterRef.current = { x: centerX, y: centerY };
         }
-    }, [getZoom, zoomToPoint]);
+    }, [getViewport]);
 
-    // Отслеживаем изменение масштаба для отображения текущего значения
-    const onMove = useCallback(() => {
-        const currentZoomValue = getZoom();
-        setCurrentZoom(currentZoomValue);
-    }, [getZoom]);
-
-    useMemo(() => {
+    // Предварительный расчёт всех уровней
+    useEffect(() => {
         if (data && data.length > 0) {
             try {
-                const tree = buildTree(data);
-                const { nodes: layoutNodes, edges: layoutEdges } = layoutTree(tree);
+                const fullTree = buildTree(data);
+                const maxAvail = getMaxAvailableDepth(fullTree);
+                setMaxAvailableDepth(maxAvail);
 
-                const edgesWithoutMarkers = layoutEdges.map(edge => ({
-                    ...edge,
-                    markerEnd: undefined,
-                }));
+                const cache = {};
+                for (let depth = 1; depth <= maxAvail; depth++) {
+                    const filteredTree = filterTreeByDepth(fullTree, depth);
+                    const { nodes: layoutNodes, edges: layoutEdges } = layoutTree(filteredTree);
+                    cache[depth] = {
+                        nodes: layoutNodes,
+                        edges: layoutEdges.map((e) => ({ ...e, markerEnd: undefined })),
+                    };
+                }
+                depthCacheRef.current = cache;
 
-                setNodes(layoutNodes);
-                setEdges(edgesWithoutMarkers);
+                const level1 = cache[1];
+                if (level1) {
+                    setNodes(level1.nodes);
+                    setEdges(level1.edges);
+                }
             } catch (error) {
                 console.error("Error building tree:", error);
             }
         } else {
             setNodes([]);
             setEdges([]);
+            depthCacheRef.current = {};
         }
     }, [data, setNodes, setEdges]);
+
+    const changeDepth = useCallback(
+        (newDepth) => {
+            if (newDepth < 1 || newDepth > maxAvailableDepth) return;
+            if (newDepth === maxDepth) return;
+            if (isTransitioning) return;
+
+            const cached = depthCacheRef.current[newDepth];
+            if (!cached) return;
+
+            captureViewportCenter();
+            setIsTransitioning(true);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        setMaxDepth(newDepth);
+                        setNodes(cached.nodes);
+                        setEdges(cached.edges);
+
+                        requestAnimationFrame(() => {
+                            setIsTransitioning(false);
+
+                            setTimeout(() => {
+                                if (viewportCenterRef.current) {
+                                    const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+                                    if (bounds) {
+                                        const viewport = getViewport();
+                                        const center = viewportCenterRef.current;
+                                        setViewport(
+                                            {
+                                                x: center.x * viewport.zoom - bounds.width / 2,
+                                                y: center.y * viewport.zoom - bounds.height / 2,
+                                                zoom: 1, // фиксированный зум
+                                            },
+                                            { duration: 0 }
+                                        );
+                                        viewportCenterRef.current = null;
+                                    }
+                                }
+                                fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
+                            }, 20);
+                        });
+                    }, 200);
+                });
+            });
+        },
+        [maxDepth, maxAvailableDepth, isTransitioning, captureViewportCenter, setNodes, setEdges, fitView, getViewport, setViewport]
+    );
+
+    const handleIncreaseDepth = useCallback(() => changeDepth(maxDepth + 1), [maxDepth, changeDepth]);
+    const handleDecreaseDepth = useCallback(() => changeDepth(maxDepth - 1), [maxDepth, changeDepth]);
+    const handleResetDepth = useCallback(() => changeDepth(1), [changeDepth]);
+    const handleShowAll = useCallback(() => changeDepth(maxAvailableDepth), [maxAvailableDepth, changeDepth]);
+
+    const handleFitView = useCallback(() => {
+        fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
+    }, [fitView]);
+
+    // Колёсико мыши управляет глубиной
+    const handleWheel = useCallback(
+        (event) => {
+            event.preventDefault();
+            const delta = event.deltaY;
+            
+            if (delta < 0) {
+                // Крутим вверх - увеличиваем глубину
+                handleIncreaseDepth();
+            } else {
+                // Крутим вниз - уменьшаем глубину
+                handleDecreaseDepth();
+            }
+        },
+        [handleIncreaseDepth, handleDecreaseDepth]
+    );
+
+    useEffect(() => {
+        if (nodes.length > 0 && !isTransitioning && maxDepth === 1) {
+            setTimeout(() => fitView({ duration: 0, padding: 0.2, maxZoom: 1 }), 50);
+        }
+    }, []);
 
     if (isLoading) {
         return (
@@ -150,9 +183,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     if (isError) {
         return (
             <div className={styles.messageContainer}>
-                <div className={styles.error}>
-                    Ошибка при загрузке данных. Пожалуйста, обновите страницу.
-                </div>
+                <div className={styles.error}>Ошибка при загрузке данных</div>
             </div>
         );
     }
@@ -160,101 +191,102 @@ function OrgChartContent({ data, isLoading, isError }) {
     if (!data || data.length === 0) {
         return (
             <div className={styles.messageContainer}>
-                <div className={styles.empty}>
-                    Нет данных для отображения структуры компании
-                </div>
+                <div className={styles.empty}>Нет данных для отображения</div>
             </div>
         );
     }
 
     return (
-        <div
-            className={styles.container}
-            ref={containerRef}
-            onWheel={handleWheel}
-        >
-            <div 
-                ref={reactFlowWrapper} 
+        <div className={styles.container} ref={containerRef} onWheel={handleWheel}>
+            <div
+                ref={reactFlowWrapper}
+                className={`${styles.flowWrapper} ${isTransitioning ? styles.fadeOut : ''}`}
                 style={{ width: '100%', height: '100%' }}
             >
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
-                        nodeTypes={nodeTypes}
+                    nodeTypes={nodeTypes}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onNodeClick={onNodeClick}
-                    onMove={onMove}
-                    fitView
-                    minZoom={0.11}
+                    fitView={false}
+                    minZoom={1}
                     maxZoom={1}
-                    attributionPosition="bottom-right"
                     nodesDraggable={false}
                     nodesConnectable={false}
                     elementsSelectable={false}
-                    draggable={false}
-                    selectNodesOnDrag={false}
-                    nodesFocusable={false}
-                    edgesFocusable={false}
+                    panOnDrag={true}
                     zoomOnScroll={false}
                     zoomOnPinch={false}
+                    preventScrolling={false}
                     defaultEdgeOptions={{
                         type: 'step',
                         style: { stroke: '#CCCCCC', strokeWidth: 5 },
                     }}
-                    nodeOrigin={[0.5, 0.5]}
+                    proOptions={{ hideAttribution: true }}
                 >
-                    <Controls
-                        showZoom={true}
-                        showFitView={true}
-                        showInteractive={false}
-                    />
-                    <MiniMap
-                        nodeColor="#CCCCCC"
-                        maskColor="rgba(0, 0, 0, 0.05)"
-                        style={{ backgroundColor: "#f5f5f5" }}
-                    />
-                    <Background
-                        color="#CCCCCC"
-                        gap={16}
-                        size={1}
-                        variant="dots"
-                    />
+                    <MiniMap nodeColor="#CCCCCC" maskColor="rgba(0, 0, 0, 0.05)" />
+                    <Background color="#CCCCCC" gap={16} size={1} variant="dots" />
                 </ReactFlow>
             </div>
 
-            {/* Кастомные кнопки управления масштабом */}
-            <div className={styles.customControls}>
-                <button
-                    onClick={handleZoomIn}
-                    className={styles.controlButton}
-                    title="Увеличить до 100%"
-                >
-                    +
-                </button>
-                <div className={styles.zoomLevel}>
-                    {Math.round(currentZoom * 100)}%
+            {/* Панель управления глубиной */}
+            <div className={styles.depthControls}>
+                <div className={styles.depthInfo}>
+                    Уровень: {maxDepth} / {maxAvailableDepth}
                 </div>
-                <button
-                    onClick={handleZoomOut}
-                    className={styles.controlButton}
-                    title="Уменьшить до 11%"
-                >
-                    -
-                </button>
-                <button
-                    onClick={handleFitView}
-                    className={styles.controlButton}
-                    title="Центрировать"
-                >
-                    ⊡
-                </button>
+                <div className={styles.depthButtons}>
+                    <button
+                        onClick={handleDecreaseDepth}
+                        className={styles.depthButton}
+                        disabled={maxDepth <= 1 || isTransitioning}
+                        title="Уменьшить глубину (колёсико вниз)"
+                    >
+                        −
+                    </button>
+                    <button
+                        onClick={handleIncreaseDepth}
+                        className={styles.depthButton}
+                        disabled={maxDepth >= maxAvailableDepth || isTransitioning}
+                        title="Увеличить глубину (колёсико вверх)"
+                    >
+                        +
+                    </button>
+                    <button
+                        onClick={handleResetDepth}
+                        className={styles.depthButton}
+                        disabled={isTransitioning}
+                        title="Сбросить до 1 уровня"
+                    >
+                        ↺
+                    </button>
+                    <button
+                        onClick={handleShowAll}
+                        className={styles.depthButton}
+                        disabled={isTransitioning}
+                        title="Показать всё"
+                    >
+                        ⊞
+                    </button>
+                </div>
+                <div className={styles.wheelHint}>
+                    ↕️ Колёсико
+                </div>
             </div>
+
+            {/* Кнопка центрирования */}
+            <button
+                onClick={handleFitView}
+                className={styles.centerButton}
+                title="Центрировать вид"
+            >
+                ⌖
+            </button>
         </div>
     );
 }
 
-// Основной компонент-обертка с ReactFlowProvider
 export default function OrgChart(props) {
     return (
         <ReactFlowProvider>
