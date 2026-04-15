@@ -58,10 +58,8 @@ function buildPostsTree(posts, organizationId) {
     return postRoots;
 }
 
-// Рассчитывает ширину поддерева с учётом ВСЕХ потомков (и постов, и организаций)
 function calculateTotalWidth(node, nodeWidth, nodeSpacing) {
     if (node.type === 'post') {
-        // Для поста - только ширина его дочерних постов
         if (!node.children || node.children.length === 0) {
             return nodeWidth;
         }
@@ -74,7 +72,6 @@ function calculateTotalWidth(node, nodeWidth, nodeSpacing) {
         
         return Math.max(totalWidth, nodeWidth);
     } else {
-        // Для организации - максимум из ширины постов и ширины дочерних организаций
         let postsWidth = nodeWidth;
         if (node.children && node.children.length > 0) {
             postsWidth = 0;
@@ -90,7 +87,7 @@ function calculateTotalWidth(node, nodeWidth, nodeSpacing) {
             node._childOrganizations.forEach(org => {
                 orgsWidth += calculateTotalWidth(org, nodeWidth, nodeSpacing);
             });
-            orgsWidth += (node._childOrganizations.length - 1) * nodeSpacing * 2; // Двойной отступ между организациями
+            orgsWidth += (node._childOrganizations.length - 1) * nodeSpacing * 2;
         }
         
         return Math.max(postsWidth, orgsWidth, nodeWidth);
@@ -108,7 +105,6 @@ export function layoutTree(tree) {
     const horizontalMargin = 50;
 
     function positionNode(node, depth = 0, left = 0, right = 0) {
-        // Используем новую функцию для расчёта полной ширины
         const totalWidth = calculateTotalWidth(node, nodeWidth, nodeSpacing);
         
         let x = left + totalWidth / 2;
@@ -128,11 +124,9 @@ export function layoutTree(tree) {
 
         nodes.push(nodeData);
 
-        // Позиционируем дочерние посты
         let maxDepth = depth;
         
         if (node.children && node.children.length > 0) {
-            // Для постов и организаций - центрируем дочерние элементы
             let childrenWidth = 0;
             node.children.forEach(child => {
                 childrenWidth += calculateTotalWidth(child, nodeWidth, nodeSpacing);
@@ -163,19 +157,15 @@ export function layoutTree(tree) {
             });
         }
 
-        // Если это организация и у неё есть дочерние организации
         if (node.type === 'organization' && node._childOrganizations && node._childOrganizations.length > 0) {
-            // Дочерние организации идут после всех постов
             const orgsDepth = maxDepth + 1;
             
-            // Вычисляем общую ширину дочерних организаций
             let totalOrgsWidth = 0;
             node._childOrganizations.forEach(org => {
                 totalOrgsWidth += calculateTotalWidth(org, nodeWidth, nodeSpacing);
             });
-            totalOrgsWidth += (node._childOrganizations.length - 1) * nodeSpacing * 2; // Увеличенный отступ
+            totalOrgsWidth += (node._childOrganizations.length - 1) * nodeSpacing * 2;
             
-            // Центрируем дочерние организации относительно родительской организации
             let orgsLeft = x - totalOrgsWidth / 2;
             
             node._childOrganizations.forEach((org) => {
@@ -183,9 +173,8 @@ export function layoutTree(tree) {
                 
                 positionNode(org, orgsDepth, orgsLeft, orgsLeft + orgWidth);
                 
-                orgsLeft += orgWidth + nodeSpacing * 2; // Увеличенный отступ между организациями
+                orgsLeft += orgWidth + nodeSpacing * 2;
 
-                // Прямое ребро от организации к дочерней организации
                 edges.push({
                     id: `${node.id}-${org.id}`,
                     source: node.id,
@@ -209,7 +198,7 @@ export function layoutTree(tree) {
         tree.forEach((root) => {
             const rootWidth = calculateTotalWidth(root, nodeWidth, nodeSpacing);
             positionNode(root, 0, globalLeft, globalLeft + rootWidth);
-            globalLeft += rootWidth + nodeSpacing * 3; // Большой отступ между корневыми организациями
+            globalLeft += rootWidth + nodeSpacing * 3;
         });
     }
 
@@ -243,4 +232,81 @@ function getPostNodeData(post) {
         divisionName: post.divisionName,
         original: post
     };
+}
+
+// ========== НОВЫЕ ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ГЛУБИНОЙ ==========
+
+/**
+ * Фильтрует дерево по максимальной глубине ПОСТОВ
+ * Уровень 1: только организации (без постов)
+ * Уровень 2: организации + верхние посты
+ * Уровень 3: организации + верхние посты + их дочерние посты
+ */
+export function filterTreeByDepth(tree, maxDepth) {
+    if (!tree || tree.length === 0) return [];
+    
+    function filterPosts(postNode, currentDepth) {
+        if (currentDepth > maxDepth - 1) {
+            const filtered = { ...postNode };
+            filtered.children = [];
+            return filtered;
+        }
+        
+        const filtered = { ...postNode };
+        if (postNode.children && postNode.children.length > 0) {
+            filtered.children = postNode.children.map(child => filterPosts(child, currentDepth + 1));
+        } else {
+            filtered.children = [];
+        }
+        return filtered;
+    }
+    
+    function filterNode(node) {
+        const filtered = { ...node };
+        
+        if (maxDepth === 1) {
+            filtered.children = [];
+        } else {
+            if (node.children && node.children.length > 0) {
+                filtered.children = node.children.map(post => filterPosts(post, 1));
+            } else {
+                filtered.children = [];
+            }
+        }
+        
+        if (node._childOrganizations && node._childOrganizations.length > 0) {
+            filtered._childOrganizations = node._childOrganizations.map(org => filterNode(org));
+        }
+        
+        return filtered;
+    }
+    
+    return tree.map(root => filterNode(root));
+}
+
+/**
+ * Находит максимальную глубину постов во всём дереве
+ */
+export function getMaxAvailableDepth(tree) {
+    let maxDepth = 0;
+    
+    function traversePosts(post, depth) {
+        maxDepth = Math.max(maxDepth, depth);
+        if (post.children && post.children.length > 0) {
+            post.children.forEach(child => traversePosts(child, depth + 1));
+        }
+    }
+    
+    function traverseOrgs(org) {
+        if (org.children && org.children.length > 0) {
+            org.children.forEach(post => traversePosts(post, 1));
+        }
+        if (org._childOrganizations && org._childOrganizations.length > 0) {
+            org._childOrganizations.forEach(childOrg => traverseOrgs(childOrg));
+        }
+    }
+    
+    tree.forEach(root => traverseOrgs(root));
+    
+    return maxDepth + 1;
 }
