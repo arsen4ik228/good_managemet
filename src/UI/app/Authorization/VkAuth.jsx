@@ -100,7 +100,8 @@ export const VkAuth = ({ fingerprint }) => {
 
                 VKID.Config.init({
                     app: CLIENT_ID,
-                    redirectUrl: "https://drained-unplanned-salsa.ngrok-free.dev",
+                    // redirectUrl: "https://drained-unplanned-salsa.ngrok-free.dev",
+                    redirectUrl: "https://24academy.ru/gm",
                     responseMode: VKID.ConfigResponseMode.Callback,
                     source: VKID.ConfigSource.LOWCODE,
                     codeChallenge: codeChallenge,
