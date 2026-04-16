@@ -40,6 +40,7 @@ import WorkingPlanPage from "../../UI/layout/WorkingPlan/WorkingPlanPage";
 import MainProject from "../../UI/app/Project/desktop/Main";
 import SingleOrgStructure from "../../UI/layout/SchemaCompany/SingleOrgLevel/OrgStructure/SingleOrgStructure";
 import Test from "../../UI/layout/SchemaCompany/Test";
+import {VkAuth} from "../../UI/app/Authorization/VkAuth";
 
 
 const AuthPage = React.lazy(() => import("@app/Authorization/AuthPage"));
@@ -125,6 +126,14 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+            {/*<Route*/}
+            {/*    path="/"*/}
+            {/*    element={*/}
+            {/*        <React.Suspense fallback={<HandlerMutation Loading={true} />}>*/}
+            {/*            <VkAuth />*/}
+            {/*        </React.Suspense>*/}
+            {/*    }*/}
+            {/*/>*/}
           {/* ==== Error ==== */}
           <Route
             path="/error"
