@@ -5,3 +5,4 @@ export const baseUrl = process.env.REACT_APP_BASE_URL;
 export const socketUrl = process.env.REACT_APP_SOCKET_URL;
 export const homeUrl = process.env.REACT_APP_LINK_URL;
 export const userId = localStorage.getItem("userId");
+export const CLIENT_ID = 54543761;
