@@ -255,7 +255,7 @@ export default function AuthPage() {
             </div>
 
             {/* VkAuth - передаем fingerprint из состояния */}
-            {/*{fingerprint && <VkAuth fingerprint={fingerprint} />}*/}
+            {fingerprint && <VkAuth fingerprint={fingerprint} />}
 
             <div className={classes.telegram}>
                 {tokenForTG && qrUrl ? (
