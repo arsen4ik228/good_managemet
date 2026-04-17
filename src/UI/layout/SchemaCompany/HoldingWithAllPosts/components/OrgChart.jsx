@@ -1,8 +1,3 @@
-// 1. Убираем все контролы зума
-// 2. Фиксируем minZoom и maxZoom на 1
-// 3. Убираем handleZoomIn, handleZoomOut, zoomToPoint, handleWheel для зума
-// 4. Колёсико мыши теперь управляет глубиной
-
 import React, { useMemo, useCallback, useState, useRef, useEffect } from "react";
 import ReactFlow, {
     Background,
@@ -26,7 +21,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     const navigate = useNavigate();
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const { fitView, setViewport, getViewport } = useReactFlow();
+    const { fitView, setViewport, getViewport, getNodes } = useReactFlow();
 
     const [maxDepth, setMaxDepth] = useState(1);
     const [maxAvailableDepth, setMaxAvailableDepth] = useState(1);
@@ -34,28 +29,35 @@ function OrgChartContent({ data, isLoading, isError }) {
 
     const containerRef = useRef(null);
     const reactFlowWrapper = useRef(null);
-    const viewportCenterRef = useRef(null);
     const depthCacheRef = useRef({});
+    
+    // Храним ID организации, на которую наведена мышь
+    const hoveredOrgIdRef = useRef(null);
 
     const onNodeClick = useCallback(
         (event, node) => {
             if (isTransitioning) return;
-            const organizationId = node.id;
-            const organizationName = node.data.label;
+            const organizationId = node.data.original?.id || node.id;
             navigate(`/structure/${organizationId}`);
         },
         [navigate, isTransitioning]
     );
 
-    const captureViewportCenter = useCallback(() => {
-        const viewport = getViewport();
-        const bounds = reactFlowWrapper.current?.getBoundingClientRect();
-        if (bounds) {
-            const centerX = (bounds.width / 2 - viewport.x) / viewport.zoom;
-            const centerY = (bounds.height / 2 - viewport.y) / viewport.zoom;
-            viewportCenterRef.current = { x: centerX, y: centerY };
+    // Обработчик наведения на узел
+    const onNodeMouseEnter = useCallback((event, node) => {
+        // Если это организация — запоминаем её ID
+        if (node.data?.isOrganization) {
+            hoveredOrgIdRef.current = node.id;
+        } else {
+            // Если это пост — запоминаем ID его организации
+            hoveredOrgIdRef.current = node.data?.original?.organizationId || null;
         }
-    }, [getViewport]);
+    }, []);
+
+    const onNodeMouseLeave = useCallback(() => {
+        // Не сбрасываем сразу, чтобы успеть использовать при скролле
+        // hoveredOrgIdRef.current = null;
+    }, []);
 
     // Предварительный расчёт всех уровней
     useEffect(() => {
@@ -100,7 +102,11 @@ function OrgChartContent({ data, isLoading, isError }) {
             const cached = depthCacheRef.current[newDepth];
             if (!cached) return;
 
-            captureViewportCenter();
+            // Запоминаем ID организации под мышью
+            const targetOrgId = hoveredOrgIdRef.current;
+            
+            console.log('Changing depth to:', newDepth, 'Target org:', targetOrgId);
+
             setIsTransitioning(true);
 
             requestAnimationFrame(() => {
@@ -114,30 +120,37 @@ function OrgChartContent({ data, isLoading, isError }) {
                             setIsTransitioning(false);
 
                             setTimeout(() => {
-                                if (viewportCenterRef.current) {
-                                    const bounds = reactFlowWrapper.current?.getBoundingClientRect();
-                                    if (bounds) {
-                                        const viewport = getViewport();
-                                        const center = viewportCenterRef.current;
-                                        setViewport(
-                                            {
-                                                x: center.x * viewport.zoom - bounds.width / 2,
-                                                y: center.y * viewport.zoom - bounds.height / 2,
-                                                zoom: 1, // фиксированный зум
-                                            },
-                                            { duration: 0 }
-                                        );
-                                        viewportCenterRef.current = null;
+                                // Если есть целевая организация — центрируемся на ней
+                                if (targetOrgId) {
+                                    const targetNode = cached.nodes.find(n => n.id === targetOrgId);
+                                    
+                                    if (targetNode) {
+                                        const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+                                        if (bounds) {
+                                            console.log('Centering on:', targetNode.id, targetNode.data?.label);
+                                            
+                                            setViewport(
+                                                {
+                                                    x: targetNode.position.x - bounds.width / 2,
+                                                    y: targetNode.position.y - bounds.height / 3,
+                                                    zoom: 1,
+                                                },
+                                                { duration: 400 }
+                                            );
+                                            return;
+                                        }
                                     }
                                 }
+                                
+                                // Если нет цели — просто fitView
                                 fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
-                            }, 20);
+                            }, 30);
                         });
                     }, 200);
                 });
             });
         },
-        [maxDepth, maxAvailableDepth, isTransitioning, captureViewportCenter, setNodes, setEdges, fitView, getViewport, setViewport]
+        [maxDepth, maxAvailableDepth, isTransitioning, setNodes, setEdges, fitView, setViewport]
     );
 
     const handleIncreaseDepth = useCallback(() => changeDepth(maxDepth + 1), [maxDepth, changeDepth]);
@@ -149,17 +162,14 @@ function OrgChartContent({ data, isLoading, isError }) {
         fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
     }, [fitView]);
 
-    // Колёсико мыши управляет глубиной
     const handleWheel = useCallback(
         (event) => {
             event.preventDefault();
             const delta = event.deltaY;
             
             if (delta < 0) {
-                // Крутим вверх - увеличиваем глубину
                 handleIncreaseDepth();
             } else {
-                // Крутим вниз - уменьшаем глубину
                 handleDecreaseDepth();
             }
         },
@@ -197,7 +207,11 @@ function OrgChartContent({ data, isLoading, isError }) {
     }
 
     return (
-        <div className={styles.container} ref={containerRef} onWheel={handleWheel}>
+        <div 
+            className={styles.container} 
+            ref={containerRef} 
+            onWheel={handleWheel}
+        >
             <div
                 ref={reactFlowWrapper}
                 className={`${styles.flowWrapper} ${isTransitioning ? styles.fadeOut : ''}`}
@@ -210,6 +224,8 @@ function OrgChartContent({ data, isLoading, isError }) {
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onNodeClick={onNodeClick}
+                    onNodeMouseEnter={onNodeMouseEnter}
+                    onNodeMouseLeave={onNodeMouseLeave}
                     fitView={false}
                     minZoom={1}
                     maxZoom={1}
@@ -231,7 +247,6 @@ function OrgChartContent({ data, isLoading, isError }) {
                 </ReactFlow>
             </div>
 
-            {/* Панель управления глубиной */}
             <div className={styles.depthControls}>
                 <div className={styles.depthInfo}>
                     Уровень: {maxDepth} / {maxAvailableDepth}
@@ -275,7 +290,6 @@ function OrgChartContent({ data, isLoading, isError }) {
                 </div>
             </div>
 
-            {/* Кнопка центрирования */}
             <button
                 onClick={handleFitView}
                 className={styles.centerButton}
