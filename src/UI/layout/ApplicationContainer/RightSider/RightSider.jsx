@@ -30,7 +30,7 @@ import navigationHistoryDB from '@helpers/navigationHistoryDB';
 import ProjectCreationComponent from './ProjectCreationComponent';
 
 export default function RightSider({ config: initialConfig }) {    //
-    const { convertId, contactId } = useParams()
+    const { convertId, contactId, organizationId } = useParams()
     const location = useLocation()
     const navigate = useNavigate();
     const [searchHelperSectionsValue, setSearchHelperSectionsValue] = useState('');
@@ -132,9 +132,13 @@ export default function RightSider({ config: initialConfig }) {    //
     const handlerClickHelper = async (link) => {
         // Специальные случаи для внешних ссылок
         if (link === 'controlPanel' || link === 'svodka' || link === 'structure') {
-            window.open(homeUrl + `#/${link}`, '_blank');
-            setExpanendHelper(false);
-            return;
+            if (link === 'structure')
+                window.open(homeUrl + `#/${organizationId}/${link}`, '_blank');
+            else {
+                window.open(homeUrl + `#/${link}`, '_blank');
+                setExpanendHelper(false);
+                return;
+            }
         }
 
         try {

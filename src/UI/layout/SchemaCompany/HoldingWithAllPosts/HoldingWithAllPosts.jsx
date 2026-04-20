@@ -14,7 +14,7 @@ export function HoldingWithAllPosts() {
     console.warn(organizations)
     return (
         <div className={classes.dialog}>
-            <Header name="холдинг + все посты" />
+            <Header name="структура компании" />
             <div className={classes.main}>
                 <OrgChart data={organizations || []} />
             </div>
