@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import classes from "./AuthPage.module.css";
 import { Button, QRCode } from "antd";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { isMobile } from "react-device-detect";
 import { socketUrl, baseUrl } from "@helpers/constants";
@@ -25,14 +25,14 @@ export default function AuthPage() {
     const [socketId, setSocketId] = useState("");
     const [qrUrl, setQrUrl] = useState("");
     const [fingerprint, setFingerprint] = useState("");
+    const [ip, setIp] = useState(""); // ✅ Добавляем IP в состояние
     const [isAuthChecked, setIsAuthChecked] = useState(false);
 
     const userAgent = navigator.userAgent;
     const dispatch = useDispatch();
     const socketRef = useRef(null);
-    const hasSentDataRef = useRef(false);
 
-    // 1. Инициализация сокета (один раз)
+    // 1. Инициализация сокета
     useEffect(() => {
         if (!socketRef.current) {
             socketRef.current = io(`${socketUrl}auth`, {
@@ -69,21 +69,24 @@ export default function AuthPage() {
         };
     }, []);
 
-    // 2. Получение IP и fingerprint (один раз, используем только FingerprintJS)
+    // 2. Получение IP, fingerprint и tokenForTG
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Получаем IP и профессиональный fingerprint
+                // Получаем IP и fingerprint
                 const [ipResponse, fp] = await Promise.all([
                     fetch("https://api.ipify.org?format=json").then((res) => res.json()),
                     FingerprintJS.load().then((fp) => fp.get()),
                 ]);
 
                 const finalFingerprint = fp.visitorId;
+                const finalIp = ipResponse.ip;
+
                 setFingerprint(finalFingerprint);
+                setIp(finalIp); // ✅ Сохраняем IP
                 localStorage.setItem("fingerprint", finalFingerprint);
 
-                console.log("IP-адрес:", ipResponse.ip);
+                console.log("IP-адрес:", finalIp);
                 console.log("Fingerprint ID:", finalFingerprint);
 
                 // Проверка авторизации
@@ -118,21 +121,22 @@ export default function AuthPage() {
         fetchData();
     }, [userAgent]);
 
-    // 3. Обработка сокет-событий (после получения fingerprint и tokenForTG)
+    // 3. Отправка данных через сокет (без флага hasSentDataRef)
     useEffect(() => {
-        if (!fingerprint || !tokenForTG || !socketRef.current || hasSentDataRef.current) return;
+        // ✅ Добавляем ip в условие
+        if (!fingerprint || !tokenForTG || !ip || !socketRef.current) return;
 
         const socket = socketRef.current;
 
         const handleRequestInfo = () => {
-            if (!hasSentDataRef.current) {
-                hasSentDataRef.current = true;
-                socket.emit("responseFromClient", {
-                    fingerprint: fingerprint,
-                    userAgent: userAgent,
-                    token: tokenForTG,
-                });
-            }
+            console.log("Server requested info, sending...");
+            // ✅ Убираем hasSentDataRef, отправляем每次都
+            socket.emit("responseFromClient", {
+                fingerprint: fingerprint,
+                userAgent: userAgent,
+                ip: ip,           // ✅ ДОБАВЛЯЕМ IP!
+                token: tokenForTG,
+            });
         };
 
         const handleAuthInfo = (authData) => {
@@ -153,9 +157,9 @@ export default function AuthPage() {
             socket.off("receiveAuthInfo", handleAuthInfo);
             socket.off("disconnect", handleDisconnect);
         };
-    }, [fingerprint, tokenForTG, userAgent]);
+    }, [fingerprint, tokenForTG, ip, userAgent]); // ✅ Добавляем ip в зависимости
 
-    // 4. Обработка успешной авторизации (установка куки и редирект)
+    // 4. Обработка успешной авторизации
     useEffect(() => {
         if (data.userId && data.userId !== "false") {
             localStorage.setItem("accessToken", data.accessToken);
@@ -254,7 +258,6 @@ export default function AuthPage() {
                 <div className={classes.text}>Войдите в программу удобным для вас способом:</div>
             </div>
 
-            {/* VkAuth - передаем fingerprint из состояния */}
             {fingerprint && <VkAuth fingerprint={fingerprint} />}
 
             <div className={classes.telegram}>
