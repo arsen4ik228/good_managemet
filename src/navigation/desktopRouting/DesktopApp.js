@@ -230,17 +230,17 @@ function DesktopApp() {
           />
 
             <Route
-                path="structure"
+                path=":organizationId/structure"
                 element={
                     <React.Suspense fallback={<HandlerMutation Loading={true} />}>
                         <div className="tab">
-                            <MainCompany />
+                            <HoldingWithAllPosts />
                         </div>
                     </React.Suspense>
                 }
             />
 
-             <Route
+             {/* <Route
                 path="structure/holding"
                 element={
                     <React.Suspense fallback={<HandlerMutation Loading={true} />}>
@@ -260,7 +260,7 @@ function DesktopApp() {
                         </div>
                     </React.Suspense>
                 }
-            />
+            /> */}
 
             <Route
                 path="structure/:orgId"
