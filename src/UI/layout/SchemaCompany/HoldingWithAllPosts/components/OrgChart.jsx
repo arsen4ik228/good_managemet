@@ -21,42 +21,52 @@ function OrgChartContent({ data, isLoading, isError }) {
     const navigate = useNavigate();
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const { fitView, setViewport, getViewport, getNodes } = useReactFlow();
+    const { fitView, getNodes, setCenter } = useReactFlow();
 
     const [maxDepth, setMaxDepth] = useState(1);
     const [maxAvailableDepth, setMaxAvailableDepth] = useState(1);
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [sliderValue, setSliderValue] = useState(0); // 0-100%
 
     const containerRef = useRef(null);
     const reactFlowWrapper = useRef(null);
     const depthCacheRef = useRef({});
-    
-    // Храним ID организации, на которую наведена мышь
+
+    const pendingCenterOrgIdRef = useRef(null);
     const hoveredOrgIdRef = useRef(null);
+    const centeringTimerRef = useRef(null);
 
-    const onNodeClick = useCallback(
-        (event, node) => {
-            if (isTransitioning) return;
-            const organizationId = node.data.original?.id || node.id;
-            navigate(`/structure/${organizationId}`);
-        },
-        [navigate, isTransitioning]
-    );
+    // Конвертация процентов в глубину
+    const percentToDepth = useCallback((percent) => {
+        return Math.round((percent / 100) * (maxAvailableDepth - 1)) + 1;
+    }, [maxAvailableDepth]);
 
-    // Обработчик наведения на узел
+    // Конвертация глубины в проценты
+    const depthToPercent = useCallback((depth) => {
+        return ((depth - 1) / (maxAvailableDepth - 1)) * 100;
+    }, [maxAvailableDepth]);
+
+    // Обновление слайдера при изменении maxDepth
+    useEffect(() => {
+        setSliderValue(depthToPercent(maxDepth));
+    }, [maxDepth, depthToPercent]);
+
+    const onNodeClick = () => true
+    // useCallback(
+    //     (event, node) => {
+    //         if (isTransitioning) return;
+    //         const organizationId = node.data.original?.id || node.id;
+    //         navigate(`/structure/${organizationId}`);
+    //     },
+    //     [navigate, isTransitioning]
+    // );
+
     const onNodeMouseEnter = useCallback((event, node) => {
-        // Если это организация — запоминаем её ID
         if (node.data?.isOrganization) {
             hoveredOrgIdRef.current = node.id;
         } else {
-            // Если это пост — запоминаем ID его организации
             hoveredOrgIdRef.current = node.data?.original?.organizationId || null;
         }
-    }, []);
-
-    const onNodeMouseLeave = useCallback(() => {
-        // Не сбрасываем сразу, чтобы успеть использовать при скролле
-        // hoveredOrgIdRef.current = null;
     }, []);
 
     // Предварительный расчёт всех уровней
@@ -93,6 +103,47 @@ function OrgChartContent({ data, isLoading, isError }) {
         }
     }, [data, setNodes, setEdges]);
 
+    const centerOnOrganization = useCallback((orgId) => {
+        if (centeringTimerRef.current) {
+            clearTimeout(centeringTimerRef.current);
+        }
+
+        centeringTimerRef.current = setTimeout(() => {
+            const currentNodes = getNodes();
+            const targetNode = currentNodes.find(n => n.id === orgId);
+
+            if (targetNode) {
+                setCenter(
+                    targetNode.position.x,
+                    targetNode.position.y,
+                    { duration: 400, zoom: 1 }
+                );
+            } else {
+                fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
+            }
+
+            centeringTimerRef.current = null;
+        }, 350);
+    }, [getNodes, setCenter, fitView]);
+
+    useEffect(() => {
+        if (!isTransitioning && pendingCenterOrgIdRef.current) {
+            const orgId = pendingCenterOrgIdRef.current;
+            pendingCenterOrgIdRef.current = null;
+            centerOnOrganization(orgId);
+        }
+    }, [isTransitioning, centerOnOrganization]);
+
+    useEffect(() => {
+        if (nodes.length > 0 && !isTransitioning && maxDepth === 1) {
+            const timer = setTimeout(() => {
+                fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
+            }, 100);
+
+            return () => clearTimeout(timer);
+        }
+    }, [nodes.length, isTransitioning, maxDepth, fitView]);
+
     const changeDepth = useCallback(
         (newDepth) => {
             if (newDepth < 1 || newDepth > maxAvailableDepth) return;
@@ -102,56 +153,32 @@ function OrgChartContent({ data, isLoading, isError }) {
             const cached = depthCacheRef.current[newDepth];
             if (!cached) return;
 
-            // Запоминаем ID организации под мышью
-            const targetOrgId = hoveredOrgIdRef.current;
-            
-            console.log('Changing depth to:', newDepth, 'Target org:', targetOrgId);
+            pendingCenterOrgIdRef.current = hoveredOrgIdRef.current;
 
             setIsTransitioning(true);
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    setTimeout(() => {
-                        setMaxDepth(newDepth);
-                        setNodes(cached.nodes);
-                        setEdges(cached.edges);
+            setTimeout(() => {
+                setMaxDepth(newDepth);
+                setNodes(cached.nodes);
+                setEdges(cached.edges);
 
-                        requestAnimationFrame(() => {
-                            setIsTransitioning(false);
-
-                            setTimeout(() => {
-                                // Если есть целевая организация — центрируемся на ней
-                                if (targetOrgId) {
-                                    const targetNode = cached.nodes.find(n => n.id === targetOrgId);
-                                    
-                                    if (targetNode) {
-                                        const bounds = reactFlowWrapper.current?.getBoundingClientRect();
-                                        if (bounds) {
-                                            console.log('Centering on:', targetNode.id, targetNode.data?.label);
-                                            
-                                            setViewport(
-                                                {
-                                                    x: targetNode.position.x - bounds.width / 2,
-                                                    y: targetNode.position.y - bounds.height / 3,
-                                                    zoom: 1,
-                                                },
-                                                { duration: 400 }
-                                            );
-                                            return;
-                                        }
-                                    }
-                                }
-                                
-                                // Если нет цели — просто fitView
-                                fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
-                            }, 30);
-                        });
-                    }, 200);
-                });
-            });
+                setTimeout(() => {
+                    setIsTransitioning(false);
+                }, 100);
+            }, 200);
         },
-        [maxDepth, maxAvailableDepth, isTransitioning, setNodes, setEdges, fitView, setViewport]
+        [maxDepth, maxAvailableDepth, isTransitioning, setNodes, setEdges]
     );
+
+    // Обработчик изменения слайдера
+    const handleSliderChange = useCallback((event) => {
+        const percent = Number(event.target.value);
+        setSliderValue(percent);
+        const newDepth = percentToDepth(percent);
+        if (newDepth !== maxDepth) {
+            changeDepth(newDepth);
+        }
+    }, [percentToDepth, maxDepth, changeDepth]);
 
     const handleIncreaseDepth = useCallback(() => changeDepth(maxDepth + 1), [maxDepth, changeDepth]);
     const handleDecreaseDepth = useCallback(() => changeDepth(maxDepth - 1), [maxDepth, changeDepth]);
@@ -162,24 +189,35 @@ function OrgChartContent({ data, isLoading, isError }) {
         fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
     }, [fitView]);
 
-    const handleWheel = useCallback(
-        (event) => {
+    // Обработчик колёсика мыши
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleWheel = (event) => {
             event.preventDefault();
             const delta = event.deltaY;
-            
+
             if (delta < 0) {
                 handleIncreaseDepth();
             } else {
                 handleDecreaseDepth();
             }
-        },
-        [handleIncreaseDepth, handleDecreaseDepth]
-    );
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+
+        return () => {
+            container.removeEventListener('wheel', handleWheel);
+        };
+    }, [handleIncreaseDepth, handleDecreaseDepth]);
 
     useEffect(() => {
-        if (nodes.length > 0 && !isTransitioning && maxDepth === 1) {
-            setTimeout(() => fitView({ duration: 0, padding: 0.2, maxZoom: 1 }), 50);
-        }
+        return () => {
+            if (centeringTimerRef.current) {
+                clearTimeout(centeringTimerRef.current);
+            }
+        };
     }, []);
 
     if (isLoading) {
@@ -207,11 +245,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     }
 
     return (
-        <div 
-            className={styles.container} 
-            ref={containerRef} 
-            onWheel={handleWheel}
-        >
+        <div className={styles.container} ref={containerRef}>
             <div
                 ref={reactFlowWrapper}
                 className={`${styles.flowWrapper} ${isTransitioning ? styles.fadeOut : ''}`}
@@ -225,7 +259,6 @@ function OrgChartContent({ data, isLoading, isError }) {
                     onEdgesChange={onEdgesChange}
                     onNodeClick={onNodeClick}
                     onNodeMouseEnter={onNodeMouseEnter}
-                    onNodeMouseLeave={onNodeMouseLeave}
                     fitView={false}
                     minZoom={1}
                     maxZoom={1}
@@ -247,56 +280,80 @@ function OrgChartContent({ data, isLoading, isError }) {
                 </ReactFlow>
             </div>
 
-            <div className={styles.depthControls}>
-                <div className={styles.depthInfo}>
-                    Уровень: {maxDepth} / {maxAvailableDepth}
-                </div>
-                <div className={styles.depthButtons}>
+            {/* Новый слайдер глубины */}
+            {/* Компактный слайдер глубины */}
+            <div className={styles.depthSliderContainer}>
+                <div className={styles.sliderRow}>
                     <button
                         onClick={handleDecreaseDepth}
-                        className={styles.depthButton}
+                        className={styles.sliderButton}
                         disabled={maxDepth <= 1 || isTransitioning}
-                        title="Уменьшить глубину (колёсико вниз)"
+                        title="Уменьшить глубину"
                     >
                         −
                     </button>
+
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={sliderValue}
+                        onChange={handleSliderChange}
+                        className={styles.depthSlider}
+                        disabled={isTransitioning}
+                    />
+
                     <button
                         onClick={handleIncreaseDepth}
-                        className={styles.depthButton}
+                        className={styles.sliderButton}
                         disabled={maxDepth >= maxAvailableDepth || isTransitioning}
-                        title="Увеличить глубину (колёсико вверх)"
+                        title="Увеличить глубину"
                     >
                         +
                     </button>
+                </div>
+
+                <div className={styles.sliderValue}>
+                    {Math.round(sliderValue)}%
+                </div>
+
+                <div className={styles.sliderActions}>
                     <button
                         onClick={handleResetDepth}
-                        className={styles.depthButton}
+                        className={styles.actionButton}
                         disabled={isTransitioning}
-                        title="Сбросить до 1 уровня"
+                        title="Сбросить"
                     >
                         ↺
                     </button>
                     <button
-                        onClick={handleShowAll}
-                        className={styles.depthButton}
-                        disabled={isTransitioning}
-                        title="Показать всё"
+                        onClick={handleFitView}
+                        className={styles.actionButton}
+                        title="Центрировать"
                     >
-                        ⊞
+                        ⌖
                     </button>
-                </div>
-                <div className={styles.wheelHint}>
-                    ↕️ Колёсико
                 </div>
             </div>
 
-            <button
-                onClick={handleFitView}
-                className={styles.centerButton}
-                title="Центрировать вид"
-            >
-                ⌖
-            </button>
+            {/* Кнопки управления */}
+            <div className={styles.depthControls}>
+                <button
+                    onClick={handleResetDepth}
+                    className={styles.iconButton}
+                    disabled={isTransitioning}
+                    title="Сбросить до 1 уровня"
+                >
+                    ↺
+                </button>
+                <button
+                    onClick={handleFitView}
+                    className={styles.iconButton}
+                    title="Центрировать вид"
+                >
+                    ⌖
+                </button>
+            </div>
         </div>
     );
 }
