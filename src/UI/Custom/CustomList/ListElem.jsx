@@ -1,11 +1,14 @@
-import React, {useEffect, forwardRef} from 'react'
+import React, {useEffect, forwardRef, useState} from 'react'
 import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
 import {useFindPathSegment} from '@helpers/helpers'
-import {Tooltip} from 'antd'
+import {Button, Tooltip} from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
+import {EditOutlined} from "@ant-design/icons";
+import ModalUpdateOrganization from "../../layout/Organization/ModalUpdateOrganization";
 
 const ListElem = forwardRef(({
+                                 id,
                                  icon,
                                  upperText,
                                  colorUpperText,
@@ -18,9 +21,15 @@ const ListElem = forwardRef(({
                                  clickFunc,
                                  setSelectedItemData,
                                  isPageProject,
-                                 objTargets
+                                 objTargets,
+                                 isOrganizationList = false,
+                                 modalUpdateOrganization,
+                                 allOrganizations,
+                                 handleOrganizationNameButtonClick
                              }, ref) => {
     const isSelected = useFindPathSegment(linkSegment)
+    const [openModalUpdateOrganization, setOpenModalUpdateOrganization] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     // Добавляем ref для элемента
     // const elemRef = useRef(null)
@@ -28,6 +37,7 @@ const ListElem = forwardRef(({
     useEffect(() => {
         if (isSelected && setSelectedItemData) {
             setSelectedItemData({
+                id,
                 icon,
                 upperText,
                 colorUpperText,
@@ -46,6 +56,8 @@ const ListElem = forwardRef(({
                 ref={ref}
                 className={`${classes.content} ${isSelected && classes.selected}`}
                 onClick={() => clickFunc()}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
                 data-after={upperLabel}
                 data-id={linkSegment} // Добавляем data-id
                 data-selected={isSelected} // Добавляем data-selected
@@ -71,7 +83,18 @@ const ListElem = forwardRef(({
                         )}
                     </div>
                 </Tooltip>
-
+                {
+                    isOrganizationList && isHovered &&
+                    <Button icon={<EditOutlined/>} type="text" onClick={() => setOpenModalUpdateOrganization(true)}/>
+                }
+                {
+                    openModalUpdateOrganization && <ModalUpdateOrganization
+                        handleOrganizationNameButtonClick={handleOrganizationNameButtonClick}
+                        organizationId={id}
+                        allOrganizations={allOrganizations}
+                        open={openModalUpdateOrganization}
+                        setOpen={setOpenModalUpdateOrganization}/>
+                }
                 <div
                     className={classes.roundSection}
                 >
@@ -108,13 +131,13 @@ const ListElem = forwardRef(({
                             }
 
                             {
-                                objTargets?.expired !== 0  && <div style={{backgroundColor: "#FF4D4F"}}>
+                                objTargets?.expired !== 0 && <div style={{backgroundColor: "#FF4D4F"}}>
                                     {objTargets?.expired}
                                 </div>
                             }
 
                             {
-                                objTargets?.normal !== 0  && <div style={{backgroundColor: "#999999"}}>
+                                objTargets?.normal !== 0 && <div style={{backgroundColor: "#999999"}}>
                                     {objTargets?.normal}
                                 </div>
                             }
