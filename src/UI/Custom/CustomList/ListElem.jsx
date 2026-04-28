@@ -85,7 +85,13 @@ const ListElem = forwardRef(({
                 </Tooltip>
                 {
                     isOrganizationList && isHovered &&
-                    <Button icon={<EditOutlined/>} type="text" onClick={() => setOpenModalUpdateOrganization(true)}/>
+                    <Button
+                        icon={<EditOutlined/>}
+                            type="text"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenModalUpdateOrganization(true)
+                            }}/>
                 }
                 {
                     openModalUpdateOrganization && <ModalUpdateOrganization
