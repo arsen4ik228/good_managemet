@@ -1,28 +1,31 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import classes from './CustomList.module.css'
 import dropdown from '@image/drop-down.svg';
 import search from '@image/search.svg'
 import icon_filter from '@image/icon_filter.svg'
 import ListAddButtom from '../ListAddButton/ListAddButtom';
 import ListElem from './ListElem';
-import { Skeleton } from 'antd';
+import {Skeleton} from 'antd';
+import {EditOutlined} from "@ant-design/icons";
 
 export default function CustomList({
-    title,
-    isFilter,
-    setOpenFilter,
-    addButtonText,
-    addButtonClick,
-    searchValue,
-    searchFunc,
-    onExpandedChange,
-    selectedItem,
-    expanded,
-    children,
-    isLoading,
-    // Добавляем проп для получения ref контейнера
-    onListContainerRef
-}) {
+                                       title,
+                                       isFilter,
+                                       setOpenFilter,
+                                       addButtonText,
+                                       addButtonClick,
+                                       searchValue,
+                                       searchFunc,
+                                       onExpandedChange,
+                                       selectedItem,
+                                       expanded,
+                                       children,
+                                       isLoading,
+                                       // Добавляем проп для получения ref контейнера
+                                       onListContainerRef,
+                                       isOrgList,
+                                       allOrganizations
+                                   }) {
     // Внутреннее состояние используется только если expanded не передано извне
     const [internalExpanded, setInternalExpanded] = useState(true);
     const [showSearch, setShowSearch] = useState(false);
@@ -84,7 +87,7 @@ export default function CustomList({
         }
     }, [showSearch]);
 
-    
+
     // Передаем ref наружу
     useEffect(() => {
         if (onListContainerRef) {
@@ -146,12 +149,15 @@ export default function CustomList({
             {selectedItem && (
                 <div className={`${classes.singleItemContainer} ${currentExpanded ? classes.collapsed : ''}`}>
                     <ListElem
+                        id={selectedItem.id}
                         icon={selectedItem?.icon}
                         upperText={selectedItem?.upperText}
                         bottomText={selectedItem?.bottomText}
                         bage={selectedItem?.bage}
                         linkSegment={selectedItem?.linkSegment}
                         clickFunc={selectedItem?.clickFunc}
+                        isOrganizationList={isOrgList}
+                        allOrganizations={allOrganizations}
                     />
                 </div>
             )}
@@ -159,12 +165,12 @@ export default function CustomList({
             {/* Контейнер для списка с фиксированной высотой и скроллом */}
             <div
                 ref={listRef}
-                
+
                 className={`${classes.listContainer} ${!currentExpanded ? classes.collapsed : ''}`}
             >
 
                 {isLoading ?
-                    <div style={{ padding: '8px' }}>
+                    <div style={{padding: '8px'}}>
                         {[1, 2, 3, 4, 5].map((item) => (
                             <div
                                 key={item}
@@ -180,11 +186,11 @@ export default function CustomList({
                                 <Skeleton.Avatar
                                     active
                                     size={40}
-                                    style={{ marginRight: 12 }}
+                                    style={{marginRight: 12}}
                                 />
 
                                 {/* Текст */}
-                                <div style={{ flex: 1, display: 'block', minWidth: 0  }}>
+                                <div style={{flex: 1, display: 'block', minWidth: 0}}>
                                     <Skeleton.Input
                                         active
                                         size="small"
@@ -210,7 +216,7 @@ export default function CustomList({
                                     active
                                     size="small"
                                     shape="circle"
-                                    style={{ width: 24, height: 24 }}
+                                    style={{width: 24, height: 24}}
                                 />
                             </div>
                         ))}

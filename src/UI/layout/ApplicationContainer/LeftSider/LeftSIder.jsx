@@ -205,14 +205,20 @@ export default function LeftSIder() {
                         selectedItem={selectedOrgSectionValue}
                         expanded={expanendOrg}
                         onExpandedChange={setExpanendOrg}
+                        isOrgList={true}
+                        allOrganizations={organizations}
+                        handleOrganizationNameButtonClick={handleOrganizationNameButtonClick}
                     >
-                        {filtredOrganizations.map((item) => (
+                        {filtredOrganizations?.map((item) => (
                             <React.Fragment key={item.id}>
                                 <ListElem
+                                    id={item.id}
                                     icon={org_icon}
                                     upperText={item.organizationName}
                                     linkSegment={item.id}
                                     setSelectedItemData={setSelectedOrgSectionValue}
+                                    isOrganizationList={true}
+                                    allOrganizations={filtredOrganizations}
                                     clickFunc={() =>
                                         handleOrganizationNameButtonClick(
                                             item.id,
@@ -260,7 +266,6 @@ export default function LeftSIder() {
                                     linkSegment={`${item.userId}`}
                                     clickFunc={() => handlerContact(item)}
                                     setSelectedItemData={setSelectedContactsSectionsValue}
-                                    // bage={'1'}
                                     greyBage={true}
                                 />
                             </React.Fragment>

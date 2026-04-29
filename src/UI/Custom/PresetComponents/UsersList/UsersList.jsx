@@ -127,11 +127,18 @@ export default function UsersList() {
         navigate(`helper/users/${users[0]?.id}`)
     }, [users])
 
+    const handlerCreateUser = () => {
+        navigate('createUser')
+    }
     return (
         <>
             <CustomList
                 title={'Сотрудники'}
                 isFilter={true}
+
+                addButtonText={'Новый сотрудник'}
+                addButtonClick={handlerCreateUser}
+
                 setOpenFilter={setOpenFilter}
                 searchValue={seacrhUsersSectionsValue}
                 searchFunc={setSeacrhUsersSectionsValue}
