@@ -32,7 +32,7 @@ export default function CustomNode({ data }) {
     }
 
     const userClick = () => {
-        window.open(`${homeUrl}#/${selectedOrganizationId}/helper/user/${userId}`, '_blank')
+        window.open(`${homeUrl}#/${selectedOrganizationId}/helper/users/${userId}`, '_blank')
 
     }
 

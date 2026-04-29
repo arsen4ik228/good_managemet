@@ -22,19 +22,39 @@ const countWeeks = [
 ];
 
 // --- Вспомогательные функции ---
+// const calculateInitialDate = () => {
+//   const currentDate = localStorage.getItem("reportDay");
+//   if (currentDate) {
+//     const targetDay = parseInt(currentDate, 10);
+//     const today = new Date();
+//     const todayDay = today.getDay();
+//     let diff = todayDay - targetDay;
+//     if (diff < 0) diff += 7;
+//     const lastTargetDate = new Date(today);
+//     lastTargetDate.setDate(today.getDate() - diff);
+//     return lastTargetDate.toISOString().split("T")[0];
+//   }
+//   return null;
+// };
+
 const calculateInitialDate = () => {
-  const currentDate = localStorage.getItem("reportDay");
-  if (currentDate) {
-    const targetDay = parseInt(currentDate, 10);
-    const today = new Date();
-    const todayDay = today.getDay();
-    let diff = todayDay - targetDay;
-    if (diff < 0) diff += 7;
-    const lastTargetDate = new Date(today);
-    lastTargetDate.setDate(today.getDate() - diff);
-    return lastTargetDate.toISOString().split("T")[0];
-  }
-  return null;
+    const reportDay = localStorage.getItem("reportDay");
+
+    if (!reportDay) {
+        return null;
+    }
+
+    const targetDay = Number(reportDay);
+    const today = dayjs();
+
+    let targetDate = today.day(targetDay);
+
+    // Если день этой недели уже прошёл, берём следующий
+    if (targetDate.isBefore(today, "day")) {
+        targetDate = targetDate.add(1, "week");
+    }
+
+    return targetDate.format("YYYY-MM-DD");
 };
 
 const generateWeeklyData = (statisticData, quantity, baseDate) => {
