@@ -335,6 +335,11 @@ export default function ControlPanel() {
         });
     }, []);
 
+    // На каждой странице в useEffect
+    useEffect(() => {
+        document.title = 'Панель управления'; // или 'Сводка', 'Структура'
+    }, []);
+
     return (
         <div className={classes.dialog}>
             <Header
