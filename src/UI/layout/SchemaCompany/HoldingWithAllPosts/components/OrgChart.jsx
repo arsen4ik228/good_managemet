@@ -25,16 +25,21 @@ function OrgChartContent({ data, isLoading, isError }) {
 
     const [maxDepth, setMaxDepth] = useState(1);
     const [maxAvailableDepth, setMaxAvailableDepth] = useState(1);
-    const [isTransitioning, setIsTransitioning] = useState(false);
     const [sliderValue, setSliderValue] = useState(0);
+    
+    // Состояния анимации
+    const [isZooming, setIsZooming] = useState(false);
+    const [zoomDirection, setZoomDirection] = useState('in'); // 'in' или 'out'
 
     const containerRef = useRef(null);
     const reactFlowWrapper = useRef(null);
     const depthCacheRef = useRef({});
-    
-    const pendingCenterNodeIdRef = useRef(null); // Теперь хранит ID узла (поста или организации)
-    const hoveredNodeIdRef = useRef(null); // ID узла под мышью
+
+    const pendingCenterNodeIdRef = useRef(null);
+    const hoveredNodeIdRef = useRef(null);
     const centeringTimerRef = useRef(null);
+    const wheelTimeoutRef = useRef(null);
+    const pendingDepthRef = useRef(null);
 
     const percentToDepth = useCallback((percent) => {
         return Math.round((percent / 100) * (maxAvailableDepth - 1)) + 1;
@@ -50,24 +55,14 @@ function OrgChartContent({ data, isLoading, isError }) {
 
     const onNodeClick = useCallback(
         (event, node) => {
-            if (isTransitioning) return;
             const organizationId = node.data.original?.id || node.id;
             navigate(`/structure/${organizationId}`);
         },
-        [navigate, isTransitioning]
+        [navigate]
     );
 
-    // Сохраняем ID узла (не организации!)
     const onNodeMouseEnter = useCallback((event, node) => {
-        // Сохраняем ID самого узла, на который наведена мышь
         hoveredNodeIdRef.current = node.id;
-        
-        console.log('🟢 HOVER Node:', {
-            id: node.id,
-            label: node.data?.label,
-            type: node.data?.isOrganization ? 'organization' : 'post',
-            position: node.position
-        });
     }, []);
 
     // Предварительный расчёт всех уровней
@@ -104,92 +99,79 @@ function OrgChartContent({ data, isLoading, isError }) {
         }
     }, [data, setNodes, setEdges]);
 
-    // Функция центрирования на узле (может быть пост или организация)
     const centerOnNode = useCallback((nodeId) => {
         if (centeringTimerRef.current) {
             clearTimeout(centeringTimerRef.current);
         }
-        
+
         centeringTimerRef.current = setTimeout(() => {
             const currentNodes = getNodes();
             const targetNode = currentNodes.find(n => n.id === nodeId);
-            
+
             if (targetNode) {
-                console.log('✅ Centering on node:', {
-                    id: targetNode.id,
-                    label: targetNode.data?.label,
-                    type: targetNode.data?.isOrganization ? 'organization' : 'post',
-                    position: targetNode.position
-                });
-                
                 setCenter(
                     targetNode.position.x,
                     targetNode.position.y,
-                    { duration: 400, zoom: 1 }
+                    { duration: 0, zoom: 1 }
                 );
             } else {
-                // Если узел не найден (например, пост скрыт на этом уровне),
-                // ищем его родительскую организацию
-                console.warn('Node not found, searching for parent...');
-                fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
+                fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
             }
-            
+
             centeringTimerRef.current = null;
-        }, 350);
+        }, 50);
     }, [getNodes, setCenter, fitView]);
 
     // Эффект для центрирования после изменения глубины
     useEffect(() => {
-        if (!isTransitioning && pendingCenterNodeIdRef.current) {
+        if (!isZooming && pendingCenterNodeIdRef.current) {
             const nodeId = pendingCenterNodeIdRef.current;
             pendingCenterNodeIdRef.current = null;
             centerOnNode(nodeId);
         }
-    }, [isTransitioning, centerOnNode]);
+    }, [isZooming, centerOnNode]);
 
     // Эффект для начального fitView
     useEffect(() => {
-        if (nodes.length > 0 && !isTransitioning && maxDepth === 1) {
+        if (nodes.length > 0 && maxDepth === 1) {
             const timer = setTimeout(() => {
                 fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
             }, 100);
-            
             return () => clearTimeout(timer);
         }
-    }, [nodes.length, isTransitioning, maxDepth, fitView]);
+    }, [nodes.length, maxDepth, fitView]);
 
     const changeDepth = useCallback(
         (newDepth) => {
             if (newDepth < 1 || newDepth > maxAvailableDepth) return;
             if (newDepth === maxDepth) return;
-            if (isTransitioning) return;
 
-            const cached = depthCacheRef.current[newDepth];
-            if (!cached) return;
-
-            // Сохраняем ID узла под мышью
             const targetNodeId = hoveredNodeIdRef.current;
             pendingCenterNodeIdRef.current = targetNodeId;
             
-            console.log('🔄 Changing depth:', {
-                from: maxDepth,
-                to: newDepth,
-                targetNode: targetNodeId
-            });
-
-            setIsTransitioning(true);
-
+            // Определяем направление
+            const direction = newDepth > maxDepth ? 'in' : 'out';
+            setZoomDirection(direction);
+            
+            // Запускаем анимацию приближения
+            setIsZooming(true);
+            
+            // Меняем данные в середине анимации
             setTimeout(() => {
-                setMaxDepth(newDepth);
-                setNodes(cached.nodes);
-                setEdges(cached.edges);
-                
-                setTimeout(() => {
-                    setIsTransitioning(false);
-                }, 100);
-            }, 200);
+                const cached = depthCacheRef.current[newDepth];
+                if (cached) {
+                    setMaxDepth(newDepth);
+                    setNodes(cached.nodes);
+                    setEdges(cached.edges);
+                }
+            }, 150);
+            
+            // Завершаем анимацию
+            setTimeout(() => {
+                setIsZooming(false);
+            }, 350);
         },
-        [maxDepth, maxAvailableDepth, isTransitioning, setNodes, setEdges]
+        [maxDepth, maxAvailableDepth, setNodes, setEdges]
     );
 
     const handleSliderChange = useCallback((event) => {
@@ -201,34 +183,57 @@ function OrgChartContent({ data, isLoading, isError }) {
         }
     }, [percentToDepth, maxDepth, changeDepth]);
 
-    const handleIncreaseDepth = useCallback(() => changeDepth(maxDepth + 1), [maxDepth, changeDepth]);
-    const handleDecreaseDepth = useCallback(() => changeDepth(maxDepth - 1), [maxDepth, changeDepth]);
+    const handleIncreaseDepth = useCallback(() => {
+        if (maxDepth < maxAvailableDepth) {
+            changeDepth(maxDepth + 1);
+        }
+    }, [maxDepth, maxAvailableDepth, changeDepth]);
+
+    const handleDecreaseDepth = useCallback(() => {
+        if (maxDepth > 1) {
+            changeDepth(maxDepth - 1);
+        }
+    }, [maxDepth, changeDepth]);
+
     const handleResetDepth = useCallback(() => changeDepth(1), [changeDepth]);
 
     const handleFitView = useCallback(() => {
         fitView({ duration: 400, padding: 0.2, maxZoom: 1 });
     }, [fitView]);
 
-    // Обработчик колёсика мыши
+    // Обработчик колёсика мыши с троттлингом
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
-        
+
         const handleWheel = (event) => {
             event.preventDefault();
-            const delta = event.deltaY;
             
-            if (delta < 0) {
-                handleIncreaseDepth();
-            } else {
-                handleDecreaseDepth();
+            if (wheelTimeoutRef.current) {
+                clearTimeout(wheelTimeoutRef.current);
             }
+            
+            const direction = event.deltaY < 0 ? 1 : -1;
+            pendingDepthRef.current = direction;
+            
+            wheelTimeoutRef.current = setTimeout(() => {
+                if (pendingDepthRef.current === 1) {
+                    handleIncreaseDepth();
+                } else if (pendingDepthRef.current === -1) {
+                    handleDecreaseDepth();
+                }
+                pendingDepthRef.current = null;
+                wheelTimeoutRef.current = null;
+            }, 100);
         };
-        
+
         container.addEventListener('wheel', handleWheel, { passive: false });
-        
+
         return () => {
             container.removeEventListener('wheel', handleWheel);
+            if (wheelTimeoutRef.current) {
+                clearTimeout(wheelTimeoutRef.current);
+            }
         };
     }, [handleIncreaseDepth, handleDecreaseDepth]);
 
@@ -266,9 +271,14 @@ function OrgChartContent({ data, isLoading, isError }) {
 
     return (
         <div className={styles.container} ref={containerRef}>
+            {/* Оверлей с анимацией приближения */}
+            {(isZooming) && (
+                <div className={`${styles.zoomOverlay} ${zoomDirection === 'in' ? styles.zoomIn : styles.zoomOut}`} />
+            )}
+            
             <div
                 ref={reactFlowWrapper}
-                className={`${styles.flowWrapper} ${isTransitioning ? styles.fadeOut : ''}`}
+                className={styles.flowWrapper}
                 style={{ width: '100%', height: '100%' }}
             >
                 <ReactFlow
@@ -306,12 +316,12 @@ function OrgChartContent({ data, isLoading, isError }) {
                     <button
                         onClick={handleDecreaseDepth}
                         className={styles.sliderButton}
-                        disabled={maxDepth <= 1 || isTransitioning}
+                        disabled={maxDepth <= 1}
                         title="Уменьшить глубину"
                     >
                         −
                     </button>
-                    
+
                     <input
                         type="range"
                         min="0"
@@ -319,29 +329,27 @@ function OrgChartContent({ data, isLoading, isError }) {
                         value={sliderValue}
                         onChange={handleSliderChange}
                         className={styles.depthSlider}
-                        disabled={isTransitioning}
                         style={{ '--value': `${sliderValue}%` }}
                     />
-                    
+
                     <button
                         onClick={handleIncreaseDepth}
                         className={styles.sliderButton}
-                        disabled={maxDepth >= maxAvailableDepth || isTransitioning}
+                        disabled={maxDepth >= maxAvailableDepth}
                         title="Увеличить глубину"
                     >
                         +
                     </button>
                 </div>
-                
+
                 <div className={styles.sliderValue}>
                     {Math.round(sliderValue)}%
                 </div>
-                
+
                 <div className={styles.sliderActions}>
                     <button
                         onClick={handleResetDepth}
                         className={styles.actionButton}
-                        disabled={isTransitioning}
                         title="Сбросить"
                     >
                         ↺
