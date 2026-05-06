@@ -12,18 +12,43 @@ import ConvertTargetContainer from '@Custom/ConvertTargetContainer/ConvertTarget
 import AdaptiveLayoutContainer from '../adaptive.container/AdaptiveLayoutContainer';
 import ApproveConvert from '../../../Custom/ApproveConvert/ApproveConvert';
 
+// Страница диалога для конверта на согласовании.
+// Отображает чат между участниками, шапку с информацией о конверте
+// и кнопки утверждения/отклонения.
 export default function AgreementDialogPage() {
+    // ID конверта из URL (например: /agreement/:convertId)
     const { convertId } = useParams();
+
+    // Смещение для пагинации прочитанных сообщений: +30 при каждом скроле вверх
     const [paginationSeenMessages, setPaginationSeenMessages] = useState(0);
+    // Смещение для пагинации непрочитанных (зарезервировано, пока не используется)
     const [paginationUnSeenMessages, setPaginationUnSeenMessages] = useState(0);
+
+    // Ref на прокручиваемый контейнер сообщений
     const bodyRef = useRef(null);
+
+    // Накопленный массив прочитанных сообщений из всех загруженных страниц
     const [messagesArray, setMessagesArray] = useState();
+
+    // Сообщения, пришедшие через WebSocket в реальном времени (не из БД)
     const [socketMessages, setSocketMessages] = useState([]);
+
+    // Ref на первый элемент блока непрочитанных — для прокрутки к нему при загрузке
     const unSeenMessagesRef = useRef(null);
+
+    // ID непрочитанных сообщений, которые сейчас видны на экране (для отправки события "прочитано")
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
+
+    // Изменение статуса конверта (утвердить / отклонить), пробрасывается в Input
     const [convertStatusChange, setConvertStatusChange] = useState()
+
+    // Список ID сообщений, которые уже были помечены как прочитанные в текущей сессии.
+    // Хранится вне состояния, чтобы не вызывать лишних ре-рендеров.
     const historySeenIds = []
 
+    // Данные и методы для работы с конвертом:
+    // currentConvert — объект конверта, senderPostId — ID должности текущего пользователя,
+    // sendMessage — отправка сообщения, approveConvert/finishConvert — смена статуса конверта
     const {
         currentConvert,
         senderPostId,
@@ -33,11 +58,14 @@ export default function AgreementDialogPage() {
         sendMessage,
         recipientPost,
         refetchGetConvertId,
-        approveConvert, 
+        approveConvert,
         finishConvert,
         isLoadingGetConvertId
     } = useConvertsHook({ convertId });
 
+    // Загрузка сообщений с пагинацией:
+    // seenMessages — прочитанные (страница по paginationSeenMessages),
+    // unSeenMessages — непрочитанные (загружаются отдельно)
     const {
         seenMessages,
         unSeenMessageExist,
@@ -50,20 +78,26 @@ export default function AgreementDialogPage() {
         isErrorUnSeenMessages,
         isFetchingUnSeenMessages,
     } = useMessages(convertId, paginationSeenMessages);
+
+    // Ref-копии для использования внутри колбэков без добавления в deps
     const seenMessagesRef = useRef(seenMessages);
     const unSeenMessageExistRef = useRef(unSeenMessageExist)
 
+    // При монтировании входим в комнату конверта по WebSocket
     useEmitSocket('join_convert', { convertId: convertId });
+    // Отправляем серверу ID сообщений, которые пользователь увидел
     useEmitSocket('messagesSeen', { convertId: convertId, messageIds: visibleUnSeenMessageIds, post: senderPostForSocket })
 
-    // Инициализация socket подписок 
+    // Подписка на входящие WebSocket-события:
+    // messageCreationEvent — новое сообщение от другого участника
+    // messagesAreSeen — кто-то прочитал сообщения
     const eventNames = useMemo(() => ['messageCreationEvent', 'messagesAreSeen'], []);
     const handleEventData = useCallback((eventName, data) => {
         //(`Data from ${eventName}:`, data);
     }, []);
     const socketResponse = useSocket(eventNames, handleEventData);
 
-    // Слушатель скрола, пагинация запрашиваемых сообщений 
+    // Инфинити-скрол вверх: при достижении верха контейнера запрашиваем следующую страницу прочитанных
     const handleScroll = debounce(() => {
         const bodyElement = bodyRef.current;
         if (!bodyElement) return;
@@ -73,8 +107,7 @@ export default function AgreementDialogPage() {
             setPaginationSeenMessages((prev) => prev + 30);
     }, 200);
 
-
-    // Монтирование слушателя скрола
+    // Вешаем и снимаем слушатель скрола на контейнер сообщений
     useLayoutEffect(() => {
         const bodyElement = bodyRef.current;
         if (!bodyElement) {
@@ -88,7 +121,7 @@ export default function AgreementDialogPage() {
         };
     }, []);
 
-    // Компоновка массива архивных сообщений 
+    // При каждой новой странице прочитанных — добавляем их в конец messagesArray
     useEffect(() => {
         if (!notEmpty(seenMessages)) {
             seenMessagesRef.current = []
@@ -105,7 +138,7 @@ export default function AgreementDialogPage() {
 
     }, [seenMessages]);
 
-    // Создание socket сообщений 
+    // Новое сообщение пришло через сокет — добавляем в socketMessages
     useEffect(() => {
         if (!notEmpty(socketResponse?.messageCreationEvent)) return;
 
@@ -113,6 +146,7 @@ export default function AgreementDialogPage() {
         setSocketMessages(prev => [...prev, {
             id: newMessage.id,
             content: newMessage.content,
+            // Определяем, наше ли это сообщение, чтобы выровнять его по правому краю
             userMessage: newMessage.sender.id === senderPostId,
             attachmentToMessage: newMessage.attachmentToMessage,
             timeSeen: null,
@@ -120,29 +154,24 @@ export default function AgreementDialogPage() {
         }]);
     }, [socketResponse?.messageCreationEvent]);
 
-    // Прочтение сообщений(смена статуса)
+    // Кто-то прочитал сообщения — обновляем статус seenStatuses у нужных элементов
     useEffect(() => {
-        // Проверяем, что socketResponse.messagesAreSeen и messageIds существуют
         if (!socketResponse?.messagesAreSeen || !Array.isArray(socketResponse.messagesAreSeen.messageIds)) {
             return;
         }
 
-        // Функция для обновления сообщений
         const updateMessages = (messages) => {
             return messages.map(message => {
-                //(socketResponse.messagesAreSeen.messageIds)
                 if (socketResponse.messagesAreSeen.messageIds.includes(message.id)) {
-                    //('bam')
                     return {
                         ...message,
-                        seenStatuses: ['isSeen']  // socketResponse.messagesAreSeen.dateSeen,
+                        seenStatuses: ['isSeen'],
                     };
                 }
                 return message;
             });
         };
 
-        // Обновляем messagesArray, если есть непрочитанные сообщения
         if (unSeenMessageExistRef.current) {
             const updatedMessagesArray = updateMessages(unSeenMessages);
             const hasUnSeenMessages = updatedMessagesArray.some(message =>
@@ -156,12 +185,11 @@ export default function AgreementDialogPage() {
             }
         }
 
-        // Обновляем socketMessages
         const updatedSocketMessages = updateMessages(socketMessages);
         setSocketMessages(updatedSocketMessages);
     }, [socketResponse?.messagesAreSeen, unSeenMessageExist]);
 
-    // Установка фокуса на не прочитанные сообщения 
+    // После загрузки непрочитанных — прокручиваем к первому из них
     useLayoutEffect(() => {
         if (!isLoadingUnSeenMessages && unSeenMessages?.length > 0 && unSeenMessagesRef.current) {
             const firstUnSeenMessageElement = unSeenMessagesRef.current;
@@ -173,63 +201,64 @@ export default function AgreementDialogPage() {
         }
     }, [unSeenMessages, isLoadingUnSeenMessages]);
 
+    // IntersectionObserver следит, какие непрочитанные сообщения видны на экране.
+    // Их ID собираются в visibleUnSeenMessageIds и отправляются серверу через useEmitSocket выше.
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                // Создаем временный массив для хранения id видимых элементов
                 const visibleIds = [];
 
                 entries.forEach((entry) => {
                     const messageId = entry.target.dataset.messageId;
                     if (entry.isIntersecting && !historySeenIds.includes(messageId)) {
-                        // Добавляем id в массив, если элемент видим и его еще нет в historySeenIds
                         visibleIds.push(messageId);
+                        // Запоминаем, чтобы не отправлять повторно в этой сессии
                         historySeenIds.push(messageId);
                     }
                 });
 
-                // Обновляем состояние массива visibleUnSeenMessageIds
                 setVisibleUnSeenMessageIds(visibleIds);
             },
             {
-                root: bodyRef.current, // Область видимости — это контейнер сообщений
-                threshold: 0.4,
+                root: bodyRef.current,
+                threshold: 0.4, // Сообщение считается прочитанным при 40% видимости
             }
         );
 
-        // Находим все элементы с data-message-id и начинаем их отслеживать
+        // Подписываемся на все элементы с data-message-id (непрочитанные)
         const messageElements = bodyRef.current.querySelectorAll('[data-message-id]');
         messageElements.forEach((element) => observer.observe(element));
 
-        // Очистка при размонтировании
         return () => {
             messageElements.forEach((element) => observer.unobserve(element));
             observer.disconnect();
         };
     }, [unSeenMessages, socketMessages]);
 
-    // console.warn(recipientPost)
-
 
     return (
         <>
+            {/* Адаптивная обёртка: переключает layout между мобильным и десктопом */}
             <AdaptiveLayoutContainer
                 userInfo={userInfo}
             >
+                {/* Шапка с информацией о конверте (статус цели, текст, дата) и кнопками согласования */}
                 <ConvertTargetContainer
                     targetStatus={currentConvert?.target?.targetStatus}
                     targetText={currentConvert?.target?.content}
                     date={currentConvert?.target?.createdAt}
                     isWatcher={true}
                 >
-                    {/* <div className={classes.recepientPost}>
-                        <span>получатель:</span> {recipientPost.postName}
-                    </div> */}
+                    {/* Кнопки "Утвердить" / "Отклонить" конверт */}
                     <ApproveConvert
                         setRequestFunction={setConvertStatusChange}
                     ></ApproveConvert>
                 </ConvertTargetContainer>
+
+                {/* Прокручиваемая область сообщений */}
                 <div className={classes.body} ref={bodyRef}>
+
+                    {/* 1. Реалтайм-сообщения из WebSocket (самые новые, сверху) */}
                     {socketMessages?.slice().reverse().map((item, index) => (
                         <React.Fragment key={index}>
                             <Message
@@ -239,12 +268,15 @@ export default function AgreementDialogPage() {
                                 data-message-number={item.messageNumber}
                                 attachmentToMessage={item?.attachmentToMessages}
                                 senderPostName={item?.senderPostName}
+                                {/* data-message-id вешается только на чужие сообщения для IntersectionObserver */}
                                 {...(!item.userMessage && { 'data-message-id': item.id })}
                             >
                                 {item.content}
                             </Message>
                         </React.Fragment>
                     ))}
+
+                    {/* 2. Непрочитанные сообщения из БД + разделитель */}
                     {unSeenMessages?.length > 0 && (
                         <>
                             {unSeenMessages?.map((item, index) => (
@@ -252,8 +284,9 @@ export default function AgreementDialogPage() {
                                     <Message
                                         userMessage={item?.sender?.id === senderPostId}
                                         createdMessage={item?.createdAt}
+                                        {/* Ref на последний элемент блока — для прокрутки к нему */}
                                         ref={index === unSeenMessages.length - 1 ? unSeenMessagesRef : null}
-                                        data-message-id={item.id} // Добавляем data-атрибут
+                                        data-message-id={item.id}
                                         data-message-number={item.messageNumber}
                                         attachmentToMessage={item?.attachmentToMessages}
                                         seenStatuses={item?.seenStatuses}
@@ -266,6 +299,8 @@ export default function AgreementDialogPage() {
                             <div className={classes.unSeenMessagesInfo}> Непрочитанные сообщения </div>
                         </>
                     )}
+
+                    {/* 3. Прочитанные сообщения из БД (старые, подгружаются при скроле вверх) */}
                     {messagesArray?.map((item, index) => (
                         <React.Fragment key={index}>
                             <Message key={index}
@@ -281,6 +316,8 @@ export default function AgreementDialogPage() {
                         </React.Fragment>
                     ))}
                 </div>
+
+                {/* Поле ввода сообщения и кнопки действий с конвертом */}
                 <footer className={classes.footer}>
                     <Input
                         convertId={currentConvert?.id}
