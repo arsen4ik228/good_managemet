@@ -70,7 +70,7 @@ export const ProjectCreationComponent = () => {
     const debouncedUpdateProjectName = useCallback(
         debounce(async () => {
             await saveProjectNameImmediately();
-        }, 1300), // Задержка 5 секунд (у тебя в комменте было 1s, но в коде 5000)
+        }, 5000), // Задержка 5 секунд (у тебя в комменте было 1s, но в коде 5000)
         [saveProjectNameImmediately]
     );
 
