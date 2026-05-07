@@ -5,6 +5,7 @@ import projects from "../img/projects.svg"
 import useViewStrategy from './useViewStrategy';
 import TextAreaRdx from '../../../radixUI/textArea/TextAreaRdx';
 import { useRightPanel, usePanelPreset } from "@hooks";
+import {homeUrl} from "../../../../helpers/constants";
 
 function formatDate(isoString) {
     const date = new Date(isoString);
@@ -15,17 +16,16 @@ function formatDate(isoString) {
     return `${day}.${month}.${year}`;
 }
 
-const StyleProject = ({ title }) => {
+const StyleProject = ({ id, title }) => {
     return (
         <div className={classes.itemProject}>
             <img src={projects} alt={projects} />
-            <button>{title}</button>
+            <button onClick={() => window.open(homeUrl + `#/${localStorage.getItem("selectedOrganizationId")}/helper/project/${id}`, '_blank')}>{title}</button>
         </div>
     );
 }
 
 export function ViewStrategy({ contentRef }) {
-
     const { PRESETS } = useRightPanel();
     usePanelPreset(PRESETS["STRATEGY"]);
 
@@ -38,7 +38,7 @@ export function ViewStrategy({ contentRef }) {
                 <h3 className={classes.h3}>{localStorage.getItem("name")}</h3>
             </div>
 
-            <div className="">
+            <div>
                 <h3 className={classes.h3}>Стратегия №{currentStrategy?.strategyNumber}</h3>
                 <h3 className={classes.date}>
                     {currentStrategy.state === "Черновик"
@@ -50,51 +50,46 @@ export function ViewStrategy({ contentRef }) {
                 </h3>
             </div>
 
-
             <div>
                 <h4 className={classes.h4}>Ситуация</h4>
                 <p>{currentObjective?.situation}</p>
             </div>
 
-
-            <div className="">
+            <div>
                 <h4 className={classes.h4}>Причина</h4>
                 <p>{currentObjective?.rootCause}</p>
             </div>
 
-
-            <div className="">
+            <div>
                 <h4 className={classes.h4}>Краткосрочная цель</h4>
-
                 <p className={classes.marginLeft}>
                     1. <div>{currentObjective?.content?.[0]}</div>
                 </p>
-
                 <p className={classes.marginLeft}>
-                    2.<div>{currentObjective?.content?.[1]}</div>
+                    2. <div>{currentObjective?.content?.[1]}</div>
                 </p>
-
             </div>
 
-
-            <div className="">
+            <div>
                 <h4 className={classes.h4}>Стратегия</h4>
+
+                {/* TextAreaRdx скрываем при печати, показываем <p> */}
                 <TextAreaRdx
-                    style={{
-                        padding: 0
-                    }}
+                    style={{ padding: 0 }}
                     value={currentStrategy?.content}
                     readOnly
                     autoSize
+                    className={classes.noPrint}
                 />
+                <p className={classes.printOnly}>
+                    {currentStrategy?.content}
+                </p>
             </div>
 
-            <div className="">
+            <div>
                 <h4 className={classes.h4}>Проекты:</h4>
-                {
-                    projects.map((p) => <StyleProject title={p.projectName} />)
-                }
+                {projects.map((p) => <StyleProject id={p.id} title={p.projectName} />)}
             </div>
         </div>
-    )
+    );
 }

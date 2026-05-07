@@ -91,18 +91,43 @@ p {
   }
 }
 
+/* Скрываем textarea при печати */
+.noPrint {
+    display: block;
+}
+
+/* Показываем plain текст только при печати */
+.printOnly {
+    display: none;
+}
+
 @media print {
-  .main {
-    border: none !important;
-    /* убираем рамку */
-    border-radius: 0 !important;
-    /* убираем скругление */
-    margin: 0 auto !important;
-    /* горизонтальное центрирование */
-    padding: 40px !important;
-    /* внутренние отступы */
-    width: 210mm;
-    /* ширина листа A4 (можно чуть меньше, например 190mm) */
-    max-width: 100%;
-  }
+    .main {
+        border: none !important;
+        border-radius: 0 !important;
+        margin: 0 auto !important;
+        padding: 40px !important;
+        width: 210mm;
+        max-width: 100%;
+        overflow: visible !important;
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
+        flex: none !important;
+        position: static !important;
+    }
+
+    .noPrint {
+        display: none !important;
+    }
+
+    .printOnly {
+        display: block !important;
+        font-family: "Montserrat";
+        font-size: 16px;
+        line-height: 1.2;
+        white-space: pre-wrap; /* сохраняем переносы строк из textarea */
+        margin: 0;
+        padding: 0;
+    }
 }

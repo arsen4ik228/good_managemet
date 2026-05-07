@@ -378,6 +378,11 @@ export default function Svodka() {
 
   console.log(allStatistics)
 
+    // На каждой странице в useEffect
+    useEffect(() => {
+        document.title = 'Сводка';
+    }, []);
+
   return (
     <div className={classes.dialog}>
       {contextHolder}
