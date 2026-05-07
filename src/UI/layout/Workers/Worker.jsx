@@ -1,30 +1,29 @@
-import React, { useEffect } from 'react'
+import React, {useEffect} from 'react'
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
-import { Avatar, Card, Divider, Flex, Typography, Space, Tag, DatePicker } from 'antd'
-import { useParams } from 'react-router-dom';
-import { useUserHook } from '@hooks'
+import {Avatar, Card, Divider, Flex, Typography, Space, Tag, DatePicker} from 'antd'
+import {useParams} from 'react-router-dom';
+import {useUserHook} from '@hooks'
 import default_avatar from '@image/default_avatar.svg'
-import { formatPhone } from '../Posts/function/functionForPost';
-import { baseUrl } from "@helpers/constants.js";
+import {formatPhone} from '../Posts/function/functionForPost';
+import {baseUrl} from "@helpers/constants.js";
 import {
     PhoneOutlined,
 } from "@ant-design/icons";
-import { useModuleActions, usePanelPreset, useRightPanel } from '../../../hooks';
-
-import { homeUrl } from "@helpers/constants";
-
-
+import {useModuleActions, usePanelPreset, useRightPanel} from '../../../hooks';
+import {homeUrl} from "@helpers/constants";
 import dayjs from 'dayjs';
-
+import classes from "./Workers.module.css";
+import icon_post from '@image/icon _ post.svg'
 
 export default function Worker() {
-    const { userId } = useParams();
+    const {userId} = useParams();
 
-    const { Title, Text } = Typography;
+    const {Title, Text} = Typography;
 
-    const { userInfo, refetchUserInfo } = useUserHook({ userId })
+    const {userInfo, refetchUserInfo} = useUserHook({userId})
+    console.log("userInfo = ", userInfo)
 
-    const { PRESETS } = useRightPanel();
+    const {PRESETS} = useRightPanel();
 
     usePanelPreset(PRESETS["USERS"]);
 
@@ -59,7 +58,7 @@ export default function Worker() {
                 <Card
                     style={{
                         width: 640,
-                        maxHeight: 500,
+                        height: "auto",
                         marginTop: 20,
                         textAlign: "center",
                         borderRadius: 8,
@@ -69,26 +68,61 @@ export default function Worker() {
                     <Avatar
                         size={168}
                         src={userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}` : default_avatar}
-                        style={{ marginBottom: 12 }}
+                        style={{marginBottom: 12}}
                     />
                     <Title level={5}>{userInfo?.lastName} {userInfo?.firstName} {userInfo?.middleName}</Title>
-                    {/* <Title level={5}>{userInfo?.middleName}</Title> */}
-
-                    <Divider />
+                    <Divider/>
 
                     <Flex vertical gap={8} align="flex-start">
                         <Space>
-                            <PhoneOutlined />
+                            <PhoneOutlined/>
                             <Text>{formatPhone(userInfo?.telephoneNumber)}</Text>
                         </Space>
                     </Flex>
 
+                    {
+                        userInfo?.posts?.length > 0 &&
+
+                        <fieldset style={{border: "1px solid #d9d9d9"}}>
+                            <legend className={classes.title}>Закрепленные посты</legend>
+
+                            {
+                                userInfo.posts.map((p) => (
+                                    <div style={{
+                                        display: "flex",
+                                        gap:"10px",
+                                        border: "1px solid #d9d9d9",
+                                        marginTop: "16px",
+                                        borderRadius: "10px",
+                                        padding: "10px",
+                                    }}
+                                    >
+                                        <img src={icon_post} alt="icon_post"/>
+                                        <div style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                        }}>
+                                            <Text className={classes.subtitle} style={{paddingLeft: "5px", fontWeight: "bold"}}>
+                                                {p.postName}
+                                            </Text>
+                                            <Text className={classes.subtitle} style={{paddingLeft: "5px"}}>
+                                                {p.divisionName}
+                                            </Text>
+                                        </div>
+                                    </div>
+
+                                ))
+                            }
 
 
+                        </fieldset>
+
+
+                    }
                     {
                         userInfo?.isFired && (
 
-                            <div style={{ marginBottom: 16, marginTop: 16 }}>
+                            <div style={{marginBottom: 16, marginTop: 16}}>
                                 <div style={{
                                     maxWidth: "350px",
                                     display: 'flex',
@@ -102,7 +136,7 @@ export default function Worker() {
                                     backgroundColor: '#fafafa'
                                 }}>
 
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
                                         {userInfo?.isFired && (
                                             <Tag
                                                 color="red"
@@ -118,12 +152,12 @@ export default function Worker() {
                                     </div>
 
                                     {userInfo?.isFired && (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span style={{ fontSize: '14px', color: '#666' }}>Дата увольнения:</span>
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                            <span style={{fontSize: '14px', color: '#666'}}>Дата увольнения:</span>
                                             <DatePicker
                                                 value={userInfo?.updatedAt ? dayjs(userInfo.updatedAt) : null}
                                                 format="DD.MM.YYYY"
-                                                style={{ width: '150px' }}
+                                                style={{width: '150px'}}
                                                 disabled
                                             />
                                         </div>
@@ -132,7 +166,7 @@ export default function Worker() {
                             </div>
                         )
                     }
-                    
+
                 </Card>
             </MainContentContainer>
         </>
