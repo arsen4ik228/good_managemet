@@ -91,81 +91,84 @@ function OrgChartContent({ data, isLoading, isError }) {
 
     // Начальный fitView
     useEffect(() => {
-        if (nodes.length > 0 && maxDepth === 1) {
+        if (nodes.length > 0 && maxDepth === 1 && !isZooming) {
             const timer = setTimeout(() => {
                 fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
             }, 100);
             return () => clearTimeout(timer);
         }
-    }, [nodes.length, maxDepth, fitView]);
+    }, [nodes.length, maxDepth, isZooming, fitView]);
 
-    const changeDepth = useCallback((newDepth) => {
-        if (newDepth < 1 || newDepth > maxAvailableDepth) return;
-        if (newDepth === maxDepth) return;
-        if (isZooming) return;
+const changeDepth = useCallback((newDepth) => {
+    if (newDepth < 1 || newDepth > maxAvailableDepth) return;
+    if (newDepth === maxDepth) return;
 
-        const targetNodeId = hoveredNodeIdRef.current;
-        const cached = depthCacheRef.current[newDepth];
-        if (!cached) return;
+    const targetNodeId = hoveredNodeIdRef.current;
+    const cached = depthCacheRef.current[newDepth];
+    if (!cached) return;
 
-        // 1. Запоминаем позицию узла на ЭКРАНЕ (в пикселях контейнера)
-        let targetScreenPos = null;
-        if (targetNodeId) {
-            const currentNode = getNodes().find(n => n.id === targetNodeId);
-            const viewport = getViewport();
-            const bounds = reactFlowWrapper.current?.getBoundingClientRect();
-
-            if (currentNode && viewport && bounds) {
-                // Формула: экранная позиция = (позиция узла * zoom) + смещение viewport + центр контейнера
-                const screenX = (currentNode.position.x * viewport.zoom) + viewport.x + bounds.width / 2;
-                const screenY = (currentNode.position.y * viewport.zoom) + viewport.y + bounds.height / 2;
-
-                targetScreenPos = { x: screenX, y: screenY };
-            }
+    // 1. Запоминаем экранную позицию узла
+    let targetScreenPos = null;
+    if (targetNodeId) {
+        const currentNode = getNodes().find(n => n.id === targetNodeId);
+        const viewport = getViewport();
+        const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+        if (currentNode && viewport && bounds) {
+            targetScreenPos = {
+                x: (currentNode.position.x * viewport.zoom) + viewport.x + bounds.width / 2,
+                y: (currentNode.position.y * viewport.zoom) + viewport.y + bounds.height / 2,
+            };
         }
+    }
 
-        // 2. Запускаем размытие
-        const direction = newDepth > maxDepth ? 'in' : 'out';
+    // 2. Определяем направление
+    const direction = newDepth > maxDepth ? 'in' : 'out';
+
+    // 3. Сбрасываем таймер размытия
+    if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current);
+
+    // 4. ЗАПУСКАЕМ АНИМАЦИЮ СРАЗУ (пересоздаём оверлей)
+    setIsZooming(false);
+    requestAnimationFrame(() => {
         setZoomDirection(direction);
         setIsZooming(true);
 
-        // Очищаем предыдущий таймер
-        if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current);
+        // 5. МЕНЯЕМ ДАННЫЕ ПОСЛЕ ЗАПУСКА АНИМАЦИИ
+        requestAnimationFrame(() => {
+            setMaxDepth(newDepth);
+            setNodes(cached.nodes);
+            setEdges(cached.edges);
 
-        // 3. Меняем данные
-        setMaxDepth(newDepth);
-        setNodes(cached.nodes);
-        setEdges(cached.edges);
-
-        // 4. После рендера — фиксируем узел на том же месте экрана
-        setTimeout(() => {
-            if (targetScreenPos && targetNodeId) {
-                const newNode = getNodes().find(n => n.id === targetNodeId);
-                const bounds = reactFlowWrapper.current?.getBoundingClientRect();
-
-                if (newNode && bounds) {
-                    // Вычисляем viewport так, чтобы узел оказался в targetScreenPos
-                    const newViewportX = targetScreenPos.x - bounds.width / 2 - (newNode.position.x * 1);
-                    const newViewportY = targetScreenPos.y - bounds.height / 2 - (newNode.position.y * 1);
-
-                    setViewport(
-                        { x: newViewportX, y: newViewportY, zoom: 1 },
-                        { duration: 0 }
-                    );
+            // 6. Фиксируем позицию узла после рендера
+            setTimeout(() => {
+                if (targetScreenPos && targetNodeId) {
+                    const newNode = getNodes().find(n => n.id === targetNodeId);
+                    const bounds = reactFlowWrapper.current?.getBoundingClientRect();
+                    if (newNode && bounds) {
+                        setViewport(
+                            {
+                                x: targetScreenPos.x - bounds.width / 2 - (newNode.position.x * 1),
+                                y: targetScreenPos.y - bounds.height / 2 - (newNode.position.y * 1),
+                                zoom: 1,
+                            },
+                            { duration: 0 }
+                        );
+                    } else {
+                        fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
+                    }
                 } else {
-                    // Если узел не найден (скрыт на этом уровне) — fitView
                     fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
                 }
-            } else {
-                fitView({ duration: 0, padding: 0.2, maxZoom: 1 });
-            }
-        }, 50);
+            }, 50);
+        });
+    });
 
-        // 5. Снимаем размытие через 2300ms
-        zoomTimerRef.current = setTimeout(() => {
-            setIsZooming(false);
-        }, 2300);
-    }, [maxDepth, maxAvailableDepth, isZooming, setNodes, setEdges, getNodes, getViewport, setViewport, fitView]);
+    // 7. Снимаем размытие через 800ms
+    zoomTimerRef.current = setTimeout(() => {
+        setIsZooming(false);
+    }, 800);
+}, [maxDepth, maxAvailableDepth, setNodes, setEdges, getNodes, getViewport, setViewport, fitView]);
+
 
     const handleSliderChange = useCallback((event) => {
         const percent = Number(event.target.value);
@@ -252,13 +255,13 @@ function OrgChartContent({ data, isLoading, isError }) {
 
             <div className={styles.depthSliderContainer}>
                 <div className={styles.sliderRow}>
-                    <button onClick={handleDecreaseDepth} className={styles.sliderButton} disabled={maxDepth <= 1 || isZooming}>−</button>
-                    <input type="range" min="0" max="100" value={sliderValue} onChange={handleSliderChange} className={styles.depthSlider} disabled={isZooming} style={{ '--value': `${sliderValue}%` }} />
-                    <button onClick={handleIncreaseDepth} className={styles.sliderButton} disabled={maxDepth >= maxAvailableDepth || isZooming}>+</button>
+                    <button onClick={handleDecreaseDepth} className={styles.sliderButton} disabled={maxDepth <= 1}>−</button>
+                    <input type="range" min="0" max="100" value={sliderValue} onChange={handleSliderChange} className={styles.depthSlider} style={{ '--value': `${sliderValue}%` }} />
+                    <button onClick={handleIncreaseDepth} className={styles.sliderButton} disabled={maxDepth >= maxAvailableDepth}>+</button>
                 </div>
                 <div className={styles.sliderValue}>{Math.round(sliderValue)}%</div>
                 <div className={styles.sliderActions}>
-                    <button onClick={handleResetDepth} className={styles.actionButton} disabled={isZooming}>↺</button>
+                    <button onClick={handleResetDepth} className={styles.actionButton}>↺</button>
                     <button onClick={handleFitView} className={styles.actionButton}>⌖</button>
                 </div>
             </div>
