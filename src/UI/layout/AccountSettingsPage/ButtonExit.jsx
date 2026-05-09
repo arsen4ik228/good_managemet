@@ -28,8 +28,15 @@ export default function ButtonExit() {
 
             // 3. Очистка клиентских данных
             localStorage.clear();
-            indexedDB.deleteDatabase("ControlPanelDB");
-            indexedDB.deleteDatabase("DraftDB");
+            const dbs = await indexedDB.databases();
+            await Promise.all(
+                dbs.map(db => new Promise((resolve) => {
+                    const req = indexedDB.deleteDatabase(db.name);
+                    req.onsuccess = resolve;
+                    req.onerror = resolve;
+                    req.onblocked = resolve;
+                }))
+            );
             // 4. Перенаправление на страницу входа
             window.location.href = "/gm/";
         } catch (error) {
