@@ -147,33 +147,40 @@ export default function LeftSIder() {
     }, [socketResponse?.messageCountEvent])
 
     useEffect(() => {
+        if (isLoadingOrganization || isErrorOrganization) return;
+        if (!organizations?.length) return;
 
-        if (organizationId) return;
-
-        if (
-            !isLoadingOrganization &&
-            !isErrorOrganization &&
-            organizations?.length > 0
-        ) {
-            const defaultOrg = organizations[0];
-            if (!localStorage.getItem("selectedOrganizationId")) {
-                localStorage.setItem("selectedOrganizationId", defaultOrg.id);
-                localStorage.setItem("name", defaultOrg.organizationName);
-                localStorage.setItem("reportDay", defaultOrg.reportDay);
-
-                // Также обновляем Redux store
-                dispatch(setSelectedOrganizationId(defaultOrg.id));
-                dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
-
-                navigate(`/${defaultOrg.id}`)
+        // Если organizationId есть в URL — он главный, синхронизируем localStorage
+        if (organizationId) {
+            const savedId = localStorage.getItem("selectedOrganizationId");
+            if (savedId !== String(organizationId)) {
+                const org = organizations.find(o => String(o.id) === String(organizationId));
+                if (org) {
+                    localStorage.setItem("selectedOrganizationId", org.id);
+                    localStorage.setItem("name", org.organizationName);
+                    localStorage.setItem("reportDay", org.reportDay);
+                    dispatch(setSelectedOrganizationId(org.id));
+                    dispatch(setSelectedOrganizationReportDay(org.reportDay));
+                    dispatch(setSelectedOrganizationName(org.organizationName));
+                }
             }
-            else {
-                navigate(`/${localStorage.getItem("selectedOrganizationId")}`)
-            }
-
-
+            return;
         }
-    }, [organizations, isLoadingOrganization, isErrorOrganization]);
+
+        // organizationId нет в URL — навигируем к нужной организации
+        const savedId = localStorage.getItem("selectedOrganizationId");
+        if (savedId) {
+            navigate(`/${savedId}`);
+        } else {
+            const defaultOrg = organizations[0];
+            localStorage.setItem("selectedOrganizationId", defaultOrg.id);
+            localStorage.setItem("name", defaultOrg.organizationName);
+            localStorage.setItem("reportDay", defaultOrg.reportDay);
+            dispatch(setSelectedOrganizationId(defaultOrg.id));
+            dispatch(setSelectedOrganizationReportDay(defaultOrg.reportDay));
+            navigate(`/${defaultOrg.id}`);
+        }
+    }, [organizations, isLoadingOrganization, isErrorOrganization, organizationId]);
 
     useEffect(() => {
         if (!notEmpty(allChats)) return
