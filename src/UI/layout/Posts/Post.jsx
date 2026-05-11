@@ -1,44 +1,46 @@
-import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom';
+import React, {useEffect} from 'react'
+import {useNavigate, useParams} from 'react-router-dom';
 
 import classes from './Post.module.css'
 
-import { Card, Avatar, Typography, Space, Divider, Flex, Tag } from "antd";
+import {Card, Avatar, Typography, Space, Divider, Flex, Tag} from "antd";
 
 
 import MainContentContainer from '../../Custom/MainContentContainer/MainContentContainer'
-import { useGetSinglePost } from '../../../hooks/Post/useGetSinglePost';
-import { baseUrl } from "@helpers/constants.js";
-import { formatPhone } from './function/functionForPost'
-import { usePanelPreset } from '@hooks';
-import { useRightPanel, useModuleActions } from '@hooks';
+import {useGetSinglePost} from '../../../hooks/Post/useGetSinglePost';
+import {baseUrl} from "@helpers/constants.js";
+import {formatPhone} from './function/functionForPost'
+import {usePanelPreset} from '@hooks';
+import {useRightPanel, useModuleActions} from '@hooks';
 import default_avatar from '@image/default_avatar.svg'
 import phone from '@image/phone.svg'
 import TextArea from 'antd/es/input/TextArea';
+import {homeUrl} from "../../../helpers/constants";
+
+const {Link} = Typography;
 
 
-
-const { Title, Text } = Typography;
+const {Title, Text} = Typography;
 
 
 export default function Post() {
+    const navigate = useNavigate();
 
-    const { postId } = useParams();
+    const {postId} = useParams();
 
-    const { PRESETS } = useRightPanel();
+    const {PRESETS} = useRightPanel();
 
     usePanelPreset(PRESETS["POSTS"]);
 
 
-    const { buttonsArr } = useModuleActions("post", postId);
+    const {buttonsArr} = useModuleActions("post", postId);
 
     const {
         currentPost,
         parentPost,
 
         refetch,
-    } = useGetSinglePost({ postId });
-
+    } = useGetSinglePost({postId});
 
 
     useEffect(() => {
@@ -59,11 +61,11 @@ export default function Post() {
     }, [refetch]);
 
     return (
-        <MainContentContainer buttons={buttonsArr} >
+        <MainContentContainer buttons={buttonsArr}>
             <div className={classes.main}>
 
                 {/* Руководитель */}
-                <Flex vertical align="center" style={{ marginBottom: 24, position: "relative" }}>
+                <Flex vertical align="center" style={{marginBottom: 24, position: "relative"}}>
                     <fieldset className={classes.fieldset}>
                         <legend> руководящий пост</legend>
                         {parentPost && Object.keys(parentPost).length ? (
@@ -72,17 +74,17 @@ export default function Post() {
                                     size={48}
                                     src={parentPost.user?.avatar_url ? `${baseUrl}${parentPost.user.avatar_url}` : default_avatar}
                                 />
-                                <Flex vertical style={{ margin: 0, marginTop: "5px", gap: 0 }}>
+                                <Flex vertical style={{margin: 0, marginTop: "5px", gap: 0}}>
                                     <Text
                                         strong
                                         className={classes.text}
-                                        style={{ margin: 0, lineHeight: 1 }}
+                                        style={{margin: 0, lineHeight: 1}}
                                     >
                                         {parentPost.user?.lastName} {parentPost.user?.firstName}
                                     </Text>
                                     <Text
                                         className={classes.title}
-                                        style={{ margin: 0, lineHeight: 1 }}
+                                        style={{margin: 0, lineHeight: 1}}
                                     >
                                         {parentPost.postName}
                                     </Text>
@@ -132,7 +134,7 @@ export default function Post() {
                                     <Avatar
                                         size={154}
                                         src={currentPost?.user?.avatar_url ? `${baseUrl}${currentPost?.user?.avatar_url}` : default_avatar}
-                                        style={{ margin: 0 }}
+                                        style={{margin: 0}}
                                     />
                                 </div>
 
@@ -144,33 +146,34 @@ export default function Post() {
                                     padding: "26px",
                                     backgroundColor: "#f0f0f0",
                                 }}>
-                                    <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
+                                    <Title style={{fontSize: 20, margin: 0, lineHeight: 1.2}}>
                                         {currentPost?.user?.firstName}
                                     </Title>
 
-                                    <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2 }}>
+                                    <Title style={{fontSize: 20, margin: 0, lineHeight: 1.2}}>
                                         {currentPost?.user?.middleName}
                                     </Title>
 
-                                    <Title style={{ fontSize: 20, margin: 0, lineHeight: 1.2, marginBottom: 12 }}>
+                                    <Title style={{fontSize: 20, margin: 0, lineHeight: 1.2, marginBottom: 12}}>
                                         {currentPost?.user?.lastName}
                                     </Title>
 
-                                    <Divider style={{ borderColor: '#005475', margin: 0, marginBottom: "15px" }} />
+                                    <Divider style={{borderColor: '#005475', margin: 0, marginBottom: "15px"}}/>
 
 
-                                    <Flex direction="column" gap={8} align="flex-start" style={{ width: '100%' }}>
-                                        <Space align="start" style={{ width: '100%' }}>
-                                            <img src={phone} alt="телефон" />
-                                            <Text style={{ color: "#999999" }}>{formatPhone(currentPost?.user?.telephoneNumber)}</Text>
+                                    <Flex direction="column" gap={8} align="flex-start" style={{width: '100%'}}>
+                                        <Space align="start" style={{width: '100%'}}>
+                                            <img src={phone} alt="телефон"/>
+                                            <Text
+                                                style={{color: "#999999"}}>{formatPhone(currentPost?.user?.telephoneNumber)}</Text>
                                         </Space>
                                     </Flex>
                                 </div>
                             </div>
 
                             {/* Правая часть — информация о посте */}
-                            <Flex vertical gap={16} style={{ flex: 1 }}>
-                                <Flex vertical style={{ marginLeft: "27px" }}>
+                            <Flex vertical gap={16} style={{flex: 1}}>
+                                <Flex vertical style={{marginLeft: "27px"}}>
                                     <Text className={classes.title}>Название подразделения</Text>
                                     <Text className={classes.subtitle}>
                                         {parentPost?.id
@@ -179,29 +182,31 @@ export default function Post() {
                                     </Text>
                                 </Flex>
 
-                                <Flex vertical style={{ marginLeft: "27px" }}>
+                                <Flex vertical style={{marginLeft: "27px"}}>
                                     <Text className={classes.title}>Название поста</Text>
                                     <Text className={classes.subtitle}>{currentPost?.postName}</Text>
                                 </Flex>
 
 
-                                <fieldset style={{ border: "1px solid #d9d9d9" }}>
+                                <fieldset style={{border: "1px solid #d9d9d9"}}>
                                     <legend className={classes.title}>Роль поста</legend>
-                                    <Text className={classes.subtitle} style={{paddingLeft:"5px"}}>
+                                    <Text className={classes.subtitle} style={{paddingLeft: "5px"}}>
                                         {currentPost?.role?.roleName}
                                     </Text>
                                 </fieldset>
 
 
-                                <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: " 1px solid #d9d9d9" }}>
-                                    <legend className={classes.title} >Продукт поста</legend>
-                                     <TextArea value=  {currentPost?.product} bordered={false} style={{ resize: 'none' }} rows={2} />
+                                <fieldset style={{minHeight: "90px", maxHeight: "90px", border: " 1px solid #d9d9d9"}}>
+                                    <legend className={classes.title}>Продукт поста</legend>
+                                    <TextArea value={currentPost?.product} bordered={false} style={{resize: 'none'}}
+                                              rows={2}/>
                                 </fieldset>
 
 
-                                <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: " 1px solid #d9d9d9" }}>
-                                    <legend className={classes.title} >Предназначение поста</legend>
-                                      <TextArea value={currentPost?.purpose} bordered={false} style={{ resize: 'none' }} rows={2} placeholder="Описание продукта поста" />
+                                <fieldset style={{minHeight: "90px", maxHeight: "90px", border: " 1px solid #d9d9d9"}}>
+                                    <legend className={classes.title}>Предназначение поста</legend>
+                                    <TextArea value={currentPost?.purpose} bordered={false} style={{resize: 'none'}}
+                                              rows={2} placeholder="Описание продукта поста"/>
                                 </fieldset>
 
                             </Flex>
@@ -209,17 +214,39 @@ export default function Post() {
                         </Flex>
 
                         <Flex vertical gap={16}>
-                            <fieldset style={{ minHeight: "90px", maxHeight: "90px", border: "1px solid #d9d9d9" }}>
+                            <fieldset style={{minHeight: "90px", maxHeight: "150px", border: "1px solid #d9d9d9", overflow: "auto"}}>
                                 <legend className={classes.title}>Статистики поста</legend>
-                                <TextArea value= {currentPost?.statistics?.length > 0
-                                        ? currentPost.statistics?.filter(s => s.isActive === true).map((item) => item.name).join(", ")
-                                        : "—"} bordered={false} style={{ resize: 'none' }} rows={2} placeholder="Описание продукта поста" />
+                                <div style={{paddingLeft:"5px"}}>
+                                    {currentPost?.statistics?.length > 0
+                                        ? currentPost.statistics
+                                            .filter(s => s.isActive === true)
+                                            .map((item, index) => (
+                                                <div key={item.id}>
+                                                    <Text className={classes.subtitle}>
+                                                        {index + 1}.{" "}
+                                                        <Link onClick={() => window.open(homeUrl + `#/${localStorage.getItem("selectedOrganizationId")}/helper/statistics/${item.id}`, '_blank')}>
+                                                            {item.name}
+                                                        </Link>
+                                                    </Text>
+                                                </div>
+                                            ))
+                                        : <Text className={classes.subtitle}>—</Text>
+                                    }
+                                </div>
                             </fieldset>
 
-                            <fieldset style={{ border: "1px solid #d9d9d9" }}>
-                                <legend className={classes.title} >Политика поста</legend>
-                                <Text className={classes.subtitle} style={{paddingLeft:"5px"}}>
-                                    {currentPost?.policy?.policyName || <Text className={classes.subtitle}>—</Text>}
+                            <fieldset style={{border: "1px solid #d9d9d9"}}>
+                                <legend className={classes.title}>Политика поста</legend>
+                                <Text className={classes.subtitle} style={{paddingLeft: "5px"}}>
+                                    {currentPost?.policy?.policyName
+                                        ? (
+                                            <Link
+                                                onClick={() => window.open(homeUrl + `#/${localStorage.getItem("selectedOrganizationId")}/helper/policy/${currentPost.policy.id}`, '_blank')}>
+                                                {currentPost.policy.policyName}
+                                            </Link>
+                                        )
+                                        : '—'
+                                    }
                                 </Text>
                             </fieldset>
                         </Flex>
