@@ -124,8 +124,9 @@ export const chatApi = apiSlice.injectEndpoints({
               watcherUnseenCount: Number(element.watcherUnseenCount) || 0,
               postsNames: [element.postName],
               user: {
-                avatar_url: element.userAvatar
-              }
+                avatar_url: element.userAvatar,
+              },
+                isFired:element.isFired,
             });
           }
         });
@@ -144,7 +145,8 @@ export const chatApi = apiSlice.injectEndpoints({
               postsNames: [element.postName],
               userId: element?.user.id,
               userLastName: element?.user.lastName,
-              userFirstName: element?.user.firstName
+              userFirstName: element?.user.firstName,
+                isFired:element.isFired,
             });
           }
         });
