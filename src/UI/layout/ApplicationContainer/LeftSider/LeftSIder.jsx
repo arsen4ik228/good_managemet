@@ -21,7 +21,20 @@ import { baseUrl } from '@helpers/constants'
 import default_avatar from '@image/default_avatar.svg'
 import logo_svg from '@image/logo_svg.svg'
 import { setSelectedOrganizationName } from '../../../../store/slices/local.storage.slice'
+import FilterElement from "../../../Custom/CustomList/FilterElement";
+import ListAddButtom from "../../../Custom/ListAddButton/ListAddButtom";
 
+
+const arrayFilter = [
+    {
+        label: "Активные",
+        value: false
+    },
+    {
+        label: "Архивные",
+        value: true
+    }
+]
 
 export default function LeftSIder() {
 
@@ -38,8 +51,13 @@ export default function LeftSIder() {
 
     const [openModalCreateOrganization, setOpenModalCreateOrganization] = useState(false)
     const [expanendOrg, setExpanendOrg] = useState(false)
-
     const { organizationId } = useParams()
+
+
+
+    const [openFilter, setOpenFilter] = useState(false);
+    const [stateFilter, setStateFilter] = useState(false);
+
 
     const eventNames = useMemo(
         () => ["convertCreationEvent", "messageCountEvent"],
@@ -109,17 +127,25 @@ export default function LeftSIder() {
     }, [seacrhOrganizationsSectionsValue, organizations]);
 
     const filtredContacts = useMemo(() => {
-        if (!searchContactsSectionsValue?.trim()) {
-            return copyChats; // Возвращаем все элементы если поиск пустой
+        let result = copyChats;
+
+        // Фильтр по isFired
+        if (stateFilter !== null && stateFilter !== undefined) {
+            result = result?.filter(item => item?.isFired === stateFilter);
         }
 
-        const searchLower = searchContactsSectionsValue?.toLowerCase();
-        return copyChats?.filter(item =>
-            item?.userFirstName.toLowerCase().includes(searchLower) ||
-            item?.userLastName.toLowerCase().includes(searchLower) ||
-            item?.postName.toLowerCase().includes(searchLower)
-        );
-    }, [searchContactsSectionsValue, copyChats]);
+        // Фильтр по поиску
+        if (searchContactsSectionsValue?.trim()) {
+            const searchLower = searchContactsSectionsValue?.toLowerCase();
+            result = result?.filter(item =>
+                item?.userFirstName.toLowerCase().includes(searchLower) ||
+                item?.userLastName.toLowerCase().includes(searchLower) ||
+                item?.postName.toLowerCase().includes(searchLower)
+            );
+        }
+
+        return result;
+    }, [searchContactsSectionsValue, copyChats, stateFilter]);
 
     useEffect(() => {
         if (!notEmpty(socketResponse?.convertCreationEvent)) return
@@ -188,7 +214,7 @@ export default function LeftSIder() {
         setCopyChats([...allChats])
     }, [allChats])
 
-    // console.log('filtredContacts   ', filtredContacts)
+    console.log('filtredContacts   ', filtredContacts)
     return (
         <>
             <div className={classes.wrapper}>
@@ -249,6 +275,8 @@ export default function LeftSIder() {
 
                     <CustomList
                         title={'контакты'}
+                        isFilter={true}
+                        setOpenFilter={setOpenFilter}
                         addButtonText={'Новый контакт'}
                         addButtonClick={handlerCreateUser}
                         searchValue={searchContactsSectionsValue}
@@ -256,6 +284,14 @@ export default function LeftSIder() {
                         selectedItem={selectedContactsSectionValue}
                         isLoading={loadingAllChats && (!allChats || allChats?.length === 0)}
                     >
+                        {
+                            openFilter && <FilterElement
+                                array={arrayFilter}
+                                state={stateFilter}
+                                setState={setStateFilter}
+                            />
+                        }
+
                         <ListElem
                             icon={userInfo?.avatar_url ? `${baseUrl}${userInfo?.avatar_url}` : default_avatar}
                             linkSegment={'accountSettings'}
