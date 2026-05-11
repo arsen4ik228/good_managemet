@@ -25,7 +25,6 @@ import { useGetReduxOrganization } from '../../../../hooks';
 import WorkingPlanCreationComponent from './WorkingPlanCreationComponent';
 import active_strategy from '@image/active_strategy.svg'
 
-import useNavigationHistory from '@hooks/useNavigationHistory';
 import navigationHistoryDB from '@helpers/navigationHistoryDB';
 import ProjectCreationComponent from './ProjectCreationComponent';
 
@@ -39,8 +38,6 @@ export default function RightSider({ config: initialConfig }) {    //
 
     const { reduxSelectedOrganizationName } = useGetReduxOrganization()
 
-    const { updateHistory, getLastPath } = useNavigationHistory();
-    const [sectionHistory, setSectionHistory] = useState({}); // История из IndexedDB
 
     // Мемоизируем config, чтобы он не пересоздавался при каждом рендере
     const config = useMemo(() => initialConfig, [
@@ -86,43 +83,20 @@ export default function RightSider({ config: initialConfig }) {    //
 
 
 
-    // Загружаем историю из IndexedDB при монтировании
-    useEffect(() => {
-        const loadHistory = async () => {
-            try {
-                const history = await navigationHistoryDB.getAllHistory();
-                const historyMap = {};
-                history.forEach(item => {
-                    historyMap[item.sectionKey] = item.path;
-                });
-                setSectionHistory(historyMap);
-            } catch (error) {
-                console.error('Error loading navigation history:', error);
-            }
-        };
-        loadHistory();
-    }, []);
 
     // Сохраняем текущий путь при изменении location
     useEffect(() => {
         const saveCurrentPath = async () => {
-            const pathSegments = location.pathname.split('/');
+            // Берём orgId прямо из pathname — они всегда синхронны
+            const pathOrgId = location.pathname.split('/')[1];
 
-            // Находим основной раздел (goal, policy, users и т.д.)
-            const mainSection = HELPER_SECTIONS.find(section => {
-                return location.pathname.includes(`helper/${section.link}`);
-            });
+            const mainSection = HELPER_SECTIONS.find(section =>
+                location.pathname.includes(`helper/${section.link}`)
+            );
 
-            if (mainSection) {
-                // Сохраняем полный текущий путь для этого раздела
-                await navigationHistoryDB.savePath(mainSection.link, location.pathname);
-                updateHistory(mainSection.link, location.pathname);
-
-                // Обновляем локальное состояние
-                setSectionHistory(prev => ({
-                    ...prev,
-                    [mainSection.link]: location.pathname
-                }));
+            if (mainSection && pathOrgId) {
+                const sectionKey = `${pathOrgId}_${mainSection.link}`;
+                await navigationHistoryDB.savePath(sectionKey, location.pathname);
             }
         };
 
@@ -141,29 +115,24 @@ export default function RightSider({ config: initialConfig }) {    //
             }
         }
 
-        try {
-            // Пробуем получить сохраненный путь из IndexedDB
-            const savedPath = await navigationHistoryDB.getPath(link);
+        // Берём orgId из URL напрямую — не из useParams (может быть stale в memo)
+        const currentOrgId = location.pathname.split('/')[1];
 
-            if (savedPath) {
-                // Переходим на сохраненный путь
+        const defaultPath = link === 'workingPlan'
+            ? `/${currentOrgId}/helper/${link}/allTasks`
+            : `/${currentOrgId}/helper/${link}`;
+
+        try {
+            const savedPath = await navigationHistoryDB.getPath(`${currentOrgId}_${link}`);
+
+            if (savedPath && savedPath.startsWith(`/${currentOrgId}/`)) {
                 navigate(savedPath);
             } else {
-                // Если нет сохраненного пути, переходим на корень раздела
-                if (link === 'workingPlan') {
-                    navigate(`helper/${link}/allTasks`);
-                } else {
-                    navigate(`helper/${link}`);
-                }
+                navigate(defaultPath);
             }
         } catch (error) {
             console.error('Error getting saved path:', error);
-            // В случае ошибки переходим на стандартный путь
-            if (link === 'workingPlan') {
-                navigate(`helper/${link}/allTasks`);
-            } else {
-                navigate(`helper/${link}`);
-            }
+            navigate(defaultPath);
         }
 
         setExpanendHelper(false);
@@ -212,7 +181,10 @@ export default function RightSider({ config: initialConfig }) {    //
                     title={'C чем работаем?'}
                     searchFunc={setSearchHelperSectionsValue}
                     searchValue={searchHelperSectionsValue}
-                    selectedItem={selectedItemHelper}
+                    selectedItem={selectedItemHelper ? {
+                        ...selectedItemHelper,
+                        clickFunc: () => handlerClickHelper(selectedItemHelper.linkSegment)
+                    } : null}
                     expanded={expanendHelper}
                     onExpandedChange={setExpanendHelper}
                 >
