@@ -128,12 +128,12 @@ export default function LeftSIder() {
 
     const filtredContacts = useMemo(() => {
         let result = copyChats;
-
+        console.log("copyChats", copyChats);
         // Фильтр по isFired
         if (stateFilter !== null && stateFilter !== undefined) {
-            result = result?.filter(item => item?.isFired === stateFilter);
+            result = result?.filter(item => item?.isFired === stateFilter || item?.user?.isFired === stateFilter);
         }
-
+          console.log("result", result);
         // Фильтр по поиску
         if (searchContactsSectionsValue?.trim()) {
             const searchLower = searchContactsSectionsValue?.toLowerCase();
