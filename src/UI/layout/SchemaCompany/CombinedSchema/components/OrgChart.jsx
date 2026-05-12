@@ -30,7 +30,7 @@ const nodeTypes = {
 // Steps 3+ = HoldingWithPost depth levels (all at zoom 1.0)
 const HIGH_LEVEL_STEPS = 2;
 const ZOOM_OUT = 0.11;
-const ZOOM_IN = 1.0;
+const ZOOM_IN = 0.9;
 
 function getTargetZoom(step) {
     return step === 1 ? ZOOM_OUT : ZOOM_IN;

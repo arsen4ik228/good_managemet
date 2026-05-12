@@ -178,6 +178,15 @@
     color: #005475;
 }
 
+/* Fix ReactFlow node wrapper — remove default white background */
+:global(.react-flow__node-card),
+:global(.react-flow__node-orgSimple) {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
 /* Zoom overlay animation */
 .zoomOverlay {
     position: absolute;
