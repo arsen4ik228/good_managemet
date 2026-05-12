@@ -45,6 +45,7 @@ import {VkAuth} from "../../UI/app/Authorization/VkAuth";
 
 import { HoldingWithPost } from "../../UI/layout/SchemaCompany/HoldingWithPostLevel/HoldingWithPost";
 import { HoldingWithAllPosts } from "../../UI/layout/SchemaCompany/HoldingWithAllPosts/HoldingWithAllPosts";
+import { CombinedSchema } from "../../UI/layout/SchemaCompany/CombinedSchema/CombinedSchema";
 
 
 
@@ -228,6 +229,17 @@ function DesktopApp() {
               </React.Suspense>
             }
           />
+
+            <Route
+                path=":organizationId/structure/combined"
+                element={
+                    <React.Suspense fallback={<HandlerMutation Loading={true} />}>
+                        <div className="tab">
+                            <CombinedSchema />
+                        </div>
+                    </React.Suspense>
+                }
+            />
 
             <Route
                 path=":organizationId/structure"
