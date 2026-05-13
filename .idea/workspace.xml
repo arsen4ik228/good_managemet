@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3bfdfbf4-6f7a-43ef-a02f-646aad910b10" name="Changes" comment="LeftSider (исправил фильрацию)">
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/CombinedSchema.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/CombinedSchema.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/components/OrgChart.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/components/OrgChart.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/utils/NodeCard.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/utils/NodeCard.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/utils/OrgNode.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/utils/OrgNode.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/utils/combinedLayout.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/CombinedSchema/utils/highLevelLayout.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/HoldingWithAllPosts/components/NodeCard.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/UI/layout/SchemaCompany/HoldingWithAllPosts/components/NodeCard.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UI/layout/ApplicationContainer/LeftSider/LeftSIder.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/UI/layout/ApplicationContainer/LeftSider/LeftSIder.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/desktopRouting/DesktopApp.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/desktopRouting/DesktopApp.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;viaya-ya&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/arsen4ik228/good_managemet.git&quot;,
+    &quot;accountId&quot;: &quot;08af2f96-1eda-40bd-988b-f99459d0b5cf&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="39kecOQdEhES4p3VGcq4e8lEAUs" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "Merging deploy",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/valeriy/WebstormProjects/good_managemet",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "settings.editor.selected.configurable": "com.anthropic.code.plugin.settings",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="ReactDesignerToolWindowState">
+    <option name="myId2Visible">
+      <map>
+        <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
+        <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
+        <entry key="com.intellij.reactbuddy.storybook" value="false" />
+      </map>
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/UI/layout/Organization" />
+      <recent name="$PROJECT_DIR$/src/hooks/Post" />
+      <recent name="$PROJECT_DIR$/src/hooks/Organization" />
+      <recent name="$PROJECT_DIR$/src/UI/layout/Project/components/row/partsRow/program" />
+      <recent name="$PROJECT_DIR$/src/UI/layout/Project/components/table" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.27397.92" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3bfdfbf4-6f7a-43ef-a02f-646aad910b10" name="Changes" comment="" />
+      <created>1771244574800</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771244574800</updated>
+      <workItem from="1771244575851" duration="2341000" />
+      <workItem from="1771259968698" duration="22758000" />
+      <workItem from="1771602248728" duration="85000" />
+      <workItem from="1771927006877" duration="42633000" />
+      <workItem from="1772371275041" duration="52856000" />
+      <workItem from="1773337952097" duration="7260000" />
+      <workItem from="1773671956577" duration="20156000" />
+      <workItem from="1773830464308" duration="195000" />
+      <workItem from="1773830740204" duration="15193000" />
+      <workItem from="1774267016178" duration="165160000" />
+      <workItem from="1777538317933" duration="146000" />
+      <workItem from="1777543289858" duration="10018000" />
+      <workItem from="1777919655550" duration="577000" />
+      <workItem from="1777920271650" duration="1068000" />
+      <workItem from="1777921344418" duration="246000" />
+      <workItem from="1777921627047" duration="1534000" />
+      <workItem from="1778099243311" duration="37875000" />
+    </task>
+    <task id="LOCAL-00032" summary="added for update Confirm request">
+      <option name="closed" value="true" />
+      <created>1773697636788</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1773697636788</updated>
+    </task>
+    <task id="LOCAL-00033" summary="delete loading on btn active and completed project">
+      <option name="closed" value="true" />
+      <created>1773698445901</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1773698445901</updated>
+    </task>
+    <task id="LOCAL-00034" summary="added message.open">
+      <option name="closed" value="true" />
+      <created>1773699080009</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1773699080009</updated>
+    </task>
+    <task id="LOCAL-00035" summary="edit message in message.open">
+      <option name="closed" value="true" />
+      <created>1773699219134</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1773699219134</updated>
+    </task>
+    <task id="LOCAL-00036" summary="fixed an error related to open program">
+      <option name="closed" value="true" />
+      <created>1773756467154</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1773756467154</updated>
+    </task>
+    <task id="LOCAL-00037" summary="commit target update">
+      <option name="closed" value="true" />
+      <created>1773756776263</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1773756776263</updated>
+    </task>
+    <task id="LOCAL-00038" summary="create StructureCompany">
+      <option name="closed" value="true" />
+      <created>1773836471218</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1773836471218</updated>
+    </task>
+    <task id="LOCAL-00039" summary="change helper.js">
+      <option name="closed" value="true" />
+      <created>1773837614531</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1773837614531</updated>
+    </task>
+    <task id="LOCAL-00040" summary="data view on request format('YYYY-MM-DD')">
+      <option name="closed" value="true" />
+      <created>1774268008415</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1774268008416</updated>
+    </task>
+    <task id="LOCAL-00041" summary="uncommit  to // ...(targetUpdate.length &gt; 0 ? {targetUpdateDtos: targetUpdate} : {}),">
+      <option name="closed" value="true" />
+      <created>1774268044856</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1774268044856</updated>
+    </task>
+    <task id="LOCAL-00042" summary="change func statusTarget, use field isExpired">
+      <option name="closed" value="true" />
+      <created>1774268090364</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1774268090364</updated>
+    </task>
+    <task id="LOCAL-00043" summary="change image project">
+      <option name="closed" value="true" />
+      <created>1774275871607</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1774275871607</updated>
+    </task>
+    <task id="LOCAL-00044" summary="change name btn for create project">
+      <option name="closed" value="true" />
+      <created>1774433812145</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1774433812145</updated>
+    </task>
+    <task id="LOCAL-00045" summary="text disabled for structureCompany">
+      <option name="closed" value="true" />
+      <created>1774433880753</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1774433880753</updated>
+    </task>
+    <task id="LOCAL-00046" summary="added new getOrganizationsWithHighPost">
+      <option name="closed" value="true" />
+      <created>1774877256664</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1774877256664</updated>
+    </task>
+    <task id="LOCAL-00047" summary="commit (name post)">
+      <option name="closed" value="true" />
+      <created>1774947187638</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1774947187638</updated>
+    </task>
+    <task id="LOCAL-00048" summary="added new response getOrganizationsWithAllPost">
+      <option name="closed" value="true" />
+      <created>1774948915383</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1774948915383</updated>
+    </task>
+    <task id="LOCAL-00049" summary="added full information about the post">
+      <option name="closed" value="true" />
+      <created>1774974012064</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1774974012064</updated>
+    </task>
+    <task id="LOCAL-00050" summary="added in view project (Tag for status targets)">
+      <option name="closed" value="true" />
+      <created>1775227257677</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1775227257679</updated>
+    </task>
+    <task id="LOCAL-00051" summary="create new endpoint useGetSinglePostForView">
+      <option name="closed" value="true" />
+      <created>1775229218377</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1775229218377</updated>
+    </task>
+    <task id="LOCAL-00052" summary="added view telephoneNumber">
+      <option name="closed" value="true" />
+      <created>1775230809634</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1775230809634</updated>
+    </task>
+    <task id="LOCAL-00053" summary="done update holderPostId in active project">
+      <option name="closed" value="true" />
+      <created>1775824052646</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1775824052646</updated>
+    </task>
+    <task id="LOCAL-00054" summary="vk auth">
+      <option name="closed" value="true" />
+      <created>1776185202061</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1776185202061</updated>
+    </task>
+    <task id="LOCAL-00055" summary="vk auth">
+      <option name="closed" value="true" />
+      <created>1776352651763</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1776352651763</updated>
+    </task>
+    <task id="LOCAL-00056" summary="закоммитил нужные изменения для Не меняется руководитель проекта в активном проекте">
+      <option name="closed" value="true" />
+      <created>1776355125502</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1776355125502</updated>
+    </task>
+    <task id="LOCAL-00057" summary="redirectUrl: &quot;https://24academy.ru/gm&quot;,">
+      <option name="closed" value="true" />
+      <created>1776355284718</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1776355284718</updated>
+    </task>
+    <task id="LOCAL-00058" summary="commit  {/*{fingerprint &amp;&amp; &lt;VkAuth fingerprint={fingerprint} /&gt;}*/}">
+      <option name="closed" value="true" />
+      <created>1776362067884</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1776362067884</updated>
+    </task>
+    <task id="LOCAL-00059" summary="change bug auth telegram">
+      <option name="closed" value="true" />
+      <created>1776691573695</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1776691573696</updated>
+    </task>
+    <task id="LOCAL-00060" summary="empty authpage">
+      <option name="closed" value="true" />
+      <created>1776780840550</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1776780840551</updated>
+    </task>
+    <task id="LOCAL-00061" summary="full authpage">
+      <option name="closed" value="true" />
+      <created>1776780925898</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1776780925898</updated>
+    </task>
+    <task id="LOCAL-00062" summary="full authpage">
+      <option name="closed" value="true" />
+      <created>1776781720666</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1776781720667</updated>
+    </task>
+    <task id="LOCAL-00063" summary="change path to the postId">
+      <option name="closed" value="true" />
+      <created>1777269616449</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1777269616449</updated>
+    </task>
+    <task id="LOCAL-00064" summary="correct file project">
+      <option name="closed" value="true" />
+      <created>1777269717959</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1777269717959</updated>
+    </task>
+    <task id="LOCAL-00065" summary="added edit organization">
+      <option name="closed" value="true" />
+      <created>1777318153925</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1777318153925</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Сводка(показывать уже для внесения текущую неделю)">
+      <option name="closed" value="true" />
+      <created>1777357470566</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1777357470566</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Добавить в Раздел Сотрудника кнопку для создания Сотрудника">
+      <option name="closed" value="true" />
+      <created>1777357709029</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1777357709029</updated>
+    </task>
+    <task id="LOCAL-00068" summary="e.stopPropagation() for organization">
+      <option name="closed" value="true" />
+      <created>1777358161017</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1777358161017</updated>
+    </task>
+    <task id="LOCAL-00069" summary="Название вкладок сделать">
+      <option name="closed" value="true" />
+      <created>1777919156562</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1777919156563</updated>
+    </task>
+    <task id="LOCAL-00070" summary="Кнопка печать">
+      <option name="closed" value="true" />
+      <created>1777919175730</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1777919175730</updated>
+    </task>
+    <task id="LOCAL-00071" summary="а) При создании программы давать ей название (Новая программа + №).&#10;б) При раскрытии модального окна фильтр(Черновик Активные Завершенные) всегда показываются выше модального окна- исправить.">
+      <option name="closed" value="true" />
+      <created>1778100066762</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1778100066763</updated>
+    </task>
+    <task id="LOCAL-00072" summary="изменить функционал работы обновления названия проектов, так чтобы сохранение происходило через 10 секунд простоя">
+      <option name="closed" value="true" />
+      <created>1778101184302</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1778101184302</updated>
+    </task>
+    <task id="LOCAL-00073" summary="В разделе сотрудники (добавить в просмотр сотрудника посты которые закреплены за ним)">
+      <option name="closed" value="true" />
+      <created>1778138590227</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1778138590227</updated>
+    </task>
+    <task id="LOCAL-00074" summary="Реализовать при выходе пользователя очищение всех данный в браузере (LocalStorage, SessionStorage, IndexDB).">
+      <option name="closed" value="true" />
+      <created>1778325063422</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1778325063422</updated>
+    </task>
+    <task id="LOCAL-00075" summary="Реализовать правильно запоминание куда заходил пользователь(историю IndexDB)">
+      <option name="closed" value="true" />
+      <created>1778479799752</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1778479799752</updated>
+    </task>
+    <task id="LOCAL-00076" summary="&#10;Добавить фильтр контактов (активные архивные) and Добавить ссылки в разделе Пост на статистики и политику.">
+      <option name="closed" value="true" />
+      <created>1778529108552</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1778529108552</updated>
+    </task>
+    <task id="LOCAL-00077" summary="&#10;Добавить фильтр контактов (активные архивные)">
+      <option name="closed" value="true" />
+      <created>1778532490046</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1778532490046</updated>
+    </task>
+    <task id="LOCAL-00078" summary="&#10;combinedSchema">
+      <option name="closed" value="true" />
+      <created>1778617213186</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1778617213186</updated>
+    </task>
+    <task id="LOCAL-00079" summary="&#10;анимация">
+      <option name="closed" value="true" />
+      <created>1778617587606</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1778617587606</updated>
+    </task>
+    <task id="LOCAL-00080" summary="LeftSider (исправил фильрацию)">
+      <option name="closed" value="true" />
+      <created>1778617650516</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1778617650516</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="vk auth" />
+    <MESSAGE value="закоммитил нужные изменения для Не меняется руководитель проекта в активном проекте" />
+    <MESSAGE value="redirectUrl: &quot;https://24academy.ru/gm&quot;," />
+    <MESSAGE value="commit  {/*{fingerprint &amp;&amp; &lt;VkAuth fingerprint={fingerprint} /&gt;}*/}" />
+    <MESSAGE value="change bug auth telegram" />
+    <MESSAGE value="empty authpage" />
+    <MESSAGE value="full authpage" />
+    <MESSAGE value="change path to the postId" />
+    <MESSAGE value="correct file project" />
+    <MESSAGE value="added edit organization" />
+    <MESSAGE value="Сводка(показывать уже для внесения текущую неделю)" />
+    <MESSAGE value="Добавить в Раздел Сотрудника кнопку для создания Сотрудника" />
+    <MESSAGE value="e.stopPropagation() for organization" />
+    <MESSAGE value="Название вкладок сделать" />
+    <MESSAGE value="Кнопка печать" />
+    <MESSAGE value="а) При создании программы давать ей название (Новая программа + №).&#10;б) При раскрытии модального окна фильтр(Черновик Активные Завершенные) всегда показываются выше модального окна- исправить." />
+    <MESSAGE value="изменить функционал работы обновления названия проектов, так чтобы сохранение происходило через 10 секунд простоя" />
+    <MESSAGE value="В разделе сотрудники (добавить в просмотр сотрудника посты которые закреплены за ним)" />
+    <MESSAGE value="Реализовать при выходе пользователя очищение всех данный в браузере (LocalStorage, SessionStorage, IndexDB)." />
+    <MESSAGE value="Реализовать правильно запоминание куда заходил пользователь(историю IndexDB)" />
+    <MESSAGE value="&#10;Добавить фильтр контактов (активные архивные) and Добавить ссылки в разделе Пост на статистики и политику." />
+    <MESSAGE value="&#10;Добавить фильтр контактов (активные архивные)" />
+    <MESSAGE value="&#10;combinedSchema" />
+    <MESSAGE value="&#10;анимация" />
+    <MESSAGE value="LeftSider (исправил фильрацию)" />
+    <option name="LAST_COMMIT_MESSAGE" value="LeftSider (исправил фильрацию)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/store/services/statistic.service.js</url>
+          <line>141</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
