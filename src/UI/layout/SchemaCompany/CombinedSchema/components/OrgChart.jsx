@@ -12,6 +12,7 @@ import styles from "./OrgChart.module.css";
 
 import OrgNode from "../utils/OrgNode";
 import NodeCard from "../utils/NodeCard";
+import { NodeExpansionContext } from "../utils/NodeExpansionContext";
 import { buildTree as buildHighLevelTree, layoutTree as layoutHighLevelTree } from "../utils/highLevelLayout";
 import {
     buildTree as buildCombinedTree,
@@ -46,6 +47,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     const [sliderValue, setSliderValue] = useState(0);
     const [isZooming, setIsZooming] = useState(false);
     const [zoomDirection, setZoomDirection] = useState('in');
+    const [openNodeId, setOpenNodeId] = useState(null);
 
     const highLevelCacheRef = useRef(null);
     const postDepthCacheRef = useRef({});
@@ -153,6 +155,7 @@ function OrgChartContent({ data, isLoading, isError }) {
             requestAnimationFrame(() => {
                 setCurrentStep(newStep);
                 setSliderValue(stepToPercent(newStep));
+                setOpenNodeId(null);
 
                 if (newStep <= HIGH_LEVEL_STEPS) {
                     const cache = highLevelCacheRef.current;
@@ -204,15 +207,6 @@ function OrgChartContent({ data, isLoading, isError }) {
         if (currentStep > 1) changeStep(currentStep - 1);
     }, [currentStep, changeStep]);
 
-    const handleReset = useCallback(() => changeStep(1), [changeStep]);
-
-    const handleFitView = useCallback(() => {
-        if (currentStep === 1) {
-            fitView({ duration: 300, padding: 0.2 });
-        } else {
-            setViewport({ x: 0, y: 0, zoom: ZOOM_IN }, { duration: 300 });
-        }
-    }, [currentStep, fitView, setViewport]);
 
     const handleSliderChange = useCallback((e) => {
         const percent = Number(e.target.value);
@@ -245,10 +239,7 @@ function OrgChartContent({ data, isLoading, isError }) {
         };
     }, [handleIncrease, handleDecrease]);
 
-    const isHighLevel = currentStep <= HIGH_LEVEL_STEPS;
-    const stepLabel = isHighLevel
-        ? `Холдинг ${currentStep}/${HIGH_LEVEL_STEPS}`
-        : `Посты: ур. ${currentStep - HIGH_LEVEL_STEPS}`;
+    const scalePercent = Math.round((currentStep / totalSteps) * 100);
 
     if (isLoading) {
         return <div className={styles.messageContainer}><div className={styles.loader}>Загрузка...</div></div>;
@@ -261,14 +252,11 @@ function OrgChartContent({ data, isLoading, isError }) {
     }
 
     return (
+        <NodeExpansionContext.Provider value={{ openNodeId, setOpenNodeId, wrapperRef: reactFlowWrapperRef }}>
         <div className={styles.container} ref={containerRef}>
             {isZooming && (
                 <div className={`${styles.zoomOverlay} ${zoomDirection === 'in' ? styles.zoomIn : styles.zoomOut}`} />
             )}
-
-            <div className={styles.modeBadge}>
-                {isHighLevel ? 'Холдинг' : 'Структура постов'}
-            </div>
 
             <div ref={reactFlowWrapperRef} style={{ width: '100%', height: '100%' }}>
                 <ReactFlow
@@ -318,13 +306,10 @@ function OrgChartContent({ data, isLoading, isError }) {
                         disabled={currentStep >= totalSteps}
                     >+</button>
                 </div>
-                <div className={styles.sliderValue}>{stepLabel}</div>
-                <div className={styles.sliderActions}>
-                    <button onClick={handleReset} className={styles.actionButton} title="В начало">↺</button>
-                    <button onClick={handleFitView} className={styles.actionButton} title="По размеру">⌖</button>
-                </div>
+                <div className={styles.sliderValue}>{scalePercent}%</div>
             </div>
         </div>
+        </NodeExpansionContext.Provider>
     );
 }
 
