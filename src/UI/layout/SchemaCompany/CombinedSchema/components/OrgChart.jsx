@@ -252,7 +252,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     }
 
     return (
-        <NodeExpansionContext.Provider value={{ openNodeId, setOpenNodeId }}>
+        <NodeExpansionContext.Provider value={{ openNodeId, setOpenNodeId, wrapperRef: reactFlowWrapperRef }}>
         <div className={styles.container} ref={containerRef}>
             {isZooming && (
                 <div className={`${styles.zoomOverlay} ${zoomDirection === 'in' ? styles.zoomIn : styles.zoomOut}`} />

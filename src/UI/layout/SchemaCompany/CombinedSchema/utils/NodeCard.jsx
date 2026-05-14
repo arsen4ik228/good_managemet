@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { Handle, Position, useReactFlow } from 'reactflow';
+import ReactDOM from 'react-dom';
+import { Handle, Position, useReactFlow, useViewport } from 'reactflow';
 import classes from './NodeCard.module.css';
 import default_avatar from '@image/default_avatar.svg';
 import phone from '@image/phone.svg';
@@ -10,13 +11,16 @@ import { useGetSinglePostForView } from '@hooks/Post/useGetSinglePostForView';
 import { formatPhone } from '../../../Posts/function/functionForPost';
 import { NodeExpansionContext } from './NodeExpansionContext';
 
-export default function NodeCard({ id, data }) {
-    const { label, userName, postName, avatarUrl, isOrganization, original } = data || {};
+const CARD_HEIGHT = 90;
+
+export default function NodeCard({ id, data, xPos, yPos }) {
+    const { label, userName, postName, avatarUrl, postId: dataPostId } = data || {};
     const [imgError, setImgError] = useState(false);
     const [postId, setPostId] = useState(null);
 
-    const { openNodeId, setOpenNodeId } = useContext(NodeExpansionContext);
+    const { openNodeId, setOpenNodeId, wrapperRef } = useContext(NodeExpansionContext);
     const { setNodes } = useReactFlow();
+    const { x: vpX, y: vpY, zoom } = useViewport();
 
     const isOpen = openNodeId === id;
 
@@ -24,8 +28,8 @@ export default function NodeCard({ id, data }) {
 
     const handleToggle = () => {
         const nextOpen = !isOpen;
-        if (nextOpen && original?.id) {
-            setPostId(original.id);
+        if (nextOpen && dataPostId) {
+            setPostId(dataPostId);
         }
         setOpenNodeId(nextOpen ? id : null);
         setNodes(nds => nds.map(n => ({
@@ -34,7 +38,7 @@ export default function NodeCard({ id, data }) {
         })));
     };
 
-    const canExpand = !isOrganization && postName;
+    const canExpand = !!dataPostId;
 
     const renderAvatar = () => {
         if (avatarUrl && !imgError) {
@@ -69,6 +73,10 @@ export default function NodeCard({ id, data }) {
             </div>
         );
     };
+
+    const bounds = wrapperRef.current?.getBoundingClientRect();
+    const panelLeft = bounds ? xPos * zoom + vpX + bounds.left : 0;
+    const panelTop  = bounds ? (yPos + CARD_HEIGHT) * zoom + vpY + bounds.top : 0;
 
     return (
         <>
@@ -121,16 +129,27 @@ export default function NodeCard({ id, data }) {
                 />
             </div>
 
-            {isOpen && (
-                <Information
-                    role={currentPost?.role?.roleName}
-                    product={currentPost?.product}
-                    purpose={currentPost?.purpose}
-                    statistics={currentPost?.statistics}
-                    policy={currentPost?.policy?.policyName}
-                    telephoneNumber={currentPost?.user?.telephoneNumber}
-                    isLoadingGetPostId={isLoadingGetPostId}
-                />
+            {isOpen && bounds && ReactDOM.createPortal(
+                <div style={{
+                    position: 'fixed',
+                    left: panelLeft,
+                    top: panelTop,
+                    zIndex: 9999,
+                    transform: `scale(${zoom})`,
+                    transformOrigin: 'top left',
+                    pointerEvents: 'auto',
+                }}>
+                    <Information
+                        role={currentPost?.role?.roleName}
+                        product={currentPost?.product}
+                        purpose={currentPost?.purpose}
+                        statistics={currentPost?.statistics}
+                        policy={currentPost?.policy?.policyName}
+                        telephoneNumber={currentPost?.user?.telephoneNumber}
+                        isLoadingGetPostId={isLoadingGetPostId}
+                    />
+                </div>,
+                document.body
             )}
         </>
     );
