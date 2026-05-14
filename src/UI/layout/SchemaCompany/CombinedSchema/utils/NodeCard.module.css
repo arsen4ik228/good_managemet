@@ -1,3 +1,7 @@
+.nodeContainer {
+    position: relative;
+}
+
 .wrapper {
     position: relative;
     width: 304px;
@@ -56,14 +60,22 @@
 
 .upperText {
     display: flex;
+    align-items: center;
     width: 100%;
     height: 40px;
-    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.upperText span {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-weight: 700;
     color: #333333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    text-align: left;
 }
 
 .bottomText {
@@ -74,37 +86,105 @@
     margin-top: 5px;
     color: #333333;
     min-width: 0;
-}
-
-.bottomText > div {
-    width: 100%;
-    display: flex;
-    align-items: flex-start;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .userName {
+    display: block;
+    width: 100%;
     font-weight: 400;
     font-size: 16px;
+    color: #333333;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
+}
+
+.postNameRow {
+    display: flex;
+    align-items: center;
     width: 100%;
+    min-width: 0;
 }
 
 .postName {
-    width: 100%;
+    display: block;
+    flex: 1;
+    min-width: 0;
     font-size: 12px;
     font-weight: 400;
+    color: #555;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
+}
+
+.expandButton {
+    flex-shrink: 0;
+    margin-left: 4px;
+    margin-right: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #555;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.expandButton:hover {
+    color: #005475;
 }
 
 .noData {
+    display: block;
     font-size: 11px;
     color: #999;
     margin-top: 4px;
+    text-align: left;
+}
+
+/* Expanded info panel */
+.infoPanel {
+    width: 304px;
+    padding-bottom: 10px;
+}
+
+.block {
+    position: relative;
+    margin-left: 70px;
+    margin-top: 20px;
+    min-height: 45px;
+    height: auto;
+    width: 214px;
+    border-radius: 20px;
+    border: 1px solid #CCCCCC;
+    padding: 15px 20px;
+    overflow-wrap: break-word;
+    background: white;
+}
+
+.nameBlock {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    display: inline-block;
+    height: auto;
+    border-radius: 20px;
+    background-color: #FFFFFF80;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999999;
+    padding: 5px 10px;
+}
+
+.phone {
+    position: relative;
+    margin-left: 70px;
+    margin-top: 20px;
+    height: auto;
+    width: auto;
 }
