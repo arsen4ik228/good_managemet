@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
-    Background,
     MiniMap,
     useNodesState,
     useEdgesState,
     useReactFlow,
     ReactFlowProvider,
 } from "reactflow";
+import bgSvg from '@image/schema_background.svg';
 import "reactflow/dist/style.css";
 import styles from "./OrgChart.module.css";
 
@@ -20,6 +20,40 @@ import {
     filterTreeByDepth,
     getMaxAvailableDepth,
 } from "../utils/combinedLayout";
+
+const SVG_ASPECT = 1920 / 873;
+const BG_STEP_SCALE = 0.9; // 9% per step
+
+function ScaledBackground({ currentStep }) {
+    const containerW = window.innerWidth;
+    const containerH = window.innerHeight - 90;
+
+    let baseW, baseH;
+    if (containerW / containerH > SVG_ASPECT) {
+        baseW = containerW;
+        baseH = containerW / SVG_ASPECT;
+    } else {
+        baseH = containerH;
+        baseW = containerH * SVG_ASPECT;
+    }
+
+    const scale = 1 + (currentStep - 1) * BG_STEP_SCALE;
+    const bgW = Math.round(baseW * scale);
+    const bgH = Math.round(baseH * scale);
+
+    return (
+        <div style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${bgSvg})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: `${bgW}px ${bgH}px`,
+            backgroundPosition: 'center center',
+            pointerEvents: 'none',
+            zIndex: 0,
+        }} />
+    );
+}
 
 // Stable nodeTypes — defined at module level so ReactFlow never re-mounts nodes
 const nodeTypes = {
@@ -254,6 +288,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     return (
         <NodeExpansionContext.Provider value={{ openNodeId, setOpenNodeId, wrapperRef: reactFlowWrapperRef }}>
         <div className={styles.container} ref={containerRef}>
+            <ScaledBackground currentStep={currentStep} />
             {isZooming && (
                 <div className={`${styles.zoomOverlay} ${zoomDirection === 'in' ? styles.zoomIn : styles.zoomOut}`} />
             )}
@@ -280,7 +315,6 @@ function OrgChartContent({ data, isLoading, isError }) {
                     proOptions={{ hideAttribution: true }}
                 >
                     <MiniMap nodeColor="#CCCCCC" maskColor="rgba(0, 0, 0, 0.05)" />
-                    <Background color="#CCCCCC" gap={16} size={1} variant="dots" />
                 </ReactFlow>
             </div>
 
