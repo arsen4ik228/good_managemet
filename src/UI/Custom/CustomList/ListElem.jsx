@@ -125,7 +125,7 @@ const ListElem = forwardRef(({
                 }
                 {
                     isDeleteDraftProject && isHovered &&
-                    <Button icon={<DeleteOutlined style={{color: "red"}}/>} onClick={ () => deleteDraftPtoject(id)}/>
+                    <Button type="text" icon={<DeleteOutlined style={{color: "red"}}/>} onClick={ () => deleteDraftPtoject(id)}/>
                 }
                 <div
                     className={classes.roundSection}
