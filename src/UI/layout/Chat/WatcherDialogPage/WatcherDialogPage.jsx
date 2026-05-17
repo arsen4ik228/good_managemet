@@ -30,6 +30,9 @@ export default function WatcherDialogPage() {
     const [openFinishModal, setOpenFinishModal] = useState()
     const [openAgreementModal, setOpenAgreementModal] = useState()
 
+    useEffect(() => {
+        document.title = 'Чат';
+    }, []);
     const {
         currentConvert,
         recipientPost,

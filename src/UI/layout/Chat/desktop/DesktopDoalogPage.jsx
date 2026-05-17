@@ -36,6 +36,9 @@ export default function DesktopDialogPage() {
     const historySeenIds = []
     const [buttons, setButtons] = useState()
 
+    useEffect(() => {
+        document.title = 'Чат';
+    }, []);
     const {
         currentConvert,
         senderPostId,

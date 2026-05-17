@@ -276,7 +276,9 @@ export default function User() {
       console.error("Ошибка в процессе создания пользователя:", error);
     }
   };
-
+    useEffect(() => {
+        document.title = 'Сотрудник';
+    }, []);
   return (
     <div className={classes.dialog}>
       {/* <Headers

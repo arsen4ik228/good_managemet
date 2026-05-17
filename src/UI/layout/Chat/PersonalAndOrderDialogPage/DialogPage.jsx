@@ -26,6 +26,9 @@ export default function DialogPage() {
     const [visibleUnSeenMessageIds, setVisibleUnSeenMessageIds] = useState([]);
     const historySeenIds = []
 
+    useEffect(() => {
+        document.title = 'Чат';
+    }, []);
     const {
         currentConvert,
         senderPostId,

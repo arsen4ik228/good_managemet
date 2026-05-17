@@ -17,6 +17,9 @@ export default function WorkingPlanPage() {
 
     usePanelPreset(PRESETS["WORKINGPLAN"]);
 
+    useEffect(() => {
+        document.title = 'Рабочий план';
+    }, []);
     const {
         personalTargets,
         orderTargets,
