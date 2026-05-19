@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import {useState, useMemo, useEffect} from "react";
 import MainContentContainer from "../../Custom/MainContentContainer/MainContentContainer";
 import { usePrint } from "../../../helpers/printHook/usePrint";
 import { ViewStrategy } from "./View/ViewStrategy";
@@ -32,6 +32,9 @@ export function StrategyPage() {
     const propsEditStrategy = useEditStrategy();
     const propsSplitStrategy = useSplitStrategy();
 
+    useEffect(() => {
+        document.title = 'Стратегия';
+    }, []);
     const strategyStateKey = useMemo(() => {
         return STRATEGY_STATE_MAP[currentStrategy?.state] ?? "draft";
     }, [currentStrategy?.state]);

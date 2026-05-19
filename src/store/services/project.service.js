@@ -270,6 +270,15 @@ export const projectApi = apiSlice.injectEndpoints({
                 {type: "Project", id: arg.programId},
             ],
         }),
+
+        deleteProjectDraftId: build.mutation({
+            query: ({ projectId }) => ({
+                url: `projects/${projectId}/delete`,
+                method: "DELETE",
+
+            }),
+            invalidatesTags: ['Project'],
+        }),
     })
 });
 
@@ -282,4 +291,5 @@ export const {
     usePostProjectMutation,
     useGetProjectIdQuery,
     useUpdateProjectMutation,
+    useDeleteProjectDraftIdMutation,
 } = projectApi;

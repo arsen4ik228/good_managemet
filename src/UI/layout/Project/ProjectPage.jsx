@@ -38,7 +38,9 @@ export default function ProjectPage() {
     const [sections, setSections] = useState(initialSections);
 
     const {projectId, programId} = useParams()
-
+    useEffect(() => {
+        document.title = 'Проект';
+    }, []);
     const toggleSection = (name) => {
         setSections(prev =>
             prev.map(section =>

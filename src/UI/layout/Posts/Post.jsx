@@ -32,7 +32,9 @@ export default function Post() {
 
     usePanelPreset(PRESETS["POSTS"]);
 
-
+    useEffect(() => {
+        document.title = 'Пост';
+    }, []);
     const {buttonsArr} = useModuleActions("post", postId);
 
     const {

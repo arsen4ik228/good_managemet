@@ -35,7 +35,9 @@ export const EditStatisticInformation = () => {
   const { allPosts } = useAllPosts();
 
   const { updateStatistics } = useUpdateSingleStatistic();
-
+    useEffect(() => {
+        document.title = 'Статистика';
+    }, []);
   // заполняем initialValues, когда загрузилась статистика
   useEffect(() => {
     if (currentStatistic?.id) {

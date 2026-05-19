@@ -1,12 +1,14 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import TextArea from '../../Custom/TextArea/TextArea'
 
 export const ViewingGoal = ({ arrGoals }) => {
 
     const stringGoal = arrGoals?.join('\n\n')
     const orgName = localStorage.getItem('name')
-    
 
+    useEffect(() => {
+        document.title = 'Цель';
+    }, []);
     return (
         <>
             <div style={{ marginTop: '15px' }}>

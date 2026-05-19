@@ -6,8 +6,12 @@ import {Button, Tooltip} from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
 import {EditOutlined} from "@ant-design/icons";
 import ModalUpdateOrganization from "../../layout/Organization/ModalUpdateOrganization";
+import {DeleteOutlined} from '@ant-design/icons';
+import {useDeleteSingleProjectDraftId} from "../../../hooks/Project/useDeleteSingleProjectDraftId";
+import { message } from "antd";
 
 const ListElem = forwardRef(({
+                                 isDeleteDraftProject,
                                  id,
                                  icon,
                                  upperText,
@@ -31,8 +35,26 @@ const ListElem = forwardRef(({
     const [openModalUpdateOrganization, setOpenModalUpdateOrganization] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
+    const {
+        deleteProject,
+        isLoadingDeleteProjectMutation,
+        isSuccessDeleteProjectMutation,
+        isErrorDeleteProjectMutation,
+        ErrorDeleteProjectMutation
+    } = useDeleteSingleProjectDraftId();
     // Добавляем ref для элемента
     // const elemRef = useRef(null)
+
+   const deleteDraftPtoject = async (projectId) => {
+       try {
+           message.loading("Удаление проекта")
+           await deleteProject({projectId:projectId}).unwrap();
+           message.success("Проект удален")
+       }
+       catch (error) {
+           message.error(error?.data?.message || "Ошибка при удалении проекта")
+       }
+   }
 
     useEffect(() => {
         if (isSelected && setSelectedItemData) {
@@ -87,11 +109,11 @@ const ListElem = forwardRef(({
                     isOrganizationList && isHovered &&
                     <Button
                         icon={<EditOutlined/>}
-                            type="text"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenModalUpdateOrganization(true)
-                            }}/>
+                        type="text"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenModalUpdateOrganization(true)
+                        }}/>
                 }
                 {
                     openModalUpdateOrganization && <ModalUpdateOrganization
@@ -100,6 +122,10 @@ const ListElem = forwardRef(({
                         allOrganizations={allOrganizations}
                         open={openModalUpdateOrganization}
                         setOpen={setOpenModalUpdateOrganization}/>
+                }
+                {
+                    isDeleteDraftProject && isHovered &&
+                    <Button type="text" icon={<DeleteOutlined style={{color: "red"}}/>} onClick={ () => deleteDraftPtoject(id)}/>
                 }
                 <div
                     className={classes.roundSection}

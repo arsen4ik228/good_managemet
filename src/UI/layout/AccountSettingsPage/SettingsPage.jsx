@@ -65,6 +65,10 @@ export default function SettingsPage() {
   const refUpdate = useRef(null);
   const [openHint, setOpenHint] = useState(false);
 
+    useEffect(() => {
+        document.title = 'Настройки пользователя';
+    }, []);
+
   const steps = [
     {
       title: "Сохранить",

@@ -14,7 +14,9 @@ export default function EditGoal() {
     const [editorState, setEditorState] = useState([]);
     const [pressedIndex, setPressedIndex] = useState(null);
 
-
+    useEffect(() => {
+        document.title = 'Цель';
+    }, []);
     const {
         reduxSelectedOrganizationId,
 

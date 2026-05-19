@@ -180,6 +180,7 @@ function getOrgNodeData(org) {
             : null,
         postName: topPost?.postName || null,
         avatarUrl: topPost?.user?.avatar_url || null,
+        postId: topPost?.id || null,
         isOrganization: true,
         original: org,
     };
@@ -193,6 +194,7 @@ function getPostNodeData(post) {
             : null,
         postName: post.postName || null,
         avatarUrl: post.user?.avatar_url || null,
+        postId: post.id || null,
         isOrganization: false,
         original: post,
     };

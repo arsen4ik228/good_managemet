@@ -254,6 +254,8 @@ export default function ProjectsAndProgramsList() {
                     filtredProjects?.map((item, index) => (
                         <React.Fragment key={index}>
                             <ListElem
+                                id={item.id}
+                                isDeleteDraftProject={item?.targets?.find(t => t.targetState === "Черновик" && t.type === "Продукт")}
                                 icon={item.type === 'Программа' ? program_icon : active_project}
                                 upperText={item.projectName}
                                 linkSegment={item.id}

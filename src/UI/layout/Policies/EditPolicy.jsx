@@ -48,7 +48,9 @@ export default function EditPolicy() {
     const [form] = Form.useForm();
     const [initialValues, setInitialValues] = useState(null);
     const [editorState, setEditorState] = useState(null);
-
+    useEffect(() => {
+        document.title = 'Политика';
+    }, []);
     const {
         currentPolicy,
     } = useGetSinglePolicy({
