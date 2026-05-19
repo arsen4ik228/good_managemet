@@ -64,6 +64,9 @@ export const EditStatisticPointsData = () => {
     const [clickArrow, setClickArrow] = useState([null, null]);
 
     const [showLineNorma, setShowLineNorma] = useState(false);
+    useEffect(() => {
+        document.title = 'Статистика';
+    }, []);
     // Получение статистики по id
     const {
         currentStatistic,

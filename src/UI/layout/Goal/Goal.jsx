@@ -32,6 +32,9 @@ export default function Goal() {
     };
   }, [refetch]);
 
+    useEffect(() => {
+        document.title = 'Цель';
+    }, []);
 
   return (
     <>

@@ -39,7 +39,9 @@ export default function EditPost() {
 
     const { roles } = useGetDataForCreatePost();
 
-
+    useEffect(() => {
+        document.title = 'Пост';
+    }, []);
     const {
         allPosts: posts,
     } = useAllPosts();

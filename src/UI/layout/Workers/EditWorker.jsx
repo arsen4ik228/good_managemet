@@ -28,7 +28,9 @@ export default function EditWorker() {
     const [isDismissed, setIsDismissed] = useState()
 
     //(userInfo)
-
+    useEffect(() => {
+        document.title = 'Сотрудник';
+    }, []);
     const handleUpdateUserButtonClick = async () => {
         const Data = {};
 

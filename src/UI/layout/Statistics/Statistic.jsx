@@ -84,7 +84,9 @@ export default function Statistic() {
     const [datePoint, setDatePoint] = useState(null);
 
     const [dataSource, setDataSource] = useState([]);
-
+    useEffect(() => {
+        document.title = 'Статистика';
+    }, []);
     const { PRESETS } = useRightPanel();
     usePanelPreset(PRESETS.STATISTICS);
 

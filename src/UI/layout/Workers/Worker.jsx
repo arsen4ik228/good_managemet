@@ -25,6 +25,9 @@ export default function Worker() {
 
     const {PRESETS} = useRightPanel();
 
+    useEffect(() => {
+        document.title = 'Сотрудник';
+    }, []);
     usePanelPreset(PRESETS["USERS"]);
 
     // const { buttonsArr } = useModuleActions("users", userId);

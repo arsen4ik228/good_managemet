@@ -16,7 +16,9 @@ export default function Policy() {
   usePanelPreset(PRESETS["POLICIES"]);
 
  const { buttonsArr } = useModuleActions("policy", policyId);
-
+    useEffect(() => {
+        document.title = 'Политика';
+    }, []);
   const {
     refetch,
     currentPolicy,

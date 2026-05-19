@@ -36,6 +36,9 @@ export default function ArchiveDialogPage() {
     const historySeenIds = []
     const [buttons, setButtons] = useState()
 
+    useEffect(() => {
+        document.title = 'Чат';
+    }, []);
     const {
         currentConvert,
         senderPostId,

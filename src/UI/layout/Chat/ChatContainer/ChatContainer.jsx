@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import classes from './ChatContainer.module.css'
 import InputMessage from '../Input/InputMessage.jsx'
 import { usePanelPreset, useRightPanel } from '@hooks';
@@ -9,6 +9,9 @@ export default function ChatContainer({ children, onCreate, onCalendar, isArchiv
     // //(',klvndsjdvnfhdvndjfhvdfjkhv dfjnvhdfvnjdfvjnkdfvjdfvj')
     // usePanelPreset(PRESETS['CHATS']);
 
+    useEffect(() => {
+        document.title = 'Чат';
+    }, []);
     return (
         <div className={classes.wrapper}>
             <div className={classes.content}>
