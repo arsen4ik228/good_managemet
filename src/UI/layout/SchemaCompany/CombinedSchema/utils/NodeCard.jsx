@@ -10,6 +10,9 @@ import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { useGetSinglePostForView } from '@hooks/Post/useGetSinglePostForView';
 import { formatPhone } from '../../../Posts/function/functionForPost';
 import { NodeExpansionContext } from './NodeExpansionContext';
+import { homeUrl } from '@helpers/constants'
+import { useParams } from 'react-router-dom';
+
 
 const CARD_HEIGHT = 90;
 
@@ -17,6 +20,8 @@ export default function NodeCard({ id, data, xPos, yPos }) {
     const { label, userName, postName, avatarUrl, postId: dataPostId } = data || {};
     const [imgError, setImgError] = useState(false);
     const [postId, setPostId] = useState(null);
+
+    const { organizationId } = useParams()
 
     const { openNodeId, setOpenNodeId, wrapperRef } = useContext(NodeExpansionContext);
     const { setNodes } = useReactFlow();
@@ -36,6 +41,10 @@ export default function NodeCard({ id, data, xPos, yPos }) {
             ...n,
             zIndex: nextOpen && n.id === id ? 1000 : 0,
         })));
+    };
+
+    const clickPost = (id) => {
+        window.open(homeUrl + `#/${organizationId}/helper/posts/${id}`, '_blank');
     };
 
     const canExpand = !!dataPostId;
@@ -76,7 +85,7 @@ export default function NodeCard({ id, data, xPos, yPos }) {
 
     const bounds = wrapperRef.current?.getBoundingClientRect();
     const panelLeft = bounds ? xPos * zoom + vpX + bounds.left : 0;
-    const panelTop  = bounds ? (yPos + CARD_HEIGHT) * zoom + vpY + bounds.top : 0;
+    const panelTop = bounds ? (yPos + CARD_HEIGHT) * zoom + vpY + bounds.top : 0;
 
     return (
         <>
@@ -104,7 +113,7 @@ export default function NodeCard({ id, data, xPos, yPos }) {
                                     <div className={classes.userName} title={userName}>{userName}</div>
                                 )}
                                 {postName && (
-                                    <div className={classes.postNameRow}>
+                                    <div className={classes.postNameRow} onClick={() => clickPost(postId)}>
                                         <span className={classes.postName} title={postName}>{postName}</span>
                                         {canExpand && (
                                             <button className={classes.expandButton} onClick={handleToggle}>
