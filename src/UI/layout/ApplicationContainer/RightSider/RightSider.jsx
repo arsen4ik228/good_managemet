@@ -106,8 +106,10 @@ export default function RightSider({ config: initialConfig }) {    //
     const handlerClickHelper = async (link) => {
         // Специальные случаи для внешних ссылок
         if (link === 'controlPanel' || link === 'svodka' || link === 'structure') {
-            if (link === 'structure')
+            if (link === 'structure'){
                 window.open(homeUrl + `#/${organizationId}/${link}`, '_blank');
+                return;
+            }
             else {
                 window.open(homeUrl + `#/${link}`, '_blank');
                 setExpanendHelper(false);
