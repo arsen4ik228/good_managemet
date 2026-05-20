@@ -2,7 +2,7 @@ import React, {useEffect, forwardRef, useState} from 'react'
 import classes from './ListElem.module.css'
 import avatar from '@image/icon _ GM-large.svg'
 import {useFindPathSegment} from '@helpers/helpers'
-import {Button, Tooltip} from 'antd'
+import {Button, Modal, Tooltip} from 'antd'
 import nuber_mark from '@image/nuber_mark.svg'
 import {EditOutlined} from "@ant-design/icons";
 import ModalUpdateOrganization from "../../layout/Organization/ModalUpdateOrganization";
@@ -55,6 +55,18 @@ const ListElem = forwardRef(({
            message.error(error?.data?.message || "Ошибка при удалении проекта")
        }
    }
+
+    const handleDeleteСonfirmation = (id) => {
+        Modal.confirm({
+            title: "Подтверждение",
+            content: "Вы уверены, что хотите удалить проект?",
+            okText: "Да",
+            cancelText: "Отмена",
+            onOk: async () => {
+                await deleteDraftPtoject(id);
+            },
+        });
+    };
 
     useEffect(() => {
         if (isSelected && setSelectedItemData) {
@@ -125,7 +137,7 @@ const ListElem = forwardRef(({
                 }
                 {
                     isDeleteDraftProject && isHovered &&
-                    <Button type="text" icon={<DeleteOutlined style={{color: "red"}}/>} onClick={ () => deleteDraftPtoject(id)}/>
+                    <Button type="text" icon={<DeleteOutlined style={{color: "red"}}/>} onClick={ () => handleDeleteСonfirmation(id)}/>
                 }
                 <div
                     className={classes.roundSection}
