@@ -6,9 +6,11 @@ import {useAllProject} from "@hooks/Project/useAllProject";
 import {useUpdateSingleProject} from "@hooks/Project/useUpdateSingleProject";
 
 
-import {AccordionRdx} from "../../../radixUI/accordion/AccordionRdx";
+import {AccordionRdx, AccordionRdxSkeleton} from "../../../radixUI/accordion/AccordionRdx";
 import {TriggerContent} from "../../../layout/Strategy/Split/components/TriggerContent";
 import {AccordionContent} from "../../../layout/Strategy/Split/components/AccordionContent";
+
+import { Skeleton } from 'antd';
 
 export default function ProjectsList() {
     const channel = new BroadcastChannel("project-events");
@@ -20,7 +22,10 @@ export default function ProjectsList() {
     const {
         projects,
         projectsWithProgram,
-        maxProjectNumber
+        maxProjectNumber,
+
+        isLoadingGetProject,
+        isFetchingGetProject,
     } = useAllProject();
 
     const {
@@ -112,6 +117,10 @@ export default function ProjectsList() {
                 addButtonClick={() => createNewProject()}
                 addButtonText={'Создать проект'}
             >
+                {
+                    (isLoadingGetProject  || isFetchingGetProject) &&  <AccordionRdxSkeleton />
+                }
+
                 {
                     filtredProjects?.map((p) => (
                         <AccordionRdx
