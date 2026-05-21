@@ -17,13 +17,14 @@ export const useAllProject = () => {
 
       isErrorGetProject,
       isLoadingGetProject,
+      isFetchingGetProject,
 
       maxProjectNumber
 
     } = useGetProjectQuery(
       {organizationId: reduxSelectedOrganizationId},
       {
-        selectFromResult: ({ data, isLoading, isError }) => ({
+        selectFromResult: ({ data, isLoading, isFetching, isError }) => ({
             allShit: data?.allShit || [],
 
           projects: data?.projects || [],
@@ -39,6 +40,7 @@ export const useAllProject = () => {
 
           isErrorGetProject: isError,
           isLoadingGetProject: isLoading,
+          isFetchingGetProject: isFetching,
         }),
         skip: !reduxSelectedOrganizationId,
       }
@@ -59,7 +61,8 @@ export const useAllProject = () => {
     archivesPrograms,
 
     isErrorGetProject,
-    isLoadingGetProject,
+      isLoadingGetProject,
+      isFetchingGetProject,
 
     maxProjectNumber
   };
