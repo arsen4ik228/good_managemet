@@ -79,8 +79,7 @@ function OrgChartContent({ data, isLoading, isError }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [totalSteps, setTotalSteps] = useState(HIGH_LEVEL_STEPS + 1);
     const [sliderValue, setSliderValue] = useState(0);
-    const [isZooming, setIsZooming] = useState(false);
-    const [zoomDirection, setZoomDirection] = useState('in');
+    const [overlayPhase, setOverlayPhase] = useState(null); // null | 'solid' | 'fading'
     const [openNodeId, setOpenNodeId] = useState(null);
 
     const highLevelCacheRef = useRef(null);
@@ -90,6 +89,8 @@ function OrgChartContent({ data, isLoading, isError }) {
     const containerRef = useRef(null);
     const reactFlowWrapperRef = useRef(null);
     const zoomTimerRef = useRef(null);
+    const rebuildTimerRef = useRef(null);
+    const zoomKeyRef = useRef(0);
     const wheelTimeoutRef = useRef(null);
     const pendingDirRef = useRef(null);
 
@@ -160,7 +161,6 @@ function OrgChartContent({ data, isLoading, isError }) {
         if (newStep < 1 || newStep > totalSteps) return;
         if (newStep === currentStep) return;
 
-        const direction = newStep > currentStep ? 'in' : 'out';
         const nextZoom = getTargetZoom(newStep);
 
         // 1. Запоминаем экранную позицию узла под мышкой ДО перестроения графа
@@ -178,59 +178,61 @@ function OrgChartContent({ data, isLoading, isError }) {
             }
         }
 
-        // 2. Запускаем оверлей и перестраиваем граф
+        // 2. Оверлей сразу solid — полностью закрывает экран
         if (zoomTimerRef.current) clearTimeout(zoomTimerRef.current);
+        if (rebuildTimerRef.current) clearTimeout(rebuildTimerRef.current);
 
-        setIsZooming(false);
-        requestAnimationFrame(() => {
-            setZoomDirection(direction);
-            setIsZooming(true);
+        zoomKeyRef.current += 1;
+        setOverlayPhase('solid');
 
-            requestAnimationFrame(() => {
-                setCurrentStep(newStep);
-                setSliderValue(stepToPercent(newStep));
-                setOpenNodeId(null);
+        // 3. Через 30ms перестраиваем граф (оверлей уже непрозрачен)
+        rebuildTimerRef.current = setTimeout(() => {
+            setCurrentStep(newStep);
+            setSliderValue(stepToPercent(newStep));
+            setOpenNodeId(null);
 
-                if (newStep <= HIGH_LEVEL_STEPS) {
-                    const cache = highLevelCacheRef.current;
-                    if (cache) { setNodes(cache.nodes); setEdges(cache.edges); }
+            if (newStep <= HIGH_LEVEL_STEPS) {
+                const cache = highLevelCacheRef.current;
+                if (cache) { setNodes(cache.nodes); setEdges(cache.edges); }
+            } else {
+                const postDepth = newStep - HIGH_LEVEL_STEPS;
+                const cache = postDepthCacheRef.current[postDepth];
+                if (cache) { setNodes(cache.nodes); setEdges(cache.edges); }
+            }
+
+            // 4. Даём React отрендерить новые ноды (150ms), затем позиционируем viewport
+            setTimeout(() => {
+                if (targetScreenPos && targetNodeId) {
+                    const newNode = getNodes().find(n => n.id === targetNodeId);
+                    const bounds = reactFlowWrapperRef.current?.getBoundingClientRect();
+                    if (newNode && bounds) {
+                        setViewport(
+                            {
+                                x: targetScreenPos.x - bounds.width / 2 - newNode.position.x * nextZoom,
+                                y: targetScreenPos.y - bounds.height / 2 - newNode.position.y * nextZoom,
+                                zoom: nextZoom,
+                            },
+                            { duration: 0 }
+                        );
+                    } else {
+                        setViewport({ x: 0, y: 0, zoom: nextZoom }, { duration: 0 });
+                    }
                 } else {
-                    const postDepth = newStep - HIGH_LEVEL_STEPS;
-                    const cache = postDepthCacheRef.current[postDepth];
-                    if (cache) { setNodes(cache.nodes); setEdges(cache.edges); }
+                    if (newStep === 1) {
+                        fitView({ duration: 0, padding: 0.2 });
+                    } else {
+                        setViewport({ x: 0, y: 0, zoom: nextZoom }, { duration: 0 });
+                    }
                 }
 
-                // 3. После рендера позиционируем так, чтобы узел остался под мышкой
+                // 5. Граф спозиционирован → ещё 250ms буфер → начинаем fade
                 setTimeout(() => {
-                    if (targetScreenPos && targetNodeId) {
-                        const newNode = getNodes().find(n => n.id === targetNodeId);
-                        const bounds = reactFlowWrapperRef.current?.getBoundingClientRect();
-                        if (newNode && bounds) {
-                            setViewport(
-                                {
-                                    x: targetScreenPos.x - bounds.width / 2 - newNode.position.x * nextZoom,
-                                    y: targetScreenPos.y - bounds.height / 2 - newNode.position.y * nextZoom,
-                                    zoom: nextZoom,
-                                },
-                                { duration: 0 }
-                            );
-                        } else {
-                            // Узел не найден в новом графе — fallback
-                            setViewport({ x: 0, y: 0, zoom: nextZoom }, { duration: 0 });
-                        }
-                    } else {
-                        // Нет узла под мышкой
-                        if (newStep === 1) {
-                            fitView({ duration: 0, padding: 0.2 });
-                        } else {
-                            setViewport({ x: 0, y: 0, zoom: nextZoom }, { duration: 0 });
-                        }
-                    }
-                }, 50);
-            });
-        });
-
-        zoomTimerRef.current = setTimeout(() => setIsZooming(false), 800);
+                    setOverlayPhase('fading');
+                    // 6. Убираем оверлей после завершения transition (500ms)
+                    zoomTimerRef.current = setTimeout(() => setOverlayPhase(null), 520);
+                }, 250);
+            }, 150);
+        }, 30);
     }, [currentStep, totalSteps, stepToPercent, setNodes, setEdges, getNodes, getViewport, setViewport, fitView]);
 
     const handleIncrease = useCallback(() => {
@@ -289,8 +291,11 @@ function OrgChartContent({ data, isLoading, isError }) {
         <NodeExpansionContext.Provider value={{ openNodeId, setOpenNodeId, wrapperRef: reactFlowWrapperRef }}>
         <div className={styles.container} ref={containerRef}>
             <ScaledBackground currentStep={currentStep} />
-            {isZooming && (
-                <div className={`${styles.zoomOverlay} ${zoomDirection === 'in' ? styles.zoomIn : styles.zoomOut}`} />
+            {overlayPhase && (
+                <div
+                    key={zoomKeyRef.current}
+                    className={overlayPhase === 'fading' ? styles.zoomOverlayFading : styles.zoomOverlaySolid}
+                />
             )}
 
             <div ref={reactFlowWrapperRef} style={{ width: '100%', height: '100%' }}>
