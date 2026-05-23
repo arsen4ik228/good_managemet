@@ -1,39 +1,46 @@
 .main {
-  position: relative;
+    position: relative;
 
-  width: auto;
-  max-width: var(--content-width);
+    width: auto;
+    max-width: var(--content-width);
 
-  flex: 1 0 120px;
+    flex: 1 0 120px;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-  gap: 40px;
-  padding: 40px 50px 0px 50px;
+    gap: 40px;
+    padding: 40px 50px 0px 50px;
 
-  background-color: #fff;
-  border: 1px solid #999999;
+    background-color: #fff;
+    border: 1px solid #999999;
 
-  overflow-y: auto;
+    overflow-y: auto;
 }
 
 
 .frame {
-  width: 100%;
+    width: 100%;
 
-  border: none;
+    border: none;
 }
 
 
 .title {
-  font-size: 12px !important;
-  color: #999999;
-  text-transform: uppercase;
+    font-size: 12px !important;
+    color: #999999;
+    text-transform: uppercase;
 }
 
 .selectionActions {
-  position: absolute; /* вместо fixed */
-  z-index: 1000;
+    position: absolute; /* вместо fixed */
+    z-index: 1000;
+    width: 70px;
+    height: 30px;
+    background-color: #005475;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

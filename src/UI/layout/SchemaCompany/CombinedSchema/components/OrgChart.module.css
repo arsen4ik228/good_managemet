@@ -154,8 +154,8 @@
     box-shadow: none !important;
 }
 
-/* Zoom overlay animation */
-.zoomOverlay {
+/* Zoom overlay — solid phase (graph is rebuilding) */
+.zoomOverlaySolid {
     position: absolute;
     top: 0;
     left: 0;
@@ -163,26 +163,23 @@
     height: 100%;
     pointer-events: none;
     z-index: 5;
-    background: radial-gradient(circle at center, transparent 0%, rgba(250, 250, 250, 0.3) 100%);
+    opacity: 1;
+    background: rgba(248, 248, 248, 0.82);
+    backdrop-filter: blur(14px);
 }
 
-.zoomIn {
-    animation: zoomInEffect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.zoomOut {
-    animation: zoomOutEffect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes zoomInEffect {
-    0%   { backdrop-filter: blur(3px);  transform: scale(0.98); opacity: 0; }
-    40%  { backdrop-filter: blur(12px); transform: scale(1.02); opacity: 1; }
-    100% { backdrop-filter: blur(3px);  transform: scale(1);    opacity: 0; }
-}
-
-@keyframes zoomOutEffect {
-    0%   { backdrop-filter: blur(3px);  transform: scale(1.02); opacity: 0; }
-    40%  { backdrop-filter: blur(12px); transform: scale(0.98); opacity: 1; }
-    100% { backdrop-filter: blur(3px);  transform: scale(1);    opacity: 0; }
+/* Zoom overlay — fading phase (graph is ready, fade out) */
+.zoomOverlayFading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    background: rgba(248, 248, 248, 0.82);
+    backdrop-filter: blur(0px);
+    transition: opacity 500ms ease-out, backdrop-filter 500ms ease-out;
 }
 
