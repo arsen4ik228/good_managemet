@@ -113,8 +113,8 @@ export default function NodeCard({ id, data, xPos, yPos }) {
                                     <div className={classes.userName} title={userName}>{userName}</div>
                                 )}
                                 {postName && (
-                                    <div className={classes.postNameRow} onClick={() => clickPost(postId)}>
-                                        <span className={classes.postName} title={postName}>{postName}</span>
+                                    <div className={classes.postNameRow}>
+                                        <span className={classes.postName} title={postName} onClick={() => clickPost(postId)}>{postName}</span>
                                         {canExpand && (
                                             <button className={classes.expandButton} onClick={handleToggle}>
                                                 {isOpen ? <DownOutlined /> : <UpOutlined />}
