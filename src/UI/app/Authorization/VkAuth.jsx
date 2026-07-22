@@ -16,19 +16,6 @@ const generateCodeVerifier = () => {
     return verifier;
 };
 
-// Генерация code_challenge из code_verifier методом SHA-256
-const generateCodeChallenge = async (codeVerifier) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(codeVerifier);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const base64Url = btoa(String.fromCharCode(...hashArray))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
-    return base64Url;
-};
-
 // Генерация случайного state
 const generateState = () => {
     const array = new Uint8Array(32);
@@ -81,9 +68,10 @@ export const VkAuth = ({ fingerprint }) => {
         if (isInitialized.current) return;
         isInitialized.current = true;
 
-        // Загружаем VK ID SDK
+        // Загружаем VK ID SDK (версия ЗАФИКСИРОВАНА, а не диапазон "<3.0.0",
+        // чтобы обновления VK не ломали конфиг без изменений в нашем коде)
         const script = document.createElement("script");
-        script.src = "https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js";
+        script.src = "https://unpkg.com/@vkid/sdk@2.6.1/dist-sdk/umd/index.js";
         script.async = true;
 
         script.onload = async () => {
@@ -93,19 +81,20 @@ export const VkAuth = ({ fingerprint }) => {
 
             try {
                 const codeVerifier = generateCodeVerifier();
-                const codeChallenge = await generateCodeChallenge(codeVerifier);
                 const state = generateState();
 
                 savePKCEParams(codeVerifier, state, fingerprint);
 
+                // Актуальный интерфейс Config.init: SDK сам считает code_challenge
+                // из codeVerifier внутри себя (PKCE S256), поэтому codeChallenge /
+                // codeChallengeMethod передавать больше не нужно и не нужно.
                 VKID.Config.init({
                     app: CLIENT_ID,
                     // redirectUrl: "https://drained-unplanned-salsa.ngrok-free.dev",
                     redirectUrl: "https://24academy.ru/gm",
                     responseMode: VKID.ConfigResponseMode.Callback,
                     source: VKID.ConfigSource.LOWCODE,
-                    codeChallenge: codeChallenge,
-                    codeChallengeMethod: "S256",
+                    codeVerifier: codeVerifier,
                     state: state,
                     scope: "email phone",
                 });
