@@ -3,6 +3,10 @@ import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import 'react-image-crop/dist/ReactCrop.css';
 import classes from "./SettingsPage.module.css";
 
+import file1 from './Договор_оферта_на_ИП_Шаповала_Д_А_.doc';
+import file2 from './Политика_обработки_персональных_данных_ИП_Шаповал.doc';
+import file3 from './Условия_лицензионного_соглашения_в_части_использования_программы.doc';
+
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
 
@@ -65,9 +69,9 @@ export default function SettingsPage() {
   const refUpdate = useRef(null);
   const [openHint, setOpenHint] = useState(false);
 
-    useEffect(() => {
-        document.title = 'Настройки пользователя';
-    }, []);
+  useEffect(() => {
+    document.title = 'Настройки пользователя';
+  }, []);
 
   const steps = [
     {
@@ -457,6 +461,8 @@ export default function SettingsPage() {
                 </List.Item>
               )}
             />
+
+
           </div>
 
           <HandlerMutation
@@ -470,6 +476,20 @@ export default function SettingsPage() {
                 : ErrorUpdateUserMutation?.data?.message
             }
           ></HandlerMutation>
+
+      <div className={classes.downloadLinks}>
+        <a href={file1} download="file1.pdf">
+          Договор оферты
+        </a>
+
+        <a href={file2} download="file2.docx">
+          Политика обработки персональных данных
+        </a>
+
+        <a href={file3} download="file3.xlsx">
+          Условия лецензионного соглашения
+        </a>
+      </div>
         </div>
       </MainContentContainer>
 
