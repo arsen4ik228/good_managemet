@@ -478,15 +478,15 @@ export default function SettingsPage() {
           ></HandlerMutation>
 
       <div className={classes.downloadLinks}>
-        <a href={file1} download="file1.pdf">
+        <a href={file1} download="file1.doc">
           Договор оферты
         </a>
 
-        <a href={file2} download="file2.docx">
+        <a href={file2} download="file2.doc">
           Политика обработки персональных данных
         </a>
 
-        <a href={file3} download="file3.xlsx">
+        <a href={file3} download="file3.doc">
           Условия лецензионного соглашения
         </a>
       </div>
