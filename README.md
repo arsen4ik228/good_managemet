@@ -1,70 +1,197 @@
-# Getting Started with Create React App
+# Good Management
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend application for managing company processes, organizational structures, projects, programs, goals, employees, analytics, and communication.
 
-## Available Scripts
+The project is a large React-based SPA with modular API integration, real-time communication, interactive diagrams, drag-and-drop interfaces, and data visualization.
 
-In the project directory, you can run:
+## Main Features
 
-### `npm start`
+- Authentication and user-related flows
+- Company and organizational structure management
+- Projects and programs
+- Goals, strategies, policies, and working plans
+- Employee and position management
+- Control panel and statistics
+- Real-time communication and chat-related functionality
+- Interactive organizational diagrams
+- Drag-and-drop interfaces
+- Data visualization and charts
+- Desktop and mobile routing
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Core
+- React 18
+- JavaScript / JSX
+- Redux Toolkit
+- RTK Query
+- React Router
+- CRACO / Webpack
 
-### `npm test`
+### UI and interaction
+- Ant Design
+- dnd-kit
+- React Flow
+- ECharts
+- D3
+- CSS Modules
+- classnames
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Data and communication
+- REST API
+- Socket.IO
+- JWT
+- i18next
 
-### `npm run build`
+### Tooling
+- Git
+- GitHub Actions
+- Nginx-based deployment
+- React Testing Library / Jest tooling
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Architecture
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The frontend is split into UI, routing, state management, API services, hooks, helpers, and shared logic.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```text
+src/
+├── UI/             # application pages, layouts and reusable UI
+├── contexts/       # React contexts
+├── helpers/        # shared helpers and configuration
+├── hooks/          # custom hooks
+├── navigation/     # desktop/mobile routing
+├── store/          # Redux store, slices and RTK Query services
+└── index.js        # application entry point
+```
 
-### `npm run eject`
+CRACO is used to extend the Create React App/Webpack configuration and provide aliases for application modules.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## State Management and API
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Redux Toolkit is used for application state.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Server state and REST API communication are organized through a shared RTK Query `createApi` instance. Feature-specific API modules inject their endpoints through `injectEndpoints`, which keeps API logic separated by domain.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The API layer includes domains such as:
 
-## Learn More
+- users
+- organizations
+- goals
+- strategies
+- projects
+- programs
+- policies
+- permissions
+- control panel
+- statistics
+- messages and communication
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Real-time Communication
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Socket.IO is used for real-time scenarios, including communication-related functionality and authorization flows.
 
-### Code Splitting
+REST API and sockets are used together depending on the type of interaction:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- REST / RTK Query for standard request-response operations and server state
+- Socket.IO for events that require real-time updates
 
-### Analyzing the Bundle Size
+## Interactive UI
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The project contains several non-trivial UI scenarios:
 
-### Making a Progressive Web App
+- sortable and draggable interfaces built with `dnd-kit`
+- organizational diagrams built with `React Flow`
+- custom React Flow nodes
+- charts and statistics built with `ECharts`
+- complex routing with lazy-loaded React components
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## AI-assisted Development
 
-### Advanced Configuration
+Claude Code was used as a development assistant during the project.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+It was mainly used for:
 
-### Deployment
+- generating draft implementations for repetitive UI and service code
+- helping with repetitive RTK Query endpoint implementations
+- suggesting refactoring options
+- assisting with debugging and locating problems in the codebase
+- accelerating navigation and analysis of a large existing codebase
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+I remained responsible for:
 
-### `npm run build` fails to minify
+- task decomposition and implementation decisions
+- architecture and technology choices
+- integration with existing business logic and API contracts
+- state-management decisions
+- reviewing and correcting generated code
+- debugging integration issues
+- final implementation and acceptance of changes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+AI-generated code was treated as a draft and reviewed before being integrated into the project.
+
+## Environment Variables
+
+The application expects several environment variables.
+
+Create a `.env.local` file in the project root:
+
+```env
+REACT_APP_BASE_URL=
+REACT_APP_SOCKET_URL=
+REACT_APP_LINK_URL=
+REACT_APP_TG_BOT_URL=
+```
+
+The actual values depend on the backend and deployment environment and are intentionally not stored in the repository.
+
+## Local Development
+
+The CI configuration uses Node.js `16.20.2`.
+
+Install dependencies:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+Start the development server:
+
+```bash
+npm start
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Run tests:
+
+```bash
+npm test
+```
+
+A working backend and valid environment variables are required for the application's server-dependent functionality.
+
+## CI/CD
+
+The repository contains a GitHub Actions deployment workflow.
+
+The deployment pipeline:
+
+1. installs dependencies
+2. builds the React application
+3. injects environment variables through GitHub Secrets
+4. uploads the production build to the server over SSH/SCP
+5. reloads Nginx
+
+Sensitive deployment values are stored in GitHub Secrets rather than in the repository.
+
+## Project Notes
+
+This repository contains the frontend part of the application.
+
+The current codebase is primarily JavaScript/JSX. TypeScript is not claimed as part of this specific repository.
+
+The project demonstrates work with a relatively large React codebase, modular server-state management, REST and real-time communication, complex UI interactions, visualization, and production deployment automation.
